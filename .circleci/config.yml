@@ -1,0 +1,50 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.13
+        environment:
+          Env: ci
+
+      - image: circleci/mysql:5.7-ram
+        environment:
+          TZ: Asia/Tokyo
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: stayway_test
+
+    steps:
+      - checkout
+
+      - run:
+          name: create config
+          command:
+            cp .circleci/stayway.yaml config.test.yaml
+
+      - run:
+          name: Wait mysql
+          command: |
+            MYSQL_HOST=localhost make wait-mysql
+
+      - restore_cache:
+          keys:
+            - go-mod-{{ checksum "go.sum" }}
+
+      - run:
+          name: download modules
+          command: go mod download
+
+      - save_cache:
+          key: go-mod-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+            - "./bin"
+
+      - run:
+          name: Run unit tests
+          command: |
+            make lint test
+
+      - run:
+          name: build
+          command: |
+            make

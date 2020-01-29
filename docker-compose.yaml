@@ -1,0 +1,55 @@
+version: "3.3"
+
+services:
+  mysql:
+    image: mysql:5.7
+    tty: true
+    stdin_open: true
+    ports:
+      - 3306
+    volumes:
+      - ./.data/mysql:/var/lib/mysql
+    environment:
+      - TZ=Asia/Tokyo
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=stayway
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: golang/golang:1.13
+    tty: true
+    stdin_open: true
+    privileged: true
+    ports:
+      - 5000:3000
+    working_dir: /app
+    volumes:
+      - ~/.cache:/root/.cache
+      - .:/app
+      - $GOPATH/pkg/mod:/go/pkg/mod
+      - ./.data/aws:/root/.aws/credentials
+    depends_on:
+      - mysql
+      - localstack
+    command: make wait-mysql start-dev
+  swagger:
+    image: swaggerapi/swagger-ui
+    volumes:
+      - ./docs:/docs
+    environment:
+      - SWAGGER_JSON=/docs/swagger.yaml
+    ports:
+      - 5010:8080
+  localstack: # TODO: create-bucketを手動でやらないといけない
+    image: localstack/localstack
+    ports:
+      - 5030:4572
+      - 5040:9090
+    environment:
+      - SERVICES=s3
+      - DATA_DIR=.data/localstack
+      - DEBUG=1 
+    volumes:
+      - /tmp/localstack:/tmp/localstack

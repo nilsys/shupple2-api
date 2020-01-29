@@ -1,0 +1,427 @@
+swagger: "2.0"
+info:
+  title: stayway
+  version: 1.0.0
+host: "localhost:3000"
+schemes: 
+  - http
+basePath: "/api"
+consumes: 
+  - application/json
+produces: 
+  - application/json
+securityDefinitions:
+  iDPCognito:
+    in: header
+    name: Authorization
+    type: apiKey
+    description: CognitoIDPから取得するDToken
+paths:
+  /users:
+    post:
+      tags: [user]
+      summary: ユーザー登録
+      description: |
+        アイコン、ヘッダ画像はフロント側でS3にアップロードし、UUIDを送信する。
+        そのUUIDからアップロードされた画像を特定し、S3上の/users/icon/${userID}に移動する。
+      parameters:
+        - in: body
+          name: profile
+          required: true
+          schema:
+            $ref: '#/definitions/UserRequest'
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: バリデーションエラーまたは既に存在するユーザー
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - iDPCognito: []
+    put:
+      tags: [user]
+      summary: プロフィール更新
+      description: ユーザープロフィール更新
+      parameters:
+        - in: body
+          name: profile
+          required: true
+          schema:
+            $ref: '#/definitions/UserRequest'
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: バリデーションエラー
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - iDPCognito: []
+  /s3:
+    post:
+      security:
+        - iDPCognito: []
+      tags: [s3]
+      summary: S3アップロードに使用する署名付きURLを生成
+      description: |
+        フロントはこれを使用してS3にファイルをアップロードし、ファイル添付系のAPIでUUIDを渡す。
+      parameters:
+        - in: body
+          name: s3
+          required: true
+          schema:
+            type: object
+            properties:
+              contentType:
+                type: string
+                format: mime
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: object
+            properties:
+              uuid:
+                type: string
+              url:
+                type: string
+                description: PutObjectに使用する署名付きURL
+  /review:
+    get:
+      tags: [review]
+      summary: レビュー検索
+      parameters:
+        - in: query
+          name: userId
+          type: integer
+          description: 指定したユーザーが投稿したレビューを取得する
+        - in: query
+          name: innId
+          type: integer
+          description: innに紐づくレビューを取得する
+        - in: query
+          name: spotId
+          type: integer
+          description: spotに紐づくレビューを取得する
+        - in: query
+          name: hashtag
+          type: string
+          description: hashtagに紐づくレビューを取得する
+        - in: query
+          name: perPage
+          type: integer
+          default: 10
+        - in: query
+          name: page
+          type: integer
+          default: 1
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Review'
+    post:
+      tags: [review]
+      summary: レビュー投稿
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: body
+          name: review
+          required: true
+          schema:
+            $ref: '#/definitions/ReviewRequest'
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/Review'
+        "400":
+          description: バリデーションエラー
+          schema:
+            $ref: '#/definitions/Error'
+  /review/:id:
+    get:
+      tags: [review]
+      summary: レビュー取得
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: レビューID
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/Review'
+        "404":
+          description: 存在しないレビュー
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      tags: [review]
+      summary: レビュー更新
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: レビューID
+        - in: body
+          name: review
+          required: true
+          schema:
+            $ref: '#/definitions/ReviewRequest'
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/Review'
+        "400":
+          description: バリデーションエラー
+          schema:
+            $ref: '#/definitions/Error'
+        "403":
+          description: 自分のものでない投稿を更新しようとした時
+          schema:
+            $ref: '#/definitions/Error'
+        "404":
+          description: 存在しないレビュー
+          schema:
+            $ref: '#/definitions/Error'
+  /review/:id/comment:
+    get:
+      tags: [review]
+      summary: レビューのコメントを取得する
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: レビューID
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ReviewComment'
+        "404":
+          description: 存在しないレビュー
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      tags: [review]
+      summary: レビューにコメントを投稿する
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: レビューID
+        - in: body
+          name: review
+          required: true
+          schema:
+            $ref: '#/definitions/ReviewCommentRequest'
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/Review'
+        "400":
+          description: バリデーションエラー
+          schema:
+            $ref: '#/definitions/Error'
+        "404":
+          description: 存在しないレビュー
+          schema:
+            $ref: '#/definitions/Error'
+  /review/:id/favorite:
+    put:
+      tags: [review]
+      summary: レビューをfavする
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+      responses:
+        "204":
+          description: 成功
+        "404":
+          description: 存在しないレビュー
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      tags: [review]
+      summary: レビューをunfavする
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+      responses:
+        "204":
+          description: 成功
+        "404":
+          description: 存在しないレビュー
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  UserRequest:
+    type: object
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+        format: email
+      birthdate:
+        type: string
+        format: date
+      gender:
+        type: string
+        enum: [male, female]
+      profile:
+        type: string
+      iconUuid:
+        type: string
+        description: S3アップロードAPIから返却されたUUIDを指定
+      pinnedPostId:
+        type: integer
+        description: 一番上に表示される記事
+      interests:
+        type: array
+        items:
+          type: integer
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      email:
+        type: string
+        format: email
+      birthdate:
+        type: string
+        format: date
+      gender:
+        type: string
+        enum: [male, female]
+      profile:
+        type: string
+      header:
+        type: string
+        format: url
+        description: ヘッダ画像。userIDから一意に定まる
+      icon:
+        type: string
+        format: url
+        description: アイコン。userIDから一意に定まる
+      pinnedPostId:
+        type: integer
+        description: 一番上に表示される記事
+      interests:
+        type: array
+        items:
+          $ref: '#/definitions/Interest'
+  UserSummary:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      icon:
+        type: string
+        format: url
+        description: アイコン。userIDから一意に定まる
+  ReviewRequest:
+    type: object
+    description: |
+      spot_idかinn_idのどちらかは必ず入っていないといけない
+    properties:
+      spotId:
+        type: integer
+      innId:
+        type: integer
+      score:
+        type: integer
+      body:
+        type: string
+      mediaUuids:
+        type: array
+        items:
+          type: string
+          description: アップロードファイルのUUID
+  Review:
+    type: object
+    properties:
+      spotId:
+        type: integer
+      InnId:
+        type: integer
+      score:
+        type: integer
+      body:
+        type: string
+      favoriteCount:
+        type: integer
+      media:
+        type: array
+        items:
+          $ref: '#/definitions/Media'
+  Media:
+    type: object
+    properties:
+      uuid:
+        type: string
+      mime:
+        type: string
+        format: mime
+      url:
+        type: string
+        format: url
+  ReviewComment:
+    type: object
+    properties:
+      user:
+        $ref: '#/definitions/UserSummary'
+      body:
+        type: string
+      createdAt:
+        type: string
+        format: date-time
+  Interest:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+  ReviewCommentRequest:
+    type: object
+    properties:
+      body:
+        type: string

@@ -1,0 +1,8 @@
+development:
+  user_id: 10
+database: "root:@tcp(mysql:3306)/stayway?charset=utf8&parseTime=True&loc=Local&clientFoundRows=true"
+logger:
+  json: false
+  level: debug
+
+# vim: set ft=yaml:
