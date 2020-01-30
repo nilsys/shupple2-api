@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
 
 	"github.com/google/wire"
@@ -33,4 +35,20 @@ func (c *PostQueryController) FindByID(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, post)
+}
+
+// TODO: 命名
+func (c *PostQueryController) FindByParams(ctx echo.Context) error {
+	params := param.FindPostListParam{}
+	if err := BindAndValidate(ctx, params); err != nil {
+		return errors.Wrapf(err, "validation find post list parameter")
+	}
+
+	query := converter.ConvertFindPostListParamToQuery(params)
+	postAndCategories, err := c.PostService.FindByParams(query)
+	if err != nil {
+		return errors.Wrap(err, "failed to find post list")
+	}
+
+	return ctx.JSON(http.StatusOK, postAndCategories)
 }
