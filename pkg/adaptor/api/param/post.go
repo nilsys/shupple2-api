@@ -15,7 +15,7 @@ type (
 		Body  string
 	}
 
-	// 記事取得API
+	// 記事一覧取得APIパラメータ
 	FindPostListParam struct {
 		AreaID       int    `query:"areaId"`
 		SubAreaID    int    `query:"subAreaId"`
@@ -51,7 +51,7 @@ func (findPostListParam FindPostListParam) GetPerPage() int {
 	return findPostListParam.PerPage
 }
 
-// offSetを返す
+// offSetを返す(sqlで使う想定)
 func (findPostListParam FindPostListParam) GetOffSet() int {
 	if findPostListParam.Page == 1 || findPostListParam.Page == 0 {
 		return 0
