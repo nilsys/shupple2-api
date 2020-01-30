@@ -3,10 +3,11 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
