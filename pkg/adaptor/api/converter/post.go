@@ -6,6 +6,7 @@ import (
 )
 
 // inputの構造体からレポジトリで使用するクエリ構造体へコンバート
+// i -> o
 func ConvertFindPostListParamToQuery(param param.FindPostListParam) *query.FindPostListQuery {
 	return &query.FindPostListQuery{
 		AreaID:       param.AreaID,
@@ -18,3 +19,5 @@ func ConvertFindPostListParamToQuery(param param.FindPostListParam) *query.FindP
 		OffSet:       param.GetOffSet(),
 	}
 }
+
+// o -> i
