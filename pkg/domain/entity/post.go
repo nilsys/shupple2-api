@@ -18,8 +18,8 @@ type (
 
 	Post struct {
 		PostTiny
-		Bodies      []*PostBody
-		CategoryIDs []*PostCategory
+		Bodies      []*PostBody     `gorm:"foreignkey:PostID"`
+		CategoryIDs []*PostCategory `gorm:"foreignkey:PostID"`
 	}
 
 	PostBody struct {
