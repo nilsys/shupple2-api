@@ -5,6 +5,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
+// inputの構造体からレポジトリで使用するクエリ構造体へコンバート
 func ConvertFindPostListParamToQuery(param param.FindPostListParam) *query.FindPostListQuery {
 	return &query.FindPostListQuery{
 		AreaID:       param.AreaID,

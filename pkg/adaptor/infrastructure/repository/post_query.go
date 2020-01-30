@@ -26,6 +26,7 @@ func (r *PostQueryRepositoryImpl) FindByID(id int) (*entity.Post, error) {
 	return &row, nil
 }
 
+// 検索条件に指定されたクエリ構造体を用い、postを複数参照
 func (r *PostQueryRepositoryImpl) FindByParams(query *query.FindPostListQuery) ([]*entity.Post, error) {
 	var posts []*entity.Post
 
@@ -41,6 +42,7 @@ func (r *PostQueryRepositoryImpl) FindByParams(query *query.FindPostListQuery) (
 	return posts, nil
 }
 
+// クエリ構造体を用い、検索クエリを作成
 func (r *PostQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindPostListQuery) *gorm.DB {
 	q := r.DB.Select("*")
 
