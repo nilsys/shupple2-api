@@ -34,6 +34,15 @@ type (
 	}
 )
 
+// Postが持つCategoryID(int)を配列で返す
+func (post *Post) GetCategoryIDs() []int {
+	var ids []int
+	for _, postCategory := range post.CategoryIDs {
+		ids = append(ids, postCategory.CategoryID)
+	}
+	return ids
+}
+
 func NewPost(tiny PostTiny, bodies []string, categoryIDs []int) Post {
 	postBodies := make([]*PostBody, len(bodies))
 	for i, body := range bodies {
