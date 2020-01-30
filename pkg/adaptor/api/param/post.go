@@ -44,7 +44,7 @@ func (findPostListParam FindPostListParam) Validate() error {
 }
 
 // PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
-func (findPostListParam FindPostListParam) GetPerPage() int {
+func (findPostListParam FindPostListParam) GetLimit() int {
 	if findPostListParam.PerPage == 0 {
 		return findPostListDefaultPerPage
 	}
@@ -56,5 +56,5 @@ func (findPostListParam FindPostListParam) GetOffSet() int {
 	if findPostListParam.Page == 1 || findPostListParam.Page == 0 {
 		return 0
 	}
-	return findPostListParam.GetPerPage()*(findPostListParam.Page-1) + 1
+	return findPostListParam.GetLimit()*(findPostListParam.Page-1) + 1
 }
