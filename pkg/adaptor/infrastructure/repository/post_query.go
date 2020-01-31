@@ -33,6 +33,7 @@ func (r *PostQueryRepositoryImpl) FindByParams(query *query.FindPostListQuery) (
 	q := r.buildFindByParamsQuery(query)
 
 	if err := q.Preload("Bodies").Preload("CategoryIDs").
+		Order(query.SortBy.GetOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
 		Find(&posts).Error; err != nil {
