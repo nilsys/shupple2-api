@@ -32,6 +32,7 @@ func (r *PostQueryRepositoryImpl) FindByParams(query *query.FindPostListQuery) (
 
 	q := r.buildFindByParamsQuery(query)
 
+	// TODO: マッピング
 	if err := q.Preload("Bodies").Preload("CategoryIDs").
 		Order(query.SortBy.GetOrderQuery()).
 		Limit(query.Limit).
