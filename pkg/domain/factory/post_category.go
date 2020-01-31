@@ -24,6 +24,7 @@ var PostCategoryFactorySet = wire.NewSet(
 )
 
 // PostからCategoryを参照し、PostCategoryを作成
+// TODO: Userもひっぱて来る、名前も考える
 func (factory *PostCategoryFactoryImpl) NewPostCategoryFromPost(post *entity.Post) (*dto.PostAndCategories, error) {
 	categories, err := factory.CategoryQueryRepository.FindByIDs(post.GetCategoryIDs()...)
 	if err != nil {
