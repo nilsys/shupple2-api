@@ -12,6 +12,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 )
 
 import (
@@ -42,8 +43,15 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	postQueryRepositoryImpl := &repository.PostQueryRepositoryImpl{
 		DB: db,
 	}
+	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
+		DB: db,
+	}
+	postCategoryFactoryImpl := &factory.PostCategoryFactoryImpl{
+		CategoryQueryRepository: categoryQueryRepositoryImpl,
+	}
 	postQueryServiceImpl := &service.PostQueryServiceImpl{
-		Repository: postQueryRepositoryImpl,
+		PostQueryRepository: postQueryRepositoryImpl,
+		PostCategoryFactory: postCategoryFactoryImpl,
 	}
 	postQueryController := api.PostQueryController{
 		PostService: postQueryServiceImpl,
@@ -61,9 +69,11 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 
 var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet)
 
-var repositorySet = wire.NewSet(repository.ProvideDB, repository.PostQueryRepositorySet, repository.PostCommandRepositorySet)
+var repositorySet = wire.NewSet(repository.ProvideDB, repository.PostQueryRepositorySet, repository.PostCommandRepositorySet, repository.CategoryQueryRepositorySet)
 
 var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet)
+
+var factorySet = wire.NewSet(factory.PostCategoryFactorySet)
 
 type App struct {
 	Config                *config.Config

@@ -9,6 +9,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 )
 
 var controllerSet = wire.NewSet(
@@ -20,11 +21,16 @@ var repositorySet = wire.NewSet(
 	repository.ProvideDB,
 	repository.PostQueryRepositorySet,
 	repository.PostCommandRepositorySet,
+	repository.CategoryQueryRepositorySet,
 )
 
 var serviceSet = wire.NewSet(
 	service.PostQueryServiceSet,
 	service.PostCommandServiceSet,
+)
+
+var factorySet = wire.NewSet(
+	factory.PostCategoryFactorySet,
 )
 
 type App struct {
@@ -42,6 +48,7 @@ func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {
 		controllerSet,
 		serviceSet,
 		repositorySet,
+		factorySet,
 	)
 
 	return new(App), nil
