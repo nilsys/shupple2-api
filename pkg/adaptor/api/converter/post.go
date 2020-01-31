@@ -2,6 +2,7 @@ package converter
 
 import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
@@ -13,7 +14,7 @@ func ConvertFindPostListParamToQuery(param param.FindPostListParam) *query.FindP
 		SubSubAreaID: param.SubSubAreaID,
 		ThemeID:      param.ThemeID,
 		HashTag:      param.HashTag,
-		SortBy:       param.SortBy,
+		SortBy:       model.NewSortBy(param.SortBy),
 		Limit:        param.GetLimit(),
 		OffSet:       param.GetOffSet(),
 	}
