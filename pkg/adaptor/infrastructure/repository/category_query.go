@@ -14,7 +14,7 @@ type CategoryQueryRepositoryImpl struct {
 
 var CategoryQueryRepositorySet = wire.NewSet(
 	wire.Struct(new(CategoryQueryRepositoryImpl), "*"),
-	wire.Build(new(repository.CategoryQueryRepository), new(CategoryQueryRepositoryImpl)),
+	wire.Bind(new(repository.CategoryQueryRepository), new(*CategoryQueryRepositoryImpl)),
 )
 
 func (r *CategoryQueryRepositoryImpl) FindByIDs(ids ...int) ([]*entity.Category, error) {
