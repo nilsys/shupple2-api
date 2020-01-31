@@ -48,19 +48,19 @@ func (r *PostQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindPostLi
 	q := r.DB.Select("*")
 
 	if query.AreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ? AND category_type = area", query.AreaID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ? AND type = area", query.AreaID)
 	}
 
 	if query.SubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ? AND category_type = sub_area", query.SubAreaID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ? AND type = subarea", query.SubAreaID)
 	}
 
 	if query.SubSubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ? AND category_type = sub_sub_area", query.SubSubAreaID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ? AND type = subsubarea", query.SubSubAreaID)
 	}
 
 	if query.ThemeID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ? AND category_type = theme", query.ThemeID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ? AND type = theme", query.ThemeID)
 	}
 
 	if query.HashTag != "" {
