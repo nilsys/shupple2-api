@@ -38,8 +38,8 @@ func (c *PostQueryController) FindByID(ctx echo.Context) error {
 }
 
 // TODO: 命名
-func (c *PostQueryController) FindByParams(ctx echo.Context) error {
-	params := param.FindPostListParam{}
+func (c *PostQueryController) ShowListByParams(ctx echo.Context) error {
+	params := param.ShowListParam{}
 	if err := BindAndValidate(ctx, params); err != nil {
 		return errors.Wrapf(err, "validation find post list parameter")
 	}

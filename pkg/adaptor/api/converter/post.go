@@ -7,7 +7,7 @@ import (
 )
 
 // i/oの構造体からレポジトリで使用するクエリ構造体へコンバート
-func ConvertFindPostListParamToQuery(param param.FindPostListParam) *query.FindPostListQuery {
+func ConvertFindPostListParamToQuery(param param.ShowListParam) *query.FindPostListQuery {
 	return &query.FindPostListQuery{
 		AreaID:       param.AreaID,
 		SubAreaID:    param.SubAreaID,
