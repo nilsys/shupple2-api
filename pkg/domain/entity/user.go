@@ -18,3 +18,8 @@ type (
 		DeletedAt   *time.Time
 	}
 )
+
+// TODO: サムネイル生成ロジック
+func (user *User) GenerateThumbnailURL() string {
+	return "foo"
+}

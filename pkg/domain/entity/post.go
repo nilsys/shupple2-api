@@ -43,6 +43,11 @@ func (post *Post) GetCategoryIDs() []int {
 	return ids
 }
 
+// TODO: サムネイルロジック
+func (post *Post) GenerateThumbnailURL() string {
+	return "hoge"
+}
+
 func NewPost(tiny PostTiny, bodies []string, categoryIDs []int) Post {
 	postBodies := make([]*PostBody, len(bodies))
 	for i, body := range bodies {
