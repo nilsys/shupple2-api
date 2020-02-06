@@ -7,6 +7,5 @@ import (
 
 type PostQueryRepository interface {
 	FindByID(id int) (*entity.Post, error)
-	// TODO: 命名
-	FindByParams(query *query.FindPostListQuery) ([]*entity.Post, error)
+	FindListByParams(query *query.FindPostListQuery) ([]*entity.Post, error)
 }
