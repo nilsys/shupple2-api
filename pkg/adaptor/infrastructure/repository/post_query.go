@@ -9,6 +9,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
+// Post参照系レポジトリ実装
 type PostQueryRepositoryImpl struct {
 	DB *gorm.DB
 }
@@ -27,13 +28,12 @@ func (r *PostQueryRepositoryImpl) FindByID(id int) (*entity.Post, error) {
 }
 
 // 検索条件に指定されたクエリ構造体を用い、postを複数参照
-func (r *PostQueryRepositoryImpl) FindByParams(query *query.FindPostListQuery) ([]*entity.Post, error) {
+func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuery) ([]*entity.Post, error) {
 	var posts []*entity.Post
 
 	q := r.buildFindByParamsQuery(query)
 
-	// TODO: マッピング
-	if err := q.Preload("Bodies").Preload("CategoryIDs").
+	if err := q.
 		Order(query.SortBy.GetOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
@@ -45,23 +45,24 @@ func (r *PostQueryRepositoryImpl) FindByParams(query *query.FindPostListQuery) (
 }
 
 // クエリ構造体を用い、検索クエリを作成
+// TODO: category取得にtype付け足す？
 func (r *PostQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindPostListQuery) *gorm.DB {
-	q := r.DB.Select("*")
+	q := r.DB
 
 	if query.AreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ? AND type = area", query.AreaID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ?)", query.AreaID)
 	}
 
 	if query.SubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ? AND type = subarea", query.SubAreaID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ?)", query.SubAreaID)
 	}
 
 	if query.SubSubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ? AND type = subsubarea", query.SubSubAreaID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ?)", query.SubSubAreaID)
 	}
 
 	if query.ThemeID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ? AND type = theme", query.ThemeID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ?)", query.ThemeID)
 	}
 
 	if query.HashTag != "" {
