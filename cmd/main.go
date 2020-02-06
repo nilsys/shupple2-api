@@ -40,6 +40,7 @@ func run() error {
 func setRoutes(app *App) {
 	api := app.Echo.Group("/api")
 
+	api.GET("/posts", app.PostQueryController.ShowListByParams)
 	api.POST("/posts", app.PostCommandController.Store)
 	api.GET("/posts/:id", app.PostQueryController.FindByID)
 }

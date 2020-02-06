@@ -22,6 +22,7 @@ var repositorySet = wire.NewSet(
 	repository.PostQueryRepositorySet,
 	repository.PostCommandRepositorySet,
 	repository.CategoryQueryRepositorySet,
+	repository.UserQueryRepositorySet,
 )
 
 var serviceSet = wire.NewSet(
@@ -30,7 +31,7 @@ var serviceSet = wire.NewSet(
 )
 
 var factorySet = wire.NewSet(
-	factory.PostCategoryFactorySet,
+	factory.PostDetailFactorySet,
 )
 
 type App struct {

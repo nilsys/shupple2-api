@@ -46,12 +46,16 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
 		DB: db,
 	}
-	postCategoryFactoryImpl := &factory.PostCategoryFactoryImpl{
+	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
+		DB: db,
+	}
+	postDetailFactoryImpl := &factory.PostDetailFactoryImpl{
 		CategoryQueryRepository: categoryQueryRepositoryImpl,
+		UserQueryRepository:     userQueryRepositoryImpl,
 	}
 	postQueryServiceImpl := &service.PostQueryServiceImpl{
 		PostQueryRepository: postQueryRepositoryImpl,
-		PostCategoryFactory: postCategoryFactoryImpl,
+		PostCategoryFactory: postDetailFactoryImpl,
 	}
 	postQueryController := api.PostQueryController{
 		PostService: postQueryServiceImpl,
@@ -69,11 +73,11 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 
 var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet)
 
-var repositorySet = wire.NewSet(repository.ProvideDB, repository.PostQueryRepositorySet, repository.PostCommandRepositorySet, repository.CategoryQueryRepositorySet)
+var repositorySet = wire.NewSet(repository.ProvideDB, repository.PostQueryRepositorySet, repository.PostCommandRepositorySet, repository.CategoryQueryRepositorySet, repository.UserQueryRepositorySet)
 
 var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet)
 
-var factorySet = wire.NewSet(factory.PostCategoryFactorySet)
+var factorySet = wire.NewSet(factory.PostDetailFactorySet)
 
 type App struct {
 	Config                *config.Config
