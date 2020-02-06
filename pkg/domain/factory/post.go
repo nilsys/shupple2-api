@@ -11,7 +11,7 @@ import (
 type (
 	// PostDetail生成ファクトリー
 	PostDetailFactory interface {
-		NewPostCategoryFromPost(post *entity.Post) (*dto.PostDetail, error)
+		NewPostDetailFromPost(post *entity.Post) (*dto.PostDetail, error)
 	}
 
 	// PostDetail生成ファクトリー実装
@@ -27,7 +27,7 @@ var PostDetailFactorySet = wire.NewSet(
 )
 
 // Postから[]Category, Userを参照し、PostCategoryを作成
-func (factory *PostDetailFactoryImpl) NewPostCategoryFromPost(post *entity.Post) (*dto.PostDetail, error) {
+func (factory *PostDetailFactoryImpl) NewPostDetailFromPost(post *entity.Post) (*dto.PostDetail, error) {
 	categories, err := factory.CategoryQueryRepository.FindByIDs(post.GetCategoryIDs()...)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed get categories")

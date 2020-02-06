@@ -48,7 +48,7 @@ func (r *PostQueryServiceImpl) ShowListByParams(query *query.FindPostListQuery) 
 
 	// MEMO: factoryの方に移動させた方がすっきりする(factoryがカオスになるが)
 	for _, post := range posts {
-		postAndCategories, err := r.PostCategoryFactory.NewPostCategoryFromPost(post)
+		postAndCategories, err := r.PostCategoryFactory.NewPostDetailFromPost(post)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed generate post and categories")
 		}
