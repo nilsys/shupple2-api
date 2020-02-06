@@ -62,6 +62,62 @@ paths:
             $ref: '#/definitions/Error'
       security:
         - iDPCognito: []
+  /users/ranking:
+    get:
+      tags: [user]
+      summary: ユーザーランキング取得
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: query
+          name: areaId
+          type: integer
+          description: エリアID
+        - in: query
+          name: subAreaId
+          type: integer
+          description: サブエリアID
+        - in: query
+          name: subSubAreaId
+          type: integer
+          description: サブサブエリアID
+        - in: query
+          name: sortBy
+          type: string
+          enum:
+              - recommended
+              - popularity
+          default: recommended
+          description: 並び順 (おすすめ順, 人気順)
+        - in: query
+          name: fromDate
+          type: string
+          format: date
+          description: 記事や投稿写真を絞る開始日 (例)2019-01-01
+          example: 2019-01-01
+        - in: query
+          name: toDate
+          type: string
+          format: date
+          description: 記事や投稿写真を絞る終了日 (例)2019-01-31
+          example: 2019-01-31
+        - in: query
+          name: page
+          type: integer
+          default: 1
+          required: false
+          description: 何ページ目
+        - in: query
+          name: perPage
+          type: integer
+          default: 30
+          required: false
+          description: ページ当たり取得件数
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/User'
   /s3:
     post:
       security:
