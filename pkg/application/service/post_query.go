@@ -11,15 +11,16 @@ import (
 )
 
 type (
+	// Post参照系サービス
 	PostQueryService interface {
-		FindByID(id int) (*entity.Post, error)
-		// TODO: 命名
-		FindByParams(query *query.FindPostListQuery) ([]*dto.PostAndCategories, error)
+		ShowByID(id int) (*entity.Post, error)
+		ShowListByParams(query *query.FindPostListQuery) ([]*dto.PostDetail, error)
 	}
 
+	// Post参照系サービス実装
 	PostQueryServiceImpl struct {
 		PostQueryRepository repository.PostQueryRepository
-		PostCategoryFactory factory.PostCategoryFactory
+		PostCategoryFactory factory.PostDetailFactory
 	}
 )
 
@@ -28,7 +29,7 @@ var PostQueryServiceSet = wire.NewSet(
 	wire.Bind(new(PostQueryService), new(*PostQueryServiceImpl)),
 )
 
-func (r *PostQueryServiceImpl) FindByID(id int) (*entity.Post, error) {
+func (r *PostQueryServiceImpl) ShowByID(id int) (*entity.Post, error) {
 	post, err := r.PostQueryRepository.FindByID(id)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get post")
@@ -37,20 +38,20 @@ func (r *PostQueryServiceImpl) FindByID(id int) (*entity.Post, error) {
 	return post, nil
 }
 
-func (r *PostQueryServiceImpl) FindByParams(query *query.FindPostListQuery) ([]*dto.PostAndCategories, error) {
-	var postAndCategoriesList []*dto.PostAndCategories
+func (r *PostQueryServiceImpl) ShowListByParams(query *query.FindPostListQuery) ([]*dto.PostDetail, error) {
+	var postAndCategoriesList []*dto.PostDetail
 
-	posts, err := r.PostQueryRepository.FindByParams(query)
+	posts, err := r.PostQueryRepository.FindListByParams(query)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed find post by params")
 	}
 
+	// MEMO: factoryの方に移動させた方がすっきりする(factoryがカオスになるが)
 	for _, post := range posts {
 		postAndCategories, err := r.PostCategoryFactory.NewPostCategoryFromPost(post)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed generate post and categories")
 		}
-
 		postAndCategoriesList = append(postAndCategoriesList, postAndCategories)
 	}
 
