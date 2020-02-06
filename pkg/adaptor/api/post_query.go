@@ -24,12 +24,12 @@ var PostQueryControllerSet = wire.NewSet(
 )
 
 func (c *PostQueryController) FindByID(ctx echo.Context) error {
-	q := param.GetPost{}
+	q := &param.GetPost{}
 	if err := BindAndValidate(ctx, q); err != nil {
 		return errors.Wrapf(err, "validation get post parameter")
 	}
 
-	post, err := c.PostService.FindByID(q.ID)
+	post, err := c.PostService.ShowByID(q.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get post")
 	}
@@ -37,18 +37,18 @@ func (c *PostQueryController) FindByID(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, post)
 }
 
-// TODO: 命名
 func (c *PostQueryController) ShowListByParams(ctx echo.Context) error {
-	params := param.ShowListParam{}
+	params := &param.ShowPostListParam{}
 	if err := BindAndValidate(ctx, params); err != nil {
 		return errors.Wrapf(err, "validation find post list parameter")
 	}
 
 	query := converter.ConvertFindPostListParamToQuery(params)
-	postAndCategories, err := c.PostService.FindByParams(query)
+
+	postDetailList, err := c.PostService.ShowListByParams(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to find post list")
 	}
 
-	return ctx.JSON(http.StatusOK, postAndCategories)
+	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailListToOutput(postDetailList))
 }
