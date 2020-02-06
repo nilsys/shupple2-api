@@ -39,7 +39,7 @@ func (r *PostQueryServiceImpl) ShowByID(id int) (*entity.Post, error) {
 }
 
 func (r *PostQueryServiceImpl) ShowListByParams(query *query.FindPostListQuery) ([]*dto.PostDetail, error) {
-	var postAndCategoriesList []*dto.PostDetail
+	var postDetailList []*dto.PostDetail
 
 	posts, err := r.PostQueryRepository.FindListByParams(query)
 	if err != nil {
@@ -52,8 +52,8 @@ func (r *PostQueryServiceImpl) ShowListByParams(query *query.FindPostListQuery) 
 		if err != nil {
 			return nil, errors.Wrap(err, "failed generate post and categories")
 		}
-		postAndCategoriesList = append(postAndCategoriesList, postAndCategories)
+		postDetailList = append(postDetailList, postAndCategories)
 	}
 
-	return postAndCategoriesList, nil
+	return postDetailList, nil
 }
