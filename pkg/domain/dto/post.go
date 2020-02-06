@@ -2,8 +2,8 @@ package dto
 
 import "github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 
-type PostAndCategories struct {
+type PostDetail struct {
 	Post       *entity.Post
 	Categories []*entity.Category
-	// TODO: ここにUserも入る
+	User       *entity.User
 }
