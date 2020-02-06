@@ -9,6 +9,6 @@ type Post struct {
 	Title            string   `json:"title"`
 	CreatorThumbnail string   `json:"creatorThumbnail"`
 	CreatorName      string   `json:"creatorName"`
-	LikeCount        string   `json:"likeCount"`
+	LikeCount        int      `json:"likeCount"`
 	UpdatedAt        string   `json:"updatedAt"`
 }
