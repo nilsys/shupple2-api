@@ -46,7 +46,7 @@ func convertPostDetailToOutput(postDetail *dto.PostDetail) *response.Post {
 		CreatorThumbnail: postDetail.User.GenerateThumbnailURL(),
 		CreatorName:      postDetail.User.Name,
 		LikeCount:        postDetail.Post.FavoriteCount,
-		UpdatedAt:        postDetail.Post.UpdatedAt.Format("2006-01-02T15:04+09:00"),
+		UpdatedAt:        model.TimeFmtToFrontStr(postDetail.Post.UpdatedAt),
 	}
 }
 
