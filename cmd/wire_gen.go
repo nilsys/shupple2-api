@@ -9,6 +9,7 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
@@ -34,8 +35,19 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
 		DB: db,
 	}
+	wordpress := configConfig.Wordpress
+	wordpressQueryRepository := repository.NewWordpressQueryRepositoryImpl(wordpress)
+	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
+		DB: db,
+	}
+	wordpressServiceImpl := &service.WordpressServiceImpl{
+		WordpressQueryRepository: wordpressQueryRepository,
+		UserQueryRepository:      userQueryRepositoryImpl,
+	}
 	postCommandServiceImpl := &service.PostCommandServiceImpl{
-		Repository: postCommandRepositoryImpl,
+		PostCommandRepository:    postCommandRepositoryImpl,
+		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressService:         wordpressServiceImpl,
 	}
 	postCommandController := api.PostCommandController{
 		PostService: postCommandServiceImpl,
@@ -44,9 +56,6 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		DB: db,
 	}
 	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
-		DB: db,
-	}
-	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
 		DB: db,
 	}
 	postDetailFactoryImpl := &factory.PostDetailFactoryImpl{
@@ -60,28 +69,51 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	postQueryController := api.PostQueryController{
 		PostService: postQueryServiceImpl,
 	}
+	reviewQueryRepositoryImpl := &repository.ReviewQueryRepositoryImpl{
+		DB: db,
+	}
+	staywayConfig := configConfig.Stayway
+	clientConfig := _wireConfigValue
+	clientClient := client.NewClient(clientConfig)
+	innQueryRepositoryImpl := &repository.InnQueryRepositoryImpl{
+		StaywayConfig: staywayConfig,
+		Client:        clientClient,
+	}
+	reviewQueryServiceImpl := &service.ReviewQueryServiceImpl{
+		ReviewQueryRepository: reviewQueryRepositoryImpl,
+		InnQueryRepository:    innQueryRepositoryImpl,
+	}
+	reviewQueryController := api.ReviewQueryController{
+		ReviewQueryService: reviewQueryServiceImpl,
+	}
 	app := &App{
 		Config:                configConfig,
 		Echo:                  echoEcho,
 		PostCommandController: postCommandController,
 		PostQueryController:   postQueryController,
+		ReviewQueryController: reviewQueryController,
 	}
 	return app, nil
 }
 
+var (
+	_wireConfigValue = &client.Config{}
+)
+
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ReviewQueryControllerSet)
 
-var repositorySet = wire.NewSet(repository.ProvideDB, repository.PostQueryRepositorySet, repository.PostCommandRepositorySet, repository.CategoryQueryRepositorySet, repository.UserQueryRepositorySet)
-
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet)
 
 var factorySet = wire.NewSet(factory.PostDetailFactorySet)
+
+var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
 
 type App struct {
 	Config                *config.Config
 	Echo                  *echo.Echo
 	PostCommandController api.PostCommandController
 	PostQueryController   api.PostQueryController
+	ReviewQueryController api.ReviewQueryController
 }

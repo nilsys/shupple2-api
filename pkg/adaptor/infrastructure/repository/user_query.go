@@ -19,8 +19,16 @@ var UserQueryRepositorySet = wire.NewSet(
 
 func (r *UserQueryRepositoryImpl) FindByID(id int) (*entity.User, error) {
 	var row entity.User
-	if err := r.DB.First(&row).Error; err != nil {
+	if err := r.DB.First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "user(id=%d)", id)
+	}
+	return &row, nil
+}
+
+func (r *UserQueryRepositoryImpl) FindByWordpressID(wordpressUserID int) (*entity.User, error) {
+	var row entity.User
+	if err := r.DB.Where("wordpress_id = ?", wordpressUserID).First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "user(wordpress_id=%d)", wordpressUserID)
 	}
 	return &row, nil
 }

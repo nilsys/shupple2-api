@@ -4,16 +4,19 @@ import (
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
 type (
 	PostCommandService interface {
-		Store(post *entity.Post) error
+		ImportFromWordpressByID(wordpressPostID int) (*entity.Post, error)
 	}
 
 	PostCommandServiceImpl struct {
-		Repository repository.PostCommandRepository
+		PostCommandRepository    repository.PostCommandRepository
+		WordpressQueryRepository repository.WordpressQueryRepository
+		WordpressService         WordpressService
 	}
 )
 
@@ -22,10 +25,20 @@ var PostCommandServiceSet = wire.NewSet(
 	wire.Bind(new(PostCommandService), new(*PostCommandServiceImpl)),
 )
 
-func (r *PostCommandServiceImpl) Store(post *entity.Post) error {
-	if err := r.Repository.Store(post); err != nil {
-		return errors.Wrap(err, "failed to store post")
+func (r *PostCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Post, error) {
+	wpPosts, err := r.WordpressQueryRepository.FindPostsByIDs([]int{id})
+	if err != nil || len(wpPosts) == 0 {
+		return nil, serror.NewResourcesNotFoundError(err, "wordpress post(id=%d)", id)
 	}
 
-	return nil
+	post, err := r.WordpressService.ConvertPost(wpPosts[0])
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to convert post")
+	}
+
+	if err := r.PostCommandRepository.Store(post); err != nil {
+		return nil, errors.Wrap(err, "failed to store post")
+	}
+
+	return post, nil
 }

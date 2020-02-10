@@ -3,5 +3,11 @@ database: "root:@tcp(localhost:3306)/stayway_test?charset=utf8&parseTime=True&lo
 logger:
   json: false
   level: info
+stayway:
+  base_url: "http://host.docker.internal:3000"
+aws:
+  region: ap-northeast-1
+  endpoint: http://localstack:4572
+  avatar_bucket: hoge
 
 # vim: set ft=yaml:

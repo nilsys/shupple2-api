@@ -43,4 +43,5 @@ func setRoutes(app *App) {
 	api.GET("/posts", app.PostQueryController.ShowListByParams)
 	api.POST("/posts", app.PostCommandController.Store)
 	api.GET("/posts/:id", app.PostQueryController.FindByID)
+	api.GET("/review", app.ReviewQueryController.LisReview)
 }

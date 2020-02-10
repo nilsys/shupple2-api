@@ -1,15 +1,22 @@
 package config
 
-import "go.uber.org/zap"
+import (
+	"net/url"
+
+	"go.uber.org/zap"
+)
 
 type (
 	ConfigFilePath string
 
 	Config struct {
 		Version     string
-		Development *Development `validate:"omitempty" yaml:"development"`
-		Database    string       `validate:"required" yaml:"database"`
-		Logger      *Logger      `validate:"" yaml:"logger"`
+		Development *Development  `validate:"omitempty" yaml:"development"`
+		Database    string        `validate:"required" yaml:"database"`
+		Logger      *Logger       `validate:"" yaml:"logger"`
+		Stayway     StaywayConfig `validate:"required" yaml:"stayway"`
+		Wordpress   Wordpress     `validate:"required" yaml:"wordpress"`
+		AWS         AWS           `validate:"required" yaml:"aws"`
 	}
 
 	Development struct {
@@ -19,6 +26,20 @@ type (
 	Logger struct {
 		JSON  bool
 		Level zap.AtomicLevel
+	}
+
+	StaywayConfig struct {
+		BaseURL string `validate:"required" yaml:"base_url"`
+	}
+
+	Wordpress struct {
+		Host url.URL `validate:"required" yaml:"host"`
+	}
+
+	AWS struct {
+		Endpoint     string `validate:"" yaml:"endpoint"`
+		Region       string `validate:"required" yaml:"region"`
+		AvatarBucket string `validate:"required" yaml:"avatar_bucket"`
 	}
 )
 

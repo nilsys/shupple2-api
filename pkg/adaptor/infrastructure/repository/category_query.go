@@ -26,3 +26,11 @@ func (r *CategoryQueryRepositoryImpl) FindByIDs(ids ...int) ([]*entity.Category,
 
 	return categories, nil
 }
+
+func (r *CategoryQueryRepositoryImpl) FindByID(id int) (*entity.Category, error) {
+	var row entity.Category
+	if err := r.DB.First(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "category(id=%d)", id)
+	}
+	return &row, nil
+}
