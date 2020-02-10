@@ -24,15 +24,17 @@ func ConvertFindPostListParamToQuery(param *param.ShowPostListParam) *query.Find
 }
 
 // outputの構造体へconvert
-// TODO: categoryはtypeで条件分岐
 func convertPostDetailToOutput(postDetail *dto.PostDetail) *response.Post {
 	var areaCategories []string
 	var themeCategories []string
 
 	for _, category := range postDetail.Categories {
-		// TODO: ここで条件分岐
-		areaCategories = append(areaCategories, category.Name)
-		themeCategories = append(themeCategories, category.Name)
+		if category.Type == model.CategoryTypeArea {
+			areaCategories = append(areaCategories, category.Name)
+		}
+		if category.Type == model.CategoryTypeTheme {
+			themeCategories = append(themeCategories, category.Name)
+		}
 	}
 
 	return &response.Post{
