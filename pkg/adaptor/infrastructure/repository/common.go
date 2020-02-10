@@ -4,11 +4,41 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql" // register driver
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
+)
+
+const (
+	dummyCredential = "dummy"
+)
+
+var RepositoriesSet = wire.NewSet(
+	ProvideDB,
+	CategoryCommandRepositorySet,
+	CategoryQueryRepositorySet,
+	ComicCommandRepositorySet,
+	ComicQueryRepositorySet,
+	FeatureCommandRepositorySet,
+	FeatureQueryRepositorySet,
+	LcategoryCommandRepositorySet,
+	LcategoryQueryRepositorySet,
+	TouristSpotCommandRepositorySet,
+	TouristSpotQueryRepositorySet,
+	PostCommandRepositorySet,
+	PostQueryRepositorySet,
+	UserQueryRepositorySet,
+	UserCommandRepositorySet,
+	VlogCommandRepositorySet,
+	VlogQueryRepositorySet,
+	WordpressQueryRepositorySet,
 )
 
 func ProvideDB(config *config.Config) (*gorm.DB, error) {
@@ -31,12 +61,34 @@ func ProvideDB(config *config.Config) (*gorm.DB, error) {
 	return db, nil
 }
 
+func ProvideAWSSession(config *config.Config) (*session.Session, error) {
+	cfgs := aws.NewConfig().WithRegion(config.AWS.Region)
+
+	if config.AWS.Endpoint != "" {
+		cfgs = cfgs.
+			WithEndpoint(config.AWS.Endpoint).
+			WithS3ForcePathStyle(true).
+			WithCredentials(credentials.NewStaticCredentials(dummyCredential, dummyCredential, dummyCredential))
+	}
+
+	if config.IsDev() {
+		cfgs = cfgs.WithLogLevel(aws.LogDebug)
+	}
+
+	return session.NewSession(cfgs)
+}
+
+func ProvideS3Uploader(sess *session.Session) *s3manager.Uploader {
+	return s3manager.NewUploader(sess)
+}
+
 func Transaction(db *gorm.DB, f func(db *gorm.DB) error) (err error) {
 	tx := db.Begin()
 
 	defer func() {
 		if r := recover(); r != nil {
-			err = serror.New(err, serror.CodeUndefined, "%s", r)
+			tx.Rollback()
+			panic(r)
 		}
 		if err != nil {
 			tx.Rollback()

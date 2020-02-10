@@ -16,15 +16,10 @@ var controllerSet = wire.NewSet(
 	api.PostCommandControllerSet,
 )
 
-var repositorySet = wire.NewSet(
-	repository.ProvideDB,
-	repository.PostQueryRepositorySet,
-	repository.PostCommandRepositorySet,
-)
-
 var serviceSet = wire.NewSet(
 	service.PostQueryServiceSet,
 	service.PostCommandServiceSet,
+	service.WordpressServiceSet,
 )
 
 type App struct {
@@ -39,9 +34,10 @@ func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {
 		echo.New,
 		wire.Struct(new(App), "*"),
 		config.GetConfig,
+		wire.FieldsOf(new(*config.Config), "Wordpress"),
 		controllerSet,
 		serviceSet,
-		repositorySet,
+		repository.RepositoriesSet,
 	)
 
 	return new(App), nil

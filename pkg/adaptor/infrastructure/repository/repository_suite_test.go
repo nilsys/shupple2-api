@@ -3,8 +3,9 @@ package repository
 import (
 	"testing"
 
-	"github.com/stayway-corp/stayway-media-api/pkg/config"
-
+	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -19,7 +20,10 @@ const (
 	configFilePath = "./../../../../config.test.yaml"
 )
 
-var db *gorm.DB
+var (
+	db    *gorm.DB
+	tests *Test
+)
 
 func TestRepository(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -28,27 +32,23 @@ func TestRepository(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	var err error
-	db, err = prepareDB()
-	Expect(err).To(Succeed())
+	Expect(beforeSuite()).To(Succeed())
 })
 
-func prepareDB() (*gorm.DB, error) {
-	c, err := config.GetConfig(configFilePath)
+func beforeSuite() error {
+	var err error
+	tests, err = InitializeTest(configFilePath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	db, err := ProvideDB(c)
-	if err != nil {
-		return nil, err
+	if err := migrateUp(tests.Config.Database); err != nil {
+		return err
 	}
 
-	if err := migrateUp(c.Database); err != nil {
-		return nil, err
-	}
+	db = tests.DB
 
-	return db, nil
+	return nil
 }
 
 func truncate(db *gorm.DB) {
@@ -87,4 +87,45 @@ func migrateUp(database string) error {
 	}
 
 	return nil
+}
+
+func prepareBucket(sess *session.Session, bucket string) error {
+	s3c := s3.New(sess)
+
+	_, err := s3c.CreateBucket(&s3.CreateBucketInput{
+		Bucket: &bucket,
+	})
+
+	if err == nil {
+		return nil
+	}
+
+	awsErr, ok := err.(awserr.Error)
+	if !(ok && awsErr.Code() == s3.ErrCodeBucketAlreadyExists) {
+		return err
+	}
+
+	// Bucketが既に存在している場合
+
+	var errDelete error
+	listInput := &s3.ListObjectsV2Input{Bucket: &bucket}
+	err = s3c.ListObjectsV2Pages(listInput, func(page *s3.ListObjectsV2Output, lastPage bool) bool {
+		for _, obj := range page.Contents {
+			_, err := s3c.DeleteObject(&s3.DeleteObjectInput{
+				Bucket: &bucket,
+				Key:    obj.Key,
+			})
+			if err != nil {
+				errDelete = err
+				return false
+			}
+		}
+		return true
+	})
+
+	if errDelete != nil {
+		return errDelete
+	}
+
+	return err
 }

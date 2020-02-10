@@ -12,6 +12,11 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: stayway_test
 
+      - image: localstack/localstack
+        environment:
+          SERVICES: s3
+        name: localstack
+
     steps:
       - checkout
 

@@ -15,8 +15,8 @@ var _ = Describe("PostRepositoryImpl", func() {
 	)
 
 	BeforeEach(func() {
-		command = &PostCommandRepositoryImpl{DB: db}
-		query = &PostQueryRepositoryImpl{DB: db}
+		command = tests.PostCommandRepositoryImpl
+		query = tests.PostQueryRepositoryImpl
 
 		truncate(db)
 		Expect(db.Save(newUser(userID)).Error).To(Succeed())
@@ -44,13 +44,13 @@ var _ = Describe("PostRepositoryImpl", func() {
 		Entry("新規作成", nil, base),
 		Entry("フィールドに変更がある場合", base, baseChanged),
 		Entry("Bodyが追加される場合", base, newPost(postID, append(bodies, addedBody), categoryIDs)),
-		Entry("WordpressCategoryIDが追加される場合", base, newPost(postID, bodies, append(categoryIDs, addedCategoryID))),
+		Entry("categoryIDが追加される場合", base, newPost(postID, bodies, append(categoryIDs, addedCategoryID))),
 		Entry("Bodyが削除される場合", base, newPost(postID, bodies[:1], categoryIDs)),
-		Entry("WordpressCategoryIDが削除される場合", base, newPost(postID, bodies, categoryIDs[:1])),
+		Entry("categoryIDが削除される場合", base, newPost(postID, bodies, categoryIDs[:1])),
 	)
 })
 
-func newPost(id int, bodies []string, wordpressCategoryIDs []int) *entity.Post {
+func newPost(id int, bodies []string, categoryIDs []int) *entity.Post {
 	post := entity.PostTiny{
 		ID:            id,
 		UserID:        userID,
@@ -61,6 +61,6 @@ func newPost(id int, bodies []string, wordpressCategoryIDs []int) *entity.Post {
 	}
 	util.FillDymmyString(&post, id)
 
-	p := entity.NewPost(post, bodies, wordpressCategoryIDs)
+	p := entity.NewPost(post, bodies, categoryIDs)
 	return &p
 }

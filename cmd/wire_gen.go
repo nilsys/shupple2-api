@@ -33,8 +33,19 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
 		DB: db,
 	}
+	wordpress := configConfig.Wordpress
+	wordpressQueryRepository := repository.NewWordpressQueryRepositoryImpl(wordpress)
+	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
+		DB: db,
+	}
+	wordpressServiceImpl := &service.WordpressServiceImpl{
+		WordpressQueryRepository: wordpressQueryRepository,
+		UserQueryRepository:      userQueryRepositoryImpl,
+	}
 	postCommandServiceImpl := &service.PostCommandServiceImpl{
-		Repository: postCommandRepositoryImpl,
+		PostCommandRepository:    postCommandRepositoryImpl,
+		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressService:         wordpressServiceImpl,
 	}
 	postCommandController := api.PostCommandController{
 		PostService: postCommandServiceImpl,
@@ -61,9 +72,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 
 var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet)
 
-var repositorySet = wire.NewSet(repository.ProvideDB, repository.PostQueryRepositorySet, repository.PostCommandRepositorySet)
-
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet)
 
 type App struct {
 	Config                *config.Config

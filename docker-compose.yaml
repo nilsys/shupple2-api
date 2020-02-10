@@ -45,8 +45,8 @@ services:
   localstack: # TODO: create-bucketを手動でやらないといけない
     image: localstack/localstack
     ports:
-      - 5030:4572
-      - 5040:9090
+      - "4567-4599:4567-4599"
+      - 8080:8080
     environment:
       - SERVICES=s3
       - DATA_DIR=.data/localstack

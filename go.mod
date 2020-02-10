@@ -3,6 +3,8 @@ module github.com/stayway-corp/stayway-media-api
 go 1.13
 
 require (
+	github.com/PuerkitoBio/goquery v1.5.0
+	github.com/aws/aws-sdk-go v1.17.7
 	github.com/cosmtrek/air v1.12.0
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
@@ -15,6 +17,7 @@ require (
 	github.com/jinzhu/gorm v1.9.2
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/jinzhu/now v1.0.1 // indirect
+	github.com/k0kubun/pp v3.0.1+incompatible
 	github.com/labstack/echo/v4 v4.1.13
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/onsi/ginkgo v1.11.0
