@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 type (
 	PostTiny struct {
@@ -45,7 +48,7 @@ func (post *Post) GetCategoryIDs() []int {
 
 // MEMO: サムネイルロジック仮置き
 func (post *Post) GenerateThumbnailURL() string {
-	return "https://files.stayway.jp/post" + string(post.ID)
+	return "https://files.stayway.jp/post/" + strconv.Itoa(post.ID)
 }
 
 func NewPost(tiny PostTiny, bodies []string, categoryIDs []int) Post {
