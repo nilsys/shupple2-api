@@ -10,13 +10,14 @@ import (
 
 // i/oの構造体からレポジトリで使用するクエリ構造体へconvert
 func ConvertFindPostListParamToQuery(param *param.ShowPostListParam) *query.FindPostListQuery {
+	sortBy, _ := model.ParseSortBy(param.SortBy)
 	return &query.FindPostListQuery{
 		AreaID:       param.AreaID,
 		SubAreaID:    param.SubAreaID,
 		SubSubAreaID: param.SubSubAreaID,
 		ThemeID:      param.ThemeID,
 		HashTag:      param.HashTag,
-		SortBy:       model.NewSortBy(param.SortBy),
+		SortBy:       sortBy,
 		Limit:        param.GetLimit(),
 		OffSet:       param.GetOffSet(),
 	}

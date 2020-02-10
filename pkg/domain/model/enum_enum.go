@@ -73,11 +73,11 @@ var _SortByMap = map[SortBy]string{
 }
 
 // String implements the Stringer interface.
-func (x SortBy) String() string {
-	if str, ok := _SortByMap[x]; ok {
+func (sortBy SortBy) String() string {
+	if str, ok := _SortByMap[sortBy]; ok {
 		return str
 	}
-	return fmt.Sprintf("SortBy(%d)", x)
+	return fmt.Sprintf("SortBy(%d)", sortBy)
 }
 
 var _SortByValue = map[string]SortBy{
@@ -94,17 +94,17 @@ func ParseSortBy(name string) (SortBy, error) {
 }
 
 // MarshalText implements the text marshaller method
-func (x SortBy) MarshalText() ([]byte, error) {
-	return []byte(x.String()), nil
+func (sortBy SortBy) MarshalText() ([]byte, error) {
+	return []byte(sortBy.String()), nil
 }
 
 // UnmarshalText implements the text unmarshaller method
-func (x *SortBy) UnmarshalText(text []byte) error {
+func (sortBy *SortBy) UnmarshalText(text []byte) error {
 	name := string(text)
 	tmp, err := ParseSortBy(name)
 	if err != nil {
 		return err
 	}
-	*x = tmp
+	*sortBy = tmp
 	return nil
 }

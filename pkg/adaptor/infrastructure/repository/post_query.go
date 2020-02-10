@@ -34,7 +34,7 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 	q := r.buildFindByParamsQuery(query)
 
 	if err := q.
-		Order(query.SortBy.GetOrderQuery()).
+		Order(query.SortBy.GetPostOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
 		Find(&posts).Error; err != nil {
