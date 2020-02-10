@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+
 	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
@@ -143,7 +145,7 @@ func newUser(id int, name ...string) *entity.User {
 	user := &entity.User{
 		ID:        id,
 		Birthdate: time.Date(2020, 7, 7, 0, 0, 0, 0, time.Local),
-		Gender:    entity.GenderMale,
+		Gender:    model.GenderMale,
 	}
 	util.FillDymmyString(user, id)
 	if len(name) > 0 {

@@ -4,5 +4,11 @@ database: "root:@tcp(mysql:3306)/stayway?charset=utf8&parseTime=True&loc=Local&c
 logger:
   json: false
   level: debug
+stayway:
+  base_url: "http://host.docker.internal:3000"
+aws:
+  region: ap-northeast-1
+  endpoint: http://localstack:4572
+  avatar_bucket: hoge
 
 # vim: set ft=yaml:

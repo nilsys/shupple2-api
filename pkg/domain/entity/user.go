@@ -1,6 +1,10 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+)
 
 type (
 	User struct {
@@ -10,7 +14,7 @@ type (
 		Name        string
 		Email       string
 		Birthdate   time.Time
-		Gender      Gender
+		Gender      model.Gender
 		Profile     string
 		AvatarUUID  string
 		CreatedAt   time.Time `gorm:"-;default:current_timestamp"`

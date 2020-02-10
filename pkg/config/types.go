@@ -11,11 +11,12 @@ type (
 
 	Config struct {
 		Version     string
-		Development *Development `validate:"omitempty" yaml:"development"`
-		Database    string       `validate:"required" yaml:"database"`
-		Logger      *Logger      `validate:"" yaml:"logger"`
-		Wordpress   Wordpress    `validate:"required" yaml:"wordpress"`
-		AWS         AWS          `validate:"required" yaml:"aws"`
+		Development *Development  `validate:"omitempty" yaml:"development"`
+		Database    string        `validate:"required" yaml:"database"`
+		Logger      *Logger       `validate:"" yaml:"logger"`
+		Stayway     StaywayConfig `validate:"required" yaml:"stayway"`
+		Wordpress   Wordpress     `validate:"required" yaml:"wordpress"`
+		AWS         AWS           `validate:"required" yaml:"aws"`
 	}
 
 	Development struct {
@@ -25,6 +26,10 @@ type (
 	Logger struct {
 		JSON  bool
 		Level zap.AtomicLevel
+	}
+
+	StaywayConfig struct {
+		BaseURL string `validate:"required" yaml:"base_url"`
 	}
 
 	Wordpress struct {
