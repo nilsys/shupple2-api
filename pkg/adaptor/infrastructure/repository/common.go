@@ -17,7 +17,8 @@ import (
 )
 
 const (
-	dummyCredential = "dummy"
+	defaultAcquisitionNumber = 1000
+	dummyCredential          = "dummy"
 )
 
 var RepositoriesSet = wire.NewSet(

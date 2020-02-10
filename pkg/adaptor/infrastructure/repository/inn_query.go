@@ -64,8 +64,7 @@ func buildFindIDsByAreaIDAQuery(areaId, subAreaId, subSubAreaId int) *client.Opt
 		opts.QueryParams.Add("sub_sub_are_id", strconv.Itoa(subSubAreaId))
 	}
 
-	// MEMO: 仮置き　どの値入れよう。。
-	opts.QueryParams.Add("per_page", strconv.Itoa(100))
+	opts.QueryParams.Add("per_page", strconv.Itoa(defaultAcquisitionNumber))
 
 	return opts
 }
