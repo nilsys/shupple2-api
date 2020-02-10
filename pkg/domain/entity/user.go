@@ -23,7 +23,7 @@ type (
 	}
 )
 
-// TODO: サムネイル生成ロジック
+// MEMO: サムネイルロジック仮置き
 func (user *User) GenerateThumbnailURL() string {
-	return "foo"
+	return "https://files.stayway.jp/avatar" + user.AvatarUUID
 }

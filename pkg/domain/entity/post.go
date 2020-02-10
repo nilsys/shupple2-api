@@ -43,9 +43,9 @@ func (post *Post) GetCategoryIDs() []int {
 	return ids
 }
 
-// TODO: サムネイルロジック
+// MEMO: サムネイルロジック仮置き
 func (post *Post) GenerateThumbnailURL() string {
-	return "hoge"
+	return "https://files.stayway.jp/post" + string(post.ID)
 }
 
 func NewPost(tiny PostTiny, bodies []string, categoryIDs []int) Post {
