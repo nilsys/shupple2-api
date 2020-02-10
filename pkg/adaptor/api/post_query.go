@@ -23,6 +23,8 @@ var PostQueryControllerSet = wire.NewSet(
 	wire.Struct(new(PostQueryController), "*"),
 )
 
+// TODO: 記事詳細の画面に必要な物とEntityをマッピングする
+//       今はただDBの値を全て返しているだけ
 func (c *PostQueryController) Show(ctx echo.Context) error {
 	q := &param.GetPost{}
 	if err := BindAndValidate(ctx, q); err != nil {
