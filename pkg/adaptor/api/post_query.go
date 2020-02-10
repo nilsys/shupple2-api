@@ -23,7 +23,7 @@ var PostQueryControllerSet = wire.NewSet(
 	wire.Struct(new(PostQueryController), "*"),
 )
 
-func (c *PostQueryController) FindByID(ctx echo.Context) error {
+func (c *PostQueryController) Show(ctx echo.Context) error {
 	q := &param.GetPost{}
 	if err := BindAndValidate(ctx, q); err != nil {
 		return errors.Wrapf(err, "validation get post parameter")
@@ -37,7 +37,7 @@ func (c *PostQueryController) FindByID(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, post)
 }
 
-func (c *PostQueryController) ShowListByParams(ctx echo.Context) error {
+func (c *PostQueryController) ListPost(ctx echo.Context) error {
 	params := &param.ShowPostListParam{}
 	if err := BindAndValidate(ctx, params); err != nil {
 		return errors.Wrapf(err, "validation find post list parameter")
