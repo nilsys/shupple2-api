@@ -12,6 +12,6 @@ type (
 
 	PostQueryRepository interface {
 		FindByID(id int) (*entity.Post, error)
-		FindListByParams(query *query.FindPostListQuery) ([]*entity.Post, error)
+		FindListByParams(query *query.FindPostListQuery) ([]*entity.QueryPost, error)
 	}
 )

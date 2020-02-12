@@ -14,7 +14,6 @@ type (
 		FavoriteCount int
 		FacebookCount int
 		Slug          string
-		User          *User     `gorm:"foreignkey:UserID"`
 		CreatedAt     time.Time `gorm:"default:current_timestamp"`
 		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
 		DeletedAt     *time.Time
@@ -24,7 +23,6 @@ type (
 		PostTiny
 		Bodies      []*PostBody     `gorm:"foreignkey:PostID"`
 		CategoryIDs []*PostCategory `gorm:"foreignkey:PostID"`
-		Categories  []*Category     `gorm:"many2many:post_category;"`
 	}
 
 	PostBody struct {
@@ -36,6 +34,13 @@ type (
 	PostCategory struct {
 		PostID     int `gorm:"primary_key"`
 		CategoryID int `gorm:"primary_key"`
+	}
+
+	QueryPost struct {
+		PostTiny
+		Bodies     []*PostBody `gorm:"foreignkey:PostID"`
+		User       *User       `gorm:"foreignkey:UserID"`
+		Categories []*Category `gorm:"many2many:post_category;"`
 	}
 )
 
@@ -49,7 +54,7 @@ func (post *Post) GetCategoryIDs() []int {
 }
 
 // MEMO: サムネイルロジック仮置き
-func (post *Post) GenerateThumbnailURL() string {
+func (post *QueryPost) GenerateThumbnailURL() string {
 	return "https://files.stayway.jp/post/" + strconv.Itoa(post.ID)
 }
 
@@ -75,6 +80,5 @@ func NewPost(tiny PostTiny, bodies []string, categoryIDs []int) Post {
 		tiny,
 		postBodies,
 		postCategoryIDs,
-		nil,
 	}
 }

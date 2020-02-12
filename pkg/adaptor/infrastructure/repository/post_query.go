@@ -19,6 +19,7 @@ var PostQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.PostQueryRepository), new(*PostQueryRepositoryImpl)),
 )
 
+// TODO: クエリ用のentityに変える
 func (r *PostQueryRepositoryImpl) FindByID(id int) (*entity.Post, error) {
 	var row entity.Post
 	if err := r.DB.First(&row, id).Error; err != nil {
@@ -28,12 +29,13 @@ func (r *PostQueryRepositoryImpl) FindByID(id int) (*entity.Post, error) {
 }
 
 // 検索条件に指定されたクエリ構造体を用い、postを複数参照
-func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuery) ([]*entity.Post, error) {
-	var posts []*entity.Post
+func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuery) ([]*entity.QueryPost, error) {
+	var posts []*entity.QueryPost
 
 	q := r.buildFindByParamsQuery(query)
 
 	if err := q.
+		Table("post").
 		Order(query.SortBy.GetPostOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).

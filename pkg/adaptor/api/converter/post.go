@@ -24,11 +24,11 @@ func ConvertFindPostListParamToQuery(param *param.ListPostParam) *query.FindPost
 }
 
 // outputの構造体へconvert
-func convertPostToOutput(postDetail *entity.Post) *response.Post {
+func convertPostToOutput(queryPost *entity.QueryPost) *response.Post {
 	var areaCategories []response.Category
 	var themeCategories []response.Category
 
-	for _, category := range postDetail.Categories {
+	for _, category := range queryPost.Categories {
 		if category.Type == model.CategoryTypeArea || category.Type == model.CategoryTypeSubArea || category.Type == model.CategoryTypeSubSubArea {
 			areaCategories = append(areaCategories, response.NewCategory(category.ID, category.Name))
 		}
@@ -38,26 +38,26 @@ func convertPostToOutput(postDetail *entity.Post) *response.Post {
 	}
 
 	return &response.Post{
-		ID:              postDetail.ID,
-		Thumbnail:       postDetail.GenerateThumbnailURL(),
+		ID:              queryPost.ID,
+		Thumbnail:       queryPost.GenerateThumbnailURL(),
 		AreaCategories:  areaCategories,
 		ThemeCategories: themeCategories,
-		Title:           postDetail.Title,
+		Title:           queryPost.Title,
 		Creator: response.Creator{
-			Thumbnail: postDetail.User.GenerateThumbnailURL(),
-			Name:      postDetail.User.Name,
+			Thumbnail: queryPost.User.GenerateThumbnailURL(),
+			Name:      queryPost.User.Name,
 		},
-		LikeCount: postDetail.FavoriteCount,
-		UpdatedAt: model.TimeFmtToFrontStr(postDetail.UpdatedAt),
+		LikeCount: queryPost.FavoriteCount,
+		UpdatedAt: model.TimeFmtToFrontStr(queryPost.UpdatedAt),
 	}
 }
 
 // ConvertPostToOutput()のスライスバージョン
-func ConvertPostToOutput(postDetailList []*entity.Post) []*response.Post {
+func ConvertPostToOutput(queryPostList []*entity.QueryPost) []*response.Post {
 	var responsePosts []*response.Post
 
-	for _, postDetail := range postDetailList {
-		responsePosts = append(responsePosts, convertPostToOutput(postDetail))
+	for _, queryPost := range queryPostList {
+		responsePosts = append(responsePosts, convertPostToOutput(queryPost))
 	}
 
 	return responsePosts
