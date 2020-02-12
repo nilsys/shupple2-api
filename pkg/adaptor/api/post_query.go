@@ -47,10 +47,10 @@ func (c *PostQueryController) ListPost(ctx echo.Context) error {
 
 	query := converter.ConvertFindPostListParamToQuery(params)
 
-	postDetailList, err := c.PostService.ShowListByParams(query)
+	posts, err := c.PostService.ShowListByParams(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to find post list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailListToOutput(postDetailList))
+	return ctx.JSON(http.StatusOK, converter.ConvertPostToOutput(posts))
 }
