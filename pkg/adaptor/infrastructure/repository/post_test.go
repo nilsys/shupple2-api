@@ -61,6 +61,11 @@ func newPost(id int, bodies []string, categoryIDs []int) *entity.Post {
 		UpdatedAt:     sampleTime,
 	}
 	util.FillDymmyString(&post, id)
+	var categories []*entity.Category
+	for _, cat := range append(categoryIDs, addedCategoryID) {
+		categories = append(categories, newCategory(cat))
+	}
 	p := entity.NewPost(post, bodies, categoryIDs)
+	p.Categories = categories
 	return &p
 }
