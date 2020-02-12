@@ -13,7 +13,6 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 )
 
 import (
@@ -55,16 +54,8 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	postQueryRepositoryImpl := &repository.PostQueryRepositoryImpl{
 		DB: db,
 	}
-	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
-		DB: db,
-	}
-	postDetailFactoryImpl := &factory.PostDetailFactoryImpl{
-		CategoryQueryRepository: categoryQueryRepositoryImpl,
-		UserQueryRepository:     userQueryRepositoryImpl,
-	}
 	postQueryServiceImpl := &service.PostQueryServiceImpl{
 		PostQueryRepository: postQueryRepositoryImpl,
-		PostCategoryFactory: postDetailFactoryImpl,
 	}
 	postQueryController := api.PostQueryController{
 		PostService: postQueryServiceImpl,
@@ -105,8 +96,6 @@ var (
 var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ReviewQueryControllerSet)
 
 var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet)
-
-var factorySet = wire.NewSet(factory.PostDetailFactorySet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
 

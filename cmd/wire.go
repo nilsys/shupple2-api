@@ -10,7 +10,6 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 )
 
 var controllerSet = wire.NewSet(
@@ -24,10 +23,6 @@ var serviceSet = wire.NewSet(
 	service.PostCommandServiceSet,
 	service.ReviewQueryServiceSet,
 	service.WordpressServiceSet,
-)
-
-var factorySet = wire.NewSet(
-	factory.PostDetailFactorySet,
 )
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
@@ -51,7 +46,6 @@ func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {
 		wire.FieldsOf(new(*config.Config), "Wordpress"),
 		controllerSet,
 		serviceSet,
-		factorySet,
 		repository.RepositoriesSet,
 	)
 
