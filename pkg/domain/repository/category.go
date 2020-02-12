@@ -9,5 +9,6 @@ type (
 
 	CategoryQueryRepository interface {
 		FindByID(id int) (*entity.Category, error)
+		FindByIDs(ids ...int) ([]*entity.Category, error)
 	}
 )

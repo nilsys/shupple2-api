@@ -8,6 +8,69 @@ import (
 )
 
 const (
+	// CategoryTypeAreaGroup is a CategoryType of type AreaGroup
+	CategoryTypeAreaGroup CategoryType = iota
+	// CategoryTypeArea is a CategoryType of type Area
+	CategoryTypeArea
+	// CategoryTypeSubArea is a CategoryType of type SubArea
+	CategoryTypeSubArea
+	// CategoryTypeSubSubArea is a CategoryType of type SubSubArea
+	CategoryTypeSubSubArea
+	// CategoryTypeTheme is a CategoryType of type Theme
+	CategoryTypeTheme
+)
+
+const _CategoryTypeName = "AreaGroupAreaSubAreaSubSubAreaTheme"
+
+var _CategoryTypeMap = map[CategoryType]string{
+	0: _CategoryTypeName[0:9],
+	1: _CategoryTypeName[9:13],
+	2: _CategoryTypeName[13:20],
+	3: _CategoryTypeName[20:30],
+	4: _CategoryTypeName[30:35],
+}
+
+// String implements the Stringer interface.
+func (x CategoryType) String() string {
+	if str, ok := _CategoryTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("CategoryType(%d)", x)
+}
+
+var _CategoryTypeValue = map[string]CategoryType{
+	_CategoryTypeName[0:9]:   0,
+	_CategoryTypeName[9:13]:  1,
+	_CategoryTypeName[13:20]: 2,
+	_CategoryTypeName[20:30]: 3,
+	_CategoryTypeName[30:35]: 4,
+}
+
+// ParseCategoryType attempts to convert a string to a CategoryType
+func ParseCategoryType(name string) (CategoryType, error) {
+	if x, ok := _CategoryTypeValue[name]; ok {
+		return x, nil
+	}
+	return CategoryType(0), fmt.Errorf("%s is not a valid CategoryType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x CategoryType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *CategoryType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseCategoryType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// GenderMale is a Gender of type Male
 	GenderMale Gender = iota
 	// GenderFemale is a Gender of type Female

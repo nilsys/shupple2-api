@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 type (
 	PostTiny struct {
@@ -18,8 +21,8 @@ type (
 
 	Post struct {
 		PostTiny
-		Bodies      []*PostBody
-		CategoryIDs []*PostCategory
+		Bodies      []*PostBody     `gorm:"foreignkey:PostID"`
+		CategoryIDs []*PostCategory `gorm:"foreignkey:PostID"`
 	}
 
 	PostBody struct {
@@ -32,7 +35,28 @@ type (
 		PostID     int `gorm:"primary_key"`
 		CategoryID int `gorm:"primary_key"`
 	}
+
+	QueryPost struct {
+		PostTiny
+		Bodies     []*PostBody `gorm:"foreignkey:PostID"`
+		User       *User       `gorm:"foreignkey:UserID"`
+		Categories []*Category `gorm:"many2many:post_category;jointable_foreignkey:post_id;"`
+	}
 )
+
+// Postが持つCategoryID(int)を配列で返す
+func (post *Post) GetCategoryIDs() []int {
+	var ids []int
+	for _, postCategory := range post.CategoryIDs {
+		ids = append(ids, postCategory.CategoryID)
+	}
+	return ids
+}
+
+// MEMO: サムネイルロジック仮置き
+func (post *QueryPost) GenerateThumbnailURL() string {
+	return "https://files.stayway.jp/post/" + strconv.Itoa(post.ID)
+}
 
 func NewPost(tiny PostTiny, bodies []string, categoryIDs []int) Post {
 	postBodies := make([]*PostBody, len(bodies))

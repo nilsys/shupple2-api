@@ -7,6 +7,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
+// User参照系レポジトリ実装
 type UserQueryRepositoryImpl struct {
 	DB *gorm.DB
 }

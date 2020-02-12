@@ -22,3 +22,8 @@ type (
 		DeletedAt   *time.Time
 	}
 )
+
+// MEMO: サムネイルロジック仮置き
+func (user *User) GenerateThumbnailURL() string {
+	return "https://files.stayway.jp/avatar" + user.AvatarUUID
+}

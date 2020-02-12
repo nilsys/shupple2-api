@@ -60,7 +60,6 @@ func newPost(id int, bodies []string, categoryIDs []int) *entity.Post {
 		UpdatedAt:     sampleTime,
 	}
 	util.FillDymmyString(&post, id)
-
 	p := entity.NewPost(post, bodies, categoryIDs)
 	return &p
 }

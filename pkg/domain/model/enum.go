@@ -11,3 +11,8 @@ type Gender int
 ENUM(NEW, RANKING)
 */
 type SortBy int
+
+/*
+ENUM(AreaGroup, Area, SubArea, SubSubArea, Theme)
+*/
+type CategoryType int

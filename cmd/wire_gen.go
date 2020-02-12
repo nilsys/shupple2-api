@@ -55,7 +55,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		DB: db,
 	}
 	postQueryServiceImpl := &service.PostQueryServiceImpl{
-		Repository: postQueryRepositoryImpl,
+		PostQueryRepository: postQueryRepositoryImpl,
 	}
 	postQueryController := api.PostQueryController{
 		PostService: postQueryServiceImpl,

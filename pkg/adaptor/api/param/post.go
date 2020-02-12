@@ -1,5 +1,10 @@
 package param
 
+import (
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
+)
+
 type (
 	GetPost struct {
 		ID int `param:"id" validate:"required"`
@@ -7,6 +12,51 @@ type (
 
 	StorePostParam struct {
 		Title string
-		Body string
+		Body  string
+	}
+
+	// 記事一覧取得APIパラメータ
+	ListPostParam struct {
+		AreaID       int    `query:"areaId"`
+		SubAreaID    int    `query:"subAreaId"`
+		SubSubAreaID int    `query:"subSubAreaId"`
+		ThemeID      int    `query:"themeId"`
+		HashTag      string `query:"hashTag"`
+		SortBy       string `query:"sortBy"`
+		Page         int    `query:"page"`
+		PerPage      int    `query:"perPage"`
 	}
 )
+
+const findPostListDefaultPerPage = 10
+
+// いずれのクエリも飛んでこない場合 or sortの値が期待値以外の場合エラーを返す
+func (param ListPostParam) Validate() error {
+	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.HashTag == "" {
+		return serror.New(nil, serror.CodeInvalidParam, "Invalid find post list param")
+	}
+
+	if param.SortBy != "" {
+		if _, err := model.ParseSortBy(param.SortBy); err != nil {
+			return serror.New(err, serror.CodeInvalidParam, "Invalid show review list sortBy")
+		}
+	}
+
+	return nil
+}
+
+// PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
+func (param ListPostParam) GetLimit() int {
+	if param.PerPage == 0 {
+		return findPostListDefaultPerPage
+	}
+	return param.PerPage
+}
+
+// offSetを返す(sqlで使う想定)
+func (showListParam ListPostParam) GetOffSet() int {
+	if showListParam.Page == 1 || showListParam.Page == 0 {
+		return 0
+	}
+	return showListParam.GetLimit()*(showListParam.Page-1) + 1
+}
