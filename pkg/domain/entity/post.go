@@ -24,7 +24,7 @@ type (
 		PostTiny
 		Bodies      []*PostBody     `gorm:"foreignkey:PostID"`
 		CategoryIDs []*PostCategory `gorm:"foreignkey:PostID"`
-		Categories  []*Category     `gorm:"many2many:post_category"`
+		Categories  []*Category     `gorm:"many2many:post_category;association_autoupdate:false;association_autocreate:false"`
 	}
 
 	PostBody struct {
