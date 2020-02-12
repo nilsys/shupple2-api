@@ -3,9 +3,7 @@ package service
 import (
 	"github.com/google/wire"
 	"github.com/pkg/errors"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/dto"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -14,13 +12,12 @@ type (
 	// Post参照系サービス
 	PostQueryService interface {
 		ShowByID(id int) (*entity.Post, error)
-		ShowListByParams(query *query.FindPostListQuery) ([]*dto.PostDetail, error)
+		ShowListByParams(query *query.FindPostListQuery) ([]*entity.Post, error)
 	}
 
 	// Post参照系サービス実装
 	PostQueryServiceImpl struct {
 		PostQueryRepository repository.PostQueryRepository
-		PostCategoryFactory factory.PostDetailFactory
 	}
 )
 
@@ -38,22 +35,12 @@ func (r *PostQueryServiceImpl) ShowByID(id int) (*entity.Post, error) {
 	return post, nil
 }
 
-func (r *PostQueryServiceImpl) ShowListByParams(query *query.FindPostListQuery) ([]*dto.PostDetail, error) {
-	var postDetailList []*dto.PostDetail
+func (r *PostQueryServiceImpl) ShowListByParams(query *query.FindPostListQuery) ([]*entity.Post, error) {
 
 	posts, err := r.PostQueryRepository.FindListByParams(query)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed find post by params")
 	}
 
-	// MEMO: factoryの方に移動させた方がすっきりする(factoryがカオスになるが)
-	for _, post := range posts {
-		postAndCategories, err := r.PostCategoryFactory.NewPostDetailFromPost(post)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed generate post and categories")
-		}
-		postDetailList = append(postDetailList, postAndCategories)
-	}
-
-	return postDetailList, nil
+	return posts, nil
 }
