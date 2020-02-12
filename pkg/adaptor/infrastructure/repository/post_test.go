@@ -31,7 +31,6 @@ var _ = Describe("PostRepositoryImpl", func() {
 
 	DescribeTable("Storeは引数のpostを作成するか、その状態になるように更新する",
 		func(before *entity.Post, saved *entity.Post) {
-			Expect(db.Exec("DELETE FROM post_category;"))
 			if before != nil {
 				Expect(command.Store(before)).To(Succeed())
 			}
@@ -62,11 +61,6 @@ func newPost(id int, bodies []string, categoryIDs []int) *entity.Post {
 		UpdatedAt:     sampleTime,
 	}
 	util.FillDymmyString(&post, id)
-	var categories []*entity.Category
-	for _, cat := range append(categoryIDs, addedCategoryID) {
-		categories = append(categories, newCategory(cat))
-	}
 	p := entity.NewPost(post, bodies, categoryIDs)
-	p.Categories = categories
 	return &p
 }
