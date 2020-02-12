@@ -16,7 +16,7 @@ type (
 	}
 
 	// 記事一覧取得APIパラメータ
-	ShowPostListParam struct {
+	ListPostParam struct {
 		AreaID       int    `query:"areaId"`
 		SubAreaID    int    `query:"subAreaId"`
 		SubSubAreaID int    `query:"subSubAreaId"`
@@ -31,7 +31,7 @@ type (
 const findPostListDefaultPerPage = 10
 
 // いずれのクエリも飛んでこない場合 or sortの値が期待値以外の場合エラーを返す
-func (param ShowPostListParam) Validate() error {
+func (param ListPostParam) Validate() error {
 	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.HashTag == "" {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid find post list param")
 	}
@@ -46,7 +46,7 @@ func (param ShowPostListParam) Validate() error {
 }
 
 // PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
-func (param ShowPostListParam) GetLimit() int {
+func (param ListPostParam) GetLimit() int {
 	if param.PerPage == 0 {
 		return findPostListDefaultPerPage
 	}
@@ -54,7 +54,7 @@ func (param ShowPostListParam) GetLimit() int {
 }
 
 // offSetを返す(sqlで使う想定)
-func (showListParam ShowPostListParam) GetOffSet() int {
+func (showListParam ListPostParam) GetOffSet() int {
 	if showListParam.Page == 1 || showListParam.Page == 0 {
 		return 0
 	}

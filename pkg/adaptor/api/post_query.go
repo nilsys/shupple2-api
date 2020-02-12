@@ -40,7 +40,7 @@ func (c *PostQueryController) Show(ctx echo.Context) error {
 }
 
 func (c *PostQueryController) ListPost(ctx echo.Context) error {
-	params := &param.ShowPostListParam{}
+	params := &param.ListPostParam{}
 	if err := BindAndValidate(ctx, params); err != nil {
 		return errors.Wrapf(err, "validation find post list parameter")
 	}

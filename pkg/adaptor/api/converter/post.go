@@ -9,7 +9,7 @@ import (
 )
 
 // i/oの構造体からレポジトリで使用するクエリ構造体へconvert
-func ConvertFindPostListParamToQuery(param *param.ShowPostListParam) *query.FindPostListQuery {
+func ConvertFindPostListParamToQuery(param *param.ListPostParam) *query.FindPostListQuery {
 	sortBy, _ := model.ParseSortBy(param.SortBy)
 	return &query.FindPostListQuery{
 		AreaID:       param.AreaID,
