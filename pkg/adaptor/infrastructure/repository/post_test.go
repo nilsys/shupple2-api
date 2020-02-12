@@ -31,6 +31,7 @@ var _ = Describe("PostRepositoryImpl", func() {
 
 	DescribeTable("Storeは引数のpostを作成するか、その状態になるように更新する",
 		func(before *entity.Post, saved *entity.Post) {
+			Expect(db.Exec("DELETE FROM post_category;"))
 			if before != nil {
 				Expect(command.Store(before)).To(Succeed())
 			}
