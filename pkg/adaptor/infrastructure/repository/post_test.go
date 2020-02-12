@@ -56,6 +56,7 @@ func newPost(id int, bodies []string, categoryIDs []int) *entity.Post {
 		UserID:        userID,
 		FavoriteCount: id,
 		FacebookCount: id,
+		User:          nil,
 		CreatedAt:     sampleTime,
 		UpdatedAt:     sampleTime,
 	}
