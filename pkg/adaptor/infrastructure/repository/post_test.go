@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"time"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
@@ -58,22 +56,9 @@ func newPost(id int, bodies []string, categoryIDs []int) *entity.Post {
 		UserID:        userID,
 		FavoriteCount: id,
 		FacebookCount: id,
-		User: &entity.User{
-			ID:          userID,
-			CognitoID:   "",
-			WordpressID: id,
-			Name:        "",
-			Email:       "",
-			Birthdate:   time.Time{},
-			Gender:      0,
-			Profile:     "",
-			AvatarUUID:  "",
-			CreatedAt:   time.Time{},
-			UpdatedAt:   time.Time{},
-			DeletedAt:   nil,
-		},
-		CreatedAt: sampleTime,
-		UpdatedAt: sampleTime,
+		User:          newUser(userID),
+		CreatedAt:     sampleTime,
+		UpdatedAt:     sampleTime,
 	}
 	util.FillDymmyString(&post, id)
 
