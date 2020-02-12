@@ -51,23 +51,15 @@ var _ = Describe("PostRepositoryImpl", func() {
 })
 
 func newPost(id int, bodies []string, categoryIDs []int) *entity.Post {
-	user := newUser(userID)
-	util.FillDymmyString(user, userID)
 	post := entity.PostTiny{
 		ID:            id,
 		UserID:        userID,
 		FavoriteCount: id,
 		FacebookCount: id,
-		User:          user,
 		CreatedAt:     sampleTime,
 		UpdatedAt:     sampleTime,
 	}
 	util.FillDymmyString(&post, id)
-	//var categories []*entity.Category
-	//for _, cat := range append(categoryIDs, addedCategoryID) {
-	//	categories = append(categories, newCategory(cat))
-	//}
 	p := entity.NewPost(post, bodies, categoryIDs)
-	//p.Categories = categories
 	return &p
 }
