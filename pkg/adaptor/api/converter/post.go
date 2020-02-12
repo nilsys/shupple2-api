@@ -54,7 +54,8 @@ func convertPostToOutput(queryPost *entity.QueryPost) *response.Post {
 
 // ConvertPostToOutput()のスライスバージョン
 func ConvertPostToOutput(queryPostList []*entity.QueryPost) []*response.Post {
-	var responsePosts []*response.Post
+	// MEMO: 代入しないと0件の時にフロントにnullが返る
+	responsePosts := []*response.Post{}
 
 	for _, queryPost := range queryPostList {
 		responsePosts = append(responsePosts, convertPostToOutput(queryPost))
