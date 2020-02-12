@@ -40,7 +40,7 @@ type (
 		PostTiny
 		Bodies     []*PostBody `gorm:"foreignkey:PostID"`
 		User       *User       `gorm:"foreignkey:UserID"`
-		Categories []*Category `gorm:"many2many:post_category;"`
+		Categories []*Category `gorm:"many2many:post_category;jointable_foreignkey:post_id;"`
 	}
 )
 
