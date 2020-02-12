@@ -3,7 +3,7 @@ package converter
 import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/response"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/dto"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
@@ -24,38 +24,40 @@ func ConvertFindPostListParamToQuery(param *param.ShowPostListParam) *query.Find
 }
 
 // outputの構造体へconvert
-func convertPostDetailToOutput(postDetail *dto.PostDetail) *response.Post {
-	var areaCategories []string
-	var themeCategories []string
+func convertPostToOutput(postDetail *entity.Post) *response.Post {
+	var areaCategories []response.Category
+	var themeCategories []response.Category
 
 	for _, category := range postDetail.Categories {
-		if category.Type == model.CategoryTypeArea {
-			areaCategories = append(areaCategories, category.Name)
+		if category.Type == model.CategoryTypeArea || category.Type == model.CategoryTypeSubArea || category.Type == model.CategoryTypeSubSubArea {
+			areaCategories = append(areaCategories, response.NewCategory(category.ID, category.Name))
 		}
 		if category.Type == model.CategoryTypeTheme {
-			themeCategories = append(themeCategories, category.Name)
+			themeCategories = append(themeCategories, response.NewCategory(category.ID, category.Name))
 		}
 	}
 
 	return &response.Post{
-		ID:               postDetail.Post.ID,
-		Thumbnail:        postDetail.Post.GenerateThumbnailURL(),
-		AreaCategories:   areaCategories,
-		ThemeCategories:  themeCategories,
-		Title:            postDetail.Post.Title,
-		CreatorThumbnail: postDetail.User.GenerateThumbnailURL(),
-		CreatorName:      postDetail.User.Name,
-		LikeCount:        postDetail.Post.FavoriteCount,
-		UpdatedAt:        model.TimeFmtToFrontStr(postDetail.Post.UpdatedAt),
+		ID:              postDetail.ID,
+		Thumbnail:       postDetail.GenerateThumbnailURL(),
+		AreaCategories:  areaCategories,
+		ThemeCategories: themeCategories,
+		Title:           postDetail.Title,
+		Creator: response.Creator{
+			Thumbnail: postDetail.User.GenerateThumbnailURL(),
+			Name:      postDetail.User.Name,
+		},
+		LikeCount: postDetail.FavoriteCount,
+		UpdatedAt: model.TimeFmtToFrontStr(postDetail.UpdatedAt),
 	}
 }
 
 // ConvertPostToOutput()のスライスバージョン
-func ConvertPostDetailListToOutput(postDetailList []*dto.PostDetail) []*response.Post {
+func ConvertPostToOutput(postDetailList []*entity.Post) []*response.Post {
 	var responsePosts []*response.Post
 
 	for _, postDetail := range postDetailList {
-		responsePosts = append(responsePosts, convertPostDetailToOutput(postDetail))
+		responsePosts = append(responsePosts, convertPostToOutput(postDetail))
 	}
 
 	return responsePosts
