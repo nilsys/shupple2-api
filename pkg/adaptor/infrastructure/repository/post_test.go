@@ -22,6 +22,9 @@ var _ = Describe("PostRepositoryImpl", func() {
 		Expect(db.Save(newUser(userID)).Error).To(Succeed())
 		for _, cat := range append(categoryIDs, addedCategoryID) {
 			Expect(db.Save(newCategory(cat)).Error).To(Succeed())
+			Expect(db.Exec("INSERT INTO post_category(post_id,category_id) VALUES (111, 1501);").Error).To(Succeed())
+			Expect(db.Exec("INSERT INTO post_category(post_id,category_id) VALUES (111, 1502);").Error).To(Succeed())
+			Expect(db.Exec("INSERT INTO post_category(post_id,category_id) VALUES (111, 1503);").Error).To(Succeed())
 		}
 	})
 
