@@ -51,12 +51,14 @@ var _ = Describe("PostRepositoryImpl", func() {
 })
 
 func newPost(id int, bodies []string, categoryIDs []int) *entity.Post {
+	user := newUser(userID)
+	util.FillDymmyString(user, userID)
 	post := entity.PostTiny{
 		ID:            id,
 		UserID:        userID,
 		FavoriteCount: id,
 		FacebookCount: id,
-		User:          newUser(userID),
+		User:          user,
 		CreatedAt:     sampleTime,
 		UpdatedAt:     sampleTime,
 	}
