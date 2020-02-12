@@ -13,7 +13,7 @@ const (
 	// CategoryTypeArea is a CategoryType of type Area
 	CategoryTypeArea
 	// CategoryTypeSubArea is a CategoryType of type SubArea
-	ategoryTypeSubArea
+	CategoryTypeSubArea
 	// CategoryTypeSubSubArea is a CategoryType of type SubSubArea
 	CategoryTypeSubSubArea
 	// CategoryTypeTheme is a CategoryType of type Theme
