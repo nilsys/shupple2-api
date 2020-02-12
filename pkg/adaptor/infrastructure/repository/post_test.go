@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
@@ -22,9 +24,6 @@ var _ = Describe("PostRepositoryImpl", func() {
 		Expect(db.Save(newUser(userID)).Error).To(Succeed())
 		for _, cat := range append(categoryIDs, addedCategoryID) {
 			Expect(db.Save(newCategory(cat)).Error).To(Succeed())
-			Expect(db.Exec("INSERT INTO post_category(post_id,category_id) VALUES (111, 1501);").Error).To(Succeed())
-			Expect(db.Exec("INSERT INTO post_category(post_id,category_id) VALUES (111, 1502);").Error).To(Succeed())
-			Expect(db.Exec("INSERT INTO post_category(post_id,category_id) VALUES (111, 1503);").Error).To(Succeed())
 		}
 	})
 
@@ -59,9 +58,22 @@ func newPost(id int, bodies []string, categoryIDs []int) *entity.Post {
 		UserID:        userID,
 		FavoriteCount: id,
 		FacebookCount: id,
-		User:          nil,
-		CreatedAt:     sampleTime,
-		UpdatedAt:     sampleTime,
+		User: &entity.User{
+			ID:          userID,
+			CognitoID:   "",
+			WordpressID: id,
+			Name:        "",
+			Email:       "",
+			Birthdate:   time.Time{},
+			Gender:      0,
+			Profile:     "",
+			AvatarUUID:  "",
+			CreatedAt:   time.Time{},
+			UpdatedAt:   time.Time{},
+			DeletedAt:   nil,
+		},
+		CreatedAt: sampleTime,
+		UpdatedAt: sampleTime,
 	}
 	util.FillDymmyString(&post, id)
 
