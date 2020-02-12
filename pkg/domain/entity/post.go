@@ -14,6 +14,7 @@ type (
 		FavoriteCount int
 		FacebookCount int
 		Slug          string
+		User          *User     `gorm:"foreignkey:UserID"`
 		CreatedAt     time.Time `gorm:"default:current_timestamp"`
 		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
 		DeletedAt     *time.Time
@@ -23,6 +24,7 @@ type (
 		PostTiny
 		Bodies      []*PostBody     `gorm:"foreignkey:PostID"`
 		CategoryIDs []*PostCategory `gorm:"foreignkey:PostID"`
+		Categories  []*Category     `gorm:"many2many:post_category"`
 	}
 
 	PostBody struct {
@@ -73,5 +75,6 @@ func NewPost(tiny PostTiny, bodies []string, categoryIDs []int) Post {
 		tiny,
 		postBodies,
 		postCategoryIDs,
+		nil,
 	}
 }
