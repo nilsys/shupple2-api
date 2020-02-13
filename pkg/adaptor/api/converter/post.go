@@ -29,10 +29,9 @@ func convertPostToOutput(queryPost *entity.QueryPost) *response.Post {
 	var themeCategories []response.Category
 
 	for _, category := range queryPost.Categories {
-		if category.Type == model.CategoryTypeArea || category.Type == model.CategoryTypeSubArea || category.Type == model.CategoryTypeSubSubArea {
+		if category.Type.IsAreaKind() {
 			areaCategories = append(areaCategories, response.NewCategory(category.ID, category.Name))
-		}
-		if category.Type == model.CategoryTypeTheme {
+		} else {
 			themeCategories = append(themeCategories, response.NewCategory(category.ID, category.Name))
 		}
 	}
@@ -54,11 +53,10 @@ func convertPostToOutput(queryPost *entity.QueryPost) *response.Post {
 
 // ConvertPostToOutput()のスライスバージョン
 func ConvertPostToOutput(queryPostList []*entity.QueryPost) []*response.Post {
-	// MEMO: 代入しないと0件の時にフロントにnullが返る
-	responsePosts := []*response.Post{}
+	responsePosts := make([]*response.Post, len(queryPostList))
 
-	for _, queryPost := range queryPostList {
-		responsePosts = append(responsePosts, convertPostToOutput(queryPost))
+	for i, queryPost := range queryPostList {
+		responsePosts[i] = convertPostToOutput(queryPost)
 	}
 
 	return responsePosts

@@ -54,7 +54,7 @@ func (post *Post) GetCategoryIDs() []int {
 }
 
 // MEMO: サムネイルロジック仮置き
-func (post *QueryPost) GenerateThumbnailURL() string {
+func (post *PostTiny) GenerateThumbnailURL() string {
 	return "https://files.stayway.jp/post/" + strconv.Itoa(post.ID)
 }
 

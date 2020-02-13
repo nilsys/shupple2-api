@@ -60,6 +60,16 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	postQueryController := api.PostQueryController{
 		PostService: postQueryServiceImpl,
 	}
+	comicQueryRepositoryImpl := &repository.ComicQueryRepositoryImpl{
+		DB: db,
+	}
+	comicQueryServiceImpl := &service.ComicQueryServiceImpl{
+		ComicQueryRepository: comicQueryRepositoryImpl,
+		UserQueryRepository:  userQueryRepositoryImpl,
+	}
+	comicQueryController := api.ComicQueryController{
+		ComicQueryService: comicQueryServiceImpl,
+	}
 	reviewQueryRepositoryImpl := &repository.ReviewQueryRepositoryImpl{
 		DB: db,
 	}
@@ -82,6 +92,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		Echo:                  echoEcho,
 		PostCommandController: postCommandController,
 		PostQueryController:   postQueryController,
+		ComicQueryController:  comicQueryController,
 		ReviewQueryController: reviewQueryController,
 	}
 	return app, nil
@@ -93,9 +104,9 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ReviewQueryControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
 
@@ -104,5 +115,6 @@ type App struct {
 	Echo                  *echo.Echo
 	PostCommandController api.PostCommandController
 	PostQueryController   api.PostQueryController
+	ComicQueryController  api.ComicQueryController
 	ReviewQueryController api.ReviewQueryController
 }

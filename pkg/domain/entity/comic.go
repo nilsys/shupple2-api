@@ -13,4 +13,19 @@ type (
 		UpdatedAt time.Time `gorm:"default:current_timestamp"`
 		DeletedAt *time.Time
 	}
+
+	QueryComic struct {
+		Comic
+		User *User `gorm:"foreignkey:UserID"`
+	}
 )
+
+// TODO: サムネイル生成ロジック
+func (comic *Comic) GenerateThumbnailURL() string {
+	return "thumbnailURL"
+}
+
+// テーブル名
+func (queryComic *QueryComic) TableName() string {
+	return "comic"
+}

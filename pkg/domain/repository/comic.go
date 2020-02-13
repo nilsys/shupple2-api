@@ -1,6 +1,9 @@
 package repository
 
-import "github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+import (
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
+)
 
 type (
 	ComicCommandRepository interface {
@@ -8,6 +11,7 @@ type (
 	}
 
 	ComicQueryRepository interface {
-		FindByID(id int) (*entity.Comic, error)
+		FindByID(id int) (*entity.QueryComic, error)
+		FindListOrderByCreatedAt(query *query.FindListPaginationQuery) ([]*entity.Comic, error)
 	}
 )

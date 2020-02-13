@@ -15,12 +15,14 @@ import (
 var controllerSet = wire.NewSet(
 	api.PostQueryControllerSet,
 	api.PostCommandControllerSet,
+	api.ComicQueryControllerSet,
 	api.ReviewQueryControllerSet,
 )
 
 var serviceSet = wire.NewSet(
 	service.PostQueryServiceSet,
 	service.PostCommandServiceSet,
+	service.ComicQueryServiceSet,
 	service.ReviewQueryServiceSet,
 	service.WordpressServiceSet,
 )
@@ -32,6 +34,7 @@ type App struct {
 	Echo                  *echo.Echo
 	PostCommandController api.PostCommandController
 	PostQueryController   api.PostQueryController
+	ComicQueryController  api.ComicQueryController
 	ReviewQueryController api.ReviewQueryController
 }
 

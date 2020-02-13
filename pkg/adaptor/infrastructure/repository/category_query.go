@@ -17,7 +17,7 @@ var CategoryQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.CategoryQueryRepository), new(*CategoryQueryRepositoryImpl)),
 )
 
-func (r *CategoryQueryRepositoryImpl) FindByIDs(ids ...int) ([]*entity.Category, error) {
+func (r *CategoryQueryRepositoryImpl) FindByIDs(ids []int) ([]*entity.Category, error) {
 	var categories []*entity.Category
 
 	if err := r.DB.Where("id IN (?)", ids).Find(&categories).Error; err != nil {
