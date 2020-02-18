@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  title: stayway
+  title: stayway-media-api
   version: 1.0.0
 host: "localhost:3000"
 schemes:
@@ -62,6 +62,7 @@ paths:
             $ref: '#/definitions/Error'
       security:
         - iDPCognito: []
+
   /users/ranking:
     get:
       tags: [user]
@@ -85,8 +86,8 @@ paths:
           name: sortBy
           type: string
           enum:
-              - recommended
-              - popularity
+            - recommended
+            - popularity
           default: recommended
           description: 並び順 (おすすめ順, 人気順)
         - in: query
@@ -94,13 +95,11 @@ paths:
           type: string
           format: date
           description: 記事や投稿写真を絞る開始日 (例)2019-01-01
-          example: 2019-01-01
         - in: query
           name: toDate
           type: string
           format: date
           description: 記事や投稿写真を絞る終了日 (例)2019-01-31
-          example: 2019-01-31
         - in: query
           name: page
           type: integer
@@ -118,6 +117,7 @@ paths:
           description: 成功
           schema:
             $ref: '#/definitions/User'
+
   /s3:
     post:
       security:
@@ -151,6 +151,12 @@ paths:
     get:
       tags: [review]
       summary: レビュー検索
+      description: |
+        フリーワード検索可能
+        複数ワードで検索可能
+        その場合、レスポンスは全てのワードに引っ掛かる物である事
+        以下の順番で返る)
+        ・本文にフリーワードが含めれているものを返す(作成日時順)
       parameters:
         - in: query
           name: userId
@@ -169,24 +175,10 @@ paths:
           type: string
           description: hashtagに紐づくレビューを取得する
         - in: query
-          name: areaId
-          type: integer
+          name: q
+          type: string
           description: |
-            areaに紐づくレビューを取得する
-            (categoryテーブル)
-        - in: query
-          name: subAreaId
-          type: integer
-          description: |
-            subAreaに紐づくレビューを取得する
-            (categoryテーブル)
-        - in: query
-          name: subSubAreaId
-          type: integer
-          description: |
-            subSubAreaに紐づくレビューを取得する
-            (categoryテーブル)
-        - $ref: '#/parameters/SortBy'
+            検索ワード
         - in: query
           name: perPage
           type: integer
@@ -362,12 +354,12 @@ paths:
           schema:
             $ref: '#/definitions/Error'
 
-  /review/feed/{userId}:
+  /user/{userId}/review:
     get:
       tags:
         - review
-      summary: フォローしているユーザー又はハッシュタグの記事取得API
-      description: userIdで指定されたユーザーがフォローしているユーザー又はハッシュタグの記事取得
+      summary: フォローしているユーザー又はハッシュタグのレビュー取得API
+      description: userIdで指定されたユーザーがフォローしているユーザー又はハッシュタグのレビュー取得
       parameters:
         - in: path
           name: userId
@@ -392,165 +384,19 @@ paths:
             items:
               $ref: '#/definitions/Review'
 
-  /review/search:
-    get:
-      tags:
-        - review
-      summary: フリーワード検索
-      description: |
-        フリーワード対象を取得
-        複数ワードで検索可能
-        その場合、レスポンスは全てのワードに引っ掛かる物である事
-        以下の順番で返る)
-        ・本文にフリーワードが含めれているものを返す(作成日時順)
-      parameters:
-        - in: query
-          name: q
-          type: string
-          description: |
-            検索ワード
-            複数の場合「+」で連結
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Review'
-
-  /inns:
-    get:
-      tags:
-        - inn
-      summary: 宿絞り込み
-      parameters:
-        - in: query
-          name: area_id
-          type: integer
-          format: int64
-        - in: query
-          name: sub_area_id
-          type: integer
-          format: int64
-        - in: query
-          name: sub_sub_area_id
-          type: integer
-          format: int64
-        - in: query
-          name: station_id
-          type: integer
-          format: int64
-        - in: query
-          name: spot_id
-          type: integer
-          format: int64
-        - in: query
-          name: inn_types
-          type: array
-          items:
-            type: integer
-        - in: query
-          name: room_types
-          type: array
-          items:
-            type: integer
-        - in: query
-          name: room_count
-          type: integer
-        - in: query
-          name: bed_count
-          type: integer
-        - in: query
-          name: price_min
-          type: integer
-          format: int64
-        - in: query
-          name: price_max
-          type: integer
-          format: int64
-        - in: query
-          name: brand_id
-          type: integer
-          format: int64
-        - in: query
-          name: tags
-          type: array
-          items:
-            type: integer
-        - in: query
-          name: place
-          type: string
-        - in: query
-          name: sort
-          type: string
-        - in: query
-          name: offset
-          type: integer
-        - in: query
-          name: per_page
-          type: integer
-      responses:
-        '200':
-          description: 成功
-          schema:
-            type: object
-            properties:
-              Rectangle:
-                $ref: '#/definitions/Rectangle'
-              Inns:
-                type: array
-                items:
-                  $ref: '#/definitions/Inn'
-              HasNext:
-                type: boolean
-        '400':
-          description: エリアを絞り込むパラメータが一個もない場合
-  /plan:
-    get:
-      tags:
-        - plan
-      summary: プラン検索
-      parameters:
-        - in: query
-          name: ids
-          type: array
-          items:
-            type: integer
-            format: int64
-          description: プラン検索する宿のID
-        - in: query
-          name: checkin
-          type: string
-          description: "チェックイン日 (例)2019-07-07"
-        - in: query
-          name: checkout
-          type: string
-          description: "チェックアウト日 (例)2019-07-07"
-        - in: query
-          name: adults
-          type: integer
-        - in: query
-          name: children
-          type: integer
-        - in: query
-          name: infants
-          type: integer
-      responses:
-        '200':
-          description: 成功
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/PlanResponse'
-        '400':
-          description: エリアを絞り込むパラメータが一個もない場合
-
   /posts:
     get:
       tags:
         - post
       summary: 記事取得API
-      description: パラメータで指定された条件で検索(組み合わせる事も可能)
+      description: |
+        パラメータで指定された条件で検索(組み合わせる事も可能)
+        フリーワード対象を取得
+        複数ワードで検索可能
+        その場合、レスポンスは全てのワードに引っ掛かる物である事
+        以下の順番で返る)
+        ・タイトルにフリーワードが含まれているもの(更新日時順)
+        ・本文にフリーワードが含まれているもの(更新日時順)
       parameters:
         - in: query
           name: areaId
@@ -590,6 +436,11 @@ paths:
             いずれか1つ以上必須
         - $ref: '#/parameters/SortBy'
         - in: query
+          name: q
+          type: string
+          description: |
+            検索ワード
+        - in: query
           name: page
           type: integer
           description: ページ数(pagination時)
@@ -605,12 +456,12 @@ paths:
           schema:
             $ref: '#/definitions/PostList'
 
-  /posts/feed/{userId}:
+  /user/{userId}/posts:
     get:
       tags:
         - post
-      summary: フォローしているユーザーの記事取得API
-      description: userIdで指定されたユーザーがフォローしているユーザーの記事取得
+      summary: フォローしているユーザー又はハッシュタグの記事取得API
+      description: userIdで指定されたユーザーがフォローしているユーザー又はハッシュタグの記事取得
       parameters:
         - in: path
           name: userId
@@ -633,37 +484,62 @@ paths:
           schema:
             $ref: '#/definitions/PostList'
 
-  /posts/search:
+  /feature_posts:
     get:
       tags:
-        - post
-      summary: フリーワード検索
+        - feature_post
+      summary: 特集記事一覧取得API
       description: |
+        特集記事一覧取得
+        更新日時順
+      parameters:
+        - in: query
+          name: page
+          type: integer
+          description: ページ数(pagination時)
+          default: 1
+        - in: query
+          name: perPage
+          type: integer
+          description: 件数
+          default: 30
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FeaturePostList'
+
+  /feature_posts/{id}:
+    get:
+      tags:
+        - feature_post
+      summary: 特集記事詳細取得API
+      description: 特集記事詳細
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: 特集記事ID
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ShowFeaturePost'
+
+
+  /vlogs:
+    get:
+      tags:
+        - vlog
+      summary: 動画取得API
+      description: |
+        パラメータで指定された条件で検索(組み合わせる事も可能)
         フリーワード対象を取得
         複数ワードで検索可能
         その場合、レスポンスは全てのワードに引っ掛かる物である事
         以下の順番で返る)
         ・タイトルにフリーワードが含まれているもの(更新日時順)
-        ・本文にフリーワードが含まれているもの(更新日時順)
-      parameters:
-        - in: query
-          name: q
-          type: string
-          description: |
-            検索ワード
-            複数の場合「+」で連結
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/PostList'
-
-  /movies:
-    get:
-      tags:
-        - movie
-      summary: 動画取得API
-      description: パラメータで指定された条件で検索(組み合わせる事も可能)
       parameters:
         - in: query
           name: areaId
@@ -695,6 +571,11 @@ paths:
           description: |
             ユーザーID
             いずれか1つ以上必須
+        - in: query
+          name: q
+          type: string
+          description: |
+            検索ワード
         - $ref: '#/parameters/SortBy'
         - in: query
           name: page
@@ -710,31 +591,50 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/MovieList'
+            $ref: '#/definitions/VlogList'
 
-  /movies/search:
+  /comics:
     get:
       tags:
-        - movie
-      summary: フリーワード検索
+        - comic
+      summary: 漫画一覧取得API
       description: |
-        フリーワード対象を取得
-        複数ワードで検索可能
-        その場合、レスポンスは全てのワードに引っ掛かる物である事
-        以下の順番で返る)
-        ・タイトルにフリーワードが含まれているもの(更新日時順)
+        漫画一覧取得
+        更新日時降順
       parameters:
         - in: query
-          name: q
-          type: string
-          description: |
-            検索ワード
-            複数の場合「+」で連結
+          name: page
+          type: integer
+          description: ページ数(pagination時)
+          default: 1
+        - in: query
+          name: perPage
+          type: integer
+          description: 件数
+          default: 10
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/MovieList'
+            $ref: '#/definitions/ComicList'
+
+  /comics/{id}:
+    get:
+      tags:
+        - comic
+      summary: 漫画詳細取得API
+      description: 漫画詳細取得
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: 漫画ID
+      responses:
+        '200':
+          description:  OK
+          schema:
+            $ref: '#/definitions/ComicShow'
 
   /tourist_spots:
     get:
@@ -762,7 +662,7 @@ paths:
             サブサブエリアID
             いずれか1つ以上必須
         - in: query
-          name: spotCategoryId
+          name: TouristSpotCategoryId
           type: integer
           description: |
             観光スポットカテゴリID
@@ -774,15 +674,20 @@ paths:
             除外するスポットID
         - $ref: '#/parameters/SortBy'
         - in: query
-          name: limit
+          name: page
           type: integer
-          description: |
-            取得件数
+          description: ページ数(pagination時)
+          default: 1
+        - in: query
+          name: perPage
+          type: integer
+          description: 件数
+          default: 30
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/SpotList'
+            $ref: '#/definitions/TouristSpotList'
 
   /tourist_spots/{touristSpotId}:
     get:
@@ -801,32 +706,32 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Spot'
+            $ref: '#/definitions/TouristSpotShow'
 
-  /tourist_spots/{touristSpotId}/recommend/{spotCategoryId}:
+  /tourist_spots/recommend:
     get:
       tags:
         - tourist_spot
       summary: 周辺おすすめスポット取得API
-      description: touristSpotIdから周辺おすすめスポット取得
+      description: 周辺おすすめスポット取得
       parameters:
-        - in: path
+        - in: query
           name: touristSpotId
           type: integer
-          required: true
           description: |
             観光スポットID
-        - in: path
+            いずれか必須
+        - in: query
           name: spotCategoryId
           type: integer
-          required: true
           description: |
             観光スポットカテゴリID
+            いずれか必須
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/SpotList'
+            $ref: '#/definitions/TouristSpotList'
 
   /hashtag/recommend:
     get:
@@ -865,6 +770,39 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/SearchSuggestions'
+
+  /area:
+    get:
+      tags:
+        - area
+      summary: エリア一覧取得API
+      description: エリア一覧取得
+      parameters:
+        - in: query
+          name: parentCategoryId
+          type: integer
+          description: |
+            親カテゴリID
+        - in: query
+          name: excludeId
+          type: integer
+          description: |
+            除外するID
+        - in: query
+          name: page
+          type: integer
+          description: ページ数(pagination時)
+          default: 1
+        - in: query
+          name: perPage
+          type: integer
+          description: 件数
+          default: 30
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/AreaList'
 
 definitions:
   UserRequest:
@@ -1005,173 +943,6 @@ definitions:
     properties:
       body:
         type: string
-  Rectangle:
-    type: object
-    properties:
-      LatNE:
-        type: number
-        format: double
-      LngNE:
-        type: number
-        format: double
-      LatSW:
-        type: number
-        format: double
-      LngSW:
-        type: number
-        format: double
-    required: [LatNE, LngNE, LatSW, LngSW]
-  Inn:
-    type: object
-    properties:
-      ID:
-        type: integer
-      Name:
-        type: string
-      Descriptioin:
-        type: string
-      URL:
-        type: string
-      BrandID:
-        type: integer
-      Thumbnail:
-        type: string
-      Latitude:
-        type: number
-        format: double
-      Longitude:
-        type: number
-        format: double
-      CountryCode:
-        type: string
-      Address:
-        type: string
-      PostCode:
-        type: string
-      Phone:
-        type: string
-      Access:
-        type: string
-      StayDaysMin:
-        type: integer
-      StayDaysMax:
-        type: integer
-      CheckInTime:
-        type: string
-      CheckOutTime:
-        type: string
-      RoomCount:
-        type: integer
-      BedCount:
-        type: integer
-      Score:
-        type: number
-        format: double
-      ReviewCount:
-        type: integer
-      MinPrice:
-        type: number
-        format: double
-      MaxPrice:
-        type: number
-        format: double
-      InnTypes:
-        type: array
-        items:
-          $ref: '#/definitions/InnType'
-      RoomTypes:
-        type: array
-        items:
-          $ref: '#/definitions/RoomType'
-      AvailableCards:
-        type: array
-        items:
-          $ref: '#/definitions/Card'
-      TrueTags:
-        type: array
-        items:
-          $ref: '#/definitions/Tag'
-      FalseTags:
-        type: array
-        items:
-          $ref: '#/definitions/Tag'
-      BookingComURL:
-        type: string
-  PlanResponse:
-    type: object
-    properties:
-      InnID:
-        type: integer
-        format: int64
-      Count:
-        type: integer
-        description: 全プラン数
-      OTAs:
-        type: array
-        items:
-          "$ref": "#/definitions/OTAPlan"
-  OTAPlan:
-    type: object
-    properties:
-      Name:
-        type: string
-        description: OTA名
-      Count:
-        type: integer
-        description: このOTAに含まれるプラン数
-      Plans:
-        type: array
-        items:
-          "$ref":  "#/definitions/Plan"
-  Plan:
-    type: object
-    properties:
-      Name:
-        type: string
-      BreckfastIncluded:
-        type: boolean
-        description: 朝食を含むかどうか
-      Price:
-        type: integer
-      URL:
-        type: string
-        format: url
-  InnType:
-    type: object
-    properties:
-      ID:
-        type: integer
-        format: int64
-      Name:
-        type: string
-      URL:
-        type: string
-  RoomType:
-    type: object
-    properties:
-      ID:
-        type: integer
-        format: int64
-      Name:
-        type: string
-  Card:
-    type: object
-    properties:
-      ID:
-        type: integer
-        format: int64
-      Name:
-        type: string
-  Tag:
-    type: object
-    properties:
-      ID:
-        type: integer
-        format: int64
-      Name:
-        type: string
-      URL:
-        type: string
 
   PostList:
     type: array
@@ -1192,25 +963,17 @@ definitions:
       areaCategories:
         type: array
         items:
-          type: string
-          description: エリアカテゴリ
+          "$ref": "#/definitions/Category"
       themeCategories:
         type: array
         items:
-          type: string
-          description: テーマカテゴリ
+          "$ref": "#/definitions/Category"
       title:
         type: string
         description: 記事タイトル
         example: 埼玉の春を満喫♪
-      creatorThumbnail:
-        type: string
-        description: クリエイターサムネイルURL
-        example: http://example.com/img/1
-      creatorName:
-        type: string
-        description: クリエイター名
-        example: Hiroko
+      creator:
+        "$ref": '#/definitions/Creator'
       likeCount:
         type: integer
         description: いいね数
@@ -1220,12 +983,79 @@ definitions:
         description: 最終更新日時, ISO 8601形式
         example: 2020-01-01T13:16+09:00
 
-  MovieList:
+  FeaturePostList:
     type: array
     items:
-      "$ref": "#/definitions/Movie"
+      "$ref": "#/definitions/FeaturePost"
 
-  Movie:
+  FeaturePost:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 特集記事ID
+        example: 1
+      title:
+        type: string
+        description: 特集記事タイトル
+        example: 絶景
+      thumbnail:
+        type: string
+        description: 特集記事サムネイルURL
+        example: https://files.stayway.jp/feature_post/1
+
+  ShowFeaturePost:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 特集記事ID
+        example: 1
+      slug:
+        type: string
+        description: スラッグ
+      thumbnail:
+        type: string
+        description: サムネイルURL
+        example: http://example.com/img/1
+      title:
+        type: string
+        description: 記事タイトル
+        example: 埼玉の春を満喫♪
+      creator:
+        "$ref": '#/definitions/Creator'
+      updatedAt:
+        type: string
+        description: 最終更新日時, ISO 8601形式
+        example: 2020-01-01T13:16+09:00
+      relationPosts:
+        type: array
+        items:
+          type: object
+          description: 関連記事
+          properties:
+            id:
+              type: integer
+              description: 記事ID
+              example: 1
+            title:
+              type: string
+              description: 記事タイトル
+              example: 韓国旅行でもっとキレイに！
+            thumbnail:
+              type: string
+              description: サムネイルURL
+              example: https://files.stayway.jp/posts/1
+            slug:
+              type: string
+              description: スラッグ
+
+  VlogList:
+    type: array
+    items:
+      "$ref": "#/definitions/Vlog"
+
+  Vlog:
     type: object
     properties:
       id:
@@ -1255,12 +1085,12 @@ definitions:
         description: 動画タイトル
         example: 埼玉の春を満喫♪
 
-  SpotList:
+  TouristSpotList:
     type: array
     items:
-      "$ref": "#/definitions/Spot"
+      "$ref": "#/definitions/TouristSpot"
 
-  Spot:
+  TouristSpot:
     type: object
     properties:
       id:
@@ -1269,7 +1099,7 @@ definitions:
         example: 1
       name:
         type: string
-        description: スポット名
+        description: 観光スポット名
         example: 絶景
       thumbnail:
         type: string
@@ -1279,6 +1109,93 @@ definitions:
         type: string
         description: スポットURL
         example: http://example.com/spot/1
+
+  TouristSpotShow:
+    type: object
+    required:
+      - id
+      - slug
+      - name
+      - city
+      - address
+      - latitude
+      - longtitude
+      - accessCar
+      - accessTrain
+      - openingHours
+      - price
+    properties:
+      id:
+        type: integer
+        description: スポットID
+        example: 12345
+      slug:
+        type: string
+        description: スラッグ
+        example: "zekkei"
+      name:
+        type: string
+        description: 観光スポット名
+        example: 絶景
+      websiteUrl:
+        type: string
+        description: 公式ホームページ
+        example: "http://zekkei.com"
+      city:
+        type: string
+        description: 件名・都市
+        example: "渋谷"
+      address:
+        type: string
+        description: 住所
+        example: "東京都渋谷区道玄坂１丁目１０−１０番８号 １F・2F 渋谷道玄坂東急ビル"
+      latitude:
+        type: number
+        format: double
+        description: 緯度
+        example: 35.65695
+      longtitude:
+        type: number
+        format: double
+        description: 経度
+        example: 139.698556
+      accessCar:
+        type: string
+        description: 車でのアクセス
+      accessTrain:
+        type: string
+        description: 電車でのアクセス
+      accessBus:
+        type: string
+        description: バスでのアクセス
+      openingHours:
+        type: string
+        description: 営業時間
+      tel:
+        type: string
+        description: 電話番号
+        example: 080-2374-2754
+      price:
+        type: string
+        description: 価格
+      instagramUrl:
+        type: string
+        description: インスタグラムURL
+        example: http://instagram.com/zekkei
+      searchInnUrl:
+        type: string
+        description: 関連宿を探すためのURL
+        example: http://stayway.jp/zekkei/recommend
+      categories:
+        type: array
+        description: カテゴリー
+        items:
+          $ref: '#/definitions/Category'
+      lcategories:
+        type: array
+        description: 観光スポットカテゴリー
+        items:
+          $ref: '#/definitions/Category'
 
   HashTagList:
     type: array
@@ -1332,6 +1249,128 @@ definitions:
         type: string
         description: URL
         example: /area/1
+
+  ComicList:
+    type: array
+    items:
+      "$ref": "#/definitions/Comic"
+
+  Comic:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 漫画ID
+        example: 1
+      slug:
+        type: string
+        description: スラッグ
+        example: "第一話"
+      title:
+        type: string
+        description: タイトル
+        example: "第一話 外付けの"
+      thumbnail:
+        type: string
+        description: サムネイルURL
+        example: http://example.com/comic/img/1
+
+  ComicShow:
+    type: object
+    required:
+      - id
+      - slug
+      - title
+      - thumbnail
+      - body
+      - createdAt
+      - creator
+    properties:
+      id:
+        type: integer
+        description: 漫画ID
+        example: 1
+      slug:
+        type: string
+        description: スラッグ
+        example: "第一話"
+      title:
+        type: string
+        description: title
+        example: "第一話 外付けの"
+      thumbnail:
+        type: string
+        description: サムネイルURL
+        example: http://example.com/comic/img/1
+      body:
+        type: string
+        description: 本文
+        example: "HTML(未定)"
+      createdAt:
+        type: string
+        description: 公開日時, ISO 8601形式
+        example: 2020-01-01T13:16+09:00
+      creator:
+        "$ref": '#/definitions/Creator'
+
+  AreaList:
+    type: array
+    items:
+      "$ref": "#/definitions/Area"
+
+  Area:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: エリアID
+        example: 1
+      name:
+        type: array
+        items:
+          type: string
+          description: エリア名
+        example: ["北海道", "東北"]
+      url:
+        type: string
+        description: url
+        example: "/tourism/hokkai-do"
+
+  Creator:
+    type: object
+    required:
+      - Thumbnail
+      - Name
+    properties:
+      Thumbnail:
+        type: string
+        description: サムネイルURL
+        example: "https://files.stayway.jp/avatar/1"
+      Nmae:
+        type: integer
+        description: クリエイター名
+        example: "Hitomi"
+      Profile:
+        type: string
+        description: クリエイタープロフィール
+        example: |
+          横浜生まれ東京育ちの旅好きライター。年に２，３回は国内外の旅行に行きます。
+          旅先での楽しみはグルメとお酒と地元の人と仲良くなること！
+
+  Category:
+    type: object
+    required:
+      - Id
+      - Name
+    properties:
+      Id:
+        type: integer
+        description: id
+        example: 1
+      Name:
+        type: string
+        description: カテゴリ名
+        example: 北海道
 
   Error:
     type: object
