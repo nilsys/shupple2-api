@@ -46,4 +46,5 @@ func setRoutes(app *App) {
 	api.GET("/review", app.ReviewQueryController.LisReview)
 	api.GET("/comics", app.ComicQueryController.ListComic)
 	api.GET("/comics/:id", app.ComicQueryController.Show)
+	api.GET("/hashtags/recommend", app.HashTagQueryController.ListRecommendHashTag)
 }

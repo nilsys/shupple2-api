@@ -17,6 +17,7 @@ var controllerSet = wire.NewSet(
 	api.PostCommandControllerSet,
 	api.ComicQueryControllerSet,
 	api.ReviewQueryControllerSet,
+	api.HashTagQueryControllerSet,
 )
 
 var serviceSet = wire.NewSet(
@@ -25,17 +26,19 @@ var serviceSet = wire.NewSet(
 	service.ComicQueryServiceSet,
 	service.ReviewQueryServiceSet,
 	service.WordpressServiceSet,
+	service.HashTagQueryServiceSet,
 )
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
 
 type App struct {
-	Config                *config.Config
-	Echo                  *echo.Echo
-	PostCommandController api.PostCommandController
-	PostQueryController   api.PostQueryController
-	ComicQueryController  api.ComicQueryController
-	ReviewQueryController api.ReviewQueryController
+	Config                 *config.Config
+	Echo                   *echo.Echo
+	PostCommandController  api.PostCommandController
+	PostQueryController    api.PostQueryController
+	ComicQueryController   api.ComicQueryController
+	ReviewQueryController  api.ReviewQueryController
+	HashTagQueryController api.HashTagQueryController
 }
 
 func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {
