@@ -739,6 +739,25 @@ paths:
         - hashtag
       summary: ハッシュタグ取得API
       description: 投稿数が多い順でハッシュタグ取得
+      parameters:
+        - in: query
+          name: areaId
+          type: integer
+          description: |
+            エリアID
+            いずれか1つ以上必須
+        - in: query
+          name: subAreaId
+          type: integer
+          description: |
+            サブエリアID
+            いずれか1つ以上必須
+        - in: query
+          name: subSubAreaId
+          type: integer
+          description: |
+            サブサブエリアID
+            いずれか1つ以上必須
       responses:
         '200':
           description: OK
