@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/query"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
 type (

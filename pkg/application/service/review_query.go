@@ -4,7 +4,7 @@ import (
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/query"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 	"go.uber.org/zap"
 )

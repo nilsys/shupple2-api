@@ -3,7 +3,7 @@ package converter
 import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/query"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
 // i/oの構造体からレポジトリで使用するクエリ発行用構造体へコンバート
