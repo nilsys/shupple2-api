@@ -37,3 +37,19 @@ func (c *ReviewQueryController) LisReview(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, r)
 }
+
+func (c *ReviewQueryController) ListFeedReview(ctx echo.Context) error {
+	p := &param.ListFeedReviewParam{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "validation feed review param")
+	}
+
+	q := converter.ConvertListFeedReviewParamToQuery(p)
+
+	reviews, err := c.ReviewQueryService.ShowListFeed(p.ID, q)
+	if err != nil {
+		return errors.Wrap(err, "failed to show feed review list")
+	}
+
+	return ctx.JSON(http.StatusOK, reviews)
+}

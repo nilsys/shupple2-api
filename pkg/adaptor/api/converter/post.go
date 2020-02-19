@@ -23,8 +23,26 @@ func ConvertFindPostListParamToQuery(param *param.ListPostParam) *query.FindPost
 	}
 }
 
+// ConvertPostToOutput()のスライスバージョン
+func ConvertPostToOutput(queryPostList []*entity.QueryPost) []*response.Post {
+	responsePosts := make([]*response.Post, len(queryPostList))
+
+	for i, queryPost := range queryPostList {
+		responsePosts[i] = ConvertQueryPostToOutput(queryPost)
+	}
+
+	return responsePosts
+}
+
+func ConvertListFeedPostParamToQuery(param *param.ListFeedPostParam) *query.FindListPaginationQuery {
+	return &query.FindListPaginationQuery{
+		Limit:  param.GetLimit(),
+		Offset: param.GetOffSet(),
+	}
+}
+
 // outputの構造体へconvert
-func convertPostToOutput(queryPost *entity.QueryPost) *response.Post {
+func ConvertQueryPostToOutput(queryPost *entity.QueryPost) *response.Post {
 	var areaCategories []response.Category
 	var themeCategories []response.Category
 
@@ -49,15 +67,4 @@ func convertPostToOutput(queryPost *entity.QueryPost) *response.Post {
 		LikeCount: queryPost.FavoriteCount,
 		UpdatedAt: model.TimeFmtToFrontStr(queryPost.UpdatedAt),
 	}
-}
-
-// ConvertPostToOutput()のスライスバージョン
-func ConvertPostToOutput(queryPostList []*entity.QueryPost) []*response.Post {
-	responsePosts := make([]*response.Post, len(queryPostList))
-
-	for i, queryPost := range queryPostList {
-		responsePosts[i] = convertPostToOutput(queryPost)
-	}
-
-	return responsePosts
 }

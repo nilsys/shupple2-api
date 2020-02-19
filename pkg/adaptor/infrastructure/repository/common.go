@@ -42,7 +42,7 @@ var RepositoriesSet = wire.NewSet(
 	WordpressQueryRepositorySet,
 	ReviewQueryRepositorySet,
 	InnQueryRepositorySet,
-	HashTagQueryRepositorySet,
+	HashtagQueryRepositorySet,
 )
 
 func ProvideDB(config *config.Config) (*gorm.DB, error) {

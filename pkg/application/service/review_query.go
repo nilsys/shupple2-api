@@ -13,6 +13,7 @@ type (
 	// Review参照系サービス
 	ReviewQueryService interface {
 		ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.Review, error)
+		ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.Review, error)
 	}
 
 	// Review参照系サービス実装
@@ -43,4 +44,8 @@ func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewL
 	}
 
 	return reviews, nil
+}
+
+func (s *ReviewQueryServiceImpl) ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.Review, error) {
+	return s.ReviewQueryRepository.FindFeedReviewListByUserID(userID, query)
 }

@@ -8,22 +8,23 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
-type HashTagQueryRepositoryImpl struct {
+type HashtagQueryRepositoryImpl struct {
 	DB *gorm.DB
 }
 
-var HashTagQueryRepositorySet = wire.NewSet(
-	wire.Struct(new(HashTagQueryRepositoryImpl), "*"),
-	wire.Bind(new(repository.HashTagQueryRepository), new(*HashTagQueryRepositoryImpl)),
+var HashtagQueryRepositorySet = wire.NewSet(
+	wire.Struct(new(HashtagQueryRepositoryImpl), "*"),
+	wire.Bind(new(repository.HashtagQueryRepository), new(*HashtagQueryRepositoryImpl)),
 )
 
-func (r *HashTagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSubAreaID int) ([]*entity.HashTag, error) {
-	var rows []*entity.HashTag
+// TODO: hashtagテーブルのscoreカラムで判断する様変更する
+// https://github.com/stayway-corp/stayway-media-api/pull/25#discussion_r380743507
+func (r *HashtagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSubAreaID int) ([]*entity.Hashtag, error) {
+	var rows []*entity.Hashtag
 
 	q := r.buildFindRecommendListQuery(areaID, subAreaID, subSubAreaID)
 
 	if err := q.
-		Table("hashtag").
 		Select("*, (SELECT COUNT(post_id) FROM post_hashtag WHERE hashtag_id = id) AS post_rank, (SELECT COUNT(review_id) FROM review_hashtag WHERE hashtag_id = id) AS review_rank").
 		Order("post_rank + review_rank DESC").Find(&rows).
 		Limit(defaultAcquisitionNumber).
@@ -34,7 +35,7 @@ func (r *HashTagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSub
 	return rows, nil
 }
 
-func (r *HashTagQueryRepositoryImpl) buildFindRecommendListQuery(areaID, subAreaID, subSubAreaID int) *gorm.DB {
+func (r *HashtagQueryRepositoryImpl) buildFindRecommendListQuery(areaID, subAreaID, subSubAreaID int) *gorm.DB {
 	q := r.DB
 
 	if areaID != 0 {

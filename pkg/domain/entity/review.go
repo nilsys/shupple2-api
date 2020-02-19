@@ -3,14 +3,14 @@ package entity
 type (
 	// table: review
 	Review struct {
-		ID            int            `json:"id" gorm:"column:id"`           // 要らなそう
-		UserID        int            `json:"user_id" gorm:"column:user_id"` // 要らなそう
-		TouristSpotID int            `json:"spotId" gorm:"column:tourist_spot_id"`
+		ID            int            `json:"id" gorm:"column:id"`
+		UserID        int            `json:"-" gorm:"column:user_id"`
+		TouristSpotID int            `json:"-" gorm:"column:tourist_spot_id"`
 		InnID         int            `json:"innId" gorm:"column:inn_id"`
 		Score         int            `json:"score" gorm:"column:score"`
-		MediaCount    int            `json:"mediaCount" gorm:"column:media_count"` // 要らなそう
+		MediaCount    int            `json:"-" gorm:"column:media_count"`
 		Body          string         `json:"body" gorm:"column:body"`
-		FavoriteCount int            `json:"favoriteCount" gorm:"column:favorite_count"` // 要らなそう
+		FavoriteCount int            `json:"favoriteCount" gorm:"column:favorite_count"`
 		Medias        []*ReviewMedia `json:"media" gorm:"foreignkey:ReviewID"`
 	}
 

@@ -19,12 +19,22 @@ var PostQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.PostQueryRepository), new(*PostQueryRepositoryImpl)),
 )
 
-// TODO: クエリ用のentityに変える
 func (r *PostQueryRepositoryImpl) FindByID(id int) (*entity.Post, error) {
 	var row entity.Post
+
 	if err := r.DB.First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "post(id=%d)", id)
 	}
+	return &row, nil
+}
+
+func (r *PostQueryRepositoryImpl) FindQueryByID(id int) (*entity.QueryPost, error) {
+	var row entity.QueryPost
+
+	if err := r.DB.Table(row.TableName()).First(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "post(id=%d)", id)
+	}
+
 	return &row, nil
 }
 
@@ -46,8 +56,25 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 	return posts, nil
 }
 
+// ユーザーIDからフォローしているハッシュタグ or ユーザーのpost一覧を参照
+func (r *PostQueryRepositoryImpl) FindFeedListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryPost, error) {
+	var posts []*entity.QueryPost
+
+	q := r.buildFindFeedListQuery(userID)
+
+	if err := q.
+		Table("post").
+		Order("updated_at desc").
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Find(&posts).Error; err != nil {
+		return nil, errors.Wrapf(err, "failed find feed posts")
+	}
+
+	return posts, nil
+}
+
 // クエリ構造体を用い、検索クエリを作成
-// TODO: category取得にtype付け足す？
 func (r *PostQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindPostListQuery) *gorm.DB {
 	q := r.DB
 
@@ -70,6 +97,16 @@ func (r *PostQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindPostLi
 	if query.HashTag != "" {
 		q = q.Where("id IN (SELECT post_id FROM post_hashtag WHERE hashtag_id = (SELECT id FROM hashtag WHERE name = ?))", query.HashTag)
 	}
+
+	return q
+}
+
+func (r *PostQueryRepositoryImpl) buildFindFeedListQuery(userID int) *gorm.DB {
+	q := r.DB
+
+	if userID != 0 {
+		q = q.Where("user_id IN (SELECT target_id FROM user_follow WHERE user_id = ?)", userID).Or("id IN (SELECT post_id FROM post_hashtag WHERE hashtag_id IN (SELECT hashtag_id FROM user_follow_hashtag WHERE user_id = ?))", userID)
+	} 
 
 	return q
 }

@@ -58,6 +58,10 @@ func (post *PostTiny) GenerateThumbnailURL() string {
 	return "https://files.stayway.jp/post/" + strconv.Itoa(post.ID)
 }
 
+func (queryPost *QueryPost) TableName() string {
+	return "post"
+}
+
 func NewPost(tiny PostTiny, bodies []string, categoryIDs []int) Post {
 	postBodies := make([]*PostBody, len(bodies))
 	for i, body := range bodies {

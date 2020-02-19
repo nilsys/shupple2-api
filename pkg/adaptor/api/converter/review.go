@@ -23,3 +23,10 @@ func ConvertFindReviewListParamToQuery(param *param.ListReviewParams) *query.Sho
 		OffSet:        param.GetOffset(),
 	}
 }
+
+func ConvertListFeedReviewParamToQuery(param *param.ListFeedReviewParam) *query.FindListPaginationQuery {
+	return &query.FindListPaginationQuery{
+		Limit:  param.GetLimit(),
+		Offset: param.GetOffset(),
+	}
+}

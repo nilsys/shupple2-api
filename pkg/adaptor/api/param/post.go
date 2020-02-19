@@ -26,6 +26,13 @@ type (
 		Page         int    `query:"page"`
 		PerPage      int    `query:"perPage"`
 	}
+
+	// ユーザーフィード記事取得APIパラメータ
+	ListFeedPostParam struct {
+		UserID  int `param:"id" validate:"required"`
+		Page    int `query:"page"`
+		PerPage int `query:"perPage"`
+	}
 )
 
 const findPostListDefaultPerPage = 10
@@ -59,4 +66,20 @@ func (showListParam ListPostParam) GetOffSet() int {
 		return 0
 	}
 	return showListParam.GetLimit()*(showListParam.Page-1) + 1
+}
+
+// PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
+func (param ListFeedPostParam) GetLimit() int {
+	if param.PerPage == 0 {
+		return findPostListDefaultPerPage
+	}
+	return param.PerPage
+}
+
+// offSetを返す(sqlで使う想定)
+func (param ListFeedPostParam) GetOffSet() int {
+	if param.Page == 1 || param.Page == 0 {
+		return 0
+	}
+	return param.GetLimit()*(param.Page-1) + 1
 }

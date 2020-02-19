@@ -23,8 +23,6 @@ var PostQueryControllerSet = wire.NewSet(
 	wire.Struct(new(PostQueryController), "*"),
 )
 
-// TODO: 記事詳細の画面に必要な物とEntityをマッピングする
-//       今はただDBの値を全て返しているだけ
 func (c *PostQueryController) Show(ctx echo.Context) error {
 	q := &param.GetPost{}
 	if err := BindAndValidate(ctx, q); err != nil {
@@ -39,17 +37,47 @@ func (c *PostQueryController) Show(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, post)
 }
 
+func (c *PostQueryController) ShowQuery(ctx echo.Context) error {
+	p := &param.GetPost{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "validation get post param")
+	}
+
+	post, err := c.PostService.ShowQueryByID(p.ID)
+	if err != nil {
+		return errors.Wrap(err, "failed to get query post")
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertQueryPostToOutput(post))
+}
+
 func (c *PostQueryController) ListPost(ctx echo.Context) error {
-	params := &param.ListPostParam{}
-	if err := BindAndValidate(ctx, params); err != nil {
+	p := &param.ListPostParam{}
+	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrapf(err, "validation find post list parameter")
 	}
 
-	query := converter.ConvertFindPostListParamToQuery(params)
+	query := converter.ConvertFindPostListParamToQuery(p)
 
 	posts, err := c.PostService.ShowListByParams(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to find post list")
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertPostToOutput(posts))
+}
+
+func (c *PostQueryController) ListFeedPost(ctx echo.Context) error {
+	p := &param.ListFeedPostParam{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrapf(err, "validation find feed post list param")
+	}
+
+	q := converter.ConvertListFeedPostParamToQuery(p)
+
+	posts, err := c.PostService.ShowListFeed(p.UserID, q)
+	if err != nil {
+		return errors.Wrap(err, "failed to show feed posts")
 	}
 
 	return ctx.JSON(http.StatusOK, converter.ConvertPostToOutput(posts))

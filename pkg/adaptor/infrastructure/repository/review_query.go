@@ -23,7 +23,7 @@ var ReviewQueryRepositorySet = wire.NewSet(
 func (r *ReviewQueryRepositoryImpl) ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.Review, error) {
 	var reviews []*entity.Review
 
-	q := r.buildQuery(query)
+	q := r.buildShowReviewListQuery(query)
 
 	if err := q.
 		Preload("Medias").
@@ -37,9 +37,26 @@ func (r *ReviewQueryRepositoryImpl) ShowReviewListByParams(query *query.ShowRevi
 	return reviews, nil
 }
 
+// ユーザーIDからフォローしているハッシュタグ or ユーザーのreview一覧を参照
+func (r *ReviewQueryRepositoryImpl) FindFeedReviewListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.Review, error) {
+	var reviews []*entity.Review
+
+	q := r.buildFindFeedListQuery(userID)
+
+	if err := q.
+		Order("updated_at desc").
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Find(&reviews).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find feed reviews")
+	}
+
+	return reviews, nil
+}
+
 // パスパラメータで飛んで来た値によって検索クエリを切り替える
 // MEMO: presentation、application層などでバリデーションがparamsにバリデーションが掛かっている事が前提
-func (r *ReviewQueryRepositoryImpl) buildQuery(query *query.ShowReviewListQuery) *gorm.DB {
+func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowReviewListQuery) *gorm.DB {
 	q := r.DB
 
 	if query.UserID != 0 {
@@ -72,6 +89,16 @@ func (r *ReviewQueryRepositoryImpl) buildQuery(query *query.ShowReviewListQuery)
 
 	if len(query.InnIDs) > 0 {
 		q = q.Where("inn_id IN (?)", query.InnIDs)
+	}
+
+	return q
+}
+
+func (r *ReviewQueryRepositoryImpl) buildFindFeedListQuery(userID int) *gorm.DB {
+	q := r.DB
+
+	if userID != 0 {
+		q = q.Where("user_id IN (SELECT target_id FROM user_follow WHERE user_id = ?)", userID).Or("id IN (SELECT review_id FROM review_hashtag WHERE hashtag_id IN (SELECT hashtag_id FROM user_follow_hashtag WHERE user_id = ?))", userID)
 	}
 
 	return q

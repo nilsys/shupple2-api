@@ -10,21 +10,21 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
-type HashTagQueryController struct {
-	service.HashTagQueryService
+type HashtagQueryController struct {
+	service.HashtagQueryService
 }
 
-var HashTagQueryControllerSet = wire.NewSet(
-	wire.Struct(new(HashTagQueryController), "*"),
+var HashtagQueryControllerSet = wire.NewSet(
+	wire.Struct(new(HashtagQueryController), "*"),
 )
 
-func (c *HashTagQueryController) ListRecommendHashTag(ctx echo.Context) error {
+func (c *HashtagQueryController) ListRecommendHashtag(ctx echo.Context) error {
 	p := &param.ListRecommendHashTagParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrapf(err, "validation show recommend hashtag list param")
 	}
 
-	recommendHashTags, err := c.HashTagQueryService.ShowRecommendList(p.AreaID, p.SubAreaID, p.SubSubAreaID)
+	recommendHashTags, err := c.HashtagQueryService.ShowRecommendList(p.AreaID, p.SubAreaID, p.SubSubAreaID)
 	if err != nil {
 		return errors.Wrap(err, "failed show recommend hashtags")
 	}

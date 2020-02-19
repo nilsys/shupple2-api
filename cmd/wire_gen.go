@@ -87,14 +87,14 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	reviewQueryController := api.ReviewQueryController{
 		ReviewQueryService: reviewQueryServiceImpl,
 	}
-	hashTagQueryRepositoryImpl := &repository.HashTagQueryRepositoryImpl{
+	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
 		DB: db,
 	}
-	hashTagQueryServiceImpl := &service.HashTagQueryServiceImpl{
-		HashTagQueryRepository: hashTagQueryRepositoryImpl,
+	hashtagQueryServiceImpl := &service.HashtagQueryServiceImpl{
+		HashtagQueryRepository: hashtagQueryRepositoryImpl,
 	}
-	hashTagQueryController := api.HashTagQueryController{
-		HashTagQueryService: hashTagQueryServiceImpl,
+	hashtagQueryController := api.HashtagQueryController{
+		HashtagQueryService: hashtagQueryServiceImpl,
 	}
 	app := &App{
 		Config:                 configConfig,
@@ -103,7 +103,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		PostQueryController:    postQueryController,
 		ComicQueryController:   comicQueryController,
 		ReviewQueryController:  reviewQueryController,
-		HashTagQueryController: hashTagQueryController,
+		HashtagQueryController: hashtagQueryController,
 	}
 	return app, nil
 }
@@ -114,9 +114,9 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.HashTagQueryControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.HashtagQueryControllerSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.HashTagQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.HashtagQueryServiceSet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
 
@@ -127,5 +127,5 @@ type App struct {
 	PostQueryController    api.PostQueryController
 	ComicQueryController   api.ComicQueryController
 	ReviewQueryController  api.ReviewQueryController
-	HashTagQueryController api.HashTagQueryController
+	HashtagQueryController api.HashtagQueryController
 }

@@ -5,28 +5,28 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 )
 
-type ListReviewParams struct {
-	UserID        int    `query:"userId"`
-	InnID         int    `query:"innId"`
-	TouristSpotID int    `query:"touristSpotId"`
-	HashTag       string `query:"hashtag"`
-	AreaID        int    `query:"areaId"`
-	SubAreaID     int    `query:"subAreaId"`
-	SubSubAreaID  int    `query:"subSubAreaID"`
-	SortBy        string `query:"sortBy"`
-	PerPage       int    `query:"perPage"`
-	Page          int    `query:"page"`
-}
+type (
+	ListReviewParams struct {
+		UserID        int    `query:"userId"`
+		InnID         int    `query:"innId"`
+		TouristSpotID int    `query:"touristSpotId"`
+		HashTag       string `query:"hashtag"`
+		AreaID        int    `query:"areaId"`
+		SubAreaID     int    `query:"subAreaId"`
+		SubSubAreaID  int    `query:"subSubAreaID"`
+		SortBy        string `query:"sortBy"`
+		PerPage       int    `query:"perPage"`
+		Page          int    `query:"page"`
+	}
+
+	ListFeedReviewParam struct {
+		ID      int `param:"id" validate:"required"`
+		Page    int `query:"page"`
+		PerPage int `query:"perPage"`
+	}
+)
 
 const getReviewsDefaultPerPage = 10
-
-// PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
-func (param *ListReviewParams) GetLimit() int {
-	if param.PerPage == 0 {
-		return getReviewsDefaultPerPage
-	}
-	return param.PerPage
-}
 
 // いずれのクエリも飛んで来なかった場合エラーを返す
 func (param *ListReviewParams) Validate() error {
@@ -43,8 +43,32 @@ func (param *ListReviewParams) Validate() error {
 	return nil
 }
 
+// PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
+func (param *ListReviewParams) GetLimit() int {
+	if param.PerPage == 0 {
+		return getReviewsDefaultPerPage
+	}
+	return param.PerPage
+}
+
 // offsetを返す(sqlで使う想定)
 func (param *ListReviewParams) GetOffset() int {
+	if param.Page == 1 || param.Page == 0 {
+		return 0
+	}
+	return param.GetLimit()*(param.Page-1) + 1
+}
+
+// PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
+func (param *ListFeedReviewParam) GetLimit() int {
+	if param.PerPage == 0 {
+		return getReviewsDefaultPerPage
+	}
+	return param.PerPage
+}
+
+// offsetを返す(sqlで使う想定)
+func (param *ListFeedReviewParam) GetOffset() int {
 	if param.Page == 1 || param.Page == 0 {
 		return 0
 	}
