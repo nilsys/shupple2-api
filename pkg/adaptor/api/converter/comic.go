@@ -18,11 +18,10 @@ func ConvertShowComicListParamToQuery(param *param.ShowComicListParam) *query.Fi
 
 // ConvertComicToOutput()のスライスバージョン
 func ConvertComicListToOutput(comics []*entity.Comic) []*response.Comic {
-	// MEMO: 代入しないと0件の時にフロントにnullが返る
-	responseComics := []*response.Comic{}
+	responseComics := make([]*response.Comic, len(comics))
 
-	for _, comic := range comics {
-		responseComics = append(responseComics, convertComicToOutput(comic))
+	for i, comic := range comics {
+		responseComics[i] = convertComicToOutput(comic)
 	}
 
 	return responseComics

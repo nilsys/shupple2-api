@@ -87,6 +87,15 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	reviewQueryController := api.ReviewQueryController{
 		ReviewQueryService: reviewQueryServiceImpl,
 	}
+	featureQueryRepositoryImpl := &repository.FeatureQueryRepositoryImpl{
+		DB: db,
+	}
+	featureQueryServiceImpl := &service.FeatureQueryServiceImpl{
+		FeatureQueryRepository: featureQueryRepositoryImpl,
+	}
+	featureQueryController := api.FeatureQueryController{
+		FeatureQueryService: featureQueryServiceImpl,
+	}
 	vlogQueryRepositoryImpl := &repository.VlogQueryRepositoryImpl{
 		DB: db,
 	}
@@ -112,6 +121,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		PostQueryController:    postQueryController,
 		ComicQueryController:   comicQueryController,
 		ReviewQueryController:  reviewQueryController,
+		FeatureQUeryController: featureQueryController,
 		VlogQueryController:    vlogQueryController,
 		HashtagQueryController: hashtagQueryController,
 	}
@@ -124,9 +134,9 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.VlogQueryServiceSet, service.HashtagQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.FeatureQueryServiceSet, service.VlogQueryServiceSet, service.HashtagQueryServiceSet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
 
@@ -137,6 +147,7 @@ type App struct {
 	PostQueryController    api.PostQueryController
 	ComicQueryController   api.ComicQueryController
 	ReviewQueryController  api.ReviewQueryController
+	FeatureQUeryController api.FeatureQueryController
 	VlogQueryController    api.VlogQueryController
 	HashtagQueryController api.HashtagQueryController
 }

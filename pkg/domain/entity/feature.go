@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 type (
 	FeatureTiny struct {
@@ -23,6 +26,12 @@ type (
 		FeatureID int `gorm:"primary_key"`
 		PostID    int `gorm:"primary_key"`
 	}
+
+	QueryFeature struct {
+		FeatureTiny
+		Posts []*Post `gorm:"many2many:feature_post;jointable_foreignkey:feature_id;"`
+		User  *User   `gorm:"foreignkey:UserID"`
+	}
 )
 
 func NewFeature(tiny FeatureTiny, postIDs []int) Feature {
@@ -38,4 +47,13 @@ func NewFeature(tiny FeatureTiny, postIDs []int) Feature {
 		tiny,
 		featurePostIDs,
 	}
+}
+
+// TODO:
+func (tiny FeatureTiny) GenerateThumbnailURL() string {
+	return "https://file.staywayy.jp/feature/" + strconv.Itoa(tiny.ID)
+}
+
+func (queryFeature QueryFeature) TableName() string {
+	return "feature"
 }
