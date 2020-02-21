@@ -3,6 +3,7 @@ package repository
 import (
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -22,4 +23,15 @@ func (r *TouristSpotQueryRepositoryImpl) FindByID(id int) (*entity.TouristSpot, 
 		return nil, ErrorToFindSingleRecord(err, "touristSpot(id=%d)", id)
 	}
 	return &row, nil
+}
+
+// name部分一致検索
+func (r *TouristSpotQueryRepositoryImpl) SearchByName(name string) ([]*entity.TouristSpot, error) {
+	var rows []*entity.TouristSpot
+
+	if err := r.DB.Select("id, name").Where("MATCH(name) AGAINST(?)", name).Limit(10).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find tourist_spot list by like name")
+	}
+
+	return rows, nil
 }

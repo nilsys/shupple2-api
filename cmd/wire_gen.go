@@ -87,6 +87,24 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	reviewQueryController := api.ReviewQueryController{
 		ReviewQueryService: reviewQueryServiceImpl,
 	}
+	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
+		DB: db,
+	}
+	touristSpotQueryRepositoryImpl := &repository.TouristSpotQueryRepositoryImpl{
+		DB: db,
+	}
+	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
+		DB: db,
+	}
+	searchQueryServiceImpl := &service.SearchQueryServiceImpl{
+		CategoryQueryRepository:    categoryQueryRepositoryImpl,
+		TouristSpotQueryRepository: touristSpotQueryRepositoryImpl,
+		HashtagQueryRepository:     hashtagQueryRepositoryImpl,
+		UserQueryRepository:        userQueryRepositoryImpl,
+	}
+	searchQueryController := api.SearchQueryController{
+		SearchQueryService: searchQueryServiceImpl,
+	}
 	featureQueryRepositoryImpl := &repository.FeatureQueryRepositoryImpl{
 		DB: db,
 	}
@@ -105,9 +123,6 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	vlogQueryController := api.VlogQueryController{
 		VlogQueryService: vlogQueryServiceImpl,
 	}
-	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
-		DB: db,
-	}
 	hashtagQueryServiceImpl := &service.HashtagQueryServiceImpl{
 		HashtagQueryRepository: hashtagQueryRepositoryImpl,
 	}
@@ -121,7 +136,8 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		PostQueryController:    postQueryController,
 		ComicQueryController:   comicQueryController,
 		ReviewQueryController:  reviewQueryController,
-		FeatureQUeryController: featureQueryController,
+		SearchQueryController:  searchQueryController,
+		FeatureQueryController: featureQueryController,
 		VlogQueryController:    vlogQueryController,
 		HashtagQueryController: hashtagQueryController,
 	}
@@ -134,9 +150,9 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.FeatureQueryServiceSet, service.VlogQueryServiceSet, service.HashtagQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.VlogQueryServiceSet, service.HashtagQueryServiceSet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
 
@@ -147,7 +163,8 @@ type App struct {
 	PostQueryController    api.PostQueryController
 	ComicQueryController   api.ComicQueryController
 	ReviewQueryController  api.ReviewQueryController
-	FeatureQUeryController api.FeatureQueryController
+	SearchQueryController  api.SearchQueryController
+	FeatureQueryController api.FeatureQueryController
 	VlogQueryController    api.VlogQueryController
 	HashtagQueryController api.HashtagQueryController
 }

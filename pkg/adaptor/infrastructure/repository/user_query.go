@@ -3,6 +3,7 @@ package repository
 import (
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -31,4 +32,15 @@ func (r *UserQueryRepositoryImpl) FindByWordpressID(wordpressUserID int) (*entit
 		return nil, ErrorToFindSingleRecord(err, "user(wordpress_id=%d)", wordpressUserID)
 	}
 	return &row, nil
+}
+
+// name部分一致検索
+func (r *UserQueryRepositoryImpl) SearchByName(name string) ([]*entity.User, error) {
+	var rows []*entity.User
+
+	if err := r.DB.Select("id, name").Where("MATCH(name) AGAINST(?)", name).Limit(10).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find user list by like name")
+	}
+
+	return rows, nil
 }

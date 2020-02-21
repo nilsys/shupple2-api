@@ -9,5 +9,7 @@ type (
 
 	TouristSpotQueryRepository interface {
 		FindByID(id int) (*entity.TouristSpot, error)
+		// name部分一致検索
+		SearchByName(name string) ([]*entity.TouristSpot, error)
 	}
 )

@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS tourist_spot (
   updated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   deleted_at     DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
+  FULLTEXT KEY(name) WITH PARSER NGRAM,
   UNIQUE INDEX tourist_spot_slug(slug)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 COMMENT = 'ほぼwordpressのデータを移しただけなので、もう少し最適化できるはず(search_inn_url等)';

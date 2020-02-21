@@ -171,3 +171,70 @@ func (x *SortBy) UnmarshalText(text []byte) error {
 	*x = tmp
 	return nil
 }
+
+const (
+	// SuggestionTypeArea is a SuggestionType of type Area
+	SuggestionTypeArea SuggestionType = iota
+	// SuggestionTypeSubArea is a SuggestionType of type SubArea
+	SuggestionTypeSubArea
+	// SuggestionTypeSubSubArea is a SuggestionType of type SubSubArea
+	SuggestionTypeSubSubArea
+	// SuggestionTypeTouristSpot is a SuggestionType of type TouristSpot
+	SuggestionTypeTouristSpot
+	// SuggestionTypeHashTag is a SuggestionType of type HashTag
+	SuggestionTypeHashTag
+	// SuggestionTypeUser is a SuggestionType of type User
+	SuggestionTypeUser
+)
+
+const _SuggestionTypeName = "AreaSubAreaSubSubAreaTouristSpotHashTagUser"
+
+var _SuggestionTypeMap = map[SuggestionType]string{
+	0: _SuggestionTypeName[0:4],
+	1: _SuggestionTypeName[4:11],
+	2: _SuggestionTypeName[11:21],
+	3: _SuggestionTypeName[21:32],
+	4: _SuggestionTypeName[32:39],
+	5: _SuggestionTypeName[39:43],
+}
+
+// String implements the Stringer interface.
+func (x SuggestionType) String() string {
+	if str, ok := _SuggestionTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("SuggestionType(%d)", x)
+}
+
+var _SuggestionTypeValue = map[string]SuggestionType{
+	_SuggestionTypeName[0:4]:   0,
+	_SuggestionTypeName[4:11]:  1,
+	_SuggestionTypeName[11:21]: 2,
+	_SuggestionTypeName[21:32]: 3,
+	_SuggestionTypeName[32:39]: 4,
+	_SuggestionTypeName[39:43]: 5,
+}
+
+// ParseSuggestionType attempts to convert a string to a SuggestionType
+func ParseSuggestionType(name string) (SuggestionType, error) {
+	if x, ok := _SuggestionTypeValue[name]; ok {
+		return x, nil
+	}
+	return SuggestionType(0), fmt.Errorf("%s is not a valid SuggestionType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x SuggestionType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *SuggestionType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseSuggestionType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}

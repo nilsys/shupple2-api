@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
@@ -33,4 +34,14 @@ func (r *CategoryQueryRepositoryImpl) FindByID(id int) (*entity.Category, error)
 		return nil, ErrorToFindSingleRecord(err, "category(id=%d)", id)
 	}
 	return &row, nil
+}
+
+func (r *CategoryQueryRepositoryImpl) SearchByName(name string) ([]*entity.Category, error) {
+	var rows []*entity.Category
+
+	if err := r.DB.Select("id, name, type").Where("MATCH(name) AGAINST(?)", name).Not("type = ?", model.CategoryTypeAreaGroup).Limit(10).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find category list by like name")
+	}
+
+	return rows, nil
 }

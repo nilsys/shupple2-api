@@ -35,6 +35,16 @@ func (r *HashtagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSub
 	return rows, nil
 }
 
+func (r *HashtagQueryRepositoryImpl) SearchByName(name string) ([]*entity.Hashtag, error) {
+	var rows []*entity.Hashtag
+
+	if err := r.DB.Select("id, name").Where("MATCH(name) AGAINST(?)", name).Limit(10).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find hashtag list by like name")
+	}
+
+	return rows, nil
+}
+
 func (r *HashtagQueryRepositoryImpl) buildFindRecommendListQuery(areaID, subAreaID, subSubAreaID int) *gorm.DB {
 	q := r.DB
 

@@ -11,5 +11,7 @@ type (
 	UserQueryRepository interface {
 		FindByID(id int) (*entity.User, error)
 		FindByWordpressID(id int) (*entity.User, error)
+		// name部分一致検索
+		SearchByName(name string) ([]*entity.User, error)
 	}
 )

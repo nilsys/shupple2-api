@@ -50,8 +50,9 @@ func setRoutes(app *App) {
 	api.GET("/user/:id/reviews/feed", app.ReviewQueryController.ListFeedReview)
 	api.GET("/comics", app.ComicQueryController.ListComic)
 	api.GET("/comics/:id", app.ComicQueryController.Show)
-	api.GET("/feature_posts", app.FeatureQUeryController.ListFeature)
-	api.GET("/feature_posts/:id", app.FeatureQUeryController.ShowQuery)
+	api.GET("/search/suggestions", app.SearchQueryController.ShowSearchSuggestionList)
+	api.GET("/feature_posts", app.FeatureQueryController.ListFeature)
+	api.GET("/feature_posts/:id", app.FeatureQueryController.ShowQuery)
 	api.GET("/vlogs", app.VlogQueryController.ListVlog)
 	api.GET("/hashtags/recommend", app.HashtagQueryController.ListRecommendHashtag)
 }

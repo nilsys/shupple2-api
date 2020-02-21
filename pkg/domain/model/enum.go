@@ -16,3 +16,8 @@ type SortBy int
 ENUM(AreaGroup, Area, SubArea, SubSubArea, Theme)
 */
 type CategoryType int
+
+/*
+ENUM(Area, SubArea, SubSubArea, TouristSpot, HashTag, User)
+*/
+type SuggestionType int
