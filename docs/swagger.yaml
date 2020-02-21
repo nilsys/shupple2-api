@@ -113,6 +113,34 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RankingUserList"
+  /users/follow:
+    get:
+      tags:
+        - user
+      summary: フォローユーザー取得
+      security:
+        - iDPCognito: []
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowUserList"
+  /users/follower:
+    get:
+      tags:
+        - user
+      summary: フォローワーユーザー取得
+      security:
+        - iDPCognito: []
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowUserList"
   /s3:
     post:
       security:
@@ -398,12 +426,46 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  "/user/{userId}/review":
+  /user/{userId}/reviews/feed:
     get:
       tags:
         - review
       summary: フォローしているユーザー又はハッシュタグのレビュー取得API
       description: userIdで指定されたユーザーがフォローしているユーザー又はハッシュタグのレビュー取得
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: ユーザーID
+          schema:
+            type: integer
+        - in: query
+          name: page
+          description: ページ数(pagination時)
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+  /user/{userId}/reviews/favorite:
+    get:
+      tags:
+        - review
+      summary: ユーザーがいいねしたレビュー取得API
+      description: userIdで指定されたユーザーがいいねしたレビュー取得
       parameters:
         - in: path
           name: userId
@@ -446,6 +508,13 @@ paths:
         ・タイトルにフリーワードが含まれているもの(更新日時順)
         ・本文にフリーワードが含まれているもの(更新日時順)
       parameters:
+        - in: query
+          name: userId
+          description: |
+            ユーザーID
+            いずれか1つ以上必須
+          schema:
+            type: integer
         - in: query
           name: areaId
           description: |
@@ -514,12 +583,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PostList"
-  "/user/{userId}/posts":
+  /user/{userId}/posts/feed:
     get:
       tags:
         - post
       summary: フォローしているユーザー又はハッシュタグの記事取得API
       description: userIdで指定されたユーザーがフォローしているユーザー又はハッシュタグの記事取得
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: ユーザーID
+          schema:
+            type: integer
+        - in: query
+          name: page
+          description: ページ数(pagination時)
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostList"
+  /user/{userId}/posts/favorite:
+    get:
+      tags:
+        - post
+      summary: ユーザーがいいねした記事取得API
+      description: userIdで指定されたユーザーがいいねした記事取得
       parameters:
         - in: path
           name: userId
@@ -1055,6 +1156,19 @@ components:
       description: |
         spot_idかinn_idのどちらかは必ず入っていないといけない
       properties:
+        trabelDate:
+          type: string
+          description: |
+            旅行日
+            format yyyy-MM
+        accompanying:
+          $ref: "#/components/schemas/Accompanying"
+        hashtagId:
+          type: array
+          description: |
+            ハッシュタグID
+          items:
+            type: integer
         spotId:
           type: integer
         innId:
@@ -1085,6 +1199,22 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Media"
+        accompanying:
+          $ref: "#/components/schemas/Accompanying"
+        updatedAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        trabelDate:
+          type: string
+          description: |
+            旅行日
+            format yyyy-MM
+        hashtag:
+          type: array
+          description: レビューに紐づくハッシュタグ
+          items:
+            $ref: "#/components/schemas/HashTag"
     Media:
       type: object
       properties:
@@ -1560,6 +1690,34 @@ components:
           example:
             - 沖縄
             - 夜景
+    FollowUserList:
+      type: array
+      items:
+        $ref: "#/components/schemas/FollowUser"
+    FollowUser:
+      type: object
+      properties:
+        id: 
+          type: integer
+          description: ユーザーID
+          example: 1
+        name:
+          type: string
+          description: 名前
+          example: hanako
+        iconURL:
+          type: string
+          description: アイコン画像URL
+          example: https://files.stayway.jp/avatar/1
+    Accompanying:
+      type: string
+      enum:
+        - BUISINESS
+        - COUPLE
+        - FAMILY
+        - FRIEND
+        - ONLY
+        - WITHCHILD
     Error:
       type: object
       properties:
