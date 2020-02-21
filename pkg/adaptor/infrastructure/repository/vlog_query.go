@@ -3,7 +3,9 @@ package repository
 import (
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
@@ -22,4 +24,44 @@ func (r *VlogQueryRepositoryImpl) FindByID(id int) (*entity.Vlog, error) {
 		return nil, ErrorToFindSingleRecord(err, "vlog(id=%d)", id)
 	}
 	return &row, nil
+}
+
+func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuery) ([]*entity.QueryVlog, error) {
+	var rows []*entity.QueryVlog
+
+	q := r.buildFindByParamsQuery(query)
+
+	if err := q.
+		Table("vlog").
+		Order(query.SortBy.GetVlogOrderQuery()).
+		Limit(query.Limit).
+		Offset(query.OffSet).
+		Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find vlogs by params")
+	}
+
+	return rows, nil
+}
+
+// クエリ構造体を用い、FindListByParams()で使用するsqlクエリを作成
+func (r *VlogQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindVlogListQuery) *gorm.DB {
+	q := r.DB
+
+	if query.AreaID != 0 {
+		q = q.Where("id IN (SELECT vlog_id FROM vlog_category WHERE category_id = ?)", query.AreaID)
+	}
+
+	if query.SubAreaID != 0 {
+		q = q.Where("id IN (SELECT vlog_id FROM vlog_category WHERE category_id = ?)", query.SubAreaID)
+	}
+
+	if query.SubSubAreaID != 0 {
+		q = q.Where("id IN (SELECT vlog_id FROM vlog_category WHERE category_id = ?)", query.SubSubAreaID)
+	}
+
+	if query.TouristSpotID != 0 {
+		q = q.Where("id IN (SELECT vlog_id FROM vlog_tourist_spot WHERE tourist_spot_id = ?)", query.SubSubAreaID)
+	}
+
+	return q
 }

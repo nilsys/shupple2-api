@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 type (
 	VlogTiny struct {
@@ -24,7 +27,7 @@ type (
 	Vlog struct {
 		VlogTiny
 		WordpressCategoryIDs []*VlogCategory
-		TouristSpotIDs          []*VlogTouristSpot
+		TouristSpotIDs       []*VlogTouristSpot
 	}
 
 	VlogCategory struct {
@@ -33,10 +36,20 @@ type (
 	}
 
 	VlogTouristSpot struct {
-		VlogID     int `gorm:"primary_key"`
+		VlogID        int `gorm:"primary_key"`
 		TouristSpotID int `gorm:"primary_key"`
 	}
+
+	QueryVlog struct {
+		VlogTiny
+		WordpressCategories []*Category    `gorm:"many2many:vlog_category;jointable_foreignkey:vlog_id;"`
+		TouristSpots        []*TouristSpot `gorm:"many2many:vlog_tourist_spot;jointable_foreignkey:vlog_id;"`
+	}
 )
+
+func (queryVlog *QueryVlog) GenerateThumbnailURL() string {
+	return "https://files.stayway.jp/vlog/" + strconv.Itoa(queryVlog.VlogTiny.ID)
+}
 
 func NewVlog(tiny VlogTiny, categoryIDs, touristSpotIDs []int) Vlog {
 	vlogCategories := make([]*VlogCategory, len(categoryIDs))
@@ -50,7 +63,7 @@ func NewVlog(tiny VlogTiny, categoryIDs, touristSpotIDs []int) Vlog {
 	vlogTouristSpots := make([]*VlogTouristSpot, len(touristSpotIDs))
 	for i, l := range touristSpotIDs {
 		vlogTouristSpots[i] = &VlogTouristSpot{
-			VlogID:     tiny.ID,
+			VlogID:        tiny.ID,
 			TouristSpotID: l,
 		}
 	}

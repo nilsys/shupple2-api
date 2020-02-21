@@ -1,0 +1,50 @@
+package param
+
+import (
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
+)
+
+// 動画一覧取得パラメータ
+type ListVlogParam struct {
+	AreaID        int    `query:"areaId"`
+	SubAreaID     int    `query:"subAreaId"`
+	SubSubAreaID  int    `query:"subSubAreaId"`
+	TouristSpotID int    `query:"touristSpotId"`
+	SortBy        string `query:"sortBy"`
+	Page          int    `query:"page"`
+	PerPage       int    `query:"perPage"`
+}
+
+const listVlogDefaultPerPage = 10
+
+// いずれのクエリも飛んでこない場合 or sortの値が期待値以外の場合エラーを返す
+func (param ListVlogParam) Validate() error {
+	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.TouristSpotID == 0 {
+		return serror.New(nil, serror.CodeInvalidParam, "Invalid show vlog list param")
+	}
+
+	if param.SortBy != "" {
+		if _, err := model.ParseSortBy(param.SortBy); err != nil {
+			return serror.New(err, serror.CodeInvalidParam, "Invalid show vlog list sortBy")
+		}
+	}
+
+	return nil
+}
+
+// PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
+func (param ListVlogParam) GetLimit() int {
+	if param.PerPage == 0 {
+		return listVlogDefaultPerPage
+	}
+	return param.PerPage
+}
+
+// offSetを返す(sqlで使う想定)
+func (param ListVlogParam) GetOffSet() int {
+	if param.Page == 1 || param.Page == 0 {
+		return 0
+	}
+	return param.GetLimit()*(param.Page-1) + 1
+}

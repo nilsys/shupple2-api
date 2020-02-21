@@ -56,6 +56,7 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 	return posts, nil
 }
 
+// クエリ構造体を用い、FindListByParams()で使用するsqlクエリを作成
 // ユーザーIDからフォローしているハッシュタグ or ユーザーのpost一覧を参照
 func (r *PostQueryRepositoryImpl) FindFeedListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryPost, error) {
 	var posts []*entity.QueryPost
@@ -106,7 +107,7 @@ func (r *PostQueryRepositoryImpl) buildFindFeedListQuery(userID int) *gorm.DB {
 
 	if userID != 0 {
 		q = q.Where("user_id IN (SELECT target_id FROM user_follow WHERE user_id = ?)", userID).Or("id IN (SELECT post_id FROM post_hashtag WHERE hashtag_id IN (SELECT hashtag_id FROM user_follow_hashtag WHERE user_id = ?))", userID)
-	} 
+	}
 
 	return q
 }

@@ -17,6 +17,7 @@ var controllerSet = wire.NewSet(
 	api.PostCommandControllerSet,
 	api.ComicQueryControllerSet,
 	api.ReviewQueryControllerSet,
+	api.VlogQueryControllerSet,
 	api.HashtagQueryControllerSet,
 )
 
@@ -26,6 +27,7 @@ var serviceSet = wire.NewSet(
 	service.ComicQueryServiceSet,
 	service.ReviewQueryServiceSet,
 	service.WordpressServiceSet,
+	service.VlogQueryServiceSet,
 	service.HashtagQueryServiceSet,
 )
 
@@ -38,6 +40,7 @@ type App struct {
 	PostQueryController    api.PostQueryController
 	ComicQueryController   api.ComicQueryController
 	ReviewQueryController  api.ReviewQueryController
+	VlogQueryController    api.VlogQueryController
 	HashtagQueryController api.HashtagQueryController
 }
 

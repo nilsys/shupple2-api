@@ -87,6 +87,15 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	reviewQueryController := api.ReviewQueryController{
 		ReviewQueryService: reviewQueryServiceImpl,
 	}
+	vlogQueryRepositoryImpl := &repository.VlogQueryRepositoryImpl{
+		DB: db,
+	}
+	vlogQueryServiceImpl := &service.VlogQueryServiceImpl{
+		VlogQueryRepository: vlogQueryRepositoryImpl,
+	}
+	vlogQueryController := api.VlogQueryController{
+		VlogQueryService: vlogQueryServiceImpl,
+	}
 	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
 		DB: db,
 	}
@@ -103,6 +112,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		PostQueryController:    postQueryController,
 		ComicQueryController:   comicQueryController,
 		ReviewQueryController:  reviewQueryController,
+		VlogQueryController:    vlogQueryController,
 		HashtagQueryController: hashtagQueryController,
 	}
 	return app, nil
@@ -114,9 +124,9 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.HashtagQueryControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.HashtagQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.VlogQueryServiceSet, service.HashtagQueryServiceSet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
 
@@ -127,5 +137,6 @@ type App struct {
 	PostQueryController    api.PostQueryController
 	ComicQueryController   api.ComicQueryController
 	ReviewQueryController  api.ReviewQueryController
+	VlogQueryController    api.VlogQueryController
 	HashtagQueryController api.HashtagQueryController
 }
