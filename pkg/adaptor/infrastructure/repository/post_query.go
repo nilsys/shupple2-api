@@ -42,7 +42,7 @@ func (r *PostQueryRepositoryImpl) FindQueryByID(id int) (*entity.QueryPost, erro
 func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuery) ([]*entity.QueryPost, error) {
 	var posts []*entity.QueryPost
 
-	q := r.buildFindByParamsQuery(query)
+	q := r.buildFindListByParamsQuery(query)
 
 	if err := q.
 		Table("post").
@@ -76,8 +76,12 @@ func (r *PostQueryRepositoryImpl) FindFeedListByUserID(userID int, query *query.
 }
 
 // クエリ構造体を用い、検索クエリを作成
-func (r *PostQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindPostListQuery) *gorm.DB {
+func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPostListQuery) *gorm.DB {
 	q := r.DB
+
+	if query.UserID != 0 {
+		q = q.Where("user_id = ?", query.UserID)
+	}
 
 	if query.AreaID != 0 {
 		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ?)", query.AreaID)

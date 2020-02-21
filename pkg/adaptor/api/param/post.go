@@ -17,6 +17,7 @@ type (
 
 	// 記事一覧取得APIパラメータ
 	ListPostParam struct {
+		UserID       int    `query:"userId"`
 		AreaID       int    `query:"areaId"`
 		SubAreaID    int    `query:"subAreaId"`
 		SubSubAreaID int    `query:"subSubAreaId"`
@@ -39,7 +40,7 @@ const findPostListDefaultPerPage = 10
 
 // いずれのクエリも飛んでこない場合 or sortの値が期待値以外の場合エラーを返す
 func (param ListPostParam) Validate() error {
-	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.HashTag == "" {
+	if param.UserID == 0 && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.HashTag == "" {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid find post list param")
 	}
 

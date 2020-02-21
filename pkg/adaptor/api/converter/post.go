@@ -12,6 +12,7 @@ import (
 func ConvertFindPostListParamToQuery(param *param.ListPostParam) *query.FindPostListQuery {
 	sortBy, _ := model.ParseSortBy(param.SortBy)
 	return &query.FindPostListQuery{
+		UserID:       param.UserID,
 		AreaID:       param.AreaID,
 		SubAreaID:    param.SubAreaID,
 		SubSubAreaID: param.SubSubAreaID,
