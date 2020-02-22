@@ -967,7 +967,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HashTagList"
+                $ref: "#/components/schemas/HashtagList"
   /search/suggestions:
     get:
       tags:
@@ -1220,7 +1220,7 @@ components:
           type: array
           description: レビューに紐づくハッシュタグ
           items:
-            $ref: "#/components/schemas/HashTag"
+            $ref: "#/components/schemas/Hashtag"
     Media:
       type: object
       properties:
@@ -1372,18 +1372,14 @@ components:
           example: http://example.com/img/1
         areaCategories:
           type: array
+          description: エリアカテゴリ
           items:
-            type: string
-            description: エリアカテゴリ
+            $ref: "#/components/schemas/Category"
         themeCategories:
           type: array
-          items:
-            type: string
-            description: テーマカテゴリ
-        theme:
-          type: string
           description: テーマカテゴリ
-          example: 絶景
+          items:
+            $ref: "#/components/schemas/Category"
         title:
           type: string
           description: 動画タイトル
@@ -1497,11 +1493,11 @@ components:
           description: 観光スポットカテゴリー
           items:
             $ref: "#/components/schemas/Category"
-    HashTagList:
+    HashtagList:
       type: array
       items:
-        $ref: "#/components/schemas/HashTag"
-    HashTag:
+        $ref: "#/components/schemas/Hashtag"
+    Hashtag:
       type: object
       properties:
         id:
