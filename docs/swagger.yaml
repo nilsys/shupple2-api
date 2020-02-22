@@ -1186,8 +1186,16 @@ components:
         mediaUuids:
           type: array
           items:
-            type: string
-            description: アップロードファイルのUUID
+            type: object
+            properties:
+              uuid:
+                type: string
+                description: アップロードファイルのUUID
+                example: uuid
+              mimeType:
+                type: string
+                description: 拡張子
+                example: png
     Review:
       type: object
       properties:
