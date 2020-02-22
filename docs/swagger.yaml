@@ -277,7 +277,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Review"
+                $ref: "#/components/schemas/ReviewShow"
         "404":
           description: 存在しないレビュー
           content:
@@ -1224,6 +1224,45 @@ components:
           description: |
             旅行日
             format yyyy-MM
+        hashtag:
+          type: array
+          description: レビューに紐づくハッシュタグ
+          items:
+            $ref: "#/components/schemas/Hashtag"
+    ReviewShow:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: レビューID
+          example: 1
+        score:
+          type: integer
+          description: 評価
+          example: 3
+        body:
+          type: string
+          description: 内容
+          example: |
+            従業員の方が親切でとても充実した時間を過ごす事が出来ました！
+        favoriteCount:
+          type: integer
+          description: いいね数
+        accompanying:
+          $ref: "#/components/schemas/Accompanying"
+        updatedAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        trabelDate:
+          type: string
+          description: |
+            旅行日
+            format yyyy-MM
+        media:
+          type: array
+          items:
+            $ref: "#/components/schemas/Media"
         hashtag:
           type: array
           description: レビューに紐づくハッシュタグ
