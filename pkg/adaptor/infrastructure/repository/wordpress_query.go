@@ -9,21 +9,25 @@ import (
 
 	"github.com/google/wire"
 	"github.com/pkg/errors"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/dto"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
 const (
+	listUsersPath              = "/wp-json/wp/v2/users/"
 	listPostsPath              = "/wp-json/wp/v2/posts/"
-	listLocationsPath          = "/wp-json/wp/v2/touristSpots/"
+	listLocationsPath          = "/wp-json/wp/v2/locations/"
 	listCategoriesPath         = "/wp-json/wp/v2/categories/"
-	listLocationCategoriesPath = "/wp-json/wp/v2/touristSpot__cat/"
+	listLocationCategoriesPath = "/wp-json/wp/v2/location__cat/"
 	listComicPath              = "/wp-json/wp/v2/comic/"
 	listFeaturePath            = "/wp-json/wp/v2/features/"
 	listVlogPath               = "/wp-json/wp/v2/vlog/"
-	getUserPathFormat          = "/wp-json/wp/v2/users/%d/"
+
+	maxPerPage = 100
 )
 
 type (
@@ -44,6 +48,11 @@ func NewWordpressQueryRepositoryImpl(config config.Wordpress) repository.Wordpre
 	}
 }
 
+func (r *WordpressQueryRepositoryImpl) FindUsersByIDs(ids []int) ([]*wordpress.User, error) {
+	var res []*wordpress.User
+	return res, r.gets(listUsersPath, ids, &res)
+}
+
 func (r *WordpressQueryRepositoryImpl) FindPostsByIDs(ids []int) ([]*wordpress.Post, error) {
 	var res []*wordpress.Post
 	return res, r.gets(listPostsPath, ids, &res)
@@ -55,8 +64,42 @@ func (r *WordpressQueryRepositoryImpl) FindLocationsByIDs(ids []int) ([]*wordpre
 }
 
 func (r *WordpressQueryRepositoryImpl) FindCategoriesByIDs(ids []int) ([]*wordpress.Category, error) {
-	var res []*wordpress.Category
-	return res, r.gets(listCategoriesPath, ids, &res)
+
+	var resp dto.WordpressCategories
+	if err := r.gets(listCategoriesPath, ids, &resp); err != nil {
+		return nil, errors.Wrap(err, "failed to get wordpress category")
+	}
+
+	result, err := resp.ToEntities()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to convert wordpress category dto")
+	}
+	return result, nil
+}
+
+func (r *WordpressQueryRepositoryImpl) FindCategoriesByParentID(parentID, limit int) ([]*wordpress.Category, error) {
+	if limit == 0 {
+		limit = maxPerPage
+	}
+
+	wURL := r.BaseURL
+	wURL.Path = path.Join(wURL.Path, listCategoriesPath)
+
+	q := wURL.Query()
+	q.Set("parent", fmt.Sprint(parentID))
+	q.Set("per_page", fmt.Sprint(limit))
+	wURL.RawQuery = q.Encode()
+
+	var resp dto.WordpressCategories
+	if err := r.getJSON(wURL.String(), &resp); err != nil {
+		return nil, errors.Wrap(err, "failed to get wordpress category")
+	}
+
+	result, err := resp.ToEntities()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to convert wordpress category dto")
+	}
+	return result, nil
 }
 
 func (r *WordpressQueryRepositoryImpl) FindLocationCategoriesByIDs(ids []int) ([]*wordpress.LocationCategory, error) {
@@ -79,14 +122,6 @@ func (r *WordpressQueryRepositoryImpl) FindVlogsByIDs(ids []int) ([]*wordpress.V
 	return res, r.gets(listVlogPath, ids, &res)
 }
 
-func (r *WordpressQueryRepositoryImpl) FindUserByID(id int) (*wordpress.User, error) {
-	u := r.Host
-	u.Path = path.Join(u.Path, fmt.Sprintf(getUserPathFormat, id))
-
-	var res wordpress.User
-	return &res, r.getJSON(u.String(), &res)
-}
-
 // http通信するだけなのでどこにでも置けるが、便宜的にココに置く
 func (r *WordpressQueryRepositoryImpl) DownloadAvatar(avatarURL string) ([]byte, error) {
 	resp, err := r.Client.Get(avatarURL)
@@ -104,18 +139,29 @@ func (r *WordpressQueryRepositoryImpl) gets(wPath string, ids []int, result inte
 		return nil
 	}
 
-	wURL := r.Host
+	if len(ids) > maxPerPage {
+		return serror.New(nil, serror.CodeInvalidParam, "too many ids")
+	}
+
+	wURL := r.BaseURL
 	wURL.Path = path.Join(wURL.Path, wPath)
 
 	q := wURL.Query()
 	q.Set("include", util.JoinIntSlice(ids, ","))
+	q.Set("per_page", fmt.Sprint(len(ids)))
 	wURL.RawQuery = q.Encode()
 
 	return r.getJSON(wURL.String(), result)
 }
 
 func (r *WordpressQueryRepositoryImpl) getJSON(url string, result interface{}) error {
-	resp, err := r.Client.Get(url)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return errors.Wrap(err, "failed to create request")
+	}
+	req.SetBasicAuth(r.User, r.Password)
+
+	resp, err := r.Client.Do(req)
 	if err != nil {
 		return errors.Wrap(err, "failed to get wordpress resource")
 	}

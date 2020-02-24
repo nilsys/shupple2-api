@@ -2,7 +2,7 @@ package serror
 
 import "net/http"
 
-//go:generate go-enum -f=code.go --marshal
+//go:generate go-enum -f=$GOFILE --marshal
 
 /*
 ENUM(Undefined, InvalidParam, NotFound)

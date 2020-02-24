@@ -26,8 +26,8 @@ type (
 
 	Vlog struct {
 		VlogTiny
-		WordpressCategoryIDs []*VlogCategory
-		TouristSpotIDs       []*VlogTouristSpot
+		CategoryIDs    []*VlogCategory
+		TouristSpotIDs []*VlogTouristSpot
 	}
 
 	VlogCategory struct {

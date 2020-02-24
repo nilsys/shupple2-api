@@ -39,9 +39,13 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
 		DB: db,
 	}
+	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
+		DB: db,
+	}
 	wordpressServiceImpl := &service.WordpressServiceImpl{
 		WordpressQueryRepository: wordpressQueryRepository,
 		UserQueryRepository:      userQueryRepositoryImpl,
+		CategoryQueryRepository:  categoryQueryRepositoryImpl,
 	}
 	postCommandServiceImpl := &service.PostCommandServiceImpl{
 		PostCommandRepository:    postCommandRepositoryImpl,
@@ -86,9 +90,6 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	}
 	reviewQueryController := api.ReviewQueryController{
 		ReviewQueryService: reviewQueryServiceImpl,
-	}
-	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
-		DB: db,
 	}
 	touristSpotQueryRepositoryImpl := &repository.TouristSpotQueryRepositoryImpl{
 		DB: db,

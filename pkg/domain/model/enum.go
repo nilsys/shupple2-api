@@ -1,19 +1,19 @@
 package model
 
-//go:generate go-enum -f=enum.go --marshal
+//go:generate go-enum -f=$GOFILE --marshal
 
 /*
-ENUM(Male, Female)
+ENUM(Male = 1, Female)
 */
 type Gender int
 
 /*
-ENUM(NEW, RANKING)
+ENUM(NEW = 1, RANKING)
 */
 type SortBy int
 
 /*
-ENUM(AreaGroup, Area, SubArea, SubSubArea, Theme)
+ENUM(AreaGroup = 1, Area, SubArea, SubSubArea, Theme)
 */
 type CategoryType int
 

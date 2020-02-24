@@ -9,7 +9,7 @@ import (
 
 const (
 	// CategoryTypeAreaGroup is a CategoryType of type AreaGroup
-	CategoryTypeAreaGroup CategoryType = iota
+	CategoryTypeAreaGroup CategoryType = iota + 1
 	// CategoryTypeArea is a CategoryType of type Area
 	CategoryTypeArea
 	// CategoryTypeSubArea is a CategoryType of type SubArea
@@ -23,11 +23,11 @@ const (
 const _CategoryTypeName = "AreaGroupAreaSubAreaSubSubAreaTheme"
 
 var _CategoryTypeMap = map[CategoryType]string{
-	0: _CategoryTypeName[0:9],
-	1: _CategoryTypeName[9:13],
-	2: _CategoryTypeName[13:20],
-	3: _CategoryTypeName[20:30],
-	4: _CategoryTypeName[30:35],
+	1: _CategoryTypeName[0:9],
+	2: _CategoryTypeName[9:13],
+	3: _CategoryTypeName[13:20],
+	4: _CategoryTypeName[20:30],
+	5: _CategoryTypeName[30:35],
 }
 
 // String implements the Stringer interface.
@@ -39,11 +39,11 @@ func (x CategoryType) String() string {
 }
 
 var _CategoryTypeValue = map[string]CategoryType{
-	_CategoryTypeName[0:9]:   0,
-	_CategoryTypeName[9:13]:  1,
-	_CategoryTypeName[13:20]: 2,
-	_CategoryTypeName[20:30]: 3,
-	_CategoryTypeName[30:35]: 4,
+	_CategoryTypeName[0:9]:   1,
+	_CategoryTypeName[9:13]:  2,
+	_CategoryTypeName[13:20]: 3,
+	_CategoryTypeName[20:30]: 4,
+	_CategoryTypeName[30:35]: 5,
 }
 
 // ParseCategoryType attempts to convert a string to a CategoryType
@@ -72,7 +72,7 @@ func (x *CategoryType) UnmarshalText(text []byte) error {
 
 const (
 	// GenderMale is a Gender of type Male
-	GenderMale Gender = iota
+	GenderMale Gender = iota + 1
 	// GenderFemale is a Gender of type Female
 	GenderFemale
 )
@@ -80,8 +80,8 @@ const (
 const _GenderName = "MaleFemale"
 
 var _GenderMap = map[Gender]string{
-	0: _GenderName[0:4],
-	1: _GenderName[4:10],
+	1: _GenderName[0:4],
+	2: _GenderName[4:10],
 }
 
 // String implements the Stringer interface.
@@ -93,8 +93,8 @@ func (x Gender) String() string {
 }
 
 var _GenderValue = map[string]Gender{
-	_GenderName[0:4]:  0,
-	_GenderName[4:10]: 1,
+	_GenderName[0:4]:  1,
+	_GenderName[4:10]: 2,
 }
 
 // ParseGender attempts to convert a string to a Gender
@@ -123,7 +123,7 @@ func (x *Gender) UnmarshalText(text []byte) error {
 
 const (
 	// SortByNEW is a SortBy of type NEW
-	SortByNEW SortBy = iota
+	SortByNEW SortBy = iota + 1
 	// SortByRANKING is a SortBy of type RANKING
 	SortByRANKING
 )
@@ -131,8 +131,8 @@ const (
 const _SortByName = "NEWRANKING"
 
 var _SortByMap = map[SortBy]string{
-	0: _SortByName[0:3],
-	1: _SortByName[3:10],
+	1: _SortByName[0:3],
+	2: _SortByName[3:10],
 }
 
 // String implements the Stringer interface.
@@ -144,8 +144,8 @@ func (x SortBy) String() string {
 }
 
 var _SortByValue = map[string]SortBy{
-	_SortByName[0:3]:  0,
-	_SortByName[3:10]: 1,
+	_SortByName[0:3]:  1,
+	_SortByName[3:10]: 2,
 }
 
 // ParseSortBy attempts to convert a string to a SortBy

@@ -10,6 +10,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
@@ -21,7 +23,7 @@ type (
 	WordpressService interface {
 		ConvertPost(*wordpress.Post) (*entity.Post, error)
 		ConvertLocation(*wordpress.Location) (*entity.TouristSpot, error)
-		ConvertCategory(*wordpress.Category) *entity.Category
+		ConvertCategory(*wordpress.Category) (*entity.Category, error)
 		ConvertLcategory(*wordpress.LocationCategory) *entity.Lcategory
 		ConvertVlog(*wordpress.Vlog) (*entity.Vlog, error)
 		ConvertFeature(*wordpress.Feature) (*entity.Feature, error)
@@ -31,6 +33,7 @@ type (
 	WordpressServiceImpl struct {
 		WordpressQueryRepository repository.WordpressQueryRepository
 		UserQueryRepository      repository.UserQueryRepository
+		CategoryQueryRepository  repository.CategoryQueryRepository
 	}
 )
 
@@ -78,6 +81,7 @@ func (s *WordpressServiceImpl) ConvertLocation(wpLocation *wordpress.Location) (
 	touristSpot := entity.NewTouristSpot(entity.TouristSpotTiny{
 		ID:           wpLocation.ID,
 		Name:         wpLocation.Title.Rendered,
+		Slug:         wpLocation.Slug,
 		WebsiteURL:   wpLocation.Attributes.OfficialURL,
 		City:         wpLocation.Attributes.City,
 		Address:      wpLocation.Attributes.Address,
@@ -91,18 +95,86 @@ func (s *WordpressServiceImpl) ConvertLocation(wpLocation *wordpress.Location) (
 		Price:        wpLocation.Attributes.Price,
 		InstagramURL: wpLocation.Attributes.Instagram,
 		SearchInnURL: wpLocation.Attributes.Inn,
-	}, wpLocation.LocationCat, wpLocation.Categories)
+		CreatedAt:    time.Time(wpLocation.Date),
+		UpdatedAt:    time.Time(wpLocation.Modified),
+	}, wpLocation.Categories, wpLocation.LocationCat)
 
 	return &touristSpot, nil
 }
 
-func (s *WordpressServiceImpl) ConvertCategory(wpCategory *wordpress.Category) *entity.Category {
-	category := &entity.Category{
-		ID:   wpCategory.ID,
-		Name: wpCategory.Name,
+/*
+## 親カテについて
+
+AreaGroupをwordpress側で作れないので、CategoryTypeがjapan,worldの場合は固定値を入れる
+
+## カテゴリタイプについて
+
+* ルートカテゴリかつCategoryTypeがjapan or worldの場合     -> Area
+* ルートカテゴリかつCategoryTypeがjapan or worldでない場合 -> Theme
+* 非ルートカテゴリかつ親カテがArea                         -> SubArea
+* 非ルートカテゴリかつ親カテがSubArea                      -> SubSubArea
+* 非ルートカテゴリかつ親カテがSubSubArea                   -> SubSubArea
+* 非ルートカテゴリかつ親カテがTheme                        -> Theme
+
+## TODO:
+
+親カテのカテゴリタイプが影響するので、カテゴリの更新があった場合は子カテの更新も行わないといけない
+*/
+func (s *WordpressServiceImpl) ConvertCategory(wpCategory *wordpress.Category) (*entity.Category, error) {
+	categoryType, err := s.convertCategoryType(wpCategory)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to convert category type")
 	}
 
-	return category
+	parentID := wpCategory.Parent
+	switch wpCategory.Type {
+	case wordpress.CategoryTypeJapan:
+		parentID = entity.AreaGroupIDJapan
+	case wordpress.CategoryTypeWorld:
+		parentID = entity.AreaGroupIDWorld
+	}
+
+	var pParentID *int
+	if parentID > 0 {
+		pParentID = &parentID
+	}
+
+	category := &entity.Category{
+		ID:       wpCategory.ID,
+		Name:     wpCategory.Name,
+		Type:     categoryType,
+		ParentID: pParentID,
+	}
+
+	return category, nil
+}
+
+func (s *WordpressServiceImpl) convertCategoryType(wpCategory *wordpress.Category) (model.CategoryType, error) {
+	if wpCategory.Parent == 0 {
+		if wpCategory.Type == wordpress.CategoryTypeJapan || wpCategory.Type == wordpress.CategoryTypeWorld {
+			return model.CategoryTypeArea, nil
+		} else {
+			return model.CategoryTypeTheme, nil
+		}
+	}
+
+	parent, err := s.CategoryQueryRepository.FindByID(wpCategory.Parent)
+	if err != nil {
+		return model.CategoryType(0), errors.Wrap(err, "failed to find parent category")
+	}
+
+	switch parent.Type {
+	case model.CategoryTypeArea:
+		return model.CategoryTypeSubArea, nil
+	case model.CategoryTypeSubArea:
+		return model.CategoryTypeSubSubArea, nil
+	case model.CategoryTypeSubSubArea:
+		return model.CategoryTypeSubSubArea, nil
+	case model.CategoryTypeTheme:
+		return model.CategoryTypeTheme, nil
+	}
+
+	return model.CategoryType(0), serror.New(nil, serror.CodeUndefined, "invalid parent category type")
 }
 
 func (s *WordpressServiceImpl) ConvertLcategory(wpLocationCategory *wordpress.LocationCategory) *entity.Lcategory {
