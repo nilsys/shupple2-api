@@ -47,8 +47,9 @@ type (
 	}
 )
 
-func (queryVlog *QueryVlog) GenerateThumbnailURL() string {
-	return "https://files.stayway.jp/vlog/" + strconv.Itoa(queryVlog.VlogTiny.ID)
+// TODO: 仮置き
+func (vlog *VlogTiny) GenerateThumbnailURL() string {
+	return "https://files.stayway.jp/vlog/" + strconv.Itoa(vlog.ID)
 }
 
 func NewVlog(tiny VlogTiny, categoryIDs, touristSpotIDs []int) Vlog {
@@ -73,4 +74,8 @@ func NewVlog(tiny VlogTiny, categoryIDs, touristSpotIDs []int) Vlog {
 		vlogCategories,
 		vlogTouristSpots,
 	}
+}
+
+func (queryVlog *QueryVlog) TableName() string {
+	return "vlog"
 }

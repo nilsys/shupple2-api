@@ -38,7 +38,7 @@ func (r *UserQueryRepositoryImpl) FindByWordpressID(wordpressUserID int) (*entit
 func (r *UserQueryRepositoryImpl) SearchByName(name string) ([]*entity.User, error) {
 	var rows []*entity.User
 
-	if err := r.DB.Select("id, name").Where("MATCH(name) AGAINST(?)", name).Limit(10).Find(&rows).Error; err != nil {
+	if err := r.DB.Where("MATCH(name) AGAINST(?)", name).Limit(10).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find user list by like name")
 	}
 

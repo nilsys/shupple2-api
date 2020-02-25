@@ -39,7 +39,7 @@ func (r *CategoryQueryRepositoryImpl) FindByID(id int) (*entity.Category, error)
 func (r *CategoryQueryRepositoryImpl) SearchByName(name string) ([]*entity.Category, error) {
 	var rows []*entity.Category
 
-	if err := r.DB.Select("id, name, type").Where("MATCH(name) AGAINST(?)", name).Not("type = ?", model.CategoryTypeAreaGroup).Limit(10).Find(&rows).Error; err != nil {
+	if err := r.DB.Where("MATCH(name) AGAINST(?)", name).Not("type = ?", model.CategoryTypeAreaGroup).Limit(defaultSearchSuggestionsNumber).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find category list by like name")
 	}
 

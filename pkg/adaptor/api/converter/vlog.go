@@ -10,23 +10,22 @@ import (
 
 // i/oの構造体からレポジトリで使用するクエリ構造体へconvert
 func ConvertListVlogParamToQuery(param *param.ListVlogParam) *query.FindVlogListQuery {
-	sortBy, _ := model.ParseSortBy(param.SortBy)
 	return &query.FindVlogListQuery{
 		AreaID:        param.AreaID,
 		SubAreaID:     param.SubAreaID,
 		SubSubAreaID:  param.SubSubAreaID,
 		TouristSpotID: param.TouristSpotID,
-		SortBy:        sortBy,
+		SortBy:        param.SortBy,
 		Limit:         param.GetLimit(),
 		OffSet:        param.GetOffSet(),
 	}
 }
 
 func ConvertVlogListToOutput(queryVlogs []*entity.QueryVlog) []*response.Vlog {
-	responseVlogs := []*response.Vlog{}
+	responseVlogs := make([]*response.Vlog, len(queryVlogs))
 
-	for _, queryVlog := range queryVlogs {
-		responseVlogs = append(responseVlogs, convertVlogToOutput(queryVlog))
+	for i, queryVlog := range queryVlogs {
+		responseVlogs[i] = convertVlogToOutput(queryVlog)
 	}
 
 	return responseVlogs

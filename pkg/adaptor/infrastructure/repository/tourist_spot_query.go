@@ -29,7 +29,7 @@ func (r *TouristSpotQueryRepositoryImpl) FindByID(id int) (*entity.TouristSpot, 
 func (r *TouristSpotQueryRepositoryImpl) SearchByName(name string) ([]*entity.TouristSpot, error) {
 	var rows []*entity.TouristSpot
 
-	if err := r.DB.Select("id, name").Where("MATCH(name) AGAINST(?)", name).Limit(10).Find(&rows).Error; err != nil {
+	if err := r.DB.Where("MATCH(name) AGAINST(?)", name).Limit(defaultSearchSuggestionsNumber).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find tourist_spot list by like name")
 	}
 

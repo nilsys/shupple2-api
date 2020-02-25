@@ -32,7 +32,6 @@ func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuer
 	q := r.buildFindByParamsQuery(query)
 
 	if err := q.
-		Table("vlog").
 		Order(query.SortBy.GetVlogOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).

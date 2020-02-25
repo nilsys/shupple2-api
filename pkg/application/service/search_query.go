@@ -10,7 +10,7 @@ import (
 
 type (
 	SearchQueryService interface {
-		ShowSearchSuggestionListByKeyward(keywards string) ([]*entity.SearchSuggetion, error)
+		ShowSearchSuggestionListByKeyward(keywards string) (*entity.SearchSuggetions, error)
 	}
 
 	SearchQueryServiceImpl struct {
@@ -26,7 +26,7 @@ var SearchQueryServiceSet = wire.NewSet(
 	wire.Bind(new(SearchQueryService), new(*SearchQueryServiceImpl)),
 )
 
-func (s *SearchQueryServiceImpl) ShowSearchSuggestionListByKeyward(keyward string) ([]*entity.SearchSuggetion, error) {
+func (s *SearchQueryServiceImpl) ShowSearchSuggestionListByKeyward(keyward string) (*entity.SearchSuggetions, error) {
 	categories, err := s.CategoryQueryRepository.SearchByName(keyward)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed search category list by keyward")
@@ -50,27 +50,29 @@ func (s *SearchQueryServiceImpl) ShowSearchSuggestionListByKeyward(keyward strin
 }
 
 // TODO: リファクタ
-// ただでさえ処理重めなのに。。
-func (s *SearchQueryServiceImpl) convertTargetToSuggetion(categories []*entity.Category, touristSpots []*entity.TouristSpot, hashtags []*entity.Hashtag, users []*entity.User) []*entity.SearchSuggetion {
-	suggetions := make([]*entity.SearchSuggetion, len(categories)+len(touristSpots)+len(hashtags)+len(users))
+func (s *SearchQueryServiceImpl) convertTargetToSuggetion(categories []*entity.Category, touristSpots []*entity.TouristSpot, hashtags []*entity.Hashtag, users []*entity.User) *entity.SearchSuggetions {
+	areaSuggestions := make([]*entity.SearchSuggetion, len(categories))
+	touristSpotSuggestions := make([]*entity.SearchSuggetion, len(touristSpots))
+	hashtagSuggestions := make([]*entity.SearchSuggetion, len(hashtags))
+	userSuggestions := make([]*entity.SearchSuggetion, len(users))
 
 	for i, category := range categories {
 		if category.Type == model.CategoryTypeArea {
-			suggetions[i] = &entity.SearchSuggetion{
+			areaSuggestions[i] = &entity.SearchSuggetion{
 				ID:   category.ID,
 				Type: model.SuggestionTypeArea,
 				Name: category.Name,
 			}
 		}
 		if category.Type == model.CategoryTypeSubArea {
-			suggetions[i] = &entity.SearchSuggetion{
+			areaSuggestions[i] = &entity.SearchSuggetion{
 				ID:   category.ID,
 				Type: model.SuggestionTypeSubArea,
 				Name: category.Name,
 			}
 		}
 		if category.Type == model.CategoryTypeSubSubArea {
-			suggetions[i] = &entity.SearchSuggetion{
+			areaSuggestions[i] = &entity.SearchSuggetion{
 				ID:   category.ID,
 				Type: model.SuggestionTypeSubSubArea,
 				Name: category.Name,
@@ -79,7 +81,7 @@ func (s *SearchQueryServiceImpl) convertTargetToSuggetion(categories []*entity.C
 	}
 
 	for i, touristSpot := range touristSpots {
-		suggetions[len(categories)+i] = &entity.SearchSuggetion{
+		touristSpotSuggestions[i] = &entity.SearchSuggetion{
 			ID:   touristSpot.ID,
 			Type: model.SuggestionTypeTouristSpot,
 			Name: touristSpot.Name,
@@ -87,7 +89,7 @@ func (s *SearchQueryServiceImpl) convertTargetToSuggetion(categories []*entity.C
 	}
 
 	for i, hashTag := range hashtags {
-		suggetions[len(categories)+len(touristSpots)+i] = &entity.SearchSuggetion{
+		hashtagSuggestions[i] = &entity.SearchSuggetion{
 			ID:   hashTag.ID,
 			Type: model.SuggestionTypeHashTag,
 			Name: hashTag.Name,
@@ -95,12 +97,12 @@ func (s *SearchQueryServiceImpl) convertTargetToSuggetion(categories []*entity.C
 	}
 
 	for i, user := range users {
-		suggetions[len(categories)+len(touristSpots)+len(hashtags)+i] = &entity.SearchSuggetion{
+		userSuggestions[i] = &entity.SearchSuggetion{
 			ID:   user.ID,
 			Type: model.SuggestionTypeUser,
 			Name: user.Name,
 		}
 	}
 
-	return suggetions
+	return entity.NewSearchSuggestions(areaSuggestions, touristSpotSuggestions, hashtagSuggestions, userSuggestions)
 }

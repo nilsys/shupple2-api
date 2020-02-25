@@ -25,7 +25,7 @@ func (c *SearchQueryController) ShowSearchSuggestionList(ctx echo.Context) error
 		return errors.Wrap(err, "validation show search suggestion list")
 	}
 
-	suggestions, err := c.SearchQueryService.ShowSearchSuggestionListByKeyward(p.Q)
+	suggestions, err := c.SearchQueryService.ShowSearchSuggestionListByKeyward(p.Value)
 	if err != nil {
 		return errors.Wrap(err, "failed to show search suggestion list")
 	}
