@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS post (
   facebook_count    INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'facebookシェア数',
   twitter_count     INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'twitterシェア数',
   slug              VARCHAR(255) NOT NULL COMMENT 'wordpressのslugを入れる',
+  views             BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '閲覧数',
   created_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   deleted_at        DATETIME DEFAULT NULL,

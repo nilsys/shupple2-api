@@ -12,7 +12,7 @@ type (
 		AreaID        int
 		SubAreaID     int
 		SubSubAreaID  int
-		SortBy        model.SortBy
+		SortBy        model.MediaSortBy
 		Limit         int
 		OffSet        int
 		// InnQueryRepositoryから取得後にいれる

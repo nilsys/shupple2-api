@@ -10,7 +10,12 @@ type Gender int
 /*
 ENUM(NEW = 1, RANKING)
 */
-type SortBy int
+type MediaSortBy int
+
+/*
+ENUM(RANKING, RECOMMEND)
+*/
+type UserSortBy int
 
 /*
 ENUM(AreaGroup = 1, Area, SubArea, SubSubArea, Theme)

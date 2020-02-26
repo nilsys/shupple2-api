@@ -21,6 +21,7 @@ var controllerSet = wire.NewSet(
 	api.FeatureQueryControllerSet,
 	api.VlogQueryControllerSet,
 	api.HashtagQueryControllerSet,
+	api.UserQueryControllerSet,
 )
 
 var serviceSet = wire.NewSet(
@@ -33,6 +34,7 @@ var serviceSet = wire.NewSet(
 	service.FeatureQueryServiceSet,
 	service.VlogQueryServiceSet,
 	service.HashtagQueryServiceSet,
+	service.UserQueryServiceSet,
 )
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
@@ -48,6 +50,7 @@ type App struct {
 	FeatureQueryController api.FeatureQueryController
 	VlogQueryController    api.VlogQueryController
 	HashtagQueryController api.HashtagQueryController
+	UserQueryController    api.UserQueryController
 }
 
 func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {

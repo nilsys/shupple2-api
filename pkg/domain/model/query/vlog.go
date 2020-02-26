@@ -9,7 +9,7 @@ type (
 		SubAreaID     int
 		SubSubAreaID  int
 		TouristSpotID int
-		SortBy        model.SortBy
+		SortBy        model.MediaSortBy
 		Limit         int
 		OffSet        int
 	}

@@ -130,6 +130,12 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	hashtagQueryController := api.HashtagQueryController{
 		HashtagQueryService: hashtagQueryServiceImpl,
 	}
+	userQueryServiceImpl := &service.UserQueryServiceImpl{
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
+	userQueryController := api.UserQueryController{
+		UserQueryService: userQueryServiceImpl,
+	}
 	app := &App{
 		Config:                 configConfig,
 		Echo:                   echoEcho,
@@ -141,6 +147,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		FeatureQueryController: featureQueryController,
 		VlogQueryController:    vlogQueryController,
 		HashtagQueryController: hashtagQueryController,
+		UserQueryController:    userQueryController,
 	}
 	return app, nil
 }
@@ -151,9 +158,9 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.VlogQueryServiceSet, service.HashtagQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.VlogQueryServiceSet, service.HashtagQueryServiceSet, service.UserQueryServiceSet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
 
@@ -168,4 +175,5 @@ type App struct {
 	FeatureQueryController api.FeatureQueryController
 	VlogQueryController    api.VlogQueryController
 	HashtagQueryController api.HashtagQueryController
+	UserQueryController    api.UserQueryController
 }

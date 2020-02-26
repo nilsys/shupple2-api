@@ -36,7 +36,7 @@ func (r *InnQueryRepositoryImpl) FindIDsByAreaID(areaId, subAreaId, subSubAreaId
 		return nil, nil
 	}
 
-	opts := buildFindIDsByAreaIDAQuery(areaId, subAreaId, subSubAreaId)
+	opts := buildFindIDsByAreaIDQuery(areaId, subAreaId, subSubAreaId)
 
 	var res dto.Inns
 	u := r.StaywayConfig.BaseURL + staywayInnAPIPath
@@ -47,7 +47,7 @@ func (r *InnQueryRepositoryImpl) FindIDsByAreaID(areaId, subAreaId, subSubAreaId
 	return res.InnsToIDs(), nil
 }
 
-func buildFindIDsByAreaIDAQuery(areaId, subAreaId, subSubAreaId int) *client.Option {
+func buildFindIDsByAreaIDQuery(areaId, subAreaId, subSubAreaId int) *client.Option {
 	opts := &client.Option{
 		QueryParams: map[string][]string{},
 	}

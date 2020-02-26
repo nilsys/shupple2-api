@@ -17,15 +17,15 @@ type (
 
 	// 記事一覧取得APIパラメータ
 	ListPostParam struct {
-		UserID       int    `query:"userId"`
-		AreaID       int    `query:"areaId"`
-		SubAreaID    int    `query:"subAreaId"`
-		SubSubAreaID int    `query:"subSubAreaId"`
-		ThemeID      int    `query:"themeId"`
-		HashTag      string `query:"hashTag"`
-		SortBy       string `query:"sortBy"`
-		Page         int    `query:"page"`
-		PerPage      int    `query:"perPage"`
+		UserID       int               `query:"userId"`
+		AreaID       int               `query:"areaId"`
+		SubAreaID    int               `query:"subAreaId"`
+		SubSubAreaID int               `query:"subSubAreaId"`
+		ThemeID      int               `query:"themeId"`
+		HashTag      string            `query:"hashTag"`
+		SortBy       model.MediaSortBy `query:"sortBy"`
+		Page         int               `query:"page"`
+		PerPage      int               `query:"perPage"`
 	}
 
 	// ユーザーフィード記事取得APIパラメータ
@@ -42,12 +42,6 @@ const findPostListDefaultPerPage = 10
 func (param ListPostParam) Validate() error {
 	if param.UserID == 0 && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.HashTag == "" {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid find post list param")
-	}
-
-	if param.SortBy != "" {
-		if _, err := model.ParseSortBy(param.SortBy); err != nil {
-			return serror.New(err, serror.CodeInvalidParam, "Invalid show review list sortBy")
-		}
 	}
 
 	return nil

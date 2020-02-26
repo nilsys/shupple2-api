@@ -11,7 +11,7 @@ type (
 		SubSubAreaID int
 		ThemeID      int
 		HashTag      string
-		SortBy       model.SortBy
+		SortBy       model.MediaSortBy
 		Limit        int
 		OffSet       int
 	}

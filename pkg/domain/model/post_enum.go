@@ -2,11 +2,11 @@ package model
 
 // queryのORDERで使用する値を返す
 // デフォルトは新着順を表すNEW
-func (sortBy SortBy) GetPostOrderQuery() string {
+func (sortBy MediaSortBy) GetPostOrderQuery() string {
 	switch sortBy {
-	case SortByRANKING:
+	case MediaSortByRANKING:
 		return "favorite_count desc"
-	case SortByNEW:
+	case MediaSortByNEW:
 		return "created_at desc"
 	default:
 		return "created_at desc"

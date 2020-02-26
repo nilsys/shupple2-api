@@ -122,49 +122,49 @@ func (x *Gender) UnmarshalText(text []byte) error {
 }
 
 const (
-	// SortByNEW is a SortBy of type NEW
-	SortByNEW SortBy = iota + 1
-	// SortByRANKING is a SortBy of type RANKING
-	SortByRANKING
+	// MediaSortByNEW is a MediaSortBy of type NEW
+	MediaSortByNEW MediaSortBy = iota + 1
+	// MediaSortByRANKING is a MediaSortBy of type RANKING
+	MediaSortByRANKING
 )
 
-const _SortByName = "NEWRANKING"
+const _MediaSortByName = "NEWRANKING"
 
-var _SortByMap = map[SortBy]string{
-	1: _SortByName[0:3],
-	2: _SortByName[3:10],
+var _MediaSortByMap = map[MediaSortBy]string{
+	1: _MediaSortByName[0:3],
+	2: _MediaSortByName[3:10],
 }
 
 // String implements the Stringer interface.
-func (x SortBy) String() string {
-	if str, ok := _SortByMap[x]; ok {
+func (x MediaSortBy) String() string {
+	if str, ok := _MediaSortByMap[x]; ok {
 		return str
 	}
-	return fmt.Sprintf("SortBy(%d)", x)
+	return fmt.Sprintf("MediaSortBy(%d)", x)
 }
 
-var _SortByValue = map[string]SortBy{
-	_SortByName[0:3]:  1,
-	_SortByName[3:10]: 2,
+var _MediaSortByValue = map[string]MediaSortBy{
+	_MediaSortByName[0:3]:  1,
+	_MediaSortByName[3:10]: 2,
 }
 
-// ParseSortBy attempts to convert a string to a SortBy
-func ParseSortBy(name string) (SortBy, error) {
-	if x, ok := _SortByValue[name]; ok {
+// ParseMediaSortBy attempts to convert a string to a MediaSortBy
+func ParseMediaSortBy(name string) (MediaSortBy, error) {
+	if x, ok := _MediaSortByValue[name]; ok {
 		return x, nil
 	}
-	return SortBy(0), fmt.Errorf("%s is not a valid SortBy", name)
+	return MediaSortBy(0), fmt.Errorf("%s is not a valid MediaSortBy", name)
 }
 
 // MarshalText implements the text marshaller method
-func (x SortBy) MarshalText() ([]byte, error) {
+func (x MediaSortBy) MarshalText() ([]byte, error) {
 	return []byte(x.String()), nil
 }
 
 // UnmarshalText implements the text unmarshaller method
-func (x *SortBy) UnmarshalText(text []byte) error {
+func (x *MediaSortBy) UnmarshalText(text []byte) error {
 	name := string(text)
-	tmp, err := ParseSortBy(name)
+	tmp, err := ParseMediaSortBy(name)
 	if err != nil {
 		return err
 	}
@@ -232,6 +232,57 @@ func (x SuggestionType) MarshalText() ([]byte, error) {
 func (x *SuggestionType) UnmarshalText(text []byte) error {
 	name := string(text)
 	tmp, err := ParseSuggestionType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
+	// UserSortByRANKING is a UserSortBy of type RANKING
+	UserSortByRANKING UserSortBy = iota
+	// UserSortByRECOMMEND is a UserSortBy of type RECOMMEND
+	UserSortByRECOMMEND
+)
+
+const _UserSortByName = "RANKINGRECOMMEND"
+
+var _UserSortByMap = map[UserSortBy]string{
+	0: _UserSortByName[0:7],
+	1: _UserSortByName[7:16],
+}
+
+// String implements the Stringer interface.
+func (x UserSortBy) String() string {
+	if str, ok := _UserSortByMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("UserSortBy(%d)", x)
+}
+
+var _UserSortByValue = map[string]UserSortBy{
+	_UserSortByName[0:7]:  0,
+	_UserSortByName[7:16]: 1,
+}
+
+// ParseUserSortBy attempts to convert a string to a UserSortBy
+func ParseUserSortBy(name string) (UserSortBy, error) {
+	if x, ok := _UserSortByValue[name]; ok {
+		return x, nil
+	}
+	return UserSortBy(0), fmt.Errorf("%s is not a valid UserSortBy", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x UserSortBy) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *UserSortBy) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseUserSortBy(name)
 	if err != nil {
 		return err
 	}
