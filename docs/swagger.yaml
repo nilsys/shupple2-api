@@ -989,6 +989,7 @@ paths:
             検索ワード
           schema:
             type: string
+        - $ref: "#/components/parameters/SearchSuggestion"
       responses:
         "200":
           description: OK
@@ -1063,6 +1064,20 @@ components:
           - RANKING
           - RECOMMEND
         default: RECOMMEND
+    SearchSuggestion:
+      name: type
+      in: query
+      description: |
+        検索対象絞り込み
+      schema:
+        type: string
+        enum:
+          - Area
+          - SubArea
+          - SubSubArea
+          - TouristSpot
+          - Hashtag
+          - User
   requestBodies:
     UserRequest:
       content:
@@ -1530,6 +1545,16 @@ components:
           type: string
           description: 関連宿を探すためのURL
           example: http://stayway.jp/zekkei/recommend
+        rate:
+          type: number
+          format: double
+          description: 評価
+          example: 3.5
+        vendorRate:
+          type: number
+          format: double
+          description: 外部評価
+          example: 2.5
         categories:
           type: array
           description: カテゴリー
@@ -1661,13 +1686,9 @@ components:
           description: エリアID
           example: 1
         name:
-          type: array
-          items:
-            type: string
-            description: エリア名
-          example:
-            - 北海道
-            - 東北
+          type: string
+          description: エリア名
+          example: 北海道
         url:
           type: string
           description: url
