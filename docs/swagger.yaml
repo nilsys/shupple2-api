@@ -173,7 +173,7 @@ paths:
                   url:
                     type: string
                     description: PutObjectに使用する署名付きURL
-  /review:
+  /reviews:
     get:
       tags:
         - review
@@ -211,6 +211,7 @@ paths:
             検索ワード
           schema:
             type: string
+        - $ref: "#/components/parameters/ReviewSortBy"
         - in: query
           name: excludeId
           description: |
@@ -257,7 +258,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /review/:id:
+  /reviews/:id:
     get:
       tags:
         - review
@@ -324,7 +325,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /review/:id/comment:
+  /reviews/:id/comment:
     get:
       tags:
         - review
@@ -389,7 +390,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /review/:id/favorite:
+  /reviews/:id/favorite:
     put:
       tags:
         - review
@@ -1051,6 +1052,19 @@ components:
         enum:
           - RANKING
           - NEW
+    ReviewSortBy:
+      name: sortBy
+      in: query
+      description: |
+        ソート:
+          * RECOMMEND - おすすめ順
+          * NEW - 新着順順
+      schema:
+        type: string
+        enum:
+          - RECOMMEND
+          - NEW
+        default: NEW
     UserSortBy:
       name: sortBy
       in: query
@@ -1177,7 +1191,7 @@ components:
       description: |
         spot_idかinn_idのどちらかは必ず入っていないといけない
       properties:
-        trabelDate:
+        travelDate:
           type: string
           description: |
             旅行日
@@ -1214,9 +1228,13 @@ components:
     Review:
       type: object
       properties:
+        id:
+          type: integer
+          description: レビューID
+          example: 1
         spotId:
           type: integer
-        InnId:
+        innId:
           type: integer
         score:
           type: integer
@@ -1234,7 +1252,7 @@ components:
           type: string
           description: 最終更新日時, ISO 8601形式
           example: 2020-01-01T13:16+09:00
-        trabelDate:
+        travelDate:
           type: string
           description: |
             旅行日
@@ -1244,6 +1262,8 @@ components:
           description: レビューに紐づくハッシュタグ
           items:
             $ref: "#/components/schemas/Hashtag"
+        creator:
+          $ref: "#/components/schemas/Creator"
     ReviewShow:
       type: object
       properties:
@@ -1269,7 +1289,7 @@ components:
           type: string
           description: 最終更新日時, ISO 8601形式
           example: 2020-01-01T13:16+09:00
-        trabelDate:
+        travelDate:
           type: string
           description: |
             旅行日
@@ -1283,6 +1303,8 @@ components:
           description: レビューに紐づくハッシュタグ
           items:
             $ref: "#/components/schemas/Hashtag"
+        creator:
+          $ref: "#/components/schemas/Creator"
     Media:
       type: object
       properties:
