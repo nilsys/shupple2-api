@@ -22,6 +22,7 @@ var controllerSet = wire.NewSet(
 	api.VlogQueryControllerSet,
 	api.HashtagQueryControllerSet,
 	api.UserQueryControllerSet,
+	api.HealthCheckControllerSet,
 )
 
 var serviceSet = wire.NewSet(
@@ -51,6 +52,7 @@ type App struct {
 	VlogQueryController    api.VlogQueryController
 	HashtagQueryController api.HashtagQueryController
 	UserQueryController    api.UserQueryController
+	HealthCheckController  api.HealthCheckController
 }
 
 func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {

@@ -136,6 +136,12 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	userQueryController := api.UserQueryController{
 		UserQueryService: userQueryServiceImpl,
 	}
+	healthCheckRepository := &repository.HealthCheckRepositoryImpl{
+		DB: db,
+	}
+	healthCheckContoroller := api.HealthCheckController{
+		HealthCheckRepository: healthCheckRepository,
+	}
 	app := &App{
 		Config:                 configConfig,
 		Echo:                   echoEcho,
@@ -148,6 +154,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		VlogQueryController:    vlogQueryController,
 		HashtagQueryController: hashtagQueryController,
 		UserQueryController:    userQueryController,
+		HealthCheckController:  healthCheckContoroller,
 	}
 	return app, nil
 }
@@ -176,4 +183,5 @@ type App struct {
 	VlogQueryController    api.VlogQueryController
 	HashtagQueryController api.HashtagQueryController
 	UserQueryController    api.UserQueryController
+	HealthCheckController  api.HealthCheckController
 }

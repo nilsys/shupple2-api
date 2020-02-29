@@ -17,7 +17,6 @@ require (
 	github.com/jinzhu/gorm v1.9.2
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/jinzhu/now v1.0.1 // indirect
-	github.com/k0kubun/pp v3.0.1+incompatible
 	github.com/labstack/echo/v4 v4.1.13
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/onsi/ginkgo v1.11.0

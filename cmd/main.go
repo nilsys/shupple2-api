@@ -56,4 +56,5 @@ func setRoutes(app *App) {
 	api.GET("/feature_posts/:id", app.FeatureQueryController.ShowQuery)
 	api.GET("/vlogs", app.VlogQueryController.ListVlog)
 	api.GET("/hashtags/recommend", app.HashtagQueryController.ListRecommendHashtag)
+	api.GET("/healthcheck", app.HealthCheckController.HealthCheck)
 }
