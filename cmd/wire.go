@@ -15,6 +15,7 @@ import (
 var controllerSet = wire.NewSet(
 	api.PostQueryControllerSet,
 	api.PostCommandControllerSet,
+	api.CategoryQueryControllerSet,
 	api.ComicQueryControllerSet,
 	api.ReviewQueryControllerSet,
 	api.SearchQueryControllerSet,
@@ -28,6 +29,7 @@ var controllerSet = wire.NewSet(
 var serviceSet = wire.NewSet(
 	service.PostQueryServiceSet,
 	service.PostCommandServiceSet,
+	service.CategoryQueryServiceSet,
 	service.ComicQueryServiceSet,
 	service.ReviewQueryServiceSet,
 	service.WordpressServiceSet,
@@ -41,18 +43,19 @@ var serviceSet = wire.NewSet(
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
 
 type App struct {
-	Config                 *config.Config
-	Echo                   *echo.Echo
-	PostCommandController  api.PostCommandController
-	PostQueryController    api.PostQueryController
-	ComicQueryController   api.ComicQueryController
-	ReviewQueryController  api.ReviewQueryController
-	SearchQueryController  api.SearchQueryController
-	FeatureQueryController api.FeatureQueryController
-	VlogQueryController    api.VlogQueryController
-	HashtagQueryController api.HashtagQueryController
-	UserQueryController    api.UserQueryController
-	HealthCheckController  api.HealthCheckController
+	Config                  *config.Config
+	Echo                    *echo.Echo
+	PostCommandController   api.PostCommandController
+	PostQueryController     api.PostQueryController
+	CategoryQueryController api.CategoryQueryController
+	ComicQueryController    api.ComicQueryController
+	ReviewQueryController   api.ReviewQueryController
+	HashtagQueryController  api.HashtagQueryController
+	SearchQueryController   api.SearchQueryController
+	FeatureQueryController  api.FeatureQueryController
+	VlogQueryController     api.VlogQueryController
+	UserQueryController     api.UserQueryController
+	HealthCheckController   api.HealthCheckController
 }
 
 func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {

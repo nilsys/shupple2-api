@@ -18,6 +18,42 @@ var CategoryQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.CategoryQueryRepository), new(*CategoryQueryRepositoryImpl)),
 )
 
+func (r *CategoryQueryRepositoryImpl) FindTypeByID(id int) (*model.CategoryType, error) {
+	var category entity.Category
+
+	if err := r.DB.First(&category, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "failed to find category_type by parentCategoryID")
+	}
+
+	return &category.Type, nil
+}
+
+func (r *CategoryQueryRepositoryImpl) FindListByParentCategoryID(parentCategoryID int, limit int, excludeID []int) ([]*entity.Category, error) {
+	var rows []*entity.Category
+	q := r.buildFindListByParentCategoryID(limit, excludeID)
+
+	if err := q.Where("parent_id = ?", parentCategoryID).Find(&rows).Error; err != nil {
+		return nil, errors.Wrapf(err, "category not found")
+	}
+
+	return rows, nil
+}
+
+// FindListByParentCategoryID関数内でのqueryBuilder
+func (r *CategoryQueryRepositoryImpl) buildFindListByParentCategoryID(limit int, excludeID []int) *gorm.DB {
+	if limit == 0 {
+		limit = defaultAcquisitionNumber
+	}
+
+	query := r.DB.Limit(limit)
+
+	if len(excludeID) > 0 {
+		query = query.Not("id", excludeID)
+	}
+
+	return query
+}
+
 func (r *CategoryQueryRepositoryImpl) FindByIDs(ids []int) ([]*entity.Category, error) {
 	var categories []*entity.Category
 

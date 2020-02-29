@@ -64,6 +64,12 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	postQueryController := api.PostQueryController{
 		PostService: postQueryServiceImpl,
 	}
+	categoryQueryServiceImpl := &service.CategoryQueryServiceImpl{
+		Repository: categoryQueryRepositoryImpl,
+	}
+	categoryQueryController := api.CategoryQueryController{
+		CategoryQueryService: categoryQueryServiceImpl,
+	}
 	comicQueryRepositoryImpl := &repository.ComicQueryRepositoryImpl{
 		DB: db,
 	}
@@ -143,18 +149,19 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		HealthCheckRepository: healthCheckRepository,
 	}
 	app := &App{
-		Config:                 configConfig,
-		Echo:                   echoEcho,
-		PostCommandController:  postCommandController,
-		PostQueryController:    postQueryController,
-		ComicQueryController:   comicQueryController,
-		ReviewQueryController:  reviewQueryController,
-		SearchQueryController:  searchQueryController,
-		FeatureQueryController: featureQueryController,
-		VlogQueryController:    vlogQueryController,
-		HashtagQueryController: hashtagQueryController,
-		UserQueryController:    userQueryController,
-		HealthCheckController:  healthCheckContoroller,
+		Config:                  configConfig,
+		Echo:                    echoEcho,
+		PostCommandController:   postCommandController,
+		PostQueryController:     postQueryController,
+		CategoryQueryController: categoryQueryController,
+		ComicQueryController:    comicQueryController,
+		ReviewQueryController:   reviewQueryController,
+		HashtagQueryController:  hashtagQueryController,
+		SearchQueryController:   searchQueryController,
+		FeatureQueryController:  featureQueryController,
+		VlogQueryController:     vlogQueryController,
+		UserQueryController:     userQueryController,
+		HealthCheckController:   healthCheckContoroller,
 	}
 	return app, nil
 }
@@ -165,23 +172,24 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.VlogQueryServiceSet, service.HashtagQueryServiceSet, service.UserQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.VlogQueryServiceSet, service.HashtagQueryServiceSet, service.UserQueryServiceSet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
 
 type App struct {
-	Config                 *config.Config
-	Echo                   *echo.Echo
-	PostCommandController  api.PostCommandController
-	PostQueryController    api.PostQueryController
-	ComicQueryController   api.ComicQueryController
-	ReviewQueryController  api.ReviewQueryController
-	SearchQueryController  api.SearchQueryController
-	FeatureQueryController api.FeatureQueryController
-	VlogQueryController    api.VlogQueryController
-	HashtagQueryController api.HashtagQueryController
-	UserQueryController    api.UserQueryController
-	HealthCheckController  api.HealthCheckController
+	Config                  *config.Config
+	Echo                    *echo.Echo
+	PostCommandController   api.PostCommandController
+	PostQueryController     api.PostQueryController
+	CategoryQueryController api.CategoryQueryController
+	ComicQueryController    api.ComicQueryController
+	ReviewQueryController   api.ReviewQueryController
+	HashtagQueryController  api.HashtagQueryController
+	SearchQueryController   api.SearchQueryController
+	FeatureQueryController  api.FeatureQueryController
+	VlogQueryController     api.VlogQueryController
+	UserQueryController     api.UserQueryController
+	HealthCheckController   api.HealthCheckController
 }
