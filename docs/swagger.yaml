@@ -113,13 +113,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RankingUserList"
-  /users/follow:
+  /users/{id}/followee:
     get:
       tags:
         - user
       summary: フォローユーザー取得
       security:
         - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: UserId
+          schema:
+            type: integer
       responses:
         '200':
           description: 成功
@@ -127,13 +134,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FollowUserList"
-  /users/follower:
+  /users/{id}/follower:
     get:
       tags:
         - user
       summary: フォローワーユーザー取得
       security:
         - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: UserId
+          schema:
+            type: integer
       responses:
         '200':
           description: 成功
@@ -278,7 +292,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ReviewShow"
+                $ref: "#/components/schemas/Review"
         "404":
           description: 存在しないレビュー
           content:
@@ -1226,45 +1240,6 @@ components:
                 description: 拡張子
                 example: png
     Review:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: レビューID
-          example: 1
-        spotId:
-          type: integer
-        innId:
-          type: integer
-        score:
-          type: integer
-        body:
-          type: string
-        favoriteCount:
-          type: integer
-        media:
-          type: array
-          items:
-            $ref: "#/components/schemas/Media"
-        accompanying:
-          $ref: "#/components/schemas/Accompanying"
-        updatedAt:
-          type: string
-          description: 最終更新日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
-        travelDate:
-          type: string
-          description: |
-            旅行日
-            format yyyy-MM
-        hashtag:
-          type: array
-          description: レビューに紐づくハッシュタグ
-          items:
-            $ref: "#/components/schemas/Hashtag"
-        creator:
-          $ref: "#/components/schemas/Creator"
-    ReviewShow:
       type: object
       properties:
         id:
