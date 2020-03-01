@@ -16,6 +16,7 @@ func ConvertListVlogParamToQuery(param *param.ListVlogParam) *query.FindVlogList
 		SubSubAreaID:  param.SubSubAreaID,
 		TouristSpotID: param.TouristSpotID,
 		SortBy:        param.SortBy,
+		Keyward:       param.Keyward,
 		Limit:         param.GetLimit(),
 		OffSet:        param.GetOffSet(),
 	}

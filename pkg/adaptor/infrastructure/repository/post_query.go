@@ -45,7 +45,6 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 	q := r.buildFindListByParamsQuery(query)
 
 	if err := q.
-		Table("post").
 		Order(query.SortBy.GetPostOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
@@ -64,7 +63,6 @@ func (r *PostQueryRepositoryImpl) FindFeedListByUserID(userID int, query *query.
 	q := r.buildFindFeedListQuery(userID)
 
 	if err := q.
-		Table("post").
 		Order("updated_at desc").
 		Limit(query.Limit).
 		Offset(query.Offset).
@@ -101,6 +99,11 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 
 	if query.HashTag != "" {
 		q = q.Where("id IN (SELECT post_id FROM post_hashtag WHERE hashtag_id = (SELECT id FROM hashtag WHERE name = ?))", query.HashTag)
+	}
+
+	// TODO: titleに引っかかる物が優先順位が高い、その後body
+	if query.Keyward != "" {
+		q = q.Where("MATCH(title) AGAINST(?)", query.Keyward).Or("id IN (SELECT post_id FROM post_body WHERE MATCH(body) AGAINST(?))", query.Keyward)
 	}
 
 	return q

@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS review (
   deleted_at     DATETIME DEFAULT NULL,
   PRIMARY KEY(id),
   CONSTRAINT review_user_id FOREIGN KEY(user_id) REFERENCES user(id),
+  FULLTEXT KEY(body) WITH PARSER NGRAM,
   CONSTRAINT review_tourist_spot_id FOREIGN KEY(tourist_spot_id) REFERENCES tourist_spot(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

@@ -91,6 +91,10 @@ func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowRe
 		q = q.Where("inn_id IN (?)", query.InnIDs)
 	}
 
+	if query.Keyward != "" {
+		q = q.Where("MATCH(body) AGAINST(?)", query.Keyward)
+	}
+
 	return q
 }
 

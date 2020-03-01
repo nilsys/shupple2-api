@@ -24,6 +24,7 @@ type (
 		ThemeID      int               `query:"themeId"`
 		HashTag      string            `query:"hashTag"`
 		SortBy       model.MediaSortBy `query:"sortBy"`
+		Keyward      string            `query:"q"`
 		Page         int               `query:"page"`
 		PerPage      int               `query:"perPage"`
 	}
@@ -40,7 +41,7 @@ const findPostListDefaultPerPage = 10
 
 // いずれのクエリも飛んでこない場合 or sortの値が期待値以外の場合エラーを返す
 func (param ListPostParam) Validate() error {
-	if param.UserID == 0 && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.HashTag == "" {
+	if param.UserID == 0 && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.HashTag == "" && param.Keyward == "" {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid find post list param")
 	}
 

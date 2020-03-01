@@ -62,5 +62,9 @@ func (r *VlogQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindVlogLi
 		q = q.Where("id IN (SELECT vlog_id FROM vlog_tourist_spot WHERE tourist_spot_id = ?)", query.SubSubAreaID)
 	}
 
+	if query.Keyward != "" {
+		q = q.Where("MATCH(title) AGAINST(?)", query.Keyward).Or("MATCH(body) AGAINST(?)", query.Keyward)
+	}
+
 	return q
 }

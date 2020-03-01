@@ -12,6 +12,7 @@ type (
 		ThemeID      int
 		HashTag      string
 		SortBy       model.MediaSortBy
+		Keyward      string
 		Limit        int
 		OffSet       int
 	}

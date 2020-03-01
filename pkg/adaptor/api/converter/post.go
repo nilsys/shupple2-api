@@ -18,6 +18,7 @@ func ConvertFindPostListParamToQuery(param *param.ListPostParam) *query.FindPost
 		ThemeID:      param.ThemeID,
 		HashTag:      param.HashTag,
 		SortBy:       param.SortBy,
+		Keyward:      param.Keyward,
 		Limit:        param.GetLimit(),
 		OffSet:       param.GetOffSet(),
 	}

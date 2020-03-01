@@ -13,6 +13,7 @@ type (
 		SubAreaID     int
 		SubSubAreaID  int
 		SortBy        model.MediaSortBy
+		Keyward       string
 		Limit         int
 		OffSet        int
 		// InnQueryRepositoryから取得後にいれる

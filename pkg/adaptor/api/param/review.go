@@ -15,6 +15,7 @@ type (
 		SubAreaID     int               `query:"subAreaId"`
 		SubSubAreaID  int               `query:"subSubAreaID"`
 		SortBy        model.MediaSortBy `query:"sortBy"`
+		Keyward       string            `query:"q"`
 		PerPage       int               `query:"perPage"`
 		Page          int               `query:"page"`
 	}
@@ -30,7 +31,7 @@ const getReviewsDefaultPerPage = 10
 
 // いずれのクエリも飛んで来なかった場合エラーを返す
 func (param *ListReviewParams) Validate() error {
-	if param.UserID == 0 && param.InnID == 0 && param.TouristSpotID == 0 && param.HashTag == "" && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 {
+	if param.UserID == 0 && param.InnID == 0 && param.TouristSpotID == 0 && param.HashTag == "" && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.Keyward == "" {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid show review param")
 	}
 

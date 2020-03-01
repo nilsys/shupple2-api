@@ -10,6 +10,7 @@ type (
 		SubSubAreaID  int
 		TouristSpotID int
 		SortBy        model.MediaSortBy
+		Keyward       string
 		Limit         int
 		OffSet        int
 	}
