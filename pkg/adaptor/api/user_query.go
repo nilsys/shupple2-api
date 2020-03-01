@@ -34,3 +34,33 @@ func (c *UserQueryController) ShowUserRanking(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, converter.ConvertUserRankingToOutput(users))
 }
+
+func (c *UserQueryController) ListFolloweeUsers(ctx echo.Context) error {
+	p := &param.ListFollowUser{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "validation list followee user")
+	}
+
+	q := converter.ConvertListFollowUserParamToQuery(p)
+
+	users, err := c.UserQueryService.ListFollowee(q)
+	if err != nil {
+		return errors.Wrap(err, "failed to list user follow")
+	}
+	return ctx.JSON(http.StatusOK, converter.ConvertUsersToFollowUsers(users))
+}
+
+func (c *UserQueryController) ListFollowerUsers(ctx echo.Context) error {
+	p := &param.ListFollowUser{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "validation list follower user")
+	}
+
+	q := converter.ConvertListFollowUserParamToQuery(p)
+
+	users, err := c.UserQueryService.ListFollower(q)
+	if err != nil {
+		return errors.Wrap(err, "failed to list user follower")
+	}
+	return ctx.JSON(http.StatusOK, converter.ConvertUsersToFollowUsers(users))
+}

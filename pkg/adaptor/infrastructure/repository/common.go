@@ -44,6 +44,7 @@ var RepositoriesSet = wire.NewSet(
 	ReviewQueryRepositorySet,
 	InnQueryRepositorySet,
 	HashtagQueryRepositorySet,
+	HealthCheckRepositorySet,
 )
 
 func ProvideDB(config *config.Config) (*gorm.DB, error) {

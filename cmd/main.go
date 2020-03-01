@@ -41,6 +41,8 @@ func setRoutes(app *App) {
 	api := app.Echo.Group("/api")
 
 	api.GET("/users/ranking", app.UserQueryController.ShowUserRanking)
+	api.GET("/users/:id/followee", app.UserQueryController.ListFolloweeUsers)
+	api.GET("/users/:id/follower", app.UserQueryController.ListFollowerUsers)
 	api.GET("/posts", app.PostQueryController.ListPost)
 	api.POST("/posts", app.PostCommandController.Store)
 	api.GET("/posts/:id", app.PostQueryController.ShowQuery)

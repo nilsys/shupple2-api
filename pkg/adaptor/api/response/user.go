@@ -15,6 +15,13 @@ type (
 		Thumbnail string   `json:"thumbnail"`
 		Interest  []string `json:"interest"`
 	}
+
+	// MEMO: ユースケースが増えれば命名返る
+	FollowUser struct {
+		ID        int    `json:"id"`
+		Name      string `json:"name"`
+		Thumbnail string `json:"thumbnail"`
+	}
 )
 
 func NewCreator(thumbnail string, name string, profile string) Creator {

@@ -97,10 +97,16 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	reviewQueryController := api.ReviewQueryController{
 		ReviewQueryService: reviewQueryServiceImpl,
 	}
-	touristSpotQueryRepositoryImpl := &repository.TouristSpotQueryRepositoryImpl{
+	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
 		DB: db,
 	}
-	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
+	hashtagQueryServiceImpl := &service.HashtagQueryServiceImpl{
+		HashtagQueryRepository: hashtagQueryRepositoryImpl,
+	}
+	hashtagQueryController := api.HashtagQueryController{
+		HashtagQueryService: hashtagQueryServiceImpl,
+	}
+	touristSpotQueryRepositoryImpl := &repository.TouristSpotQueryRepositoryImpl{
 		DB: db,
 	}
 	searchQueryServiceImpl := &service.SearchQueryServiceImpl{
@@ -130,23 +136,17 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	vlogQueryController := api.VlogQueryController{
 		VlogQueryService: vlogQueryServiceImpl,
 	}
-	hashtagQueryServiceImpl := &service.HashtagQueryServiceImpl{
-		HashtagQueryRepository: hashtagQueryRepositoryImpl,
-	}
-	hashtagQueryController := api.HashtagQueryController{
-		HashtagQueryService: hashtagQueryServiceImpl,
-	}
 	userQueryServiceImpl := &service.UserQueryServiceImpl{
 		UserQueryRepository: userQueryRepositoryImpl,
 	}
 	userQueryController := api.UserQueryController{
 		UserQueryService: userQueryServiceImpl,
 	}
-	healthCheckRepository := &repository.HealthCheckRepositoryImpl{
+	healthCheckRepositoryImpl := &repository.HealthCheckRepositoryImpl{
 		DB: db,
 	}
-	healthCheckContoroller := api.HealthCheckController{
-		HealthCheckRepository: healthCheckRepository,
+	healthCheckController := api.HealthCheckController{
+		HealthCheckRepository: healthCheckRepositoryImpl,
 	}
 	app := &App{
 		Config:                  configConfig,
@@ -161,7 +161,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		FeatureQueryController:  featureQueryController,
 		VlogQueryController:     vlogQueryController,
 		UserQueryController:     userQueryController,
-		HealthCheckController:   healthCheckContoroller,
+		HealthCheckController:   healthCheckController,
 	}
 	return app, nil
 }
@@ -172,7 +172,7 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.HealthCheckControllerSet)
 
 var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.VlogQueryServiceSet, service.HashtagQueryServiceSet, service.UserQueryServiceSet)
 

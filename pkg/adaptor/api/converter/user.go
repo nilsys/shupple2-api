@@ -8,6 +8,9 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
+/*
+ * o -> i
+ */
 func ConvertListRankinUserParamToQuery(param *param.ListUserRanking) *query.FindUserRankingListQuery {
 	var categoryID int
 	fromDate, _ := model.ParseTimeFromFrontStr(param.FromDate)
@@ -32,6 +35,17 @@ func ConvertListRankinUserParamToQuery(param *param.ListUserRanking) *query.Find
 	}
 }
 
+func ConvertListFollowUserParamToQuery(param *param.ListFollowUser) *query.FindFollowUser {
+	return &query.FindFollowUser{
+		ID:     param.ID,
+		Limit:  param.GetLimit(),
+		Offset: param.GetOffset(),
+	}
+}
+
+/*
+ * i -> o
+ */
 func ConvertUserRankingToOutput(users []*entity.QueryRankingUser) []*response.RankinUser {
 	userRanking := make([]*response.RankinUser, len(users))
 
@@ -40,6 +54,22 @@ func ConvertUserRankingToOutput(users []*entity.QueryRankingUser) []*response.Ra
 	}
 
 	return userRanking
+}
+
+func ConvertUsersToFollowUsers(users []*entity.User) []*response.FollowUser {
+	followUsers := make([]*response.FollowUser, len(users))
+	for i, user := range users {
+		followUsers[i] = convertUserToFollowUser(user)
+	}
+	return followUsers
+}
+
+func convertUserToFollowUser(user *entity.User) *response.FollowUser {
+	return &response.FollowUser{
+		ID:        user.ID,
+		Name:      user.Name,
+		Thumbnail: user.GenerateThumbnailURL(),
+	}
 }
 
 // QueryRankingUserをランキング一覧で返す型にコンバート

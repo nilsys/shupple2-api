@@ -57,8 +57,36 @@ func (r *UserQueryRepositoryImpl) FindUserRankingListByParams(query *query.FindU
 func (r *UserQueryRepositoryImpl) SearchByName(name string) ([]*entity.User, error) {
 	var rows []*entity.User
 
-	if err := r.DB.Where("MATCH(name) AGAINST(?)", name).Limit(10).Find(&rows).Error; err != nil {
+	if err := r.DB.Where("MATCH(name) AGAINST(?)", name).Limit(defaultSearchSuggestionsNumber).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find user list by like name")
+	}
+
+	return rows, nil
+}
+
+// idで指定されたユーザーがフォローしているユーザー
+func (r *UserQueryRepositoryImpl) FindFolloweeByID(query *query.FindFollowUser) ([]*entity.User, error) {
+	var rows []*entity.User
+
+	if err := r.DB.Where("id IN (SELECT target_id FROM user_followee WHERE user_id = ?)", query.ID).
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Find(&rows).Error; err != nil {
+		return nil, errors.Wrapf(err, "failed find follow user list user_id=%d", query.ID)
+	}
+
+	return rows, nil
+}
+
+// idで指定されたユーザーがフォローされているユーザー
+func (r *UserQueryRepositoryImpl) FindFollowerByID(query *query.FindFollowUser) ([]*entity.User, error) {
+	var rows []*entity.User
+
+	if err := r.DB.Where("id IN (SELECT user_id FROM user_followed WHERE target_id = ?)", query.ID).
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Find(&rows).Error; err != nil {
+		return nil, errors.Wrapf(err, "failed find follower user list user_id=%d", query.ID)
 	}
 
 	return rows, nil

@@ -16,6 +16,12 @@ type (
 		PerPage      int              `query:"perPage"`
 		Page         int              `query:"page"`
 	}
+
+	ListFollowUser struct {
+		ID      int `param:"id" validate:"required"`
+		PerPage int `query:"perPage"`
+		Page    int `query:"page"`
+	}
 )
 
 const getUsersDefaultPerPage = 30
@@ -52,6 +58,22 @@ func (param *ListUserRanking) GetLimit() int {
 
 // offsetを返す(sqlで使う想定)
 func (param *ListUserRanking) GetOffset() int {
+	if param.Page == 1 || param.Page == 0 {
+		return 0
+	}
+	return param.GetLimit()*(param.Page-1) + 1
+}
+
+// PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
+func (param *ListFollowUser) GetLimit() int {
+	if param.PerPage == 0 {
+		return getUsersDefaultPerPage
+	}
+	return param.PerPage
+}
+
+// offsetを返す(sqlで使う想定)
+func (param *ListFollowUser) GetOffset() int {
 	if param.Page == 1 || param.Page == 0 {
 		return 0
 	}

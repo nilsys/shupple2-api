@@ -15,4 +15,10 @@ type (
 		Limit      int
 		Offset     int
 	}
+
+	FindFollowUser struct {
+		ID     int
+		Limit  int
+		Offset int
+	}
 )

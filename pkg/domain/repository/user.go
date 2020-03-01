@@ -17,5 +17,7 @@ type (
 		FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.QueryRankingUser, error)
 		// name部分一致検索
 		SearchByName(name string) ([]*entity.User, error)
+		FindFolloweeByID(query *query.FindFollowUser) ([]*entity.User, error)
+		FindFollowerByID(query *query.FindFollowUser) ([]*entity.User, error)
 	}
 )
