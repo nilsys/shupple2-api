@@ -20,3 +20,9 @@ var PostCommandRepositorySet = wire.NewSet(
 func (r *PostCommandRepositoryImpl) Store(post *entity.Post) error {
 	return errors.Wrap(r.DB.Save(post).Error, "failed to save post")
 }
+
+func (r *PostCommandRepositoryImpl) DeleteByID(id int) error {
+	e := &entity.Post{}
+	e.ID = id
+	return errors.Wrapf(r.DB.Delete(e).Error, "failed to delete post(id=%d)", id)
+}

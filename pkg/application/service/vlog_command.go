@@ -4,6 +4,7 @@ import (
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -29,6 +30,14 @@ func (r *VlogCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Vlog, 
 	wpVlogs, err := r.WordpressQueryRepository.FindVlogsByIDs([]int{id})
 	if err != nil || len(wpVlogs) == 0 {
 		return nil, serror.NewResourcesNotFoundError(err, "wordpress vlog(id=%d)", id)
+	}
+
+	if wpVlogs[0].Status != wordpress.StatusPublish {
+		if err := r.VlogCommandRepository.DeleteByID(id); err != nil {
+			return nil, errors.Wrapf(err, "failed to delete vlog(id=%d)", id)
+		}
+
+		return nil, serror.New(nil, serror.CodeImportDeleted, "try to import deleted vlog")
 	}
 
 	vlog, err := r.WordpressService.ConvertVlog(wpVlogs[0])

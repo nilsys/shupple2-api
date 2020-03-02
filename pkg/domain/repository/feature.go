@@ -8,6 +8,7 @@ import (
 type (
 	FeatureCommandRepository interface {
 		Store(feature *entity.Feature) error
+		DeleteByID(id int) error
 	}
 
 	FeatureQueryRepository interface {

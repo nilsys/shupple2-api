@@ -8,6 +8,7 @@ import (
 type (
 	PostCommandRepository interface {
 		Store(post *entity.Post) error
+		DeleteByID(id int) error
 	}
 
 	PostQueryRepository interface {

@@ -5,7 +5,7 @@ type Vlog struct {
 	Date          Time            `json:"date"`
 	Modified      Time            `json:"modified"`
 	Slug          string          `json:"slug"`
-	Status        string          `json:"status"`
+	Status        Status          `json:"status"`
 	Type          string          `json:"type"`
 	Link          string          `json:"link"`
 	Title         Text            `json:"title"`

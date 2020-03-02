@@ -4,6 +4,7 @@ import (
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -29,6 +30,14 @@ func (r *PostCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Post, 
 	wpPosts, err := r.WordpressQueryRepository.FindPostsByIDs([]int{id})
 	if err != nil || len(wpPosts) == 0 {
 		return nil, serror.NewResourcesNotFoundError(err, "wordpress post(id=%d)", id)
+	}
+
+	if wpPosts[0].Status != wordpress.StatusPublish {
+		if err := r.PostCommandRepository.DeleteByID(id); err != nil {
+			return nil, errors.Wrapf(err, "failed to delete post(id=%d)", id)
+		}
+
+		return nil, serror.New(nil, serror.CodeImportDeleted, "try to import deleted post")
 	}
 
 	post, err := r.WordpressService.ConvertPost(wpPosts[0])

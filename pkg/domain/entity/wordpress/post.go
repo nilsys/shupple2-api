@@ -8,7 +8,7 @@ type Post struct {
 	Modified      Time            `json:"modified"`
 	ModifiedGmt   Time            `json:"modified_gmt"`
 	Slug          string          `json:"slug"`
-	Status        string          `json:"status"`
+	Status        Status          `json:"status"`
 	Type          string          `json:"type"`
 	Link          string          `json:"link"`
 	Title         Text            `json:"title"`

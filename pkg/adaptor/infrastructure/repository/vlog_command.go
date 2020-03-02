@@ -20,3 +20,9 @@ var VlogCommandRepositorySet = wire.NewSet(
 func (r *VlogCommandRepositoryImpl) Store(vlog *entity.Vlog) error {
 	return errors.Wrap(r.DB.Save(vlog).Error, "failed to save vlog")
 }
+
+func (r *VlogCommandRepositoryImpl) DeleteByID(id int) error {
+	e := &entity.Vlog{}
+	e.ID = id
+	return errors.Wrapf(r.DB.Delete(e).Error, "failed to delete vlog(id=%d)", id)
+}

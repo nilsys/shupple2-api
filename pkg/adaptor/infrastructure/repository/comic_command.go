@@ -20,3 +20,7 @@ var ComicCommandRepositorySet = wire.NewSet(
 func (r *ComicCommandRepositoryImpl) Store(comic *entity.Comic) error {
 	return errors.Wrap(r.DB.Save(comic).Error, "failed to save comic")
 }
+
+func (r *ComicCommandRepositoryImpl) DeleteByID(id int) error {
+	return errors.Wrapf(r.DB.Delete(&entity.Comic{ID: id}).Error, "failed to delete comic(id=%d)", id)
+}

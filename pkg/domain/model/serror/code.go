@@ -5,7 +5,7 @@ import "net/http"
 //go:generate go-enum -f=$GOFILE --marshal
 
 /*
-ENUM(Undefined, InvalidParam, NotFound)
+ENUM(Undefined, InvalidParam, NotFound, ImportDeleted)
 */
 type Code int
 
@@ -15,6 +15,8 @@ func (c Code) HTTPStatusCode() int {
 		return http.StatusBadRequest
 	case CodeNotFound:
 		return http.StatusNotFound
+	case CodeImportDeleted:
+		return http.StatusBadRequest
 	}
 
 	return http.StatusInternalServerError

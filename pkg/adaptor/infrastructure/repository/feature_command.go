@@ -20,3 +20,9 @@ var FeatureCommandRepositorySet = wire.NewSet(
 func (r *FeatureCommandRepositoryImpl) Store(feature *entity.Feature) error {
 	return errors.Wrap(r.DB.Save(feature).Error, "failed to save feature")
 }
+
+func (r *FeatureCommandRepositoryImpl) DeleteByID(id int) error {
+	e := &entity.Feature{}
+	e.ID = id
+	return errors.Wrapf(r.DB.Delete(e).Error, "failed to delete feature(id=%d)", id)
+}

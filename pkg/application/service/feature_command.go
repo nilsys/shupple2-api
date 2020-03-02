@@ -4,6 +4,7 @@ import (
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -29,6 +30,14 @@ func (r *FeatureCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Fea
 	wpFeatures, err := r.WordpressQueryRepository.FindFeaturesByIDs([]int{id})
 	if err != nil || len(wpFeatures) == 0 {
 		return nil, serror.NewResourcesNotFoundError(err, "wordpress feature(id=%d)", id)
+	}
+
+	if wpFeatures[0].Status != wordpress.StatusPublish {
+		if err := r.FeatureCommandRepository.DeleteByID(id); err != nil {
+			return nil, errors.Wrapf(err, "failed to delete feature(id=%d)", id)
+		}
+
+		return nil, serror.New(nil, serror.CodeImportDeleted, "try to import deleted feature")
 	}
 
 	feature, err := r.WordpressService.ConvertFeature(wpFeatures[0])

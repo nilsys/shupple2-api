@@ -20,3 +20,9 @@ var TouristSpotCommandRepositorySet = wire.NewSet(
 func (r *TouristSpotCommandRepositoryImpl) Store(touristSpot *entity.TouristSpot) error {
 	return errors.Wrap(r.DB.Save(touristSpot).Error, "failed to save touristSpot")
 }
+
+func (r *TouristSpotCommandRepositoryImpl) DeleteByID(id int) error {
+	e := &entity.TouristSpot{}
+	e.ID = id
+	return errors.Wrapf(r.DB.Delete(e).Error, "failed to delete touristSpot(id=%d)", id)
+}

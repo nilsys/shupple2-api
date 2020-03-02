@@ -14,14 +14,17 @@ const (
 	CodeInvalidParam
 	// CodeNotFound is a Code of type NotFound
 	CodeNotFound
+	// CodeImportDeleted is a Code of type ImportDeleted
+	CodeImportDeleted
 )
 
-const _CodeName = "UndefinedInvalidParamNotFound"
+const _CodeName = "UndefinedInvalidParamNotFoundImportDeleted"
 
 var _CodeMap = map[Code]string{
 	0: _CodeName[0:9],
 	1: _CodeName[9:21],
 	2: _CodeName[21:29],
+	3: _CodeName[29:42],
 }
 
 // String implements the Stringer interface.
@@ -36,6 +39,7 @@ var _CodeValue = map[string]Code{
 	_CodeName[0:9]:   0,
 	_CodeName[9:21]:  1,
 	_CodeName[21:29]: 2,
+	_CodeName[29:42]: 3,
 }
 
 // ParseCode attempts to convert a string to a Code

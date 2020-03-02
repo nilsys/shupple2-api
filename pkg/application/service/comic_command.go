@@ -4,6 +4,7 @@ import (
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -29,6 +30,14 @@ func (r *ComicCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Comic
 	wpComics, err := r.WordpressQueryRepository.FindComicsByIDs([]int{id})
 	if err != nil || len(wpComics) == 0 {
 		return nil, serror.NewResourcesNotFoundError(err, "wordpress comic(id=%d)", id)
+	}
+
+	if wpComics[0].Status != wordpress.StatusPublish {
+		if err := r.ComicCommandRepository.DeleteByID(id); err != nil {
+			return nil, errors.Wrapf(err, "failed to delete comic(id=%d)", id)
+		}
+
+		return nil, serror.New(nil, serror.CodeImportDeleted, "try to import deleted comic")
 	}
 
 	comic, err := r.WordpressService.ConvertComic(wpComics[0])

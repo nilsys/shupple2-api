@@ -8,6 +8,7 @@ import (
 type (
 	VlogCommandRepository interface {
 		Store(vlog *entity.Vlog) error
+		DeleteByID(id int) error
 	}
 
 	VlogQueryRepository interface {

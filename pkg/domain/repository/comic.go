@@ -8,6 +8,7 @@ import (
 type (
 	ComicCommandRepository interface {
 		Store(comic *entity.Comic) error
+		DeleteByID(id int) error
 	}
 
 	ComicQueryRepository interface {

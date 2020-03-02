@@ -5,6 +5,7 @@ type Feature struct {
 	Date       Time              `json:"date"`
 	Modified   Time              `json:"modified"`
 	Slug       string            `json:"slug"`
+	Status     Status            `json:"status"`
 	Title      Text              `json:"title"`
 	Content    ProtectableText   `json:"content"`
 	FeatureCat []int             `json:"feature_cat"`

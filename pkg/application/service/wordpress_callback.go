@@ -50,5 +50,9 @@ func (s *WordpressCallbackServiceImpl) Import(entityType wordpress.EntityType, i
 		err = serror.New(nil, serror.CodeInvalidParam, "unknown wordpress entity type; %s", entityType)
 	}
 
+	if serror.IsErrorCode(err, serror.CodeImportDeleted) {
+		return nil
+	}
+
 	return errors.Wrap(err, "failed to import wordpress entity")
 }

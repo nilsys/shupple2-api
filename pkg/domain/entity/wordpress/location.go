@@ -8,6 +8,7 @@ type Location struct {
 	Modified    Time               `json:"modified"`
 	ModifiedGmt Time               `json:"modified_gmt"`
 	Slug        string             `json:"slug"`
+	Status      Status             `json:"status"`
 	Title       Text               `json:"title"`
 	Categories  []int              `json:"categories"`
 	LocationCat []int              `json:"location__cat"`
