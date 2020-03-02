@@ -148,20 +148,81 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	healthCheckController := api.HealthCheckController{
 		HealthCheckRepository: healthCheckRepositoryImpl,
 	}
+	categoryCommandRepositoryImpl := &repository.CategoryCommandRepositoryImpl{
+		DB: db,
+	}
+	categoryCommandServiceImpl := &service.CategoryCommandServiceImpl{
+		CategoryCommandRepository: categoryCommandRepositoryImpl,
+		WordpressQueryRepository:  wordpressQueryRepository,
+		WordpressService:          wordpressServiceImpl,
+	}
+	comicCommandRepositoryImpl := &repository.ComicCommandRepositoryImpl{
+		DB: db,
+	}
+	comicCommandServiceImpl := &service.ComicCommandServiceImpl{
+		ComicCommandRepository:   comicCommandRepositoryImpl,
+		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressService:         wordpressServiceImpl,
+	}
+	featureCommandRepositoryImpl := &repository.FeatureCommandRepositoryImpl{
+		DB: db,
+	}
+	featureCommandServiceImpl := &service.FeatureCommandServiceImpl{
+		FeatureCommandRepository: featureCommandRepositoryImpl,
+		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressService:         wordpressServiceImpl,
+	}
+	lcategoryCommandRepositoryImpl := &repository.LcategoryCommandRepositoryImpl{
+		DB: db,
+	}
+	lcategoryCommandServiceImpl := &service.LcategoryCommandServiceImpl{
+		LcategoryCommandRepository: lcategoryCommandRepositoryImpl,
+		WordpressQueryRepository:   wordpressQueryRepository,
+		WordpressService:           wordpressServiceImpl,
+	}
+	touristSpotCommandRepositoryImpl := &repository.TouristSpotCommandRepositoryImpl{
+		DB: db,
+	}
+	touristSpotCommandServiceImpl := &service.TouristSpotCommandServiceImpl{
+		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
+		WordpressQueryRepository:     wordpressQueryRepository,
+		WordpressService:             wordpressServiceImpl,
+	}
+	vlogCommandRepositoryImpl := &repository.VlogCommandRepositoryImpl{
+		DB: db,
+	}
+	vlogCommandServiceImpl := &service.VlogCommandServiceImpl{
+		VlogCommandRepository:    vlogCommandRepositoryImpl,
+		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressService:         wordpressServiceImpl,
+	}
+	wordpressCallbackServiceImpl := &service.WordpressCallbackServiceImpl{
+		CategoryCommandService:    categoryCommandServiceImpl,
+		ComicCommandService:       comicCommandServiceImpl,
+		FeatureCommandService:     featureCommandServiceImpl,
+		LcategoryCommandService:   lcategoryCommandServiceImpl,
+		PostCommandService:        postCommandServiceImpl,
+		TouristSpotCommandService: touristSpotCommandServiceImpl,
+		VlogCommandService:        vlogCommandServiceImpl,
+	}
+	wordpressCallbackController := api.WordpressCallbackController{
+		WordpressCallbackService: wordpressCallbackServiceImpl,
+	}
 	app := &App{
-		Config:                  configConfig,
-		Echo:                    echoEcho,
-		PostCommandController:   postCommandController,
-		PostQueryController:     postQueryController,
-		CategoryQueryController: categoryQueryController,
-		ComicQueryController:    comicQueryController,
-		ReviewQueryController:   reviewQueryController,
-		HashtagQueryController:  hashtagQueryController,
-		SearchQueryController:   searchQueryController,
-		FeatureQueryController:  featureQueryController,
-		VlogQueryController:     vlogQueryController,
-		UserQueryController:     userQueryController,
-		HealthCheckController:   healthCheckController,
+		Config:                      configConfig,
+		Echo:                        echoEcho,
+		PostCommandController:       postCommandController,
+		PostQueryController:         postQueryController,
+		CategoryQueryController:     categoryQueryController,
+		ComicQueryController:        comicQueryController,
+		ReviewQueryController:       reviewQueryController,
+		HashtagQueryController:      hashtagQueryController,
+		SearchQueryController:       searchQueryController,
+		FeatureQueryController:      featureQueryController,
+		VlogQueryController:         vlogQueryController,
+		UserQueryController:         userQueryController,
+		HealthCheckController:       healthCheckController,
+		WordpressCallbackController: wordpressCallbackController,
 	}
 	return app, nil
 }
@@ -172,24 +233,8 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.HealthCheckControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.VlogQueryServiceSet, service.HashtagQueryServiceSet, service.UserQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
-
-type App struct {
-	Config                  *config.Config
-	Echo                    *echo.Echo
-	PostCommandController   api.PostCommandController
-	PostQueryController     api.PostQueryController
-	CategoryQueryController api.CategoryQueryController
-	ComicQueryController    api.ComicQueryController
-	ReviewQueryController   api.ReviewQueryController
-	HashtagQueryController  api.HashtagQueryController
-	SearchQueryController   api.SearchQueryController
-	FeatureQueryController  api.FeatureQueryController
-	VlogQueryController     api.VlogQueryController
-	UserQueryController     api.UserQueryController
-	HealthCheckController   api.HealthCheckController
-}

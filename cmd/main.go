@@ -1,9 +1,12 @@
 package main
 
 import (
+	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api"
+	staywayMiddleware "github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/middleware"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
+	"github.com/stayway-corp/stayway-media-api/pkg/config"
 
 	"log"
 
@@ -19,6 +22,23 @@ func main() {
 	if err := run(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+type App struct {
+	Config                      *config.Config
+	Echo                        *echo.Echo
+	PostCommandController       api.PostCommandController
+	PostQueryController         api.PostQueryController
+	CategoryQueryController     api.CategoryQueryController
+	ComicQueryController        api.ComicQueryController
+	ReviewQueryController       api.ReviewQueryController
+	HashtagQueryController      api.HashtagQueryController
+	SearchQueryController       api.SearchQueryController
+	FeatureQueryController      api.FeatureQueryController
+	VlogQueryController         api.VlogQueryController
+	UserQueryController         api.UserQueryController
+	HealthCheckController       api.HealthCheckController
+	WordpressCallbackController api.WordpressCallbackController
 }
 
 func run() error {
@@ -40,24 +60,60 @@ func run() error {
 func setRoutes(app *App) {
 	api := app.Echo.Group("/api")
 
-	api.GET("/users/ranking", app.UserQueryController.ShowUserRanking)
-	api.GET("/users/:id/followee", app.UserQueryController.ListFolloweeUsers)
-	api.GET("/users/:id/follower", app.UserQueryController.ListFollowerUsers)
-	api.GET("/posts", app.PostQueryController.ListPost)
-	api.POST("/posts", app.PostCommandController.Store)
-	api.GET("/posts/:id", app.PostQueryController.ShowQuery)
-	// api.GET("/posts/:id", app.PostQueryController.Show)
-	api.GET("/areas", app.CategoryQueryController.ListArea)
-	api.GET("/areas/:id", app.CategoryQueryController.ShowAreaByID)
-	api.GET("/user/:id/posts/feed", app.PostQueryController.ListFeedPost)
-	api.GET("/reviews", app.ReviewQueryController.LisReview)
-	api.GET("/user/:id/reviews/feed", app.ReviewQueryController.ListFeedReview)
-	api.GET("/comics", app.ComicQueryController.ListComic)
-	api.GET("/comics/:id", app.ComicQueryController.Show)
-	api.GET("/search/suggestions", app.SearchQueryController.ShowSearchSuggestionList)
-	api.GET("/feature_posts", app.FeatureQueryController.ListFeature)
-	api.GET("/feature_posts/:id", app.FeatureQueryController.ShowQuery)
-	api.GET("/vlogs", app.VlogQueryController.ListVlog)
-	api.GET("/hashtags/recommend", app.HashtagQueryController.ListRecommendHashtag)
+	{
+		posts := api.Group("/posts")
+		posts.GET("", app.PostQueryController.ListPost)
+		posts.POST("", app.PostCommandController.Store)
+		posts.GET("/:id", app.PostQueryController.Show)
+	}
+
+	{
+		users := api.Group("/users")
+		users.GET("/:id/posts/feed", app.PostQueryController.ListFeedPost)
+		users.GET("/:id/reviews/feed", app.ReviewQueryController.ListFeedReview)
+		users.GET("/ranking", app.UserQueryController.ShowUserRanking)
+		users.GET("/:id/followee", app.UserQueryController.ListFolloweeUsers)
+		users.GET("/:id/follower", app.UserQueryController.ListFollowerUsers)
+	}
+
+	{
+		reviews := api.Group("/reviews")
+		reviews.GET("", app.ReviewQueryController.LisReview)
+	}
+
+	{
+		comics := api.Group("/comics")
+		comics.GET("", app.ComicQueryController.ListComic)
+		comics.GET("/:id", app.ComicQueryController.Show)
+	}
+
+	{
+		features := api.Group("/feature_posts")
+		features.GET("", app.FeatureQueryController.ListFeature)
+		features.GET("/:id", app.FeatureQueryController.ShowQuery)
+	}
+
+	{
+		areas := api.Group("/areas")
+		areas.GET("", app.CategoryQueryController.ListArea)
+		areas.GET("/:id", app.CategoryQueryController.ShowAreaByID)
+	}
+
+	{
+		vlogs := api.Group("/vlogs")
+		vlogs.GET("", app.VlogQueryController.ListVlog)
+	}
+
+	{
+		hashtags := api.Group("/hashtags")
+		hashtags.GET("/recommend", app.HashtagQueryController.ListRecommendHashtag)
+	}
+
 	api.GET("/healthcheck", app.HealthCheckController.HealthCheck)
+	api.GET("/search/suggestions", app.SearchQueryController.ShowSearchSuggestionList)
+	api.POST(
+		"/wordpress/import",
+		app.WordpressCallbackController.Import,
+		staywayMiddleware.KeyAuth(app.Config.Wordpress.CallbackKey),
+	)
 }

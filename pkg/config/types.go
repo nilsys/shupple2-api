@@ -37,9 +37,10 @@ type (
 	}
 
 	Wordpress struct {
-		BaseURL  URL    `validate:"required" yaml:"base_url"`
-		User     string `validate:"required" yaml:"user"`
-		Password string `validate:"required" yaml:"password"`
+		BaseURL     URL    `validate:"required" yaml:"base_url"`
+		User        string `validate:"required" yaml:"user"`
+		Password    string `validate:"required" yaml:"password"`
+		CallbackKey string `validate:"required" yaml:"callback_key"`
 	}
 
 	AWS struct {

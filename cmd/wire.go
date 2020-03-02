@@ -24,6 +24,7 @@ var controllerSet = wire.NewSet(
 	api.HashtagQueryControllerSet,
 	api.UserQueryControllerSet,
 	api.HealthCheckControllerSet,
+	api.WordpressCallbackControllerSet,
 )
 
 var serviceSet = wire.NewSet(
@@ -31,32 +32,23 @@ var serviceSet = wire.NewSet(
 	service.PostCommandServiceSet,
 	service.CategoryQueryServiceSet,
 	service.ComicQueryServiceSet,
+	service.ComicCommandServiceSet,
 	service.ReviewQueryServiceSet,
 	service.WordpressServiceSet,
 	service.SearchQueryServiceSet,
 	service.FeatureQueryServiceSet,
+	service.FeatureCommandServiceSet,
 	service.VlogQueryServiceSet,
+	service.VlogCommandServiceSet,
 	service.HashtagQueryServiceSet,
+	service.TouristSpotCommandServiceSet,
+	service.CategoryCommandServiceSet,
+	service.LcategoryCommandServiceSet,
+	service.WordpressCallbackServiceSet,
 	service.UserQueryServiceSet,
 )
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
-
-type App struct {
-	Config                  *config.Config
-	Echo                    *echo.Echo
-	PostCommandController   api.PostCommandController
-	PostQueryController     api.PostQueryController
-	CategoryQueryController api.CategoryQueryController
-	ComicQueryController    api.ComicQueryController
-	ReviewQueryController   api.ReviewQueryController
-	HashtagQueryController  api.HashtagQueryController
-	SearchQueryController   api.SearchQueryController
-	FeatureQueryController  api.FeatureQueryController
-	VlogQueryController     api.VlogQueryController
-	UserQueryController     api.UserQueryController
-	HealthCheckController   api.HealthCheckController
-}
 
 func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {
 	wire.Build(
