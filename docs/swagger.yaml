@@ -621,7 +621,7 @@ paths:
         "204":
           description: 成功
         "404":
-          description: 存在しないレビュー
+          description: 存在しない記事
           content:
             application/json:
               schema:
@@ -642,7 +642,7 @@ paths:
         "204":
           description: 成功
         "404":
-          description: 存在しないレビュー
+          description: 存在しない記事
           content:
             application/json:
               schema:
