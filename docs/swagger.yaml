@@ -604,6 +604,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PostList"
+  /posts/:id:
+    get:
+      tags:
+        - post
+      summary: 記事取得API
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: 記事ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostShow"
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /posts/:id/favorite:
     put:
       tags:
@@ -1389,7 +1416,66 @@ components:
           type: integer
           description: いいね数
           example: 3
+        views:
+          type: integer
+          description: 閲覧数
+          example: 6
         updatedAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        createdAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+    PostShow:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 記事ID
+          example: 1
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: http://example.com/img/1
+        areaCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+        themeCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+        hashtags:
+            $ref: "#/components/schemas/HashtagList"
+        title:
+          type: string
+          description: 記事タイトル
+          example: 埼玉の春を満喫♪
+        creator:
+          $ref: "#/components/schemas/Creator"
+        likeCount:
+          type: integer
+          description: いいね数
+          example: 3
+        facebookCount:
+          type: integer
+          description: Facebookシェア数
+          example: 4
+        twitterCount:
+          type: integer
+          description: Twitterシェア数
+          example: 5
+        views:
+          type: integer
+          description: 閲覧数
+          example: 6
+        updatedAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        createdAt:
           type: string
           description: 最終更新日時, ISO 8601形式
           example: 2020-01-01T13:16+09:00
@@ -1430,8 +1516,16 @@ components:
           type: string
           description: 記事タイトル
           example: 埼玉の春を満喫♪
+        body:
+          type: string
+          description: 本文
+          example: 埼玉の春を満喫できる記事をまとめました！
         creator:
           $ref: "#/components/schemas/Creator"
+        createdAt:
+          type: string
+          description: 公開日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
         updatedAt:
           type: string
           description: 最終更新日時, ISO 8601形式
