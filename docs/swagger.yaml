@@ -1595,9 +1595,15 @@ components:
           format: double
           description: 外部評価
           example: 2.5
-        categories:
+        reviewCount:
+          type: number
+          description: レビュー件数
+        areaCategories:
           type: array
-          description: カテゴリー
+          items:
+            $ref: "#/components/schemas/Category"
+        themeCategories:
+          type: array
           items:
             $ref: "#/components/schemas/Category"
         lcategories:
@@ -1605,6 +1611,14 @@ components:
           description: 観光スポットカテゴリー
           items:
             $ref: "#/components/schemas/Category"
+        createdAt:
+          type: string
+          description: 公開日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        updatedAt:
+          type: string
+          description: 更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
     HashtagList:
       type: array
       items:
