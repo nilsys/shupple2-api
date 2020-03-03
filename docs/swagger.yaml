@@ -604,6 +604,49 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PostList"
+  /posts/:id/favorite:
+    put:
+      tags:
+        - post
+      summary: 記事をfavする
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: 成功
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - post
+      summary: 記事をunfavする
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: 成功
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /user/{userId}/posts/feed:
     get:
       tags:
