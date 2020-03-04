@@ -1348,6 +1348,10 @@ components:
           description: |
             旅行日
             format yyyy-MM
+        commentCount:
+          type: integer
+          description: コメント数
+          example: 4
         media:
           type: array
           items:
@@ -1448,6 +1452,10 @@ components:
           type: string
           description: サムネイルURL
           example: http://example.com/img/1
+        body:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostBody"
         areaCategories:
           type: array
           items:
@@ -1491,6 +1499,17 @@ components:
           type: string
           description: 最終更新日時, ISO 8601形式
           example: 2020-01-01T13:16+09:00
+    PostBody:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: 何ページ目か
+          example: 1
+        body:
+          type: string
+          description: 内容
+          example: 春におすすめの......
     FeaturePostList:
       type: array
       items:
