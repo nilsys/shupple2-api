@@ -25,6 +25,6 @@ RUN go build
 
 EXPOSE 3000
 
-RUN ["./cmd"]
+ENTRYPOINT ["./cmd"]
 
 # vim: set ft=dockerfile:
