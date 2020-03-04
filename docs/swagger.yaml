@@ -1884,6 +1884,14 @@ components:
           type: string
           description: カテゴリ名
           example: 北海道
+        type:
+          type: string
+          enum:
+            - AreaGroup
+            - Area
+            - SubArea
+            - SubSubArea
+            - Theme
     RankingUserList:
       type: array
       items:
