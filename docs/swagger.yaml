@@ -603,7 +603,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PostList"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  posts:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PostList"
   /posts/:id:
     get:
       tags:
