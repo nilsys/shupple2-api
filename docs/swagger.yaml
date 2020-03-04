@@ -1462,6 +1462,9 @@ components:
           type: string
           description: 記事タイトル
           example: 埼玉の春を満喫♪
+        toc:
+          type: string
+          description: 目次
         creator:
           $ref: "#/components/schemas/Creator"
         likeCount:
