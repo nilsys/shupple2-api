@@ -210,8 +210,50 @@ paths:
           schema:
             type: integer
         - in: query
-          name: spotId
+          name: touristSpotId
           description: spotに紐づくレビューを取得する
+          schema:
+            type: integer
+        - in: query
+          name: areaId
+          description: |
+            エリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subAreaId
+          description: |
+            サブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subSubAreaId
+          description: |
+            サブサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: metasearchAreaId
+          description: |
+            検索サイトエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: metasearchSubAreaId
+          description: |
+            検索サイトサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: metasearchSubSubAreaId
+          description: |
+            検索サイトサブサブエリアID
+            いずれか1つ以上必須
           schema:
             type: integer
         - in: query
@@ -586,10 +628,17 @@ paths:
           schema:
             type: integer
         - in: query
-          name: touristSpotId
+          name: innTypeId
           description: |
-            観光スポットID
-            いずれか１つ以上必須
+            宿タイプID
+            いずれか1つ以上必須
+          schema: 
+            type: integer
+        - in: query
+          name: innDiscerningType
+          description: |
+            宿こだわり条件ID
+            いずれか1つ以上必須
           schema:
             type: integer
         - in: query
