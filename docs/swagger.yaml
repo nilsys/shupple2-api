@@ -558,6 +558,27 @@ paths:
           schema:
             type: integer
         - in: query
+          name: metasearchAreaId
+          description: |
+            検索サイトエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: metasearchSubAreaId
+          description: |
+            検索サイトサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: metasearchSubSubAreaId
+          description: |
+            検索サイトサブサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
           name: themeId
           description: |
             テーマID
