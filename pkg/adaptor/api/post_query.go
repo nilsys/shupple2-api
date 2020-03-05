@@ -29,12 +29,12 @@ func (c *PostQueryController) Show(ctx echo.Context) error {
 		return errors.Wrapf(err, "validation get post parameter")
 	}
 
-	post, err := c.PostService.ShowByID(q.ID)
+	post, err := c.PostService.ShowQueryByID(q.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get post")
 	}
 
-	return ctx.JSON(http.StatusOK, post)
+	return ctx.JSON(http.StatusOK, converter.ConvertQueryShowPostToOutput(post))
 }
 
 func (c *PostQueryController) ListPost(ctx echo.Context) error {

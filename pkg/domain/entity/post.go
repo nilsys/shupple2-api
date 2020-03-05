@@ -13,6 +13,8 @@ type (
 		TOC           string
 		FavoriteCount int
 		FacebookCount int
+		TwitterCount  int
+		Views         int
 		Slug          string
 		CreatedAt     time.Time `gorm:"default:current_timestamp"`
 		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
@@ -36,11 +38,21 @@ type (
 		CategoryID int `gorm:"primary_key"`
 	}
 
-	QueryPost struct {
+	// 参照用Post
+	PostDetail struct {
 		PostTiny
 		Bodies     []*PostBody `gorm:"foreignkey:PostID"`
 		User       *User       `gorm:"foreignkey:UserID"`
 		Categories []*Category `gorm:"many2many:post_category;jointable_foreignkey:post_id;"`
+	}
+
+	// 参照用Post詳細
+	PostDetailWithHashtag struct {
+		PostTiny
+		Bodies     []*PostBody `gorm:"foreignkey:PostID"`
+		User       *User       `gorm:"foreignkey:UserID"`
+		Categories []*Category `gorm:"many2many:post_category;jointable_foreignkey:post_id;"`
+		Hashtag    []*Hashtag  `gorm:"many2many:post_hashtag;jointable_foreignkey:post_id;"`
 	}
 )
 
@@ -58,7 +70,11 @@ func (post *PostTiny) GenerateThumbnailURL() string {
 	return "https://files.stayway.jp/post/" + strconv.Itoa(post.ID)
 }
 
-func (queryPost *QueryPost) TableName() string {
+func (post *PostDetail) TableName() string {
+	return "post"
+}
+
+func (post *PostDetailWithHashtag) TableName() string {
 	return "post"
 }
 

@@ -28,10 +28,10 @@ func (r *PostQueryRepositoryImpl) FindByID(id int) (*entity.Post, error) {
 	return &row, nil
 }
 
-func (r *PostQueryRepositoryImpl) FindQueryByID(id int) (*entity.QueryPost, error) {
-	var row entity.QueryPost
+func (r *PostQueryRepositoryImpl) FindQueryShowByID(id int) (*entity.PostDetailWithHashtag, error) {
+	var row entity.PostDetailWithHashtag
 
-	if err := r.DB.Table(row.TableName()).First(&row, id).Error; err != nil {
+	if err := r.DB.First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "post(id=%d)", id)
 	}
 
@@ -39,8 +39,8 @@ func (r *PostQueryRepositoryImpl) FindQueryByID(id int) (*entity.QueryPost, erro
 }
 
 // 検索条件に指定されたクエリ構造体を用い、postを複数参照
-func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuery) ([]*entity.QueryPost, error) {
-	var posts []*entity.QueryPost
+func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuery) ([]*entity.PostDetail, error) {
+	var posts []*entity.PostDetail
 
 	q := r.buildFindListByParamsQuery(query)
 
@@ -57,8 +57,8 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 
 // クエリ構造体を用い、FindListByParams()で使用するsqlクエリを作成
 // ユーザーIDからフォローしているハッシュタグ or ユーザーのpost一覧を参照
-func (r *PostQueryRepositoryImpl) FindFeedListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryPost, error) {
-	var posts []*entity.QueryPost
+func (r *PostQueryRepositoryImpl) FindFeedListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error) {
+	var posts []*entity.PostDetail
 
 	q := r.buildFindFeedListQuery(userID)
 

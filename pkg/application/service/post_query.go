@@ -12,9 +12,9 @@ type (
 	// Post参照系サービス
 	PostQueryService interface {
 		ShowByID(id int) (*entity.Post, error)
-		ShowQueryByID(id int) (*entity.QueryPost, error)
-		ShowListByParams(query *query.FindPostListQuery) ([]*entity.QueryPost, error)
-		ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryPost, error)
+		ShowQueryByID(id int) (*entity.PostDetailWithHashtag, error)
+		ShowListByParams(query *query.FindPostListQuery) ([]*entity.PostDetail, error)
+		ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
 	}
 
 	// Post参照系サービス実装
@@ -37,12 +37,12 @@ func (r *PostQueryServiceImpl) ShowByID(id int) (*entity.Post, error) {
 	return post, nil
 }
 
-func (s *PostQueryServiceImpl) ShowQueryByID(id int) (*entity.QueryPost, error) {
-	return s.PostQueryRepository.FindQueryByID(id)
+func (s *PostQueryServiceImpl) ShowQueryByID(id int) (*entity.PostDetailWithHashtag, error) {
+	return s.PostQueryRepository.FindQueryShowByID(id)
 }
 
 // 記事一覧参照
-func (r *PostQueryServiceImpl) ShowListByParams(query *query.FindPostListQuery) ([]*entity.QueryPost, error) {
+func (r *PostQueryServiceImpl) ShowListByParams(query *query.FindPostListQuery) ([]*entity.PostDetail, error) {
 	posts, err := r.PostQueryRepository.FindListByParams(query)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed find post by params")
@@ -52,6 +52,6 @@ func (r *PostQueryServiceImpl) ShowListByParams(query *query.FindPostListQuery) 
 }
 
 // ユーザーがフォローしたユーザー or ハッシュタグの記事一覧参照
-func (r *PostQueryServiceImpl) ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryPost, error) {
+func (r *PostQueryServiceImpl) ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error) {
 	return r.PostQueryRepository.FindFeedListByUserID(userID, query)
 }

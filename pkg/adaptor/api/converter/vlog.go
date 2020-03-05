@@ -38,10 +38,10 @@ func convertVlogToOutput(queryVlog *entity.QueryVlog) *response.Vlog {
 
 	for _, category := range queryVlog.WordpressCategories {
 		if category.Type == model.CategoryTypeArea || category.Type == model.CategoryTypeSubArea || category.Type == model.CategoryTypeSubSubArea {
-			areaCategories = append(areaCategories, response.NewCategory(category.ID, category.Name))
+			areaCategories = append(areaCategories, response.NewCategory(category.ID, category.Name, category.Type))
 		}
 		if category.Type == model.CategoryTypeTheme {
-			themeCategories = append(themeCategories, response.NewCategory(category.ID, category.Name))
+			themeCategories = append(themeCategories, response.NewCategory(category.ID, category.Name, category.Type))
 		}
 	}
 

@@ -13,8 +13,8 @@ type (
 
 	PostQueryRepository interface {
 		FindByID(id int) (*entity.Post, error)
-		FindQueryByID(id int) (*entity.QueryPost, error)
-		FindListByParams(query *query.FindPostListQuery) ([]*entity.QueryPost, error)
-		FindFeedListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryPost, error)
+		FindQueryShowByID(id int) (*entity.PostDetailWithHashtag, error)
+		FindListByParams(query *query.FindPostListQuery) ([]*entity.PostDetail, error)
+		FindFeedListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
 	}
 )
