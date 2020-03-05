@@ -87,6 +87,18 @@ func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowRe
 		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?)", query.SubSubAreaID)
 	}
 
+	if query.MetasearchAreaID != 0 {
+		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id IN (SELECT id FROM category WHERE metasearch_area_id = ?))", query.MetasearchAreaID)
+	}
+
+	if query.MetasearchSubAreaID != 0 {
+		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id IN (SELECT id FROM category WHERE metasearch_sub_area_id = ?))", query.MetasearchSubAreaID)
+	}
+
+	if query.MetasearchSubSubAreaID != 0 {
+		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id IN (SELECT id FROM category WHERE metasearch_sub_sub_area_id = ?))", query.MetasearchSubSubAreaID)
+	}
+
 	if len(query.InnIDs) > 0 {
 		q = q.Where("inn_id IN (?)", query.InnIDs)
 	}

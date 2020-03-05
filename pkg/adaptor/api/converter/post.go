@@ -8,19 +8,26 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
-// i/oの構造体からレポジトリで使用するクエリ構造体へconvert
+/*
+ * o -> i
+ */
 func ConvertFindPostListParamToQuery(param *param.ListPostParam) *query.FindPostListQuery {
 	return &query.FindPostListQuery{
-		UserID:       param.UserID,
-		AreaID:       param.AreaID,
-		SubAreaID:    param.SubAreaID,
-		SubSubAreaID: param.SubSubAreaID,
-		ThemeID:      param.ThemeID,
-		HashTag:      param.HashTag,
-		SortBy:       param.SortBy,
-		Keyward:      param.Keyward,
-		Limit:        param.GetLimit(),
-		OffSet:       param.GetOffSet(),
+		UserID:                 param.UserID,
+		AreaID:                 param.AreaID,
+		SubAreaID:              param.SubAreaID,
+		SubSubAreaID:           param.SubSubAreaID,
+		MetasearchAreaID:       param.MetasearchAreaID,
+		MetasearchSubAreaID:    param.MetasearchSubAreaID,
+		MetasearchSubSubAreaID: param.MetasearchSubSubAreaID,
+		InnTypeID:              param.InnTypeID,
+		InnDiscerningType:      param.InnDiscerningType,
+		ThemeID:                param.ThemeID,
+		HashTag:                param.HashTag,
+		SortBy:                 param.SortBy,
+		Keyward:                param.Keyward,
+		Limit:                  param.GetLimit(),
+		OffSet:                 param.GetOffSet(),
 	}
 }
 

@@ -93,6 +93,26 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ?)", query.SubSubAreaID)
 	}
 
+	if query.MetasearchAreaID != 0 {
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE `category_id` IN (SELECT id FROM category WHERE `metasearch_area_id` = ?))", query.MetasearchAreaID)
+	}
+
+	if query.MetasearchSubAreaID != 0 {
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE `category_id` IN (SELECT id FROM category WHERE `metasearch_sub_area_id` = ?))", query.MetasearchSubAreaID)
+	}
+
+	if query.MetasearchSubSubAreaID != 0 {
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE `category_id` IN (SELECT id FROM category WHERE `metasearch_sub_sub_area_id` = ?))", query.MetasearchSubSubAreaID)
+	}
+
+	if query.InnTypeID != 0 {
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE `category_id` IN (SELECT id FROM category WHERE `metasearch_inn_type_id` = ?))", query.InnTypeID)
+	}
+
+	if query.InnDiscerningType != 0 {
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE `category_id` IN (SELECT id FROM category WHERE `metasearch_discerning_condition_id` = ?))", query.InnDiscerningType)
+	}
+
 	if query.ThemeID != 0 {
 		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ?)", query.ThemeID)
 	}

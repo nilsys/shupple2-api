@@ -7,17 +7,20 @@ import (
 
 type (
 	ListReviewParams struct {
-		UserID        int               `query:"userId"`
-		InnID         int               `query:"innId"`
-		TouristSpotID int               `query:"touristSpotId"`
-		HashTag       string            `query:"hashtag"`
-		AreaID        int               `query:"areaId"`
-		SubAreaID     int               `query:"subAreaId"`
-		SubSubAreaID  int               `query:"subSubAreaID"`
-		SortBy        model.MediaSortBy `query:"sortBy"`
-		Keyward       string            `query:"q"`
-		PerPage       int               `query:"perPage"`
-		Page          int               `query:"page"`
+		UserID                 int               `query:"userId"`
+		InnID                  int               `query:"innId"`
+		TouristSpotID          int               `query:"touristSpotId"`
+		HashTag                string            `query:"hashtag"`
+		AreaID                 int               `query:"areaId"`
+		SubAreaID              int               `query:"subAreaId"`
+		SubSubAreaID           int               `query:"subSubAreaID"`
+		MetasearchAreaID       int               `query:"metasearchAreaId"`
+		MetasearchSubAreaID    int               `query:"metasearchSubAreaId"`
+		MetasearchSubSubAreaID int               `query:"metasearchSubSubAreaId"`
+		SortBy                 model.MediaSortBy `query:"sortBy"`
+		Keyward                string            `query:"q"`
+		PerPage                int               `query:"perPage"`
+		Page                   int               `query:"page"`
 	}
 
 	ListFeedReviewParam struct {
@@ -31,7 +34,7 @@ const getReviewsDefaultPerPage = 10
 
 // いずれのクエリも飛んで来なかった場合エラーを返す
 func (param *ListReviewParams) Validate() error {
-	if param.UserID == 0 && param.InnID == 0 && param.TouristSpotID == 0 && param.HashTag == "" && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.Keyward == "" {
+	if param.UserID == 0 && param.InnID == 0 && param.TouristSpotID == 0 && param.HashTag == "" && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.MetasearchAreaID == 0 && param.MetasearchSubAreaID == 0 && param.MetasearchSubSubAreaID == 0 && param.Keyward == "" {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid show review param")
 	}
 

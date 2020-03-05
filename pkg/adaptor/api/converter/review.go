@@ -8,16 +8,19 @@ import (
 // i/oの構造体からレポジトリで使用するクエリ発行用構造体へコンバート
 func ConvertFindReviewListParamToQuery(param *param.ListReviewParams) *query.ShowReviewListQuery {
 	return &query.ShowReviewListQuery{
-		UserID:        param.UserID,
-		InnID:         param.InnID,
-		TouristSpotID: param.TouristSpotID,
-		HashTag:       param.HashTag,
-		AreaID:        param.AreaID,
-		SubAreaID:     param.SubAreaID,
-		SubSubAreaID:  param.SubSubAreaID,
-		SortBy:        param.SortBy,
-		Limit:         param.GetLimit(),
-		OffSet:        param.GetOffset(),
+		UserID:                 param.UserID,
+		InnID:                  param.InnID,
+		TouristSpotID:          param.TouristSpotID,
+		HashTag:                param.HashTag,
+		AreaID:                 param.AreaID,
+		SubAreaID:              param.SubAreaID,
+		SubSubAreaID:           param.SubSubAreaID,
+		MetasearchAreaID:       param.MetasearchAreaID,
+		MetasearchSubAreaID:    param.MetasearchSubAreaID,
+		MetasearchSubSubAreaID: param.MetasearchSubSubAreaID,
+		SortBy:                 param.SortBy,
+		Limit:                  param.GetLimit(),
+		OffSet:                 param.GetOffset(),
 	}
 }
 

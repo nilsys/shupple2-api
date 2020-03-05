@@ -17,16 +17,22 @@ type (
 
 	// 記事一覧取得APIパラメータ
 	ListPostParam struct {
-		UserID       int               `query:"userId"`
-		AreaID       int               `query:"areaId"`
-		SubAreaID    int               `query:"subAreaId"`
-		SubSubAreaID int               `query:"subSubAreaId"`
-		ThemeID      int               `query:"themeId"`
-		HashTag      string            `query:"hashTag"`
-		SortBy       model.MediaSortBy `query:"sortBy"`
-		Keyward      string            `query:"q"`
-		Page         int               `query:"page"`
-		PerPage      int               `query:"perPage"`
+		UserID                 int `query:"userId"`
+		AreaID                 int `query:"areaId"`
+		SubAreaID              int `query:"subAreaId"`
+		SubSubAreaID           int `query:"subSubAreaId"`
+		MetasearchAreaID       int `query:"metasearchAreaId"`
+		MetasearchSubAreaID    int `query:"metasearchSubAreaId"`
+		MetasearchSubSubAreaID int `query:"metasearchSubSubAreaId"`
+		InnTypeID              int `json:"innTypeId"`
+		// TODO: intかstring
+		InnDiscerningType int               `json:"innDiscerningType"`
+		ThemeID           int               `query:"themeId"`
+		HashTag           string            `query:"hashTag"`
+		SortBy            model.MediaSortBy `query:"sortBy"`
+		Keyward           string            `query:"q"`
+		Page              int               `query:"page"`
+		PerPage           int               `query:"perPage"`
 	}
 
 	// ユーザーフィード記事取得APIパラメータ
@@ -41,7 +47,7 @@ const findPostListDefaultPerPage = 10
 
 // いずれのクエリも飛んでこない場合 or sortの値が期待値以外の場合エラーを返す
 func (param ListPostParam) Validate() error {
-	if param.UserID == 0 && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.HashTag == "" && param.Keyward == "" {
+	if param.UserID == 0 && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.MetasearchAreaID == 0 && param.MetasearchSubAreaID == 0 && param.MetasearchSubSubAreaID == 0 && param.InnTypeID == 0 && param.InnDiscerningType == 0 && param.HashTag == "" && param.Keyward == "" {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid find post list param")
 	}
 
