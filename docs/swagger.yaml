@@ -1828,12 +1828,12 @@ components:
           type: string
           description: 関連宿を探すためのURL
           example: http://stayway.jp/zekkei/recommend
-        rate:
+        score:
           type: number
           format: double
           description: 評価
           example: 3.5
-        vendorRate:
+        vendorScore:
           type: number
           format: double
           description: 外部評価
