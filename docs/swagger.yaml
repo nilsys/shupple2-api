@@ -1996,9 +1996,9 @@ components:
         - Thumbnail
         - Name
       properties:
-        thumbnail:
+        iconUrl:
           type: string
-          description: サムネイルURL
+          description: アイコンURL
           example: https://files.stayway.jp/avatar/1
         name:
           type: string
