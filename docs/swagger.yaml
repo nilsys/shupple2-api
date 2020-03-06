@@ -680,9 +680,7 @@ paths:
                     description: 検索総件数
                     example: 120
                   posts:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/PostList"
+                    $ref: "#/components/schemas/PostList"
   /posts/:id:
     get:
       tags:
@@ -1161,7 +1159,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SearchSuggestions"
-  /area:
+  /areas:
     get:
       tags:
         - area
@@ -1199,6 +1197,56 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaList"
+  /inns:
+    get:
+      tags:
+        - inn
+      summary: 宿検索API
+      description: metasearch側の/innsのAPIをラップ
+      parameters:
+        - in: query
+          name: areaId
+          description: |
+            エリアID
+          schema:
+            type: integer
+        - in: query
+          name: subAreaId
+          description: |
+            サブエリアID
+          schema:
+            type: integer
+        - in: query
+          name: subSubAreaId
+          description: |
+            サブサブエリアID
+          schema:
+            type: integer
+        - in: query
+          name: touristSpotId
+          description: |
+            観光スポットID
+          schema:
+            type: integer
+        - in: query
+          name: page
+          description: ページ数
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InnList"
 servers:
   - url: http://localhost:3000/api
 components:
@@ -2036,6 +2084,193 @@ components:
           type: string
           description: アイコン画像URL
           example: https://files.stayway.jp/avatar/1
+    InnList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Inn"
+    Inn:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 宿ID
+          example: 1
+        name:
+          type: string
+          description: 宿名前
+          example: "グランメゾンド"
+        url:
+          type: string
+          description: 予約サイトURL
+          example: "https://www.booking.com/hotel/cn/grand-hongqiao-shanghai.html"
+        brand:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: ブランドID
+              example: 4
+            name:
+              type: string
+              description: ブランド名
+              example: "アコーホテルズ"
+        thumbnail:
+          type: string
+          description: イメージURL
+          example: "https://images.trvl-media.com/hotels/2000000/1680000/1678800/1678784/8a180494_b.jpg"
+        latitude:
+          type: number
+          format: double
+          description: 緯度
+          example: 35.65695
+        longtitude:
+          type: number
+          format: double
+          description: 経度
+          example: 139.698556
+        countryCode:
+          type: string
+          description: 国コード
+          example: "cn"
+        address:
+          type: string
+          description: 住所
+          example: "中国 上海 369"
+        postCode:
+          type: string
+          description: 郵便番号
+          example: "200336"
+        phone:
+          type: string
+          description: 電話番号
+          example: "0120-117-117"
+        access:
+          type: string
+          description: アクセス
+          example: "上海から10分"
+        stayDaysMin:
+          type: integer
+          description: 最低宿泊数
+          example: 1
+        stayDaysMax:
+          type: integer
+          description: 最大宿泊数
+          example: 365
+        checkInTime:
+          type: string
+          description: チェックイン時間
+          example: "14:00"
+        checkOutTime:
+          type: string
+          description: チェックアウト時間
+          example: "12:00"
+        roomCount:
+          type: integer
+          description: 部屋数
+          example: 363
+        bedCount:
+          type: integer
+          description: ベッド数
+          example: 1
+        score:
+          type: number
+          format: double
+          description: 評価
+          example: 3.7
+        reviewCount:
+          type: integer
+          description: レビュー数
+          example: 883
+        minPrice:
+          type: number
+          format: double
+          description: 最低金額
+          example: 1352.81
+        maxPrice:
+          type: number
+          format: double
+          description: 最高金額
+          example: 1352.81
+        innTypes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: 宿タイプID
+                example: 1
+              name:
+                type: string
+                description: 宿タイプ
+                example: "ビジネスホテル"
+              url:
+                type: string
+                example: "/hotels/i_1/"
+        availableCards:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: カード会社ID
+                example: 1
+              name:
+                type: string
+                description: カード会社名
+                example: Visa
+        roomTypes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: ルームタイプID
+                example: 1
+              name:
+                type: string
+                description: ルームタイプ
+                example: "ホテル"
+        trueTags:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: タグID
+                example: 1
+              name:
+                type: string
+                description: タグ名
+                example: "ツイン"
+              url:
+                type: string
+                description: url
+                example: "/hogels/c_17/"
+        falseTags:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: タグID
+                example: 1
+              name:
+                type: string
+                description: タグ名
+                example: "ツイン"
+              url:
+                type: string
+                description: url
+                example: "/hogels/c_17/"
+        hasNext:
+          type: boolean
+          description: 次のページがあるか
+          example: true
     Accompanying:
       type: string
       enum:
