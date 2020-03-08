@@ -208,6 +208,12 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	wordpressCallbackController := api.WordpressCallbackController{
 		WordpressCallbackService: wordpressCallbackServiceImpl,
 	}
+	touristSpotQueryServiceImpl := &service.TouristSpotQueryServiceImpl{
+		TouristSpotQueryRepository: touristSpotQueryRepositoryImpl,
+	}
+	touristSpotQueryController := api.TouristSpotQueryController{
+		TouristSpotQueryService: touristSpotQueryServiceImpl,
+	}
 	app := &App{
 		Config:                      configConfig,
 		Echo:                        echoEcho,
@@ -223,6 +229,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		UserQueryController:         userQueryController,
 		HealthCheckController:       healthCheckController,
 		WordpressCallbackController: wordpressCallbackController,
+		TouristSpotQueryController:  touristSpotQueryController,
 	}
 	return app, nil
 }
@@ -233,8 +240,8 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")

@@ -18,6 +18,7 @@ import (
 
 const (
 	defaultAcquisitionNumber       = 1000
+	defaultRangeSearchKm           = 5
 	dummyCredential                = "dummy"
 	defaultSearchSuggestionsNumber = 10
 )

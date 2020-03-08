@@ -68,15 +68,15 @@ func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
 	return &response.Post{
 		ID:              queryPost.ID,
 		Thumbnail:       queryPost.GenerateThumbnailURL(),
+		Title:           queryPost.Title,
 		AreaCategories:  areaCategories,
 		ThemeCategories: themeCategories,
-		Title:           queryPost.Title,
 		Creator: response.Creator{
 			Thumbnail: queryPost.User.GenerateThumbnailURL(),
 			Name:      queryPost.User.Name,
 		},
 		LikeCount: queryPost.FavoriteCount,
-		UpdatedAt: model.TimeFmtToFrontStr(queryPost.UpdatedAt),
+		UpdatedAt: model.TimeResponse(queryPost.UpdatedAt),
 	}
 }
 

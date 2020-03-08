@@ -38,7 +38,7 @@ func ConvertQueryFeatureToOutput(feature *entity.QueryFeature) *response.ShowFea
 		Thumbnail:     feature.GenerateThumbnailURL(),
 		Title:         feature.Title,
 		Creator:       response.NewCreator(feature.User.GenerateThumbnailURL(), feature.User.Name, feature.User.Profile),
-		UpdatedAt:     model.TimeFmtToFrontStr(feature.UpdatedAt),
+		UpdatedAt:     model.TimeResponse(feature.UpdatedAt),
 		RelationPosts: relationPosts,
 	}
 }

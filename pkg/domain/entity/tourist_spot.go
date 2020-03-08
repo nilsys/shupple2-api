@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 type (
 	TouristSpotTiny struct {
@@ -20,6 +23,8 @@ type (
 		Price        string
 		InstagramURL string
 		SearchInnURL string
+		Rate         float64
+		VendorRate   float64
 		CreatedAt    time.Time  `gorm:"default:current_timestamp"`
 		UpdatedAt    time.Time  `gorm:"default:current_timestamp"`
 		DeletedAt    *time.Time `json:"-"`
@@ -33,12 +38,18 @@ type (
 
 	TouristSpotCategory struct {
 		TouristSpotID int `gorm:"primary_key"`
-		CategoryID int `gorm:"primary_key"`
+		CategoryID    int `gorm:"primary_key"`
 	}
 
 	TouristSpotLcategory struct {
-		TouristSpotID  int `gorm:"primary_key"`
-		LcategoryID int `gorm:"primary_key"`
+		TouristSpotID int `gorm:"primary_key"`
+		LcategoryID   int `gorm:"primary_key"`
+	}
+
+	QueryTouristSpot struct {
+		TouristSpotTiny
+		Categories  []*Category  `gorm:"many2many:tourist_spot_category;jointable_foreignkey:tourist_spot_id;"`
+		Lcategories []*Lcategory `gorm:"many2many:tourist_spot_lcategory;jointable_foreignkey:tourist_spot_id;"`
 	}
 )
 
@@ -47,15 +58,15 @@ func NewTouristSpot(tiny TouristSpotTiny, categoryIDs, lcategoryIDs []int) Touri
 	for i, c := range categoryIDs {
 		touristSpotCategoryIDs[i] = &TouristSpotCategory{
 			TouristSpotID: tiny.ID,
-			CategoryID: c,
+			CategoryID:    c,
 		}
 	}
 
 	touristSpotLcategoryIDs := make([]*TouristSpotLcategory, len(lcategoryIDs))
 	for i, c := range lcategoryIDs {
 		touristSpotLcategoryIDs[i] = &TouristSpotLcategory{
-			TouristSpotID:  tiny.ID,
-			LcategoryID: c,
+			TouristSpotID: tiny.ID,
+			LcategoryID:   c,
 		}
 	}
 
@@ -64,4 +75,14 @@ func NewTouristSpot(tiny TouristSpotTiny, categoryIDs, lcategoryIDs []int) Touri
 		touristSpotCategoryIDs,
 		touristSpotLcategoryIDs,
 	}
+}
+
+// MEMO: サムネイルロジック仮置き
+func (tiny *TouristSpotTiny) GenerateThumbnailURL() string {
+	return "https://files.stayway.jp/spot/" + strconv.Itoa(tiny.ID)
+}
+
+// テーブル名
+func (queryTouristSpot *QueryTouristSpot) TableName() string {
+	return "tourist_spot"
 }

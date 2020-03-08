@@ -20,7 +20,7 @@ var ComicQueryRepositorySet = wire.NewSet(
 
 func (r *ComicQueryRepositoryImpl) FindByID(id int) (*entity.QueryComic, error) {
 	var row entity.QueryComic
-	if err := r.DB.Table("comic").First(&row, id).Error; err != nil {
+	if err := r.DB.First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "comic(id=%d)", id)
 	}
 	return &row, nil

@@ -23,7 +23,6 @@ func (showListParam ShowComicListParam) GetLimit() int {
 }
 
 // offSetを返す(sqlで使う想定)
-// TODO: 共通化出来そう🤔
 func (showListParam ShowComicListParam) GetOffSet() int {
 	if showListParam.Page == 1 || showListParam.Page == 0 {
 		return 0
