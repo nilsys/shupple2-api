@@ -937,6 +937,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/VlogList"
+  /vlogs/{id}:
+    get:
+      tags:
+        - vlog
+      summary: 動画取得API
+      description: |
+        パラメータで指定された条件で検索(組み合わせる事も可能)
+        フリーワード対象を取得
+        複数ワードで検索可能
+        その場合、レスポンスは全てのワードに引っ掛かる物である事
+        以下の順番で返る)
+        ・タイトルにフリーワードが含まれているもの(更新日時順)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: |
+            vlogID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VlogShow"
   /comics:
     get:
       tags:
@@ -1671,6 +1698,10 @@ components:
           example: 埼玉の春を満喫できる記事をまとめました！
         creator:
           $ref: "#/components/schemas/Creator"
+        views:
+          type: integer
+          description: 閲覧数
+          example: 103
         createdAt:
           type: string
           description: 公開日時, ISO 8601形式
@@ -1729,6 +1760,78 @@ components:
           type: string
           description: 動画タイトル
           example: 埼玉の春を満喫♪
+    VlogShow:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: vlogId
+          example: 1
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: http://example.com/img/1
+        areaCategories:
+          type: array
+          description: エリアカテゴリ
+          items:
+            $ref: "#/components/schemas/Category"
+        themeCategories:
+          type: array
+          description: テーマカテゴリ
+          items:
+            $ref: "#/components/schemas/Category"
+        title:
+          type: string
+          description: 動画タイトル
+          example: 埼玉の春を満喫♪
+        body:
+          type: string
+          description: 本文
+          example: おすすめの動画です
+        series:
+          type: string
+          description: シリーズ名
+          example: ~シリーズ~
+        creatorSns:
+          type: string
+          description: 投稿者のSNS
+          example: https://twitter.jp/1
+        editorName:
+          type: string
+          description: 編集者の名前
+          example: 編集者です
+        yearMonth:
+          type: string
+          description: 撮影年月
+          example: 2020-01
+        playTime:
+          type: string
+          description: 再生時間
+          example: "14:02"
+        timeLine:
+          type: string
+          description: 目次みたいなやつ(TODO)
+        youtubeUrl:
+          type: string
+          description: yotubeUrl
+          example: https://www.youtube.com/watch?v=b_yyCd1kVNo
+        views:
+          type: integer
+          description: 閲覧数
+          example: 123
+        facebookCount:
+          type: integer
+          description: Facebookシェア数
+          example: 4
+        twitterCount:
+          type: integer
+          description: Twitterシェア数
+          example: 5
+        touristSpots:
+          type: array
+          items:
+            $ref: "#/components/schemas/TouristSpot"
     TouristSpotList:
       type: array
       items:
@@ -1748,10 +1851,6 @@ components:
           type: string
           description: サムネイルURL
           example: http://example.com/img/1
-        url:
-          type: string
-          description: スポットURL
-          example: http://example.com/spot/1
     TouristSpotShow:
       type: object
       required:
@@ -1761,7 +1860,7 @@ components:
         - city
         - address
         - latitude
-        - longtitude
+        - longitude
         - accessCar
         - accessTrain
         - openingHours
@@ -1779,6 +1878,10 @@ components:
           type: string
           description: 観光スポット名
           example: 絶景
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: https://files.stayway.jp/example/img/1
         websiteUrl:
           type: string
           description: 公式ホームページ
@@ -1796,7 +1899,7 @@ components:
           format: double
           description: 緯度
           example: 35.65695
-        longtitude:
+        longitude:
           type: number
           format: double
           description: 経度
@@ -1877,10 +1980,6 @@ components:
           type: string
           description: ハッシュタグ名
           example: 春に行きたい
-        url:
-          type: string
-          description: URL
-          example: http://example.com/img/1
     SearchSuggestions:
       type: array
       items:
@@ -1986,16 +2085,16 @@ components:
           type: string
           description: エリア名
           example: 北海道
-        url:
-          type: string
-          description: url
-          example: /tourism/hokkai-do
     Creator:
       type: object
       required:
-        - Thumbnail
-        - Name
+        - iconUrl
+        - name
       properties:
+        id:
+          type: integer
+          description: ユーザーID
+          example: 1
         iconUrl:
           type: string
           description: アイコンURL
@@ -2123,7 +2222,7 @@ components:
           format: double
           description: 緯度
           example: 35.65695
-        longtitude:
+        longitude:
           type: number
           format: double
           description: 経度
@@ -2246,10 +2345,6 @@ components:
                 type: string
                 description: タグ名
                 example: "ツイン"
-              url:
-                type: string
-                description: url
-                example: "/hogels/c_17/"
         falseTags:
           type: array
           items:
@@ -2263,10 +2358,6 @@ components:
                 type: string
                 description: タグ名
                 example: "ツイン"
-              url:
-                type: string
-                description: url
-                example: "/hogels/c_17/"
         hasNext:
           type: boolean
           description: 次のページがあるか
