@@ -16,10 +16,6 @@ paths:
       responses:
         "200":
           description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
         "400":
           description: バリデーションエラーまたは既に存在するユーザー
           content:
@@ -38,10 +34,6 @@ paths:
       responses:
         "200":
           description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
         "400":
           description: バリデーションエラー
           content:
@@ -304,10 +296,6 @@ paths:
       responses:
         "200":
           description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Review"
         "400":
           description: バリデーションエラー
           content:
@@ -359,10 +347,6 @@ paths:
       responses:
         "200":
           description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Review"
         "400":
           description: バリデーションエラー
           content:
