@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 
@@ -21,10 +22,28 @@ const (
 	defaultRangeSearchKm           = 5
 	dummyCredential                = "dummy"
 	defaultSearchSuggestionsNumber = 10
+	contextKeyForTransaction       = "dbTransaction"
 )
+
+type DAO struct {
+	DB_ *gorm.DB
+}
+
+func (d DAO) DB(c context.Context) *gorm.DB {
+	if c == nil {
+		return d.DB_
+	}
+
+	if db, ok := c.Value(contextKeyForTransaction).(*gorm.DB); ok {
+		return db
+	}
+
+	return d.DB_
+}
 
 var RepositoriesSet = wire.NewSet(
 	ProvideDB,
+	wire.Struct(new(DAO), "*"),
 	CategoryCommandRepositorySet,
 	CategoryQueryRepositorySet,
 	ComicCommandRepositorySet,
@@ -46,6 +65,7 @@ var RepositoriesSet = wire.NewSet(
 	InnQueryRepositorySet,
 	HashtagQueryRepositorySet,
 	HealthCheckRepositorySet,
+	TransactionServiceSet,
 )
 
 func ProvideDB(config *config.Config) (*gorm.DB, error) {
