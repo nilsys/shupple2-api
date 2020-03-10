@@ -26,6 +26,7 @@ var controllerSet = wire.NewSet(
 	api.UserQueryControllerSet,
 	api.HealthCheckControllerSet,
 	api.WordpressCallbackControllerSet,
+	api.InterestQueryControllerSet,
 )
 
 var serviceSet = wire.NewSet(
@@ -49,6 +50,7 @@ var serviceSet = wire.NewSet(
 	service.LcategoryCommandServiceSet,
 	service.WordpressCallbackServiceSet,
 	service.UserQueryServiceSet,
+	service.InterestQueryServiceSet,
 )
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")

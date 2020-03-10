@@ -40,6 +40,7 @@ type App struct {
 	HealthCheckController       api.HealthCheckController
 	WordpressCallbackController api.WordpressCallbackController
 	TouristSpotQueryController  api.TouristSpotQueryController
+	InteresetQueryController    api.InterestQueryController
 }
 
 func run() error {
@@ -67,6 +68,7 @@ func setRoutes(app *App) {
 		posts.POST("", app.PostCommandController.Store)
 		posts.GET("/:id", app.PostQueryController.Show)
 	}
+
 	{
 		users := api.Group("/users")
 		users.GET("/:id/posts/feed", app.PostQueryController.ListFeedPost)
@@ -115,6 +117,11 @@ func setRoutes(app *App) {
 	{
 		hashtags := api.Group("/hashtags")
 		hashtags.GET("/recommend", app.HashtagQueryController.ListRecommendHashtag)
+	}
+
+	{
+		interests := api.Group("/interests")
+		interests.GET("", app.InteresetQueryController.ListAll)
 	}
 
 	api.GET("/healthcheck", app.HealthCheckController.HealthCheck)

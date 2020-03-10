@@ -29,8 +29,8 @@ type (
 	}
 
 	Interest struct {
-		ID   int `gorm:"primary_key"`
-		Name string
+		ID   int    `gorm:"primary_key" json:"id"`
+		Name string `json:"name"`
 	}
 )
 
