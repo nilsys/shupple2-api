@@ -21,7 +21,7 @@ var _ = Describe("FeatureRepositoryImpl", func() {
 		truncate(db)
 		Expect(db.Save(newUser(userID)).Error).To(Succeed())
 		for _, post := range append(postIDs, addedPostID) {
-			Expect(db.Save(newPost(post, nil, nil)).Error).To(Succeed())
+			Expect(db.Save(newPost(post, nil, nil, nil)).Error).To(Succeed())
 		}
 	})
 

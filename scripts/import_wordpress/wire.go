@@ -19,6 +19,7 @@ var serviceSet = wire.NewSet(
 	service.LcategoryCommandServiceSet,
 	service.TouristSpotCommandServiceSet,
 	service.VlogCommandServiceSet,
+	service.HashtagCommandServiceSet,
 )
 
 func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {

@@ -17,6 +17,21 @@ var HashtagQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.HashtagQueryRepository), new(*HashtagQueryRepositoryImpl)),
 )
 
+func (r *HashtagQueryRepositoryImpl) FindByNames(names []string) (map[string]*entity.Hashtag, error) {
+	var rows []*entity.Hashtag
+
+	if err := r.DB.Where("name in (?)", names).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find hashtag by names")
+	}
+
+	result := make(map[string]*entity.Hashtag, len(rows))
+	for _, row := range rows {
+		result[row.Name] = row
+	}
+
+	return result, nil
+}
+
 // TODO: hashtagテーブルのscoreカラムで判断する様変更する
 // https://github.com/stayway-corp/stayway-media-api/pull/25#discussion_r380743507
 func (r *HashtagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSubAreaID int) ([]*entity.Hashtag, error) {

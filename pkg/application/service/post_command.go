@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -12,12 +14,15 @@ import (
 type (
 	PostCommandService interface {
 		ImportFromWordpressByID(wordpressPostID int) (*entity.Post, error)
+		Store(post *entity.Post) error
 	}
 
 	PostCommandServiceImpl struct {
-		PostCommandRepository    repository.PostCommandRepository
-		WordpressQueryRepository repository.WordpressQueryRepository
-		WordpressService         WordpressService
+		repository.PostCommandRepository
+		repository.HashtagCommandRepository
+		repository.WordpressQueryRepository
+		WordpressService
+		TransactionService
 	}
 )
 
@@ -45,9 +50,27 @@ func (r *PostCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Post, 
 		return nil, errors.Wrap(err, "failed to convert post")
 	}
 
-	if err := r.PostCommandRepository.Store(post); err != nil {
+	if err := r.Store(post); err != nil {
 		return nil, errors.Wrap(err, "failed to store post")
 	}
 
 	return post, nil
+}
+
+func (r *PostCommandServiceImpl) Store(post *entity.Post) error {
+	return r.TransactionService.Do(func(c context.Context) error {
+		if err := r.HashtagCommandRepository.DecrementPostCountByPostID(c, post.ID); err != nil {
+			return errors.Wrap(err, "failed to decrement post_count")
+		}
+
+		if err := r.PostCommandRepository.Store(c, post); err != nil {
+			return errors.Wrap(err, "failed to store post")
+		}
+
+		if err := r.HashtagCommandRepository.IncrementPostCountByPostID(c, post.ID); err != nil {
+			return errors.Wrap(err, "failed to increment post_count")
+		}
+
+		return nil
+	})
 }

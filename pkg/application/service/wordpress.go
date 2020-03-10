@@ -31,9 +31,10 @@ type (
 	}
 
 	WordpressServiceImpl struct {
-		WordpressQueryRepository repository.WordpressQueryRepository
-		UserQueryRepository      repository.UserQueryRepository
-		CategoryQueryRepository  repository.CategoryQueryRepository
+		repository.WordpressQueryRepository
+		repository.UserQueryRepository
+		repository.CategoryQueryRepository
+		HashtagCommandService
 	}
 )
 
@@ -54,6 +55,15 @@ func (s *WordpressServiceImpl) ConvertPost(wpPost *wordpress.Post) (*entity.Post
 	}
 	bodies := strings.Split(wpPost.Content.Rendered, wpPageDelimiter)
 
+	hashtags, err := s.HashtagCommandService.FindOrCreateHashtags(model.FindHashtags(wpPost.Content.Rendered))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to find hashtags")
+	}
+	hashtagIDs := make([]int, len(hashtags))
+	for i, hashtag := range hashtags {
+		hashtagIDs[i] = hashtag.ID
+	}
+
 	post := entity.NewPost(entity.PostTiny{
 		ID:        wpPost.ID,
 		UserID:    user.ID,
@@ -62,7 +72,7 @@ func (s *WordpressServiceImpl) ConvertPost(wpPost *wordpress.Post) (*entity.Post
 		Slug:      wpPost.Slug,
 		CreatedAt: time.Time(wpPost.Date),
 		UpdatedAt: time.Time(wpPost.Modified),
-	}, bodies, wpPost.Categories)
+	}, bodies, wpPost.Categories, hashtagIDs)
 
 	return &post, nil
 }

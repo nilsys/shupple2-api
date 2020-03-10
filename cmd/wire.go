@@ -43,6 +43,7 @@ var serviceSet = wire.NewSet(
 	service.VlogQueryServiceSet,
 	service.VlogCommandServiceSet,
 	service.HashtagQueryServiceSet,
+	service.HashtagCommandServiceSet,
 	service.TouristSpotCommandServiceSet,
 	service.CategoryCommandServiceSet,
 	service.LcategoryCommandServiceSet,

@@ -34,6 +34,12 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
 		DB: db,
 	}
+	dao := repository.DAO{
+		DB_: db,
+	}
+	hashtagCommandRepositoryImpl := &repository.HashtagCommandRepositoryImpl{
+		DAO: dao,
+	}
 	wordpress := configConfig.Wordpress
 	wordpressQueryRepository := repository.NewWordpressQueryRepositoryImpl(wordpress)
 	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
@@ -42,15 +48,28 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
 		DB: db,
 	}
+	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
+		DB: db,
+	}
+	hashtagCommandServiceImpl := &service.HashtagCommandServiceImpl{
+		HashtagQueryRepository:   hashtagQueryRepositoryImpl,
+		HashtagCommandRepository: hashtagCommandRepositoryImpl,
+	}
 	wordpressServiceImpl := &service.WordpressServiceImpl{
 		WordpressQueryRepository: wordpressQueryRepository,
 		UserQueryRepository:      userQueryRepositoryImpl,
 		CategoryQueryRepository:  categoryQueryRepositoryImpl,
+		HashtagCommandService:    hashtagCommandServiceImpl,
+	}
+	transactionServiceImpl := &repository.TransactionServiceImpl{
+		DB: db,
 	}
 	postCommandServiceImpl := &service.PostCommandServiceImpl{
 		PostCommandRepository:    postCommandRepositoryImpl,
+		HashtagCommandRepository: hashtagCommandRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepository,
 		WordpressService:         wordpressServiceImpl,
+		TransactionService:       transactionServiceImpl,
 	}
 	postCommandController := api.PostCommandController{
 		PostService: postCommandServiceImpl,
@@ -96,9 +115,6 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	}
 	reviewQueryController := api.ReviewQueryController{
 		ReviewQueryService: reviewQueryServiceImpl,
-	}
-	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
-		DB: db,
 	}
 	hashtagQueryServiceImpl := &service.HashtagQueryServiceImpl{
 		HashtagQueryRepository: hashtagQueryRepositoryImpl,
@@ -242,6 +258,6 @@ var (
 
 var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")

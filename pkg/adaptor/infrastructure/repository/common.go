@@ -63,6 +63,7 @@ var RepositoriesSet = wire.NewSet(
 	WordpressQueryRepositorySet,
 	ReviewQueryRepositorySet,
 	InnQueryRepositorySet,
+	HashtagCommandRepositorySet,
 	HashtagQueryRepositorySet,
 	HealthCheckRepositorySet,
 	TransactionServiceSet,

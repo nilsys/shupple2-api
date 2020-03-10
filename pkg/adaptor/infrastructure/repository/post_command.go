@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
@@ -17,7 +19,7 @@ var PostCommandRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.PostCommandRepository), new(*PostCommandRepositoryImpl)),
 )
 
-func (r *PostCommandRepositoryImpl) Store(post *entity.Post) error {
+func (r *PostCommandRepositoryImpl) Store(c context.Context, post *entity.Post) error {
 	return errors.Wrap(r.DB.Save(post).Error, "failed to save post")
 }
 

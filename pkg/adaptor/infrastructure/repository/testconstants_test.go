@@ -36,5 +36,8 @@ var (
 	postIDs     = []int{1901, 1902}
 	addedPostID = 1903
 
+	hashtagIDs     = []int{2001, 2002}
+	addedHashtagID = 2003
+
 	sampleTime = time.Date(2020, 7, 7, 10, 0, 0, 0, time.Local)
 )

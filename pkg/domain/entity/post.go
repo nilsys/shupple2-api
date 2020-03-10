@@ -23,8 +23,9 @@ type (
 
 	Post struct {
 		PostTiny
-		Bodies      []*PostBody     `gorm:"foreignkey:PostID"`
-		CategoryIDs []*PostCategory `gorm:"foreignkey:PostID"`
+		Bodies      []*PostBody
+		CategoryIDs []*PostCategory
+		HashtagIDs  []*PostHashtag
 	}
 
 	PostBody struct {
@@ -36,6 +37,11 @@ type (
 	PostCategory struct {
 		PostID     int `gorm:"primary_key"`
 		CategoryID int `gorm:"primary_key"`
+	}
+
+	PostHashtag struct {
+		PostID    int `gorm:"primary_key"`
+		HashtagID int `gorm:"primary_key"`
 	}
 
 	// 参照用Post
@@ -78,7 +84,7 @@ func (post *PostDetailWithHashtag) TableName() string {
 	return "post"
 }
 
-func NewPost(tiny PostTiny, bodies []string, categoryIDs []int) Post {
+func NewPost(tiny PostTiny, bodies []string, categoryIDs []int, hashtagIDs []int) Post {
 	postBodies := make([]*PostBody, len(bodies))
 	for i, body := range bodies {
 		postBodies[i] = &PostBody{
@@ -96,9 +102,18 @@ func NewPost(tiny PostTiny, bodies []string, categoryIDs []int) Post {
 		}
 	}
 
+	postHashtagIDs := make([]*PostHashtag, len(hashtagIDs))
+	for i, h := range hashtagIDs {
+		postHashtagIDs[i] = &PostHashtag{
+			PostID:    tiny.ID,
+			HashtagID: h,
+		}
+	}
+
 	return Post{
 		tiny,
 		postBodies,
 		postCategoryIDs,
+		postHashtagIDs,
 	}
 }

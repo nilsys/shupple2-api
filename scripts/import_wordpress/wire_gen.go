@@ -45,10 +45,24 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
 		DB: db,
 	}
+	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
+		DB: db,
+	}
+	dao := repository.DAO{
+		DB_: db,
+	}
+	hashtagCommandRepositoryImpl := &repository.HashtagCommandRepositoryImpl{
+		DAO: dao,
+	}
+	hashtagCommandServiceImpl := &service.HashtagCommandServiceImpl{
+		HashtagQueryRepository:   hashtagQueryRepositoryImpl,
+		HashtagCommandRepository: hashtagCommandRepositoryImpl,
+	}
 	wordpressServiceImpl := &service.WordpressServiceImpl{
 		WordpressQueryRepository: wordpressQueryRepository,
 		UserQueryRepository:      userQueryRepositoryImpl,
 		CategoryQueryRepository:  categoryQueryRepositoryImpl,
+		HashtagCommandService:    hashtagCommandServiceImpl,
 	}
 	categoryCommandServiceImpl := &service.CategoryCommandServiceImpl{
 		CategoryCommandRepository: categoryCommandRepositoryImpl,
@@ -82,10 +96,15 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
 		DB: db,
 	}
+	transactionServiceImpl := &repository.TransactionServiceImpl{
+		DB: db,
+	}
 	postCommandServiceImpl := &service.PostCommandServiceImpl{
 		PostCommandRepository:    postCommandRepositoryImpl,
+		HashtagCommandRepository: hashtagCommandRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepository,
 		WordpressService:         wordpressServiceImpl,
+		TransactionService:       transactionServiceImpl,
 	}
 	touristSpotCommandRepositoryImpl := &repository.TouristSpotCommandRepositoryImpl{
 		DB: db,
@@ -122,4 +141,4 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.CategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.LcategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.CategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.LcategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet)
