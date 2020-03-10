@@ -249,6 +249,14 @@ paths:
           schema:
             type: integer
         - in: query
+          name: childId
+          description: |
+            子のカテゴリID
+            親カテゴリに紐づく
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
           name: hashtag
           description: hashtagに紐づくレビューを取得する
           schema:
@@ -1208,6 +1216,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaList"
+  /interests:
+    get:
+      tags:
+        - interest
+      summary: ユーザー興味項目検索API
+      description: ユーザー興味項目検索
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InterestList"
   /inns:
     get:
       tags:
@@ -1315,6 +1336,11 @@ components:
           - Hashtag
           - User
   requestBodies:
+    UserRegisterRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UserRequest"
     UserRequest:
       content:
         application/json:
@@ -1358,6 +1384,77 @@ components:
         pinnedPostId:
           type: integer
           description: 一番上に表示される記事
+        interests:
+          type: array
+          items:
+            type: integer
+    UserRegisterRequest:
+      type: object
+      properties:
+        cognitoId: 
+          type: string
+          description: cognitoのid
+          example: "6a3e24ea-60ec-484b-b912-e854be261c95"
+        name:
+          type: string
+          description: ユーザー名
+          example: サトシ
+        uid:
+          type: string
+          description: |
+            ユーザーが決める一意なID
+            半角英字のみ
+        email:
+          type: string
+          format: email
+          description: email
+        birthdate:
+          type: string
+          description: |
+            生年月日
+            formatはexampleに合わせる事
+          example: 2010-10-01
+        gender:
+          type: string
+          enum:
+            - Male
+            - Female
+          example: Male
+        profile:
+          type: string
+          description: プロフィール文
+          example: 香川出身24歳です！旅大好き！
+        iconUuid:
+          type: string
+          description: アイコンをs3投稿時に返却されるUUID
+          example: "6a3e24ea-60ec-484b-b912-e854be261c95"
+        headerUuid:
+          type: string
+          description: ヘッダーをs3投稿時に返却されるUUID
+          example: "6a3e24ea-60ec-484b-b912-e854be261c95"
+        url:
+          type: string
+          description: ユーザーが自由に設定するURL
+          format: url
+          example: https://hoge.com
+        facebookUrl:
+          type: string
+          description: facebookURL
+          format: url
+          example: https://facebook.com/
+        instagramUrl:
+          type: string
+          description: instagramURL
+          format: url
+          example: https://instagram.com/
+        twitterUrl:
+          type: string
+          description: twitterURL
+          example: https://twitter.com/
+        livingArea:
+          type: string
+          description: 居住エリア
+          example: 東北
         interests:
           type: array
           items:
@@ -1513,13 +1610,6 @@ components:
         createdAt:
           type: string
           format: date-time
-    Interest:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
     ReviewCommentRequest:
       type: object
       properties:
@@ -2069,6 +2159,21 @@ components:
           type: string
           description: エリア名
           example: 北海道
+    InterestList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Interest"
+    Interest:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        name:
+          type: string
+          description: 興味名前
+          example: 東北
     Creator:
       type: object
       required:
