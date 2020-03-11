@@ -81,3 +81,43 @@ func (r *CategoryQueryRepositoryImpl) SearchByName(name string) ([]*entity.Categ
 
 	return rows, nil
 }
+
+func (r *CategoryQueryRepositoryImpl) SearchAreaByName(name string) ([]*entity.Category, error) {
+	var rows []*entity.Category
+
+	q := r.buildSearchByNameAndType(name, model.CategoryTypeArea)
+
+	if err := q.Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to search area by name")
+	}
+
+	return rows, nil
+}
+
+func (r *CategoryQueryRepositoryImpl) SearchSubAreaByName(name string) ([]*entity.Category, error) {
+	var rows []*entity.Category
+
+	q := r.buildSearchByNameAndType(name, model.CategoryTypeSubArea)
+
+	if err := q.Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to search area by name")
+	}
+
+	return rows, nil
+}
+
+func (r *CategoryQueryRepositoryImpl) SearchSubSubAreaByName(name string) ([]*entity.Category, error) {
+	var rows []*entity.Category
+
+	q := r.buildSearchByNameAndType(name, model.CategoryTypeSubSubArea)
+
+	if err := q.Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to search area by name")
+	}
+
+	return rows, nil
+}
+
+func (r *CategoryQueryRepositoryImpl) buildSearchByNameAndType(name string, categoryType model.CategoryType) *gorm.DB {
+	return r.DB.Where("MATCH(name) AGAINST(?)", name).Where("type = ?", categoryType).Limit(defaultSearchSuggestionsNumber)
+}

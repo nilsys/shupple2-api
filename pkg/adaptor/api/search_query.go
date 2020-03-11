@@ -18,14 +18,15 @@ var SearchQueryControllerSet = wire.NewSet(
 	wire.Struct(new(SearchQueryController), "*"),
 )
 
-func (c *SearchQueryController) ShowSearchSuggestionList(ctx echo.Context) error {
+func (c *SearchQueryController) ListSearchSuggestion(ctx echo.Context) error {
 	p := &param.Keyward{}
 
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation show search suggestion list")
 	}
 
-	suggestions, err := c.SearchQueryService.ShowSearchSuggestionListByKeyward(p.Value)
+	suggestions, err := p.SearchResult(c.SearchQueryService.ListSuggestionsByKeyward, c.SearchQueryService.ListSuggestionsByType)
+
 	if err != nil {
 		return errors.Wrap(err, "failed to show search suggestion list")
 	}

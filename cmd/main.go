@@ -125,7 +125,7 @@ func setRoutes(app *App) {
 	}
 
 	api.GET("/healthcheck", app.HealthCheckController.HealthCheck)
-	api.GET("/search/suggestions", app.SearchQueryController.ShowSearchSuggestionList)
+	api.GET("/search/suggestions", app.SearchQueryController.ListSearchSuggestion)
 	api.POST(
 		"/wordpress/import",
 		app.WordpressCallbackController.Import,

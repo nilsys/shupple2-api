@@ -10,7 +10,8 @@ import (
 
 type (
 	SearchQueryService interface {
-		ShowSearchSuggestionListByKeyward(keywards string) (*entity.SearchSuggetions, error)
+		ListSuggestionsByKeyward(keyward string) (*entity.SearchSuggetions, error)
+		ListSuggestionsByType(keyward string, suggestionType model.SuggestionType) (*entity.SearchSuggetions, error)
 	}
 
 	SearchQueryServiceImpl struct {
@@ -26,7 +27,7 @@ var SearchQueryServiceSet = wire.NewSet(
 	wire.Bind(new(SearchQueryService), new(*SearchQueryServiceImpl)),
 )
 
-func (s *SearchQueryServiceImpl) ShowSearchSuggestionListByKeyward(keyward string) (*entity.SearchSuggetions, error) {
+func (s *SearchQueryServiceImpl) ListSuggestionsByKeyward(keyward string) (*entity.SearchSuggetions, error) {
 	categories, err := s.CategoryQueryRepository.SearchByName(keyward)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed search category list by keyward")
@@ -44,13 +45,59 @@ func (s *SearchQueryServiceImpl) ShowSearchSuggestionListByKeyward(keyward strin
 		return nil, errors.Wrap(err, "failed search user list by keyward")
 	}
 
-	suggestions := s.convertTargetToSuggetion(categories, touristSpots, hashtags, users)
+	return s.convertTargetToSuggestion(categories, touristSpots, hashtags, users), nil
+}
 
-	return suggestions, nil
+// 選択された候補のみ返す
+// TODO: リファクタ
+func (s *SearchQueryServiceImpl) ListSuggestionsByType(keyward string, suggestionType model.SuggestionType) (*entity.SearchSuggetions, error) {
+	if suggestionType == model.SuggestionTypeArea {
+		categories, err := s.CategoryQueryRepository.SearchAreaByName(keyward)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed search area list by keyward")
+		}
+		return s.convertTargetToSuggestion(categories, nil, nil, nil), nil
+	}
+	if suggestionType == model.SuggestionTypeSubArea {
+		categories, err := s.CategoryQueryRepository.SearchSubAreaByName(keyward)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed search sub_area list by keyward")
+		}
+		return s.convertTargetToSuggestion(categories, nil, nil, nil), nil
+	}
+	if suggestionType == model.SuggestionTypeSubSubArea {
+		categories, err := s.CategoryQueryRepository.SearchSubSubAreaByName(keyward)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed search sub_sub_area list by keyward")
+		}
+		return s.convertTargetToSuggestion(categories, nil, nil, nil), nil
+	}
+	if suggestionType == model.SuggestionTypeTouristSpot {
+		touristSpots, err := s.TouristSpotQueryRepository.SearchByName(keyward)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed search tourist_spot list by keyward")
+		}
+		return s.convertTargetToSuggestion(nil, touristSpots, nil, nil), nil
+	}
+	if suggestionType == model.SuggestionTypeHashTag {
+		hashtags, err := s.HashtagQueryRepository.SearchByName(keyward)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed search hashtag list by keyward")
+		}
+		return s.convertTargetToSuggestion(nil, nil, hashtags, nil), nil
+	}
+	if suggestionType == model.SuggestionTypeUser {
+		users, err := s.UserQueryRepository.SearchByName(keyward)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed search user list by keyward")
+		}
+		return s.convertTargetToSuggestion(nil, nil, nil, users), nil
+	}
+	return nil, nil
 }
 
 // TODO: リファクタ
-func (s *SearchQueryServiceImpl) convertTargetToSuggetion(categories []*entity.Category, touristSpots []*entity.TouristSpot, hashtags []*entity.Hashtag, users []*entity.User) *entity.SearchSuggetions {
+func (s *SearchQueryServiceImpl) convertTargetToSuggestion(categories []*entity.Category, touristSpots []*entity.TouristSpot, hashtags []*entity.Hashtag, users []*entity.User) *entity.SearchSuggetions {
 	areaSuggestions := make([]*entity.SearchSuggetion, len(categories))
 	touristSpotSuggestions := make([]*entity.SearchSuggetion, len(touristSpots))
 	hashtagSuggestions := make([]*entity.SearchSuggetion, len(hashtags))

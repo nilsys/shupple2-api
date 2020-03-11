@@ -23,6 +23,6 @@ ENUM(AreaGroup = 1, Area, SubArea, SubSubArea, Theme)
 type CategoryType int
 
 /*
-ENUM(Area, SubArea, SubSubArea, TouristSpot, HashTag, User)
+ENUM(Area = 1, SubArea, SubSubArea, TouristSpot, HashTag, User)
 */
 type SuggestionType int

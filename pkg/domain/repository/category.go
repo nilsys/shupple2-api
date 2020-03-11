@@ -17,5 +17,8 @@ type (
 		FindByIDs(ids []int) ([]*entity.Category, error)
 		// name部分一致検索
 		SearchByName(name string) ([]*entity.Category, error)
+		SearchAreaByName(name string) ([]*entity.Category, error)
+		SearchSubAreaByName(name string) ([]*entity.Category, error)
+		SearchSubSubAreaByName(name string) ([]*entity.Category, error)
 	}
 )

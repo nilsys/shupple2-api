@@ -174,7 +174,7 @@ func (x *MediaSortBy) UnmarshalText(text []byte) error {
 
 const (
 	// SuggestionTypeArea is a SuggestionType of type Area
-	SuggestionTypeArea SuggestionType = iota
+	SuggestionTypeArea SuggestionType = iota + 1
 	// SuggestionTypeSubArea is a SuggestionType of type SubArea
 	SuggestionTypeSubArea
 	// SuggestionTypeSubSubArea is a SuggestionType of type SubSubArea
@@ -190,12 +190,12 @@ const (
 const _SuggestionTypeName = "AreaSubAreaSubSubAreaTouristSpotHashTagUser"
 
 var _SuggestionTypeMap = map[SuggestionType]string{
-	0: _SuggestionTypeName[0:4],
-	1: _SuggestionTypeName[4:11],
-	2: _SuggestionTypeName[11:21],
-	3: _SuggestionTypeName[21:32],
-	4: _SuggestionTypeName[32:39],
-	5: _SuggestionTypeName[39:43],
+	1: _SuggestionTypeName[0:4],
+	2: _SuggestionTypeName[4:11],
+	3: _SuggestionTypeName[11:21],
+	4: _SuggestionTypeName[21:32],
+	5: _SuggestionTypeName[32:39],
+	6: _SuggestionTypeName[39:43],
 }
 
 // String implements the Stringer interface.
@@ -207,12 +207,12 @@ func (x SuggestionType) String() string {
 }
 
 var _SuggestionTypeValue = map[string]SuggestionType{
-	_SuggestionTypeName[0:4]:   0,
-	_SuggestionTypeName[4:11]:  1,
-	_SuggestionTypeName[11:21]: 2,
-	_SuggestionTypeName[21:32]: 3,
-	_SuggestionTypeName[32:39]: 4,
-	_SuggestionTypeName[39:43]: 5,
+	_SuggestionTypeName[0:4]:   1,
+	_SuggestionTypeName[4:11]:  2,
+	_SuggestionTypeName[11:21]: 3,
+	_SuggestionTypeName[21:32]: 4,
+	_SuggestionTypeName[32:39]: 5,
+	_SuggestionTypeName[39:43]: 6,
 }
 
 // ParseSuggestionType attempts to convert a string to a SuggestionType
