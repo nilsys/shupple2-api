@@ -2454,7 +2454,2474 @@ components:
     Accompanying:
       type: string
       enum:
-        - BUISINESS
+        - openapi: 3.0.0
+info:
+  title: stayway-media-api
+  version: 1.0.0
+paths:
+  /users:
+    post:
+      tags:
+        - user
+      summary: ユーザー登録
+      description: |
+        アイコン、ヘッダ画像はフロント側でS3にアップロードし、UUIDを送信する。
+        そのUUIDからアップロードされた画像を特定し、S3上の/users/icon/${userID}に移動する。
+      requestBody:
+        $ref: "#/components/requestBodies/UserRequest"
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: バリデーションエラーまたは既に存在するユーザー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+        - iDPCognito: []
+    put:
+      tags:
+        - user
+      summary: プロフィール更新
+      description: ユーザープロフィール更新
+      requestBody:
+        $ref: "#/components/requestBodies/UserRequest"
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+        - iDPCognito: []
+  /users/ranking:
+    get:
+      tags:
+        - user
+      summary: ユーザーランキング取得
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: query
+          name: areaId
+          description: |
+            エリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subAreaId
+          description: |
+            サブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subSubAreaId
+          description: |
+            サブサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - $ref: "#/components/parameters/UserSortBy"
+        - in: query
+          name: fromDate
+          description: 記事や投稿写真を絞る開始日 (例)2019-01-01
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: toDate
+          description: 記事や投稿写真を絞る終了日 (例)2019-01-31
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: page
+          required: false
+          description: 何ページ目
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          required: false
+          description: ページ当たり取得件数
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RankingUserList"
+  /users/{id}/followee:
+    get:
+      tags:
+        - user
+      summary: フォローユーザー取得
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: UserId
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowUserList"
+  /users/{id}/follower:
+    get:
+      tags:
+        - user
+      summary: フォローワーユーザー取得
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: UserId
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowUserList"
+  /s3:
+    post:
+      security:
+        - iDPCognito: []
+      tags:
+        - s3
+      summary: S3アップロードに使用する署名付きURLを生成
+      description: |
+        フロントはこれを使用してS3にファイルをアップロードし、ファイル添付系のAPIでUUIDを渡す。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contentType:
+                  type: string
+                  format: mime
+        required: true
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  url:
+                    type: string
+                    description: PutObjectに使用する署名付きURL
+  /reviews:
+    get:
+      tags:
+        - review
+      summary: レビュー検索
+      description: |
+        フリーワード検索可能
+        複数ワードで検索可能
+        その場合、レスポンスは全てのワードに引っ掛かる物である事
+        以下の順番で返る)
+        ・本文にフリーワードが含めれているものを返す(作成日時順)
+      parameters:
+        - in: query
+          name: userId
+          description: 指定したユーザーが投稿したレビューを取得する
+          schema:
+            type: integer
+        - in: query
+          name: innId
+          description: innに紐づくレビューを取得する
+          schema:
+            type: integer
+        - in: query
+          name: touristSpotId
+          description: spotに紐づくレビューを取得する
+          schema:
+            type: integer
+        - in: query
+          name: areaId
+          description: |
+            エリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subAreaId
+          description: |
+            サブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subSubAreaId
+          description: |
+            サブサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: metasearchAreaId
+          description: |
+            検索サイトエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: metasearchSubAreaId
+          description: |
+            検索サイトサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: metasearchSubSubAreaId
+          description: |
+            検索サイトサブサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: childId
+          description: |
+            子のカテゴリID
+            親カテゴリに紐づく
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: hashtag
+          description: hashtagに紐づくレビューを取得する
+          schema:
+            type: string
+        - in: query
+          name: q
+          description: |
+            検索ワード
+          schema:
+            type: string
+        - $ref: "#/components/parameters/ReviewSortBy"
+        - in: query
+          name: excludeId
+          description: |
+            除外するID
+          schema:
+            type: integer
+        - in: query
+          name: perPage
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+    post:
+      tags:
+        - review
+      summary: レビュー投稿
+      security:
+        - iDPCognito: []
+      requestBody:
+        $ref: "#/components/requestBodies/ReviewRequest"
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /reviews/:id:
+    get:
+      tags:
+        - review
+      summary: レビュー取得
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: レビューID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+        - review
+      summary: レビュー更新
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: レビューID
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/ReviewRequest"
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: 自分のものでない投稿を更新しようとした時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /reviews/:id/comment:
+    get:
+      tags:
+        - review
+      summary: レビューのコメントを取得する
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: レビューID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReviewComment"
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - review
+      summary: レビューにコメントを投稿する
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: レビューID
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewCommentRequest"
+        required: true
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+        "400":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /reviews/:id/favorite:
+    put:
+      tags:
+        - review
+      summary: レビューをfavする
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: 成功
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - review
+      summary: レビューをunfavする
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: 成功
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user/{userId}/reviews/feed:
+    get:
+      tags:
+        - review
+      summary: フォローしているユーザー又はハッシュタグのレビュー取得API
+      description: userIdで指定されたユーザーがフォローしているユーザー又はハッシュタグのレビュー取得
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: ユーザーID
+          schema:
+            type: integer
+        - in: query
+          name: page
+          description: ページ数(pagination時)
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+  /user/{userId}/reviews/favorite:
+    get:
+      tags:
+        - review
+      summary: ユーザーがいいねしたレビュー取得API
+      description: userIdで指定されたユーザーがいいねしたレビュー取得
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: ユーザーID
+          schema:
+            type: integer
+        - in: query
+          name: page
+          description: ページ数(pagination時)
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+  /posts:
+    get:
+      tags:
+        - post
+      summary: 記事取得API
+      description: |
+        パラメータで指定された条件で検索(組み合わせる事も可能)
+        フリーワード対象を取得
+        複数ワードで検索可能
+        その場合、レスポンスは全てのワードに引っ掛かる物である事
+        以下の順番で返る)
+        ・タイトルにフリーワードが含まれているもの(更新日時順)
+        ・本文にフリーワードが含まれているもの(更新日時順)
+      parameters:
+        - in: query
+          name: userId
+          description: |
+            ユーザーID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: areaId
+          description: |
+            エリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subAreaId
+          description: |
+            サブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subSubAreaId
+          description: |
+            サブサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: metasearchAreaId
+          description: |
+            検索サイトエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: metasearchSubAreaId
+          description: |
+            検索サイトサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: metasearchSubSubAreaId
+          description: |
+            検索サイトサブサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: themeId
+          description: |
+            テーマID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: innTypeId
+          description: |
+            宿タイプID
+            いずれか1つ以上必須
+          schema: 
+            type: integer
+        - in: query
+          name: innDiscerningType
+          description: |
+            宿こだわり条件ID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: hashTag
+          description: |
+            ハッシュタグ
+            いずれか1つ以上必須
+          schema:
+            type: string
+        - $ref: "#/components/parameters/SortBy"
+        - in: query
+          name: q
+          description: |
+            検索ワード
+          schema:
+            type: string
+        - in: query
+          name: page
+          description: ページ数(pagination時)
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  posts:
+                    $ref: "#/components/schemas/PostList"
+  /posts/:id:
+    get:
+      tags:
+        - post
+      summary: 記事取得API
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: 記事ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostShow"
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /posts/:id/favorite:
+    put:
+      tags:
+        - post
+      summary: 記事をfavする
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: 成功
+        "404":
+          description: 存在しない記事
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - post
+      summary: 記事をunfavする
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: 成功
+        "404":
+          description: 存在しない記事
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user/{userId}/posts/feed:
+    get:
+      tags:
+        - post
+      summary: フォローしているユーザー又はハッシュタグの記事取得API
+      description: userIdで指定されたユーザーがフォローしているユーザー又はハッシュタグの記事取得
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: ユーザーID
+          schema:
+            type: integer
+        - in: query
+          name: page
+          description: ページ数(pagination時)
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostList"
+  /user/{userId}/posts/favorite:
+    get:
+      tags:
+        - post
+      summary: ユーザーがいいねした記事取得API
+      description: userIdで指定されたユーザーがいいねした記事取得
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: ユーザーID
+          schema:
+            type: integer
+        - in: query
+          name: page
+          description: ページ数(pagination時)
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostList"
+  /feature_posts:
+    get:
+      tags:
+        - feature_post
+      summary: 特集記事一覧取得API
+      description: |
+        特集記事一覧取得
+        更新日時順
+      parameters:
+        - in: query
+          name: page
+          description: ページ数(pagination時)
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeaturePostList"
+  "/feature_posts/{id}":
+    get:
+      tags:
+        - feature_post
+      summary: 特集記事詳細取得API
+      description: 特集記事詳細
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: 特集記事ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShowFeaturePost"
+  /vlogs:
+    get:
+      tags:
+        - vlog
+      summary: 動画取得API
+      description: |
+        パラメータで指定された条件で検索(組み合わせる事も可能)
+        フリーワード対象を取得
+        複数ワードで検索可能
+        その場合、レスポンスは全てのワードに引っ掛かる物である事
+        以下の順番で返る)
+        ・タイトルにフリーワードが含まれているもの(更新日時順)
+      parameters:
+        - in: query
+          name: areaId
+          description: |
+            エリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subAreaId
+          description: |
+            サブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subSubAreaId
+          description: |
+            サブサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: touristSpotId
+          description: |
+            観光スポットID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: userId
+          description: |
+            ユーザーID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: q
+          description: |
+            検索ワード
+          schema:
+            type: string
+        - $ref: "#/components/parameters/SortBy"
+        - in: query
+          name: page
+          description: ページ数(pagination時)
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VlogList"
+  /vlogs/{id}:
+    get:
+      tags:
+        - vlog
+      summary: 動画取得API
+      description: |
+        パラメータで指定された条件で検索(組み合わせる事も可能)
+        フリーワード対象を取得
+        複数ワードで検索可能
+        その場合、レスポンスは全てのワードに引っ掛かる物である事
+        以下の順番で返る)
+        ・タイトルにフリーワードが含まれているもの(更新日時順)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: |
+            vlogID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VlogShow"
+  /comics:
+    get:
+      tags:
+        - comic
+      summary: 漫画一覧取得API
+      description: |
+        漫画一覧取得
+        更新日時降順
+      parameters:
+        - in: query
+          name: page
+          description: ページ数(pagination時)
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComicList"
+  "/comics/{id}":
+    get:
+      tags:
+        - comic
+      summary: 漫画詳細取得API
+      description: 漫画詳細取得
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: 漫画ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComicShow"
+  /tourist_spots:
+    get:
+      tags:
+        - tourist_spot
+      summary: 観光スポット取得API
+      description: パラメータで指定された条件で検索(組み合わせる事も可能)
+      parameters:
+        - in: query
+          name: areaId
+          description: |
+            エリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subAreaId
+          description: |
+            サブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subSubAreaId
+          description: |
+            サブサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: TouristSpotCategoryId
+          description: |
+            観光スポットカテゴリID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: excludeSpotId
+          description: |
+            除外するスポットID
+          schema:
+            type: integer
+        - $ref: "#/components/parameters/SortBy"
+        - in: query
+          name: page
+          description: ページ数(pagination時)
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TouristSpotList"
+  "/tourist_spots/{touristSpotId}":
+    get:
+      tags:
+        - tourist_spot
+      summary: 観光スポット詳細取得API
+      description: 観光スポット詳細取得
+      parameters:
+        - in: path
+          name: touristSpotId
+          required: true
+          description: |
+            観光スポットID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TouristSpotShow"
+  /tourist_spots/recommend:
+    get:
+      tags:
+        - tourist_spot
+      summary: 周辺おすすめスポット取得API
+      description: 周辺おすすめスポット取得
+      parameters:
+        - in: query
+          name: touristSpotId
+          description: |
+            観光スポットID
+            いずれか必須
+          schema:
+            type: integer
+        - in: query
+          name: spotCategoryId
+          description: |
+            観光スポットカテゴリID
+            いずれか必須
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TouristSpotList"
+  /hashtag/recommend:
+    get:
+      tags:
+        - hashtag
+      summary: ハッシュタグ取得API
+      description: 投稿数が多い順でハッシュタグ取得
+      parameters:
+        - in: query
+          name: areaId
+          description: |
+            エリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subAreaId
+          description: |
+            サブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: subSubAreaId
+          description: |
+            サブサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HashtagList"
+  /search/suggestions:
+    get:
+      tags:
+        - search
+      summary: 検索候補取得API
+      description: |
+        検索候補を以下のリストから取得
+        レスポンスは以下の順番で返る
+            ・エリア　　　　
+            ・サブエリア
+            ・サブサブエリア
+            ・観光スポット　
+            ・ハッシュタグ
+            ・ユーザー
+      parameters:
+        - in: query
+          name: q
+          description: |
+            検索ワード
+          schema:
+            type: string
+        - $ref: "#/components/parameters/SearchSuggestion"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchSuggestions"
+  /areas:
+    get:
+      tags:
+        - area
+      summary: エリア一覧取得API
+      description: エリア一覧取得
+      parameters:
+        - in: query
+          name: parentCategoryId
+          description: |
+            親カテゴリID
+          schema:
+            type: integer
+        - in: query
+          name: excludeId
+          description: |
+            除外するID
+          schema:
+            type: integer
+        - in: query
+          name: page
+          description: ページ数(pagination時)
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaList"
+  /interests:
+    get:
+      tags:
+        - interest
+      summary: ユーザー興味項目検索API
+      description: ユーザー興味項目検索
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InterestList"
+  /inns:
+    get:
+      tags:
+        - inn
+      summary: 宿検索API
+      description: metasearch側の/innsのAPIをラップ
+      parameters:
+        - in: query
+          name: areaId
+          description: |
+            エリアID
+          schema:
+            type: integer
+        - in: query
+          name: subAreaId
+          description: |
+            サブエリアID
+          schema:
+            type: integer
+        - in: query
+          name: subSubAreaId
+          description: |
+            サブサブエリアID
+          schema:
+            type: integer
+        - in: query
+          name: touristSpotId
+          description: |
+            観光スポットID
+          schema:
+            type: integer
+        - in: query
+          name: page
+          description: ページ数
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InnList"
+servers:
+  - url: http://localhost:3000/api
+components:
+  parameters:
+    SortBy:
+      name: sortBy
+      in: query
+      description: |
+        ソート:
+          * RANKING - 人気順
+          * NEW - 新着順順
+      schema:
+        type: string
+        enum:
+          - RANKING
+          - NEW
+    ReviewSortBy:
+      name: sortBy
+      in: query
+      description: |
+        ソート:
+          * RECOMMEND - おすすめ順
+          * NEW - 新着順順
+      schema:
+        type: string
+        enum:
+          - RECOMMEND
+          - NEW
+        default: NEW
+    UserSortBy:
+      name: sortBy
+      in: query
+      description: |
+        ソート:
+          * RANKING - 人気順
+          * RECOMMEND - お勧め順
+      schema:
+        type: string
+        enum:
+          - RANKING
+          - RECOMMEND
+        default: RECOMMEND
+    SearchSuggestion:
+      name: type
+      in: query
+      description: |
+        検索対象絞り込み
+      schema:
+        type: string
+        enum:
+          - Area
+          - SubArea
+          - SubSubArea
+          - TouristSpot
+          - Hashtag
+          - User
+  requestBodies:
+    UserRegisterRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UserRequest"
+    UserRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UserRequest"
+      required: true
+    ReviewRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ReviewRequest"
+      required: true
+  securitySchemes:
+    iDPCognito:
+      in: header
+      name: Authorization
+      type: apiKey
+      description: CognitoIDPから取得するDToken
+  schemas:
+    UserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        birthdate:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum:
+            - male
+            - female
+        profile:
+          type: string
+        iconUuid:
+          type: string
+          description: S3アップロードAPIから返却されたUUIDを指定
+        pinnedPostId:
+          type: integer
+          description: 一番上に表示される記事
+        interests:
+          type: array
+          items:
+            type: integer
+    UserRegisterRequest:
+      type: object
+      properties:
+        cognitoId: 
+          type: string
+          description: cognitoのid
+          example: "6a3e24ea-60ec-484b-b912-e854be261c95"
+        name:
+          type: string
+          description: ユーザー名
+          example: サトシ
+        uid:
+          type: string
+          description: |
+            ユーザーが決める一意なID
+            半角英字のみ
+        email:
+          type: string
+          format: email
+          description: email
+        birthdate:
+          type: string
+          description: |
+            生年月日
+            formatはexampleに合わせる事
+          example: 2010-10-01
+        gender:
+          type: string
+          enum:
+            - Male
+            - Female
+          example: Male
+        profile:
+          type: string
+          description: プロフィール文
+          example: 香川出身24歳です！旅大好き！
+        iconUuid:
+          type: string
+          description: アイコンをs3投稿時に返却されるUUID
+          example: "6a3e24ea-60ec-484b-b912-e854be261c95"
+        headerUuid:
+          type: string
+          description: ヘッダーをs3投稿時に返却されるUUID
+          example: "6a3e24ea-60ec-484b-b912-e854be261c95"
+        url:
+          type: string
+          description: ユーザーが自由に設定するURL
+          format: url
+          example: https://hoge.com
+        facebookUrl:
+          type: string
+          description: facebookURL
+          format: url
+          example: https://facebook.com/
+        instagramUrl:
+          type: string
+          description: instagramURL
+          format: url
+          example: https://instagram.com/
+        twitterUrl:
+          type: string
+          description: twitterURL
+          example: https://twitter.com/
+        livingArea:
+          type: string
+          description: 居住エリア
+          example: 東北
+        interests:
+          type: array
+          items:
+            type: integer
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        birthdate:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum:
+            - male
+            - female
+        profile:
+          type: string
+        header:
+          type: string
+          format: url
+          description: ヘッダ画像。userIDから一意に定まる
+        icon:
+          type: string
+          format: url
+          description: アイコン。userIDから一意に定まる
+        pinnedPostId:
+          type: integer
+          description: 一番上に表示される記事
+        interests:
+          type: array
+          items:
+            $ref: "#/components/schemas/Interest"
+    UserSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        icon:
+          type: string
+          format: url
+          description: アイコン。userIDから一意に定まる
+    ReviewRequest:
+      type: object
+      description: |
+        spot_idかinn_idのどちらかは必ず入っていないといけない
+      properties:
+        travelDate:
+          type: string
+          description: |
+            旅行日
+            format yyyy-MM
+        accompanying:
+          $ref: "#/components/schemas/Accompanying"
+        hashtagId:
+          type: array
+          description: |
+            ハッシュタグID
+          items:
+            type: integer
+        spotId:
+          type: integer
+        innId:
+          type: integer
+        score:
+          type: integer
+        body:
+          type: string
+        mediaUuids:
+          type: array
+          items:
+            type: object
+            properties:
+              uuid:
+                type: string
+                description: アップロードファイルのUUID
+                example: uuid
+              mimeType:
+                type: string
+                description: 拡張子
+                example: png
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: レビューID
+          example: 1
+        score:
+          type: integer
+          description: 評価
+          example: 3
+        body:
+          type: string
+          description: 内容
+          example: |
+            従業員の方が親切でとても充実した時間を過ごす事が出来ました！
+        favoriteCount:
+          type: integer
+          description: いいね数
+        accompanying:
+          $ref: "#/components/schemas/Accompanying"
+        updatedAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        travelDate:
+          type: string
+          description: |
+            旅行日
+            format yyyy-MM
+        commentCount:
+          type: integer
+          description: コメント数
+          example: 4
+        media:
+          type: array
+          items:
+            $ref: "#/components/schemas/Media"
+        hashtag:
+          type: array
+          description: レビューに紐づくハッシュタグ
+          items:
+            $ref: "#/components/schemas/Hashtag"
+        creator:
+          $ref: "#/components/schemas/Creator"
+    Media:
+      type: object
+      properties:
+        uuid:
+          type: string
+        mime:
+          type: string
+          format: mime
+        url:
+          type: string
+          format: url
+    ReviewComment:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/UserSummary"
+        body:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    ReviewCommentRequest:
+      type: object
+      properties:
+        body:
+          type: string
+    PostList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Post"
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 記事ID
+          example: 1
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: http://example.com/img/1
+        areaCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+        themeCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+        title:
+          type: string
+          description: 記事タイトル
+          example: 埼玉の春を満喫♪
+        creator:
+          $ref: "#/components/schemas/Creator"
+        likeCount:
+          type: integer
+          description: いいね数
+          example: 3
+        views:
+          type: integer
+          description: 閲覧数
+          example: 6
+        updatedAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        createdAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+    PostShow:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 記事ID
+          example: 1
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: http://example.com/img/1
+        body:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostBody"
+        areaCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+        themeCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+        hashtags:
+            $ref: "#/components/schemas/HashtagList"
+        title:
+          type: string
+          description: 記事タイトル
+          example: 埼玉の春を満喫♪
+        toc:
+          type: string
+          description: 目次
+        creator:
+          $ref: "#/components/schemas/Creator"
+        likeCount:
+          type: integer
+          description: いいね数
+          example: 3
+        facebookCount:
+          type: integer
+          description: Facebookシェア数
+          example: 4
+        twitterCount:
+          type: integer
+          description: Twitterシェア数
+          example: 5
+        views:
+          type: integer
+          description: 閲覧数
+          example: 6
+        updatedAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        createdAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+    PostBody:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: 何ページ目か
+          example: 1
+        body:
+          type: string
+          description: 内容
+          example: 春におすすめの......
+    FeaturePostList:
+      type: array
+      items:
+        $ref: "#/components/schemas/FeaturePost"
+    FeaturePost:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 特集記事ID
+          example: 1
+        title:
+          type: string
+          description: 特集記事タイトル
+          example: 絶景
+        thumbnail:
+          type: string
+          description: 特集記事サムネイルURL
+          example: https://files.stayway.jp/feature_post/1
+    ShowFeaturePost:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 特集記事ID
+          example: 1
+        slug:
+          type: string
+          description: スラッグ
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: http://example.com/img/1
+        title:
+          type: string
+          description: 記事タイトル
+          example: 埼玉の春を満喫♪
+        body:
+          type: string
+          description: 本文
+          example: 埼玉の春を満喫できる記事をまとめました！
+        creator:
+          $ref: "#/components/schemas/Creator"
+        views:
+          type: integer
+          description: 閲覧数
+          example: 103
+        createdAt:
+          type: string
+          description: 公開日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        updatedAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        relationPosts:
+          type: array
+          items:
+            type: object
+            description: 関連記事
+            properties:
+              id:
+                type: integer
+                description: 記事ID
+                example: 1
+              title:
+                type: string
+                description: 記事タイトル
+                example: 韓国旅行でもっとキレイに！
+              thumbnail:
+                type: string
+                description: サムネイルURL
+                example: https://files.stayway.jp/posts/1
+              slug:
+                type: string
+                description: スラッグ
+    VlogList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Vlog"
+    Vlog:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 動画ID
+          example: 1
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: http://example.com/img/1
+        areaCategories:
+          type: array
+          description: エリアカテゴリ
+          items:
+            $ref: "#/components/schemas/Category"
+        themeCategories:
+          type: array
+          description: テーマカテゴリ
+          items:
+            $ref: "#/components/schemas/Category"
+        title:
+          type: string
+          description: 動画タイトル
+          example: 埼玉の春を満喫♪
+    VlogShow:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: vlogId
+          example: 1
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: http://example.com/img/1
+        areaCategories:
+          type: array
+          description: エリアカテゴリ
+          items:
+            $ref: "#/components/schemas/Category"
+        themeCategories:
+          type: array
+          description: テーマカテゴリ
+          items:
+            $ref: "#/components/schemas/Category"
+        title:
+          type: string
+          description: 動画タイトル
+          example: 埼玉の春を満喫♪
+        body:
+          type: string
+          description: 本文
+          example: おすすめの動画です
+        series:
+          type: string
+          description: シリーズ名
+          example: ~シリーズ~
+        creatorSns:
+          type: string
+          description: 投稿者のSNS
+          example: https://twitter.jp/1
+        editorName:
+          type: string
+          description: 編集者の名前
+          example: 編集者です
+        yearMonth:
+          type: string
+          description: 撮影年月
+          example: 2020-01
+        playTime:
+          type: string
+          description: 再生時間
+          example: "14:02"
+        timeLine:
+          type: string
+          description: 目次みたいなやつ(TODO)
+        youtubeUrl:
+          type: string
+          description: yotubeUrl
+          example: https://www.youtube.com/watch?v=b_yyCd1kVNo
+        views:
+          type: integer
+          description: 閲覧数
+          example: 123
+        facebookCount:
+          type: integer
+          description: Facebookシェア数
+          example: 4
+        twitterCount:
+          type: integer
+          description: Twitterシェア数
+          example: 5
+        touristSpots:
+          type: array
+          items:
+            $ref: "#/components/schemas/TouristSpot"
+    TouristSpotList:
+      type: array
+      items:
+        $ref: "#/components/schemas/TouristSpot"
+    TouristSpot:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: スポットID
+          example: 1
+        name:
+          type: string
+          description: 観光スポット名
+          example: 絶景
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: http://example.com/img/1
+    TouristSpotShow:
+      type: object
+      required:
+        - id
+        - slug
+        - name
+        - city
+        - address
+        - latitude
+        - longitude
+        - accessCar
+        - accessTrain
+        - openingHours
+        - price
+      properties:
+        id:
+          type: integer
+          description: スポットID
+          example: 12345
+        slug:
+          type: string
+          description: スラッグ
+          example: zekkei
+        name:
+          type: string
+          description: 観光スポット名
+          example: 絶景
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: https://files.stayway.jp/example/img/1
+        websiteUrl:
+          type: string
+          description: 公式ホームページ
+          example: http://zekkei.com
+        city:
+          type: string
+          description: 件名・都市
+          example: 渋谷
+        address:
+          type: string
+          description: 住所
+          example: 東京都渋谷区道玄坂１丁目１０−１０番８号 １F・2F 渋谷道玄坂東急ビル
+        latitude:
+          type: number
+          format: double
+          description: 緯度
+          example: 35.65695
+        longitude:
+          type: number
+          format: double
+          description: 経度
+          example: 139.698556
+        accessCar:
+          type: string
+          description: 車でのアクセス
+        accessTrain:
+          type: string
+          description: 電車でのアクセス
+        accessBus:
+          type: string
+          description: バスでのアクセス
+        openingHours:
+          type: string
+          description: 営業時間
+        tel:
+          type: string
+          description: 電話番号
+          example: 080-2374-2754
+        price:
+          type: string
+          description: 価格
+        instagramUrl:
+          type: string
+          description: インスタグラムURL
+          example: http://instagram.com/zekkei
+        searchInnUrl:
+          type: string
+          description: 関連宿を探すためのURL
+          example: http://stayway.jp/zekkei/recommend
+        score:
+          type: number
+          format: double
+          description: 評価
+          example: 3.5
+        vendorScore:
+          type: number
+          format: double
+          description: 外部評価
+          example: 2.5
+        reviewCount:
+          type: number
+          description: レビュー件数
+        areaCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+        themeCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+        lcategories:
+          type: array
+          description: 観光スポットカテゴリー
+          items:
+            $ref: "#/components/schemas/Category"
+        createdAt:
+          type: string
+          description: 公開日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        updatedAt:
+          type: string
+          description: 更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+    HashtagList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Hashtag"
+    Hashtag:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ハッシュタグID
+          example: 1
+        name:
+          type: string
+          description: ハッシュタグ名
+          example: 春に行きたい
+    SearchSuggestions:
+      type: array
+      items:
+        $ref: "#/components/schemas/SearchSuggestion"
+    SearchSuggestion:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ハッシュタグID
+          example: 1
+        type:
+          type: string
+          description: 候補タイプ(enum)
+          example: AREA
+          enum:
+            - AREA
+            - SUBAREA
+            - SUBSUBAREA
+            - SPOT
+            - HASHTAG
+            - USER
+        name:
+          type: string
+          description: 候補名
+          example: 渋谷
+        url:
+          type: string
+          description: URL
+          example: /area/1
+    ComicList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Comic"
+    Comic:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 漫画ID
+          example: 1
+        slug:
+          type: string
+          description: スラッグ
+          example: 第一話
+        title:
+          type: string
+          description: タイトル
+          example: 第一話 外付けの
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: http://example.com/comic/img/1
+    ComicShow:
+      type: object
+      required:
+        - id
+        - slug
+        - title
+        - thumbnail
+        - body
+        - createdAt
+        - creator
+      properties:
+        id:
+          type: integer
+          description: 漫画ID
+          example: 1
+        slug:
+          type: string
+          description: スラッグ
+          example: 第一話
+        title:
+          type: string
+          description: title
+          example: 第一話 外付けの
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: http://example.com/comic/img/1
+        body:
+          type: string
+          description: 本文
+          example: HTML(未定)
+        createdAt:
+          type: string
+          description: 公開日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        creator:
+          $ref: "#/components/schemas/Creator"
+    AreaList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Area"
+    Area:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: エリアID
+          example: 1
+        name:
+          type: string
+          description: エリア名
+          example: 北海道
+    InterestList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Interest"
+    Interest:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        name:
+          type: string
+          description: 興味名前
+          example: 東北
+    Creator:
+      type: object
+      required:
+        - iconUrl
+        - name
+      properties:
+        id:
+          type: integer
+          description: ユーザーID
+          example: 1
+        iconUrl:
+          type: string
+          description: アイコンURL
+          example: https://files.stayway.jp/avatar/1
+        name:
+          type: string
+          description: クリエイター名
+          example: Hitomi
+        profile:
+          type: string
+          description: クリエイタープロフィール
+          example: |
+            横浜生まれ東京育ちの旅好きライター。年に２，３回は国内外の旅行に行きます。
+            旅先での楽しみはグルメとお酒と地元の人と仲良くなること！
+    Category:
+      type: object
+      required:
+        - Id
+        - Name
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        name:
+          type: string
+          description: カテゴリ名
+          example: 北海道
+        type:
+          type: string
+          enum:
+            - AreaGroup
+            - Area
+            - SubArea
+            - SubSubArea
+            - Theme
+    RankingUserList:
+      type: array
+      items:
+        $ref: "#/components/schemas/RankingUser"
+    RankingUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ユーザーID
+          example: 1
+        name:
+          type: string
+          description: 名前
+          example: hanako
+        profile:
+          type: string
+          description: プロフィール
+          example: |
+            横浜生まれ東京育ちの旅好きライター。年に２，３回は国内外の旅行に行きます。
+            旅先での楽しみはグルメとお酒と地元の人と仲良くなること！
+        iconURL:
+          type: string
+          description: アイコン画像URL
+          example: https://files.stayway.jp/avatar/1
+        interest:
+          type: array
+          items:
+            type: string
+            description: 興味分野
+          example:
+            - 沖縄
+            - 夜景
+    FollowUserList:
+      type: array
+      items:
+        $ref: "#/components/schemas/FollowUser"
+    FollowUser:
+      type: object
+      properties:
+        id: 
+          type: integer
+          description: ユーザーID
+          example: 1
+        name:
+          type: string
+          description: 名前
+          example: hanako
+        iconURL:
+          type: string
+          description: アイコン画像URL
+          example: https://files.stayway.jp/avatar/1
+    InnList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Inn"
+    Inn:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 宿ID
+          example: 1
+        name:
+          type: string
+          description: 宿名前
+          example: "グランメゾンド"
+        url:
+          type: string
+          description: 予約サイトURL
+          example: "https://www.booking.com/hotel/cn/grand-hongqiao-shanghai.html"
+        brand:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: ブランドID
+              example: 4
+            name:
+              type: string
+              description: ブランド名
+              example: "アコーホテルズ"
+        thumbnail:
+          type: string
+          description: イメージURL
+          example: "https://images.trvl-media.com/hotels/2000000/1680000/1678800/1678784/8a180494_b.jpg"
+        latitude:
+          type: number
+          format: double
+          description: 緯度
+          example: 35.65695
+        longitude:
+          type: number
+          format: double
+          description: 経度
+          example: 139.698556
+        countryCode:
+          type: string
+          description: 国コード
+          example: "cn"
+        address:
+          type: string
+          description: 住所
+          example: "中国 上海 369"
+        postCode:
+          type: string
+          description: 郵便番号
+          example: "200336"
+        phone:
+          type: string
+          description: 電話番号
+          example: "0120-117-117"
+        access:
+          type: string
+          description: アクセス
+          example: "上海から10分"
+        stayDaysMin:
+          type: integer
+          description: 最低宿泊数
+          example: 1
+        stayDaysMax:
+          type: integer
+          description: 最大宿泊数
+          example: 365
+        checkInTime:
+          type: string
+          description: チェックイン時間
+          example: "14:00"
+        checkOutTime:
+          type: string
+          description: チェックアウト時間
+          example: "12:00"
+        roomCount:
+          type: integer
+          description: 部屋数
+          example: 363
+        bedCount:
+          type: integer
+          description: ベッド数
+          example: 1
+        score:
+          type: number
+          format: double
+          description: 評価
+          example: 3.7
+        reviewCount:
+          type: integer
+          description: レビュー数
+          example: 883
+        minPrice:
+          type: number
+          format: double
+          description: 最低金額
+          example: 1352.81
+        maxPrice:
+          type: number
+          format: double
+          description: 最高金額
+          example: 1352.81
+        innTypes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: 宿タイプID
+                example: 1
+              name:
+                type: string
+                description: 宿タイプ
+                example: "ビジネスホテル"
+              url:
+                type: string
+                example: "/hotels/i_1/"
+        availableCards:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: カード会社ID
+                example: 1
+              name:
+                type: string
+                description: カード会社名
+                example: Visa
+        roomTypes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: ルームタイプID
+                example: 1
+              name:
+                type: string
+                description: ルームタイプ
+                example: "ホテル"
+        trueTags:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: タグID
+                example: 1
+              name:
+                type: string
+                description: タグ名
+                example: "ツイン"
+        falseTags:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: タグID
+                example: 1
+              name:
+                type: string
+                description: タグ名
+                example: "ツイン"
+        hasNext:
+          type: boolean
+          description: 次のページがあるか
+          example: true
+    Accompanying:
+      type: string
+      enum:
+        - BUSINESS
+        - COUPLE
+        - FAMILY
+        - FRIEND
+        - ONLY
+        - WITHCHILD
+    Error:
+      type: object
+      properties:
+        Message:
+          type: string
+
         - COUPLE
         - FAMILY
         - FRIEND
