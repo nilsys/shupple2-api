@@ -99,6 +99,7 @@ func fetchParameterStore(param string) (string, error) {
 		WithDecryption: aws.Bool(true),
 	})
 	if err != nil {
+		fmt.Printf("fetch error %s", err.Error())
 		return "fetch Error", err
 	}
 
