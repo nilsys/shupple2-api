@@ -32,6 +32,9 @@ func GetConfig(filename ConfigFilePath) (*Config, error) {
 	url := os.Getenv("ECS_CONTAINER_METADATA_URI")
 	if utf8.RuneCountInString(url) > 0 {
 		resp, err := http.Get(url)
+		if err != nil {
+			log.Debug(err.Error())
+		}
 		if err != nil || resp.StatusCode == http.StatusOK {
 			bodyBytes, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
