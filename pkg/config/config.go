@@ -89,10 +89,16 @@ func getConfigFromSSM() (*Config, error) {
 
 // SSMから引数で受けたkeyのvalueを取得
 func fetchParameterStore(param string) (string, error) {
-	sess := session.Must(session.NewSession())
+	c := &aws.Config{
+		Region: aws.String(Region),
+	}
+	//sess := session.Must(session.NewSession())
+	//svc := ssm.New(
+	//	sess,
+	//	aws.NewConfig().WithRegion(Region),
+	//)
 	svc := ssm.New(
-		sess,
-		aws.NewConfig().WithRegion(Region),
+		session.Must(session.NewSession(c)),
 	)
 	res, err := svc.GetParameter(&ssm.GetParameterInput{
 		Name:           aws.String(param),
