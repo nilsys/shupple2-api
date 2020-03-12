@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -30,6 +31,7 @@ const (
 func GetConfig(filename ConfigFilePath) (*Config, error) {
 	// 環境を判断
 	url := os.Getenv("ECS_CONTAINER_METADATA_URI")
+	fmt.Print(url)
 	if utf8.RuneCountInString(url) > 0 {
 		resp, err := http.Get(url)
 		if err != nil || resp.StatusCode == http.StatusOK {
@@ -38,6 +40,7 @@ func GetConfig(filename ConfigFilePath) (*Config, error) {
 				log.Debug("failed aws meta data read response body")
 			}
 			log.Debugf("ECS CONTAINER METADATA: %s", string(bodyBytes))
+			fmt.Printf("ECS CONTAINER METADATA: %s", string(bodyBytes))
 			return getConfigFromSSM()
 		}
 		defer func() {
