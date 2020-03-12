@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -31,7 +30,6 @@ const (
 func GetConfig(filename ConfigFilePath) (*Config, error) {
 	// 環境を判断
 	url := os.Getenv("ECS_CONTAINER_METADATA_URI")
-	fmt.Print(url)
 	if utf8.RuneCountInString(url) > 0 {
 		resp, err := http.Get(url)
 		if err != nil || resp.StatusCode == http.StatusOK {
@@ -40,7 +38,6 @@ func GetConfig(filename ConfigFilePath) (*Config, error) {
 				log.Debug("failed aws meta data read response body")
 			}
 			log.Debugf("ECS CONTAINER METADATA: %s", string(bodyBytes))
-			fmt.Printf("ECS CONTAINER METADATA: %s", string(bodyBytes))
 			return getConfigFromSSM()
 		}
 		defer func() {
@@ -89,23 +86,16 @@ func getConfigFromSSM() (*Config, error) {
 
 // SSMから引数で受けたkeyのvalueを取得
 func fetchParameterStore(param string) (string, error) {
-	c := &aws.Config{
-		Region: aws.String(Region),
-	}
-	//sess := session.Must(session.NewSession())
-	//svc := ssm.New(
-	//	sess,
-	//	aws.NewConfig().WithRegion(Region),
-	//)
+	sess := session.Must(session.NewSession())
 	svc := ssm.New(
-		session.Must(session.NewSession(c)),
+		sess,
+		aws.NewConfig().WithRegion(Region),
 	)
 	res, err := svc.GetParameter(&ssm.GetParameterInput{
 		Name:           aws.String(param),
 		WithDecryption: aws.Bool(true),
 	})
 	if err != nil {
-		fmt.Printf("fetch error %s", err.Error())
 		return "fetch Error", err
 	}
 
