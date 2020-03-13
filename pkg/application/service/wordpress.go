@@ -16,7 +16,8 @@ import (
 )
 
 const (
-	wpPageDelimiter = "<p><!--nextpage--></p>"
+	wpPageDelimiter   = "<p><!--nextpage--></p>"
+	thumbnailS3Prefix = "https://s3-ap-northeast-1.amazonaws.com/"
 )
 
 type (
@@ -49,6 +50,11 @@ func (s *WordpressServiceImpl) ConvertPost(wpPost *wordpress.Post) (*entity.Post
 		return nil, errors.Wrap(err, "failed to get user corresponding to wordpress user")
 	}
 
+	thumbnail, err := s.getThumbnail(wpPost.FeaturedMedia)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get thumbnail")
+	}
+
 	toc, err := s.extractTOC(wpPost)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to extract toc")
@@ -67,9 +73,10 @@ func (s *WordpressServiceImpl) ConvertPost(wpPost *wordpress.Post) (*entity.Post
 	post := entity.NewPost(entity.PostTiny{
 		ID:        wpPost.ID,
 		UserID:    user.ID,
+		Slug:      wpPost.Slug,
+		Thumbnail: thumbnail,
 		Title:     wpPost.Title.Rendered,
 		TOC:       toc,
-		Slug:      wpPost.Slug,
 		CreatedAt: time.Time(wpPost.Date),
 		UpdatedAt: time.Time(wpPost.Modified),
 	}, bodies, wpPost.Categories, hashtagIDs)
@@ -88,10 +95,16 @@ func (s *WordpressServiceImpl) ConvertLocation(wpLocation *wordpress.Location) (
 		return nil, errors.Wrap(err, "failed to parse lng")
 	}
 
+	thumbnail, err := s.getThumbnail(wpLocation.FeaturedMedia)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get thumbnail")
+	}
+
 	touristSpot := entity.NewTouristSpot(entity.TouristSpotTiny{
 		ID:           wpLocation.ID,
 		Name:         wpLocation.Title.Rendered,
 		Slug:         wpLocation.Slug,
+		Thumbnail:    thumbnail,
 		WebsiteURL:   wpLocation.Attributes.OfficialURL,
 		City:         wpLocation.Attributes.City,
 		Address:      wpLocation.Attributes.Address,
@@ -202,10 +215,16 @@ func (s *WordpressServiceImpl) ConvertVlog(wpVlog *wordpress.Vlog) (*entity.Vlog
 		return nil, errors.Wrap(err, "failed to get user corresponding to wordpress user")
 	}
 
+	thumbnail, err := s.getThumbnail(wpVlog.FeaturedMedia)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get thumbnail")
+	}
+
 	vlog := entity.NewVlog(entity.VlogTiny{
 		ID:         wpVlog.ID,
 		UserID:     user.ID,
 		Slug:       wpVlog.Slug,
+		Thumbnail:  thumbnail,
 		Title:      wpVlog.Title.Rendered,
 		Body:       wpVlog.Content.Rendered,
 		YoutubeURL: wpVlog.Attributes.Youtube,
@@ -228,6 +247,11 @@ func (s *WordpressServiceImpl) ConvertFeature(wpFeature *wordpress.Feature) (*en
 		return nil, errors.Wrap(err, "failed to get user corresponding to wordpress user")
 	}
 
+	thumbnail, err := s.getThumbnail(wpFeature.FeaturedMedia)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get thumbnail")
+	}
+
 	postIDs := make([]int, len(wpFeature.Attributes.FeatureArticle))
 	for i, feature := range wpFeature.Attributes.FeatureArticle {
 		postIDs[i] = feature.ID
@@ -237,6 +261,7 @@ func (s *WordpressServiceImpl) ConvertFeature(wpFeature *wordpress.Feature) (*en
 		ID:        wpFeature.ID,
 		UserID:    user.ID,
 		Slug:      wpFeature.Slug,
+		Thumbnail: thumbnail,
 		Title:     wpFeature.Title.Rendered,
 		Body:      wpFeature.Content.Rendered,
 		CreatedAt: time.Time(wpFeature.Date),
@@ -252,10 +277,16 @@ func (s *WordpressServiceImpl) ConvertComic(wpComic *wordpress.Comic) (*entity.C
 		return nil, errors.Wrap(err, "failed to get user corresponding to wordpress user")
 	}
 
+	thumbnail, err := s.getThumbnail(wpComic.FeaturedMedia)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get thumbnail")
+	}
+
 	comic := entity.Comic{
 		ID:        wpComic.ID,
 		UserID:    user.ID,
 		Slug:      wpComic.Slug,
+		Thumbnail: thumbnail,
 		Title:     wpComic.Title.Rendered,
 		Body:      wpComic.Content.Rendered,
 		CreatedAt: time.Time(wpComic.Date),
@@ -273,4 +304,17 @@ func (s *WordpressServiceImpl) extractTOC(wpPost *wordpress.Post) (string, error
 
 	toc, err := goquery.OuterHtml(d.Find("#toc_container"))
 	return toc, errors.Wrap(err, "failed to find toc")
+}
+
+func (s *WordpressServiceImpl) getThumbnail(mediaID int) (string, error) {
+	media, err := s.WordpressQueryRepository.FindMediaByIDs([]int{mediaID})
+	if err != nil || len(media) == 0 {
+		return "", serror.NewResourcesNotFoundError(err, "thumbnail(id=%d)", mediaID)
+	}
+
+	thumbnail := media[0].MediaDetails.Sizes.Full.SourceURL
+	if strings.HasPrefix(thumbnail, thumbnailS3Prefix) {
+		thumbnail = "https://" + thumbnail[len(thumbnailS3Prefix):]
+	}
+	return thumbnail, nil
 }

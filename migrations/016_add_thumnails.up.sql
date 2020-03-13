@@ -1,0 +1,5 @@
+ALTER TABLE post ADD thumbnail VARCHAR(255) NOT NULL AFTER user_id;
+ALTER TABLE tourist_spot ADD thumbnail VARCHAR(255) NOT NULL AFTER slug;
+ALTER TABLE comic ADD thumbnail VARCHAR(255) NOT NULL AFTER slug;
+ALTER TABLE feature ADD thumbnail VARCHAR(255) NOT NULL AFTER slug;
+ALTER TABLE vlog ADD thumbnail VARCHAR(255) NOT NULL AFTER slug;

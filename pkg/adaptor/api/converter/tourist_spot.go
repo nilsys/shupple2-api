@@ -36,7 +36,7 @@ func convertTouristSpotToOutput(touristSpot *entity.TouristSpot) *response.Touri
 	return &response.TouristSpot{
 		ID:        touristSpot.ID,
 		Name:      touristSpot.Name,
-		Thumbnail: touristSpot.GenerateThumbnailURL(),
+		Thumbnail: touristSpot.Thumbnail,
 		URL:       touristSpot.WebsiteURL,
 	}
 }

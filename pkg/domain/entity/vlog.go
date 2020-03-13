@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"strconv"
 	"time"
 )
 
@@ -10,6 +9,7 @@ type (
 		ID         int `gorm:"primary_key"`
 		UserID     int
 		Slug       string
+		Thumbnail  string
 		Title      string
 		Body       string
 		YoutubeURL string
@@ -46,11 +46,6 @@ type (
 		TouristSpots        []*TouristSpot `gorm:"many2many:vlog_tourist_spot;jointable_foreignkey:vlog_id;"`
 	}
 )
-
-// TODO: 仮置き
-func (vlog *VlogTiny) GenerateThumbnailURL() string {
-	return "https://files.stayway.jp/vlog/" + strconv.Itoa(vlog.ID)
-}
 
 func NewVlog(tiny VlogTiny, categoryIDs, touristSpotIDs []int) Vlog {
 	vlogCategories := make([]*VlogCategory, len(categoryIDs))

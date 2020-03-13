@@ -7,6 +7,7 @@ type (
 		ID        int `gorm:"primary_key"`
 		UserID    int
 		Slug      string
+		Thumbnail string
 		Title     string
 		Body      string
 		CreatedAt time.Time `gorm:"default:current_timestamp"`
@@ -19,11 +20,6 @@ type (
 		User *User `gorm:"foreignkey:UserID"`
 	}
 )
-
-// TODO: サムネイル生成ロジック
-func (comic *Comic) GenerateThumbnailURL() string {
-	return "thumbnailURL"
-}
 
 // テーブル名
 func (queryComic *QueryComic) TableName() string {

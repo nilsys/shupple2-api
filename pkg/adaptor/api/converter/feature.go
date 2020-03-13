@@ -35,7 +35,7 @@ func ConvertQueryFeatureToOutput(feature *entity.QueryFeature) *response.ShowFea
 	return &response.ShowFeature{
 		ID:            feature.ID,
 		Slug:          feature.Slug,
-		Thumbnail:     feature.GenerateThumbnailURL(),
+		Thumbnail:     feature.Thumbnail,
 		Title:         feature.Title,
 		Creator:       response.NewCreator(feature.User.GenerateThumbnailURL(), feature.User.Name, feature.User.Profile),
 		UpdatedAt:     model.TimeResponse(feature.UpdatedAt),
@@ -47,7 +47,7 @@ func convertPostToRelationPost(post *entity.Post) *response.RelationPost {
 	return &response.RelationPost{
 		ID:        post.ID,
 		Title:     post.Title,
-		Thumbnail: post.GenerateThumbnailURL(),
+		Thumbnail: post.Thumbnail,
 		Slug:      post.Slug,
 	}
 }
@@ -57,6 +57,6 @@ func convertFeatureToOutput(feature *entity.Feature) *response.Feature {
 		ID:        feature.ID,
 		Title:     feature.Title,
 		Slug:      feature.Slug,
-		Thumbnail: feature.GenerateThumbnailURL(),
+		Thumbnail: feature.Thumbnail,
 	}
 }

@@ -32,7 +32,7 @@ func ConvertQueryComicOutput(queryComic *entity.QueryComic) *response.ShowComic 
 		ID:        queryComic.Comic.ID,
 		Slug:      queryComic.Comic.Slug,
 		Title:     queryComic.Comic.Title,
-		Thumbnail: queryComic.Comic.GenerateThumbnailURL(),
+		Thumbnail: queryComic.Comic.Thumbnail,
 		Body:      queryComic.Comic.Body,
 		CreatedAt: model.TimeResponse(queryComic.Comic.CreatedAt),
 		Creator:   response.NewCreator(queryComic.User.GenerateThumbnailURL(), queryComic.User.Name, queryComic.User.Profile),
@@ -45,6 +45,6 @@ func convertComicToOutput(comic *entity.Comic) *response.Comic {
 		ID:        comic.ID,
 		Slug:      comic.Slug,
 		Title:     comic.Title,
-		Thumbnail: comic.GenerateThumbnailURL(),
+		Thumbnail: comic.Thumbnail,
 	}
 }

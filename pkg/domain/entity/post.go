@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"strconv"
 	"time"
 )
 
@@ -9,13 +8,14 @@ type (
 	PostTiny struct {
 		ID            int `gorm:"primary_key"`
 		UserID        int
+		Slug          string
+		Thumbnail     string
 		Title         string
 		TOC           string
 		FavoriteCount int
 		FacebookCount int
 		TwitterCount  int
 		Views         int
-		Slug          string
 		CreatedAt     time.Time `gorm:"default:current_timestamp"`
 		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
 		DeletedAt     *time.Time
@@ -69,11 +69,6 @@ func (post *Post) GetCategoryIDs() []int {
 		ids = append(ids, postCategory.CategoryID)
 	}
 	return ids
-}
-
-// MEMO: サムネイルロジック仮置き
-func (post *PostTiny) GenerateThumbnailURL() string {
-	return "https://files.stayway.jp/post/" + strconv.Itoa(post.ID)
 }
 
 func (post *PostDetail) TableName() string {

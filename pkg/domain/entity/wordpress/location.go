@@ -1,18 +1,19 @@
 package wordpress
 
 type Location struct {
-	ID          int                `json:"id"`
-	Date        Time               `json:"date"`
-	DateGmt     Time               `json:"date_gmt"`
-	GUID        Text               `json:"guid"`
-	Modified    Time               `json:"modified"`
-	ModifiedGmt Time               `json:"modified_gmt"`
-	Slug        string             `json:"slug"`
-	Status      Status             `json:"status"`
-	Title       Text               `json:"title"`
-	Categories  []int              `json:"categories"`
-	LocationCat []int              `json:"location__cat"`
-	Attributes  LocationAttributes `json:"acf"`
+	ID            int                `json:"id"`
+	Date          Time               `json:"date"`
+	DateGmt       Time               `json:"date_gmt"`
+	GUID          Text               `json:"guid"`
+	Modified      Time               `json:"modified"`
+	ModifiedGmt   Time               `json:"modified_gmt"`
+	Slug          string             `json:"slug"`
+	Status        Status             `json:"status"`
+	Title         Text               `json:"title"`
+	FeaturedMedia int                `json:"featured_media"`
+	Categories    []int              `json:"categories"`
+	LocationCat   []int              `json:"location__cat"`
+	Attributes    LocationAttributes `json:"acf"`
 }
 
 type LocationAttributes struct {

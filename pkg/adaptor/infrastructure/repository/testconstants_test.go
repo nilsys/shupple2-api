@@ -11,18 +11,17 @@ const (
 	featureID     = 151
 	categoryID    = 161
 	lcategoryID   = 171
+	reviewID      = 181
+	hashtagID     = 191
+	innID         = 201
+
+	mockReviewPerPage = 10
+	mockReviewPage    = 1
 )
 
 var (
 	categoryIDs     = []int{1501, 1502}
 	addedCategoryID = 1503
-	// review_test
-	mockReviewUserID        = 1
-	mockReviewInnID         = 1
-	mockReviewTouristSpotID = 1
-	mockReviewHashTag       = "dummy"
-	mockReviewPerPage       = 10
-	mockReviewPage          = 1
 
 	bodies    = []string{"b1601", "b1602"}
 	addedBody = "1603"

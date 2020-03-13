@@ -11,17 +11,20 @@ import (
 )
 
 var _ = Describe("ReviewRepositoryTest", func() {
-	var query *ReviewQueryRepositoryImpl
+	var (
+		query   *ReviewQueryRepositoryImpl
+		hashtag *entity.Hashtag = newHashtag(hashtagID)
+	)
 
 	BeforeEach(func() {
 		query = &ReviewQueryRepositoryImpl{DB: db}
 
 		truncate(db)
-		Expect(db.Exec("INSERT INTO tourist_spot(id,name,slug,city,address,lat,lng,access_car,access_train,opening_hours,price) VALUES (1,'dummy','dummy','dummy','dummy',39.09,391.00,'dummy','dummy','dummy','dummy');").Error).To(Succeed())
-		Expect(db.Save(newUser(1)).Error).To(Succeed())
-		Expect(db.Save(newReview(1)).Error).To(Succeed())
-		Expect(db.Exec("INSERT INTO hashtag(id,name) VALUES (1,'dummy');").Error).To(Succeed())
-		Expect(db.Exec("INSERT INTO review_hashtag(review_id,hashtag_id) VALUES (1,1);").Error).To(Succeed())
+		Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
+		Expect(db.Save(newUser(userID)).Error).To(Succeed())
+		Expect(db.Save(newReview(reviewID, userID, touristSpotID, innID)).Error).To(Succeed())
+		Expect(db.Save(hashtag).Error).To(Succeed())
+		Expect(db.Exec("INSERT INTO review_hashtag(review_id,hashtag_id) VALUES (?,?)", reviewID, hashtagID).Error).To(Succeed())
 	})
 
 	DescribeTable("ShowReviewListByParams",
@@ -30,23 +33,23 @@ var _ = Describe("ReviewRepositoryTest", func() {
 			actual, err := query.ShowReviewListByParams(queryStruct)
 			Expect(err).To(Succeed())
 
-			Expect(actual).To(Equal([]*entity.Review{newReview(1)}))
+			Expect(actual).To(Equal([]*entity.Review{newReview(reviewID, userID, touristSpotID, innID)}))
 		},
-		Entry("正常系_全条件検索", newShowReviewListParam(mockReviewUserID, mockReviewInnID, mockReviewTouristSpotID, mockReviewHashTag)),
-		Entry("正常系_UserID検索", newShowReviewListParam(mockReviewUserID, 0, 0, "")),
-		Entry("正常系_InnID検索", newShowReviewListParam(0, mockReviewInnID, 0, "")),
-		Entry("正常系_SpotID検索", newShowReviewListParam(0, 0, mockReviewTouristSpotID, "")),
-		Entry("正常系_HashTag検索", newShowReviewListParam(0, 0, 0, mockReviewHashTag)),
+		Entry("正常系_全条件検索", newShowReviewListParam(userID, innID, touristSpotID, hashtag.Name)),
+		Entry("正常系_UserID検索", newShowReviewListParam(userID, 0, 0, "")),
+		Entry("正常系_InnID検索", newShowReviewListParam(0, innID, 0, "")),
+		Entry("正常系_SpotID検索", newShowReviewListParam(0, 0, touristSpotID, "")),
+		Entry("正常系_HashTag検索", newShowReviewListParam(0, 0, 0, hashtag.Name)),
 	)
 })
 
-func newReview(id int) *entity.Review {
+func newReview(id, userID, touristSpotID, innID int) *entity.Review {
 	// 全てのパラメータは仮置き
 	review := &entity.Review{
 		ID:            id,
-		UserID:        id,
-		TouristSpotID: id,
-		InnID:         id,
+		UserID:        userID,
+		TouristSpotID: touristSpotID,
+		InnID:         innID,
 		Score:         id,
 		MediaCount:    id,
 		Body:          "dummy",
@@ -58,12 +61,12 @@ func newReview(id int) *entity.Review {
 	return review
 }
 
-func newShowReviewListParam(userID, innID, touristSpotID int, hashTag string) *param.ListReviewParams {
+func newShowReviewListParam(userID, innID, touristSpotID int, hashtag string) *param.ListReviewParams {
 	return &param.ListReviewParams{
 		UserID:        userID,
 		InnID:         innID,
 		TouristSpotID: touristSpotID,
-		HashTag:       hashTag,
+		HashTag:       hashtag,
 		PerPage:       mockReviewPerPage,
 		Page:          mockReviewPage,
 	}

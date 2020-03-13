@@ -26,6 +26,7 @@ const (
 	listComicPath              = "/wp-json/wp/v2/comic/"
 	listFeaturePath            = "/wp-json/wp/v2/features/"
 	listVlogPath               = "/wp-json/wp/v2/vlog/"
+	listMediaPath              = "/wp-json/wp/v2/media/"
 
 	maxPerPage = 100
 )
@@ -120,6 +121,11 @@ func (r *WordpressQueryRepositoryImpl) FindFeaturesByIDs(ids []int) ([]*wordpres
 func (r *WordpressQueryRepositoryImpl) FindVlogsByIDs(ids []int) ([]*wordpress.Vlog, error) {
 	var res []*wordpress.Vlog
 	return res, r.gets(listVlogPath, ids, &res)
+}
+
+func (r *WordpressQueryRepositoryImpl) FindMediaByIDs(ids []int) ([]*wordpress.Media, error) {
+	var res []*wordpress.Media
+	return res, r.gets(listMediaPath, ids, &res)
 }
 
 // http通信するだけなのでどこにでも置けるが、便宜的にココに置く

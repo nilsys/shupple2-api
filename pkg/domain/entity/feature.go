@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"strconv"
 	"time"
 )
 
@@ -10,6 +9,7 @@ type (
 		ID        int `gorm:"primary_key"`
 		UserID    int
 		Slug      string
+		Thumbnail string
 		Title     string
 		Body      string
 		CreatedAt time.Time
@@ -47,11 +47,6 @@ func NewFeature(tiny FeatureTiny, postIDs []int) Feature {
 		tiny,
 		featurePostIDs,
 	}
-}
-
-// TODO:
-func (tiny FeatureTiny) GenerateThumbnailURL() string {
-	return "https://file.staywayy.jp/feature/" + strconv.Itoa(tiny.ID)
 }
 
 func (queryFeature QueryFeature) TableName() string {

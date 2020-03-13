@@ -13,6 +13,7 @@ type (
 		FindComicsByIDs(ids []int) ([]*wordpress.Comic, error)
 		FindFeaturesByIDs(ids []int) ([]*wordpress.Feature, error)
 		FindVlogsByIDs(ids []int) ([]*wordpress.Vlog, error)
+		FindMediaByIDs(ids []int) ([]*wordpress.Media, error)
 		DownloadAvatar(avatarURL string) ([]byte, error)
 	}
 )

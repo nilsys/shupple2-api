@@ -67,7 +67,7 @@ func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
 
 	return &response.Post{
 		ID:              queryPost.ID,
-		Thumbnail:       queryPost.GenerateThumbnailURL(),
+		Thumbnail:       queryPost.Thumbnail,
 		Title:           queryPost.Title,
 		AreaCategories:  areaCategories,
 		ThemeCategories: themeCategories,
@@ -102,7 +102,7 @@ func ConvertQueryShowPostToOutput(post *entity.PostDetailWithHashtag) *response.
 
 	return &response.PostShow{
 		ID:              post.ID,
-		Thumbnail:       post.PostTiny.GenerateThumbnailURL(),
+		Thumbnail:       post.PostTiny.Thumbnail,
 		Title:           post.Title,
 		Body:            bodies,
 		TOC:             post.TOC,

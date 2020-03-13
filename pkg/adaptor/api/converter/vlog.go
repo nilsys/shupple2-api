@@ -46,7 +46,7 @@ func convertVlogToOutput(queryVlog *entity.QueryVlog) *response.Vlog {
 	}
 
 	return &response.Vlog{
-		Thumbnail:       queryVlog.GenerateThumbnailURL(),
+		Thumbnail:       queryVlog.Thumbnail,
 		AreaCategories:  areaCategories,
 		ThemeCategories: themeCategories,
 		Title:           queryVlog.VlogTiny.Title,

@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"strconv"
 	"time"
 )
 
@@ -9,6 +8,7 @@ type (
 	TouristSpotTiny struct {
 		ID           int `gorm:"primary_key"`
 		Slug         string
+		Thumbnail    string
 		Name         string
 		WebsiteURL   string
 		City         string
@@ -32,8 +32,8 @@ type (
 
 	TouristSpot struct {
 		TouristSpotTiny
-		CategoryIDs  []*TouristSpotCategory
-		LcategoryIDs []*TouristSpotLcategory
+		CategoryIDs  []*TouristSpotCategory  `gorm:"foreignkey:TouristSpotID"`
+		LcategoryIDs []*TouristSpotLcategory `gorm:"foreignkey:TouristSpotID"`
 	}
 
 	TouristSpotCategory struct {
@@ -75,11 +75,6 @@ func NewTouristSpot(tiny TouristSpotTiny, categoryIDs, lcategoryIDs []int) Touri
 		touristSpotCategoryIDs,
 		touristSpotLcategoryIDs,
 	}
-}
-
-// MEMO: サムネイルロジック仮置き
-func (tiny *TouristSpotTiny) GenerateThumbnailURL() string {
-	return "https://files.stayway.jp/spot/" + strconv.Itoa(tiny.ID)
 }
 
 // テーブル名

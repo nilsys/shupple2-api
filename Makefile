@@ -55,7 +55,7 @@ test: $(ginkgo)
 	ENV=test $(ginkgo) $(TARGET)
 
 mysql-cli:
-	mysql --port $(shell docker inspect stayway-media-api_mysql_1 | jq -r '.[0].NetworkSettings.Ports."3306/tcp"[0].HostPort') \
+	mysql --port $(shell docker inspect stayway-media-api-mysql | jq -r '.[0].NetworkSettings.Ports."3306/tcp"[0].HostPort') \
 	--host 127.0.0.1 --user root stayway
 
 generate: $(mockgen) $(wire) $(go-enum)
