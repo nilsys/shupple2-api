@@ -1198,17 +1198,11 @@ paths:
           schema:
             type: integer
         - in: query
-          name: page
-          description: ページ数(pagination時)
-          schema:
-            type: integer
-            default: 1
-        - in: query
           name: perPage
           description: 件数
           schema:
             type: integer
-            default: 30
+            default: 1000
       responses:
         "200":
           description: OK
@@ -1216,6 +1210,127 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaList"
+  /areas/:id:
+    get:
+      tags:
+        - area
+      summary: IDに該当するエリアを取得するAPI
+      description: IDに該当するエリア取得
+      parameters:
+        - in: path
+          name: id
+          description: 検索するエリアID
+          schema:
+            type: integer
+      response:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Area"
+  /sub_areas:
+    get:
+      tags:
+        - subArea
+      summary: 親IDに紐づくサブエリア一覧取得API
+      description: 親IDに紐づくサブエリア一覧取得
+      parameters:
+        - in: query
+          name: parentCategoryId
+          description: |
+            親カテゴリID
+          schema:
+            type: integer
+        - in: query
+          name: excludeId
+          description: |
+            除外するID
+          schema:
+            type: integer
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 1000
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaList"
+  /sub_areas/:id:
+    get:
+      tags:
+        - subArea
+      summary: IDに該当するサブエリアを取得するAPI
+      description: IDに該当するサブエリア取得
+      parameters:
+        - in: path
+          name: id
+          description: 検索するサブエリアID
+          schema:
+            type: integer
+      response:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Area"
+  /sub_sub_areas:
+    get:
+      tags:
+        - subSubArea
+      summary: 親IDに紐づくサブサブエリア一覧取得API
+      description: 親IDに紐づくサブサブエリア一覧取得
+      parameters:
+        - in: query
+          name: parentCategoryId
+          description: |
+            親カテゴリID
+          schema:
+            type: integer
+        - in: query
+          name: excludeId
+          description: |
+            除外するID
+          schema:
+            type: integer
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: integer
+            default: 1000
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaList"
+  /sub_sbu_areas/:id:
+    get:
+      tags:
+        - subSubArea
+      summary: IDに該当するサブサブエリアを取得するAPI
+      description: IDに該当するサブサブエリア取得
+      parameters:
+        - in: path
+          name: id
+          description: 検索するサブサブエリアID
+          schema:
+            type: integer
+      response:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Area"
   /interests:
     get:
       tags:
@@ -1272,13 +1387,38 @@ paths:
           schema:
             type: integer
             default: 10
-      responses:
+      response:
         "200":
           description: OK
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/InnList"
+  /theme:
+    get:
+      tags:
+      - theme
+      summary: Theme取得API
+      description: IDに紐づくThemeの一覧を取得する
+      parameters:
+      - name: categoryId
+        in: query
+        description: 取得するThemeが紐づくカテゴリーのID
+        required: true
+        schema:
+          type: integer
+      - name: excludeId
+        in: query
+        description: 除外するカテゴリーのID
+        schema:
+          type: integer
+      response:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryList"
 servers:
   - url: http://localhost:3000/api
 components:
@@ -2198,6 +2338,10 @@ components:
           example: |
             横浜生まれ東京育ちの旅好きライター。年に２，３回は国内外の旅行に行きます。
             旅先での楽しみはグルメとお酒と地元の人と仲良くなること！
+    CategoryList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Category"
     Category:
       type: object
       required:
