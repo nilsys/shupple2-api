@@ -67,3 +67,17 @@ func (c *ReviewQueryController) ShowReview(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewShowToOutput(review))
 }
+
+func (c *ReviewQueryController) ListReviewCommentByReviewID(ctx echo.Context) error {
+	p := &param.ListReviewCommentParam{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "Failed to bind parameters")
+	}
+
+	reviewComments, err := c.ReviewQueryService.ListReviewCommentByReviewID(p.ID, p.GetLimit())
+	if err != nil {
+		return errors.Wrap(err, "failed to show review comment list")
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertReviewCommentListToOutput(reviewComments))
+}

@@ -50,6 +50,11 @@ type (
 	ShowReview struct {
 		ID int `param:"id" validate:"required"`
 	}
+
+	ListReviewCommentParam struct {
+		ID      int `param:"id" validate:"required"`
+		PerPage int `query:"perPage"`
+	}
 )
 
 const getReviewsDefaultPerPage = 10
@@ -108,4 +113,12 @@ func (param *StoreReviewParam) Validate() error {
 	}
 
 	return nil
+}
+
+// PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
+func (param *ListReviewCommentParam) GetLimit() int {
+	if param.PerPage == 0 {
+		return getReviewsDefaultPerPage
+	}
+	return param.PerPage
 }

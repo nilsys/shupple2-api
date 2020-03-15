@@ -19,41 +19,104 @@ var _ = Describe("ReviewRepositoryTest", func() {
 		hashtag *entity.Hashtag = newHashtag(hashtagID)
 	)
 
-	BeforeEach(func() {
-		query = &ReviewQueryRepositoryImpl{DB: db}
+	Describe("ShowReviewListByParamsのテスト", func() {
+		BeforeEach(func() {
+			query = &ReviewQueryRepositoryImpl{DB: db}
 
-		truncate(db)
-		Expect(db.Save(hashtag).Error).To(Succeed())
-		Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
-		Expect(db.Save(newUser(userID)).Error).To(Succeed())
-		Expect(db.Save(newReview(reviewID, userID, touristSpotID, innID)).Error).To(Succeed())
-		Expect(db.Exec("INSERT INTO review_hashtag(review_id,hashtag_id) VALUES (?,?)", reviewID, hashtag.ID).Error).To(Succeed())
+			truncate(db)
+			Expect(db.Save(hashtag).Error).To(Succeed())
+			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
+			Expect(db.Save(newUser(userID)).Error).To(Succeed())
+			Expect(db.Save(newReview(reviewID, userID, touristSpotID, innID)).Error).To(Succeed())
+			Expect(db.Exec("INSERT INTO review_hashtag(review_id,hashtag_id) VALUES (?,?)", reviewID, hashtag.ID).Error).To(Succeed())
+		})
+
+		DescribeTable("ShowReviewListByParams",
+			func(param *param.ListReviewParams) {
+				queryStruct := converter.ConvertFindReviewListParamToQuery(param)
+				actual, err := query.ShowReviewListByParams(queryStruct)
+				Expect(err).To(Succeed())
+
+				for _, result := range actual {
+					Expect(result.CreatedAt).NotTo(BeZero())
+					Expect(result.UpdatedAt).NotTo(BeZero())
+					Expect(result.User.CreatedAt).NotTo(BeZero())
+					Expect(result.User.UpdatedAt).NotTo(BeZero())
+					result.CreatedAt = time.Time{}
+					result.UpdatedAt = time.Time{}
+					result.User.CreatedAt = time.Time{}
+					result.User.UpdatedAt = time.Time{}
+				}
+				Expect(actual).To(Equal([]*entity.QueryReview{newQueryReview(hashtag.Name, hashtag.ID)}))
+			},
+			Entry("正常系_全条件検索", newShowReviewListParam(userID, innID, touristSpotID, hashtag.Name)),
+			Entry("正常系_UserID検索", newShowReviewListParam(userID, 0, 0, "")),
+			Entry("正常系_InnID検索", newShowReviewListParam(0, innID, 0, "")),
+			Entry("正常系_SpotID検索", newShowReviewListParam(0, 0, touristSpotID, "")),
+			Entry("正常系_HashTag検索", newShowReviewListParam(0, 0, 0, hashtag.Name)),
+		)
 	})
 
-	DescribeTable("ShowReviewListByParams",
-		func(param *param.ListReviewParams) {
-			queryStruct := converter.ConvertFindReviewListParamToQuery(param)
-			actual, err := query.ShowReviewListByParams(queryStruct)
-			Expect(err).To(Succeed())
+	Describe("FindReviewCommentListByReviewID", func() {
+		BeforeEach(func() {
+			query = &ReviewQueryRepositoryImpl{DB: db}
 
-			for _, result := range actual {
-				Expect(result.CreatedAt).NotTo(BeZero())
-				Expect(result.UpdatedAt).NotTo(BeZero())
-				Expect(result.User.CreatedAt).NotTo(BeZero())
-				Expect(result.User.UpdatedAt).NotTo(BeZero())
-				result.CreatedAt = time.Time{}
-				result.UpdatedAt = time.Time{}
-				result.User.CreatedAt = time.Time{}
-				result.User.UpdatedAt = time.Time{}
-			}
-			Expect(actual).To(Equal([]*entity.QueryReview{newQueryReview(hashtag.Name, hashtag.ID)}))
-		},
-		Entry("正常系_全条件検索", newShowReviewListParam(userID, innID, touristSpotID, hashtag.Name)),
-		Entry("正常系_UserID検索", newShowReviewListParam(userID, 0, 0, "")),
-		Entry("正常系_InnID検索", newShowReviewListParam(0, innID, 0, "")),
-		Entry("正常系_SpotID検索", newShowReviewListParam(0, 0, touristSpotID, "")),
-		Entry("正常系_HashTag検索", newShowReviewListParam(0, 0, 0, hashtag.Name)),
-	)
+			truncate(db)
+			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
+
+			Expect(db.Save(newUser(1)).Error).To(Succeed())
+			Expect(db.Save(newUser(2)).Error).To(Succeed())
+			// コメントの存在する投稿
+			Expect(db.Save(newReview(1, 1, touristSpotID, innID)).Error).To(Succeed())
+			// コメントの存在しない投稿
+			Expect(db.Save(newReview(2, 2, touristSpotID, innID)).Error).To(Succeed())
+
+			// 投稿日の違う2件の投稿
+			Expect(db.Exec("INSERT INTO review_comment(id, user_id, review_id, body, created_at, updated_at) VALUES (1, 1, 1, 'dummy 1', '2020-01-01 10:10:10', '2020-01-01 10:10:10');").Error).To(Succeed())
+			Expect(db.Exec("INSERT INTO review_comment(id, user_id, review_id, body, created_at, updated_at) VALUES (2, 1, 1, 'dummy 2', '2020-02-01 10:10:10', '2020-02-01 10:10:10');").Error).To(Succeed())
+
+		})
+
+		DescribeTable("コメントの存在する投稿の場合",
+			func(id int) {
+				actual, err := query.FindReviewCommentListByReviewID(id, 2)
+				Expect(err).To(Succeed())
+
+				// 新しい順になっている
+				Expect(actual[0].ID).To(Equal(2))
+				Expect(actual[1].ID).To(Equal(1))
+
+				// 内容が正しいか
+				Expect(actual[0].Body).To(Equal("dummy 2"))
+				Expect(actual[1].Body).To(Equal("dummy 1"))
+				Expect(actual[0].User.ID).To(Equal(newUser(1).ID))
+				Expect(actual[1].User.ID).To(Equal(newUser(1).ID))
+			},
+			Entry("正常系_全件取得", 1),
+		)
+
+		DescribeTable("コメントの存在する投稿の場合",
+			func(id int) {
+				actual, err := query.FindReviewCommentListByReviewID(id, 1)
+				Expect(err).To(Succeed())
+
+				// 取得は一件だけ
+				Expect(len(actual)).To(Equal(1))
+			},
+			Entry("正常系_リミット指定", 1),
+		)
+
+		DescribeTable("コメントの存在しない投稿の場合",
+			func(id int) {
+				actual, err := query.FindReviewCommentListByReviewID(id, 2)
+				Expect(err).To(Succeed())
+
+				// コメントが0件であること
+				Expect(len(actual)).To(Equal(0))
+			},
+			Entry("正常系_0件取得", 2),
+		)
+	})
 })
 
 func newReview(id, userID, touristSpotID, innID int) *entity.Review {

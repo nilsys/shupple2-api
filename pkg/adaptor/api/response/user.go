@@ -22,6 +22,12 @@ type (
 		Name      string `json:"name"`
 		Thumbnail string `json:"thumbnail"`
 	}
+
+	UserSummary struct {
+		ID   int    `json:"id"`
+		Name string `json:"name"`
+		Icon string `json:"icon"`
+	}
 )
 
 func NewCreator(thumbnail string, name string, profile string) Creator {
@@ -29,5 +35,13 @@ func NewCreator(thumbnail string, name string, profile string) Creator {
 		Thumbnail: thumbnail,
 		Name:      name,
 		Profile:   profile,
+	}
+}
+
+func NewUserSummary(id int, name string, Icon string) *UserSummary {
+	return &UserSummary{
+		ID:   id,
+		Name: name,
+		Icon: Icon,
 	}
 }

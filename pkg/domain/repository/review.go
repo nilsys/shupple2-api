@@ -12,6 +12,7 @@ type (
 	ReviewQueryRepository interface {
 		ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.QueryReview, error)
 		FindFeedReviewListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
+		FindReviewCommentListByReviewID(reviewID int, limit int) ([]*entity.ReviewComment, error)
 		FindQueryReviewByID(id int) (*entity.QueryReview, error)
 	}
 

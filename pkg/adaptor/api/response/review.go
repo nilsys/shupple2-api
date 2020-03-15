@@ -36,4 +36,18 @@ type (
 		Name string `json:"name"`
 		Area string `json:"area"`
 	}
+
+	ReviewComment struct {
+		UserSummary *UserSummary       `json:"user"`
+		Body        string             `json:"body"`
+		CreatedAt   model.TimeResponse `json:"createdAt"`
+	}
 )
+
+func NewReviewComment(userSummary *UserSummary, body string, createdAt model.TimeResponse) *ReviewComment {
+	return &ReviewComment{
+		UserSummary: userSummary,
+		Body:        body,
+		CreatedAt:   createdAt,
+	}
+}

@@ -35,6 +35,23 @@ func ConvertListFeedReviewParamToQuery(param *param.ListFeedReviewParam) *query.
 	}
 }
 
+func ConvertReviewCommentListToOutput(reviewComments []*entity.ReviewComment) []*response.ReviewComment {
+	reviewCommentOutputs := make([]*response.ReviewComment, len(reviewComments))
+	for i, reviewComment := range reviewComments {
+		reviewCommentOutputs[i] = convertReviewCommentToOutput(reviewComment)
+	}
+	return reviewCommentOutputs
+}
+
+func convertReviewCommentToOutput(reviewComment *entity.ReviewComment) *response.ReviewComment {
+	userSummary := response.NewUserSummary(reviewComment.User.ID, reviewComment.User.Name, reviewComment.User.GenerateThumbnailURL())
+	return response.NewReviewComment(
+		userSummary,
+		reviewComment.Body,
+		model.TimeResponse(reviewComment.CreatedAt),
+	)
+}
+
 func ConvertQueryReviewListToOutput(queryReviews []*entity.QueryReview) []*response.Review {
 	responses := make([]*response.Review, len(queryReviews))
 	for i, queryReview := range queryReviews {

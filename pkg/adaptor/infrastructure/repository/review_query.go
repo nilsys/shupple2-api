@@ -159,3 +159,21 @@ func (r *ReviewQueryRepositoryImpl) buildFindFeedListQuery(userID int) *gorm.DB 
 
 	return q
 }
+
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentListByReviewID(reviewID int, limit int) ([]*entity.ReviewComment, error) {
+	var results []*entity.ReviewComment
+
+	err := r.DB.
+		Where("review_id = ?", reviewID).
+		Order("created_at DESC").
+		Limit(limit).
+		Find(&results).
+		Error
+
+	if err != nil {
+		return nil, errors.Wrap(err, "failed find review comments.")
+	}
+
+	return results, nil
+}
+
