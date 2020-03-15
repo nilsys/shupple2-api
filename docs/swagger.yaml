@@ -481,7 +481,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /user/{userId}/reviews/feed:
+  /user/{userId}/feed/reviews:
     get:
       tags:
         - review
@@ -515,7 +515,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Review"
-  /user/{userId}/reviews/favorite:
+  /user/{userId}/favorite/reviews:
     get:
       tags:
         - review
@@ -743,7 +743,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /user/{userId}/posts/feed:
+  /user/{userId}/feed/posts:
     get:
       tags:
         - post
@@ -775,7 +775,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PostList"
-  /user/{userId}/posts/favorite:
+  /user/{userId}/favorite/posts:
     get:
       tags:
         - post
@@ -1210,7 +1210,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaList"
-  /areas/:id:
+  /areas/{id}:
     get:
       tags:
         - area
@@ -1220,9 +1220,10 @@ paths:
         - in: path
           name: id
           description: 検索するエリアID
+          required: true
           schema:
             type: integer
-      response:
+      responses:
         "200":
           description: OK
           content:
@@ -1261,7 +1262,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaList"
-  /sub_areas/:id:
+  /sub_areas/{id}:
     get:
       tags:
         - subArea
@@ -1271,9 +1272,10 @@ paths:
         - in: path
           name: id
           description: 検索するサブエリアID
+          required: true
           schema:
             type: integer
-      response:
+      responses:
         "200":
           description: OK
           content:
@@ -1312,7 +1314,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaList"
-  /sub_sbu_areas/:id:
+  /sub_sbu_areas/{id}:
     get:
       tags:
         - subSubArea
@@ -1321,10 +1323,11 @@ paths:
       parameters:
         - in: path
           name: id
+          required: true
           description: 検索するサブサブエリアID
           schema:
             type: integer
-      response:
+      responses:
         "200":
           description: OK
           content:
@@ -1387,7 +1390,7 @@ paths:
           schema:
             type: integer
             default: 10
-      response:
+      responses:
         "200":
           description: OK
           content:
@@ -1412,7 +1415,7 @@ paths:
         description: 除外するカテゴリーのID
         schema:
           type: integer
-      response:
+      responses:
         "200":
           description: OK
           content:
