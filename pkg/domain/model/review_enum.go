@@ -2,13 +2,13 @@ package model
 
 // queryのORDERで使用する値を返す
 // デフォルトは新着順を表すNEW
-func (sortBy MediaSortBy) GetReviewOrderQuery() string {
+func (sortBy ReviewSortBy) GetReviewOrderQuery() string {
 	switch sortBy {
-	case MediaSortByRANKING:
-		return "favorite_count desc"
-	case MediaSortByNEW:
-		return "created_at desc"
+	case ReviewSortByNEW:
+		return "updated_at DESC"
+	case ReviewSortByRECOMMEND:
+		return "views DESC"
 	default:
-		return "created_at desc"
+		return "updated_at DESC"
 	}
 }

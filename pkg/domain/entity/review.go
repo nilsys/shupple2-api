@@ -1,25 +1,74 @@
 package entity
 
+import (
+	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+)
+
 type (
 	// table: review
 	Review struct {
-		ID            int            `json:"id" gorm:"column:id"`
-		UserID        int            `json:"-" gorm:"column:user_id"`
-		TouristSpotID int            `json:"-" gorm:"column:tourist_spot_id"`
-		InnID         int            `json:"innId" gorm:"column:inn_id"`
-		Score         int            `json:"score" gorm:"column:score"`
-		MediaCount    int            `json:"-" gorm:"column:media_count"`
-		Body          string         `json:"body" gorm:"column:body"`
-		FavoriteCount int            `json:"favoriteCount" gorm:"column:favorite_count"`
-		Medias        []*ReviewMedia `json:"media" gorm:"foreignkey:ReviewID"`
+		ID            int
+		UserID        int
+		TouristSpotID int `gorm:"default:nil"`
+		InnID         int `gorm:"default:nil"`
+		Score         int
+		MediaCount    int
+		Body          string
+		FavoriteCount int
+		Views         int
+		TravelDate    time.Time
+		Accompanying  model.AccompanyingType
+		Medias        []*ReviewMedia   `gorm:"foreignkey:ReviewID"`
+		HashtagIDs    []*ReviewHashtag `gorm:"foreignkey:ReviewID"`
+		CreatedAt     time.Time        `gorm:"-;default:current_timestamp"`
+		UpdatedAt     time.Time        `gorm:"-;default:current_timestamp"`
+		DeletedAt     *time.Time
 	}
 
 	// table: review_media
 	ReviewMedia struct {
-		UUID string `json:"uuid" gorm:"column:id"`
-		Mime int    `json:"mime" gorm:"column:mime_type"`
-		// TODO: 仮置き
-		URL      string `json:"url" gorm:"column:priority"`
-		ReviewID int    `json:"-" gorm:"review_id"`
+		ID       string
+		MimeType string
+		Priority int
+		ReviewID int `gorm:"review_id"`
+	}
+
+	ReviewHashtag struct {
+		ReviewID  int `gorm:"primary_key"`
+		HashtagID int `gorm:"primary_key"`
+	}
+
+	// 参照用Review
+	QueryReview struct {
+		Review
+		CommentCount int
+		User         *User      `gorm:"foreignkey:UserID"`
+		Hashtag      []*Hashtag `gorm:"many2many:review_hashtag;jointable_foreignkey:review_id;"`
 	}
 )
+
+func NewReviewMedia(id string, mimeType string, priority int) *ReviewMedia {
+	return &ReviewMedia{
+		ID:       id,
+		MimeType: mimeType,
+		Priority: priority,
+	}
+}
+
+func NewReviewHashtag(reviewID, hashtagID int) *ReviewHashtag {
+	return &ReviewHashtag{
+		ReviewID:  reviewID,
+		HashtagID: hashtagID,
+	}
+}
+
+// TODO: 仮置き
+func (r *ReviewMedia) GenerateURL() string {
+	return "https://stayway.jp/image/" + r.ID
+}
+
+func (r *QueryReview) TableName() string {
+	return "review"
+}

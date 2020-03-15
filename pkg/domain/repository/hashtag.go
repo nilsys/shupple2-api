@@ -15,6 +15,9 @@ type (
 	}
 
 	HashtagCommandRepository interface {
+		FirstOrCreate(hashtag *entity.Hashtag) (*entity.Hashtag, error)
+		StoreHashtagCategory(c context.Context, hashtagCategory *entity.HashtagCategory) error
+		IncrementScoreByID(c context.Context, id int) error
 		Store(hashtag *entity.Hashtag) error
 		IncrementPostCountByPostID(c context.Context, postID int) error
 		DecrementPostCountByPostID(c context.Context, postID int) error

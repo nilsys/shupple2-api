@@ -8,6 +8,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
+	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 )
@@ -18,6 +19,7 @@ var controllerSet = wire.NewSet(
 	api.CategoryQueryControllerSet,
 	api.ComicQueryControllerSet,
 	api.ReviewQueryControllerSet,
+	api.ReviewCommandControllerSet,
 	api.TouristSpotQeuryControllerSet,
 	api.SearchQueryControllerSet,
 	api.FeatureQueryControllerSet,
@@ -29,13 +31,19 @@ var controllerSet = wire.NewSet(
 	api.InterestQueryControllerSet,
 )
 
+var scenarioSet = wire.NewSet(
+	scenario.ReviewCommandScenarioSet,
+)
+
 var serviceSet = wire.NewSet(
 	service.PostQueryServiceSet,
 	service.PostCommandServiceSet,
 	service.CategoryQueryServiceSet,
+	service.CategoryCommandServiceSet,
 	service.ComicQueryServiceSet,
 	service.ComicCommandServiceSet,
 	service.ReviewQueryServiceSet,
+	service.ReviewCommandServiceSet,
 	service.WordpressServiceSet,
 	service.TouristSpotQueryServiceSet,
 	service.SearchQueryServiceSet,
@@ -46,7 +54,6 @@ var serviceSet = wire.NewSet(
 	service.HashtagQueryServiceSet,
 	service.HashtagCommandServiceSet,
 	service.TouristSpotCommandServiceSet,
-	service.CategoryCommandServiceSet,
 	service.LcategoryCommandServiceSet,
 	service.WordpressCallbackServiceSet,
 	service.UserQueryServiceSet,
@@ -65,6 +72,7 @@ func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {
 		wire.Value(&client.Config{}),
 		wire.FieldsOf(new(*config.Config), "Wordpress"),
 		controllerSet,
+		scenarioSet,
 		serviceSet,
 		repository.RepositoriesSet,
 	)

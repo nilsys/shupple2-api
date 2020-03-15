@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
@@ -11,6 +12,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/dto"
 
 	"github.com/google/wire"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
@@ -45,6 +47,16 @@ func (r *InnQueryRepositoryImpl) FindIDsByAreaID(areaId, subAreaId, subSubAreaId
 	}
 
 	return res.InnsToIDs(), nil
+}
+
+func (r *InnQueryRepositoryImpl) FindAreaIDsByID(id int) (*entity.InnAreaTypeIDs, error) {
+	var res dto.InnArea
+	url := fmt.Sprintf(r.StaywayConfig.BaseURL+staywayInnAPIPath+"/%d/area", id)
+	if err := r.Client.GetJSON(url, nil, &res); err != nil {
+		return nil, errors.Wrapf(err, "failed to get inn area details from stayway api by innID: %d", id)
+	}
+
+	return res.ToInnAreaTypeIDs(), nil
 }
 
 func buildFindIDsByAreaIDQuery(areaId, subAreaId, subSubAreaId int) *client.Option {

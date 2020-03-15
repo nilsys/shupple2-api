@@ -2,6 +2,9 @@ package converter
 
 import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/response"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
@@ -18,6 +21,7 @@ func ConvertFindReviewListParamToQuery(param *param.ListReviewParams) *query.Sho
 		MetasearchAreaID:       param.MetasearchAreaID,
 		MetasearchSubAreaID:    param.MetasearchSubAreaID,
 		MetasearchSubSubAreaID: param.MetasearchSubSubAreaID,
+		ChildID:                param.ChildID,
 		SortBy:                 param.SortBy,
 		Limit:                  param.GetLimit(),
 		OffSet:                 param.GetOffset(),
@@ -28,5 +32,83 @@ func ConvertListFeedReviewParamToQuery(param *param.ListFeedReviewParam) *query.
 	return &query.FindListPaginationQuery{
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffset(),
+	}
+}
+
+func ConvertQueryReviewListToOutput(queryReviews []*entity.QueryReview) []*response.Review {
+	responses := make([]*response.Review, len(queryReviews))
+	for i, queryReview := range queryReviews {
+		responses[i] = convertQueryReviewToOutput(queryReview)
+	}
+	return responses
+}
+
+func convertQueryReviewToOutput(queryReview *entity.QueryReview) *response.Review {
+	medias := make([]response.ReviewMedia, queryReview.MediaCount)
+	hashtags := make([]response.Hashtag, len(queryReview.Hashtag))
+	for i, media := range queryReview.Medias {
+		medias[i] = response.ReviewMedia{
+			UUID: media.ID,
+			Mime: media.MimeType,
+			URL:  media.GenerateURL(),
+		}
+	}
+	for i, hashtag := range queryReview.Hashtag {
+		hashtags[i] = response.Hashtag{
+			ID:   hashtag.ID,
+			Name: hashtag.Name,
+		}
+	}
+
+	return &response.Review{
+		ID:            queryReview.ID,
+		InnID:         queryReview.InnID,
+		TouristSpotID: queryReview.TouristSpotID,
+		Score:         queryReview.Score,
+		Body:          queryReview.Body,
+		FavoriteCount: queryReview.FavoriteCount,
+		Media:         medias,
+		Views:         queryReview.Views,
+		Accompanying:  queryReview.Accompanying.String(),
+		UpdatedAt:     model.TimeFmtToFrontStr(queryReview.Review.UpdatedAt),
+		TravelDate:    model.NewYearMonth(queryReview.TravelDate),
+		Hashtag:       hashtags,
+		CommentCount:  queryReview.CommentCount,
+		Creator:       response.NewCreator(queryReview.User.GenerateThumbnailURL(), queryReview.User.Name, queryReview.Body),
+	}
+}
+
+func ConvertQueryReviewShowToOutput(r *entity.QueryReview) *response.Review {
+	medias := make([]response.ReviewMedia, r.MediaCount)
+	hashtags := make([]response.Hashtag, len(r.Hashtag))
+	for i, media := range r.Medias {
+		medias[i] = response.ReviewMedia{
+			UUID: media.ID,
+			Mime: media.MimeType,
+			URL:  media.GenerateURL(),
+		}
+	}
+	for i, hashtag := range r.Hashtag {
+		hashtags[i] = response.Hashtag{
+			ID:   hashtag.ID,
+			Name: hashtag.Name,
+		}
+	}
+
+	return &response.Review{
+		ID:            r.ID,
+		InnID:         r.InnID,
+		TouristSpotID: r.TouristSpotID,
+		Score:         r.Score,
+		Body:          r.Body,
+		FavoriteCount: r.FavoriteCount,
+		Media:         medias,
+		Views:         r.Views,
+		Accompanying:  r.Accompanying.String(),
+		UpdatedAt:     model.TimeFmtToFrontStr(r.Review.UpdatedAt),
+		TravelDate:    model.NewYearMonth(r.TravelDate),
+		CommentCount:  r.CommentCount,
+		Hashtag:       hashtags,
+		Creator:       response.NewCreator(r.User.GenerateThumbnailURL(), r.User.Name, r.Body),
 	}
 }

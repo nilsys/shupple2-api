@@ -12,8 +12,9 @@ import (
 type (
 	// Review参照系サービス
 	ReviewQueryService interface {
-		ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.Review, error)
-		ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.Review, error)
+		ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.QueryReview, error)
+		ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
+		ShowReview(id int) (*entity.QueryReview, error)
 	}
 
 	// Review参照系サービス実装
@@ -29,7 +30,7 @@ var ReviewQueryServiceSet = wire.NewSet(
 )
 
 // クエリで飛んで来た検索条件を用いreviewを検索
-func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.Review, error) {
+func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.QueryReview, error) {
 	innIDs, err := s.InnQueryRepository.FindIDsByAreaID(query.AreaID, query.SubAreaID, query.SubSubAreaID)
 	if err != nil {
 		zap.Error(err)
@@ -46,6 +47,10 @@ func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewL
 	return reviews, nil
 }
 
-func (s *ReviewQueryServiceImpl) ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.Review, error) {
+func (s *ReviewQueryServiceImpl) ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error) {
 	return s.ReviewQueryRepository.FindFeedReviewListByUserID(userID, query)
+}
+
+func (s *ReviewQueryServiceImpl) ShowReview(id int) (*entity.QueryReview, error) {
+	return s.ReviewQueryRepository.FindQueryReviewByID(id)
 }

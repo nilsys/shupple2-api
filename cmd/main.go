@@ -32,6 +32,7 @@ type App struct {
 	CategoryQueryController     api.CategoryQueryController
 	ComicQueryController        api.ComicQueryController
 	ReviewQueryController       api.ReviewQueryController
+	ReviewCommandController     api.ReviewCommandController
 	HashtagQueryController      api.HashtagQueryController
 	SearchQueryController       api.SearchQueryController
 	FeatureQueryController      api.FeatureQueryController
@@ -81,6 +82,8 @@ func setRoutes(app *App) {
 	{
 		reviews := api.Group("/reviews")
 		reviews.GET("", app.ReviewQueryController.LisReview)
+		reviews.POST("", app.ReviewCommandController.Store)
+		reviews.GET("/:id", app.ReviewQueryController.ShowReview)
 	}
 
 	{

@@ -11,6 +11,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
+	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 )
@@ -116,6 +117,27 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	reviewQueryController := api.ReviewQueryController{
 		ReviewQueryService: reviewQueryServiceImpl,
 	}
+	reviewCommandRepositoryImpl := &repository.ReviewCommandRepositoryImpl{
+		DAO: dao,
+	}
+	touristSpotCommandRepositoryImpl := &repository.TouristSpotCommandRepositoryImpl{
+		DAO: dao,
+	}
+	reviewCommandServiceImpl := &service.ReviewCommandServiceImpl{
+		ReviewCommandRepository:      reviewCommandRepositoryImpl,
+		HashtagCommandRepository:     hashtagCommandRepositoryImpl,
+		CategoryQueryRepository:      categoryQueryRepositoryImpl,
+		InnQueryRepository:           innQueryRepositoryImpl,
+		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
+		TransactionService:           transactionServiceImpl,
+	}
+	reviewCommandScenarioImpl := &scenario.ReviewCommandScenarioImpl{
+		ReviewCommandService:  reviewCommandServiceImpl,
+		HashtagCommandService: hashtagCommandServiceImpl,
+	}
+	reviewCommandController := api.ReviewCommandController{
+		ReviewCommandScenario: reviewCommandScenarioImpl,
+	}
 	hashtagQueryServiceImpl := &service.HashtagQueryServiceImpl{
 		HashtagQueryRepository: hashtagQueryRepositoryImpl,
 	}
@@ -196,9 +218,6 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		WordpressQueryRepository:   wordpressQueryRepository,
 		WordpressService:           wordpressServiceImpl,
 	}
-	touristSpotCommandRepositoryImpl := &repository.TouristSpotCommandRepositoryImpl{
-		DB: db,
-	}
 	touristSpotCommandServiceImpl := &service.TouristSpotCommandServiceImpl{
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
 		WordpressQueryRepository:     wordpressQueryRepository,
@@ -247,6 +266,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		CategoryQueryController:     categoryQueryController,
 		ComicQueryController:        comicQueryController,
 		ReviewQueryController:       reviewQueryController,
+		ReviewCommandController:     reviewCommandController,
 		HashtagQueryController:      hashtagQueryController,
 		SearchQueryController:       searchQueryController,
 		FeatureQueryController:      featureQueryController,
@@ -266,8 +286,10 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet, api.InterestQueryControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet, api.InterestQueryControllerSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.InterestQueryServiceSet)
+var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet)
+
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.InterestQueryServiceSet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")

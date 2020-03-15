@@ -18,11 +18,14 @@ const (
 
 type (
 	Category struct {
-		ID        int `gorm:"primary_key"`
-		Name      string
-		Type      model.CategoryType
-		ParentID  *int
-		CreatedAt time.Time `gorm:"-"`
-		UpdatedAt time.Time `gorm:"-"`
+		ID                     int `gorm:"primary_key"`
+		Name                   string
+		Type                   model.CategoryType
+		MetasearchAreaID       int
+		MetasearchSubAreaID    int
+		MetasearchSubSubAreaID int
+		ParentID               *int
+		CreatedAt              time.Time `gorm:"-"`
+		UpdatedAt              time.Time `gorm:"-"`
 	}
 )

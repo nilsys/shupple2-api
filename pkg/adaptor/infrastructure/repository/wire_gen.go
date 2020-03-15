@@ -56,8 +56,11 @@ func InitializeTest(configFilePath config.ConfigFilePath) (*Test, error) {
 	lcategoryQueryRepositoryImpl := &LcategoryQueryRepositoryImpl{
 		DB: db,
 	}
+	dao := DAO{
+		DB_: db,
+	}
 	touristSpotCommandRepositoryImpl := &TouristSpotCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	touristSpotQueryRepositoryImpl := &TouristSpotQueryRepositoryImpl{
 		DB: db,

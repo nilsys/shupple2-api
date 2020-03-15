@@ -63,7 +63,7 @@ func (r *PostQueryRepositoryImpl) FindFeedListByUserID(userID int, query *query.
 	q := r.buildFindFeedListQuery(userID)
 
 	if err := q.
-		Order("updated_at desc").
+		Order("updated_at DESC").
 		Limit(query.Limit).
 		Offset(query.Offset).
 		Find(&posts).Error; err != nil {

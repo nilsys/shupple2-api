@@ -35,7 +35,7 @@ func (c *ReviewQueryController) LisReview(ctx echo.Context) error {
 		return errors.Wrap(err, "Failed to show review list")
 	}
 
-	return ctx.JSON(http.StatusOK, r)
+	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewListToOutput(r))
 }
 
 func (c *ReviewQueryController) ListFeedReview(ctx echo.Context) error {
@@ -51,5 +51,19 @@ func (c *ReviewQueryController) ListFeedReview(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to show feed review list")
 	}
 
-	return ctx.JSON(http.StatusOK, reviews)
+	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewListToOutput(reviews))
+}
+
+func (c *ReviewQueryController) ShowReview(ctx echo.Context) error {
+	p := &param.ShowReview{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "required review id")
+	}
+
+	review, err := c.ReviewQueryService.ShowReview(p.ID)
+	if err != nil {
+		return errors.Wrap(err, "failed show review")
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewShowToOutput(review))
 }

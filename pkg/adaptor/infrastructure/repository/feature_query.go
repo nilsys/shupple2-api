@@ -39,7 +39,7 @@ func (r *FeatureQueryRepositoryImpl) FindQueryFeatureByID(id int) (*entity.Query
 // 更新日時降順でFeature一覧参照
 func (r *FeatureQueryRepositoryImpl) FindList(query *query.FindListPaginationQuery) ([]*entity.Feature, error) {
 	var rows []*entity.Feature
-	if err := r.DB.Order("updated_at desc").Limit(query.Limit).Offset(query.Offset).Find(&rows).Error; err != nil {
+	if err := r.DB.Order("updated_at DESC").Limit(query.Limit).Offset(query.Offset).Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed find features")
 	}
 	return rows, nil

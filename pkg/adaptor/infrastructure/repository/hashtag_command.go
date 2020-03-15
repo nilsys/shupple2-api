@@ -18,6 +18,31 @@ var HashtagCommandRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.HashtagCommandRepository), new(*HashtagCommandRepositoryImpl)),
 )
 
+// hashtag.nameで検索、無ければInsert、あれば返す
+func (r *HashtagCommandRepositoryImpl) FirstOrCreate(hashtag *entity.Hashtag) (*entity.Hashtag, error) {
+	var row entity.Hashtag
+
+	if err := r.DB(context.TODO()).Where("name = ?", hashtag.Name).Attrs(hashtag).FirstOrCreate(&row).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find or create hashtag")
+	}
+	return &row, nil
+}
+
+// hashtag_idとcategory_idの組み合わせが無ければInsert、あれば何もしない
+func (r *HashtagCommandRepositoryImpl) StoreHashtagCategory(c context.Context, hashtagCategory *entity.HashtagCategory) error {
+	if err := r.DB(c).Where(hashtagCategory).Attrs(hashtagCategory).FirstOrCreate(hashtagCategory).Error; err != nil {
+		return errors.Wrap(err, "failed to find or create hashtag_category")
+	}
+	return nil
+}
+
+func (r HashtagCommandRepositoryImpl) IncrementScoreByID(c context.Context, id int) error {
+	if err := r.DB(c).Exec("UPDATE hashtag SET score=score+1 WHERE id = ?", id).Error; err != nil {
+		return errors.Wrap(err, "failed increment review score")
+	}
+	return nil
+}
+
 func (r *HashtagCommandRepositoryImpl) Store(hashtag *entity.Hashtag) error {
 	return errors.Wrap(r.DB(context.TODO()).Save(hashtag).Error, "failed to save hashtag")
 }

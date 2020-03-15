@@ -82,6 +82,16 @@ func (r *CategoryQueryRepositoryImpl) SearchByName(name string) ([]*entity.Categ
 	return rows, nil
 }
 
+func (r *CategoryQueryRepositoryImpl) FindByTouristSpotID(touristSpotID int) ([]*entity.Category, error) {
+	var rows []*entity.Category
+
+	if err := r.DB.Where("id IN (SELECT category_id FROM tourist_spot_category WHERE tourist_spot_id = ?)", touristSpotID).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find category list by tourist_spot_id")
+	}
+
+	return rows, nil
+}
+
 func (r *CategoryQueryRepositoryImpl) SearchAreaByName(name string) ([]*entity.Category, error) {
 	var rows []*entity.Category
 
@@ -101,6 +111,16 @@ func (r *CategoryQueryRepositoryImpl) SearchSubAreaByName(name string) ([]*entit
 
 	if err := q.Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to search area by name")
+	}
+
+	return rows, nil
+}
+
+func (r *CategoryQueryRepositoryImpl) FindByMetaSearchID(innAreaTypeIDs *entity.InnAreaTypeIDs) ([]*entity.Category, error) {
+	var rows []*entity.Category
+
+	if err := r.DB.Where("metasearch_area_id = ?", innAreaTypeIDs.AreaID).Or("metasearch_sub_area_id =?", innAreaTypeIDs.SubAreaID).Or("metasearch_sub_sub_area_id = ?", innAreaTypeIDs.SubSubAreaID).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find category list by metasearch_id")
 	}
 
 	return rows, nil

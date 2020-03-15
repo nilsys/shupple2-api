@@ -1,6 +1,8 @@
 package query
 
-import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+import (
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+)
 
 type (
 	// repositoryで使用するクエリ発行用構造体
@@ -15,7 +17,8 @@ type (
 		MetasearchAreaID       int
 		MetasearchSubAreaID    int
 		MetasearchSubSubAreaID int
-		SortBy                 model.MediaSortBy
+		ChildID                int
+		SortBy                 model.ReviewSortBy
 		Keyward                string
 		Limit                  int
 		OffSet                 int

@@ -64,13 +64,13 @@ func (r *HashtagQueryRepositoryImpl) buildFindRecommendListQuery(areaID, subArea
 	q := r.DB
 
 	if areaID != 0 {
-		q = q.Where("id IN (SELECT id FROM category_hashtag WHERE category_id = ?)", areaID)
+		q = q.Where("id IN (SELECT id FROM hashtag_category WHERE category_id = ?)", areaID)
 	}
 	if subAreaID != 0 {
-		q = q.Where("id IN (SELECT id FROM category_hashtag WHERE category_id = ?)", subAreaID)
+		q = q.Where("id IN (SELECT id FROM hashtag_category WHERE category_id = ?)", subAreaID)
 	}
 	if subSubAreaID != 0 {
-		q = q.Where("id IN (SELECT id FROM category_hashtag WHERE category_id = ?)", subSubAreaID)
+		q = q.Where("id IN (SELECT id FROM hashtag_category WHERE category_id = ?)", subSubAreaID)
 	}
 
 	return q

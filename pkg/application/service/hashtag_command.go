@@ -9,6 +9,7 @@ import (
 
 type (
 	HashtagCommandService interface {
+		FindOrCreateHashtag(hashtag *entity.Hashtag) (*entity.Hashtag, error)
 		FindOrCreateHashtags(hashtags []string) ([]*entity.Hashtag, error)
 	}
 
@@ -22,6 +23,10 @@ var HashtagCommandServiceSet = wire.NewSet(
 	wire.Struct(new(HashtagCommandServiceImpl), "*"),
 	wire.Bind(new(HashtagCommandService), new(*HashtagCommandServiceImpl)),
 )
+
+func (s *HashtagCommandServiceImpl) FindOrCreateHashtag(hashtag *entity.Hashtag) (*entity.Hashtag, error) {
+	return s.HashtagCommandRepository.FirstOrCreate(hashtag)
+}
 
 func (s *HashtagCommandServiceImpl) FindOrCreateHashtags(hashtags []string) ([]*entity.Hashtag, error) {
 	existingHashtags, err := s.HashtagQueryRepository.FindByNames(hashtags)

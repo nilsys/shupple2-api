@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
@@ -8,6 +10,8 @@ import (
 type (
 	TouristSpotCommandRepository interface {
 		Store(touristSpot *entity.TouristSpot) error
+		// レビューの平均値を更新
+		UpdateScoreByID(c context.Context, id int) error
 		DeleteByID(id int) error
 	}
 

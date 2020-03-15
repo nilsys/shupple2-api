@@ -31,13 +31,13 @@ CREATE TABLE IF NOT EXISTS post_body (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS category (
-  id         BIGINT UNSIGNED NOT NULL COMMENT 'wordpressのIDをそのまま用いる',
-  parent_id  BIGINT UNSIGNED DEFAULT NULL COMMENT 'wordpressのIDをそのまま用いる',
-  name       VARCHAR(255) NOT NULL COMMENT '名前',
-  type       TINYINT NOT NULL COMMENT 'カテゴリ種別',
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  deleted_at DATETIME DEFAULT NULL,
+  id                         BIGINT UNSIGNED NOT NULL COMMENT 'wordpressのIDをそのまま用いる',
+  parent_id                  BIGINT UNSIGNED DEFAULT NULL COMMENT 'wordpressのIDをそのまま用いる',
+  name                       VARCHAR(255) NOT NULL COMMENT '名前',
+  type                       TINYINT NOT NULL COMMENT 'カテゴリ種別',
+  created_at                 DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at                 DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at                 DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   FULLTEXT KEY(name) WITH PARSER NGRAM,
   CONSTRAINT category_parent_id FOREIGN KEY(parent_id) REFERENCES category(id)

@@ -8,6 +8,73 @@ import (
 )
 
 const (
+	// AccompanyingTypeBUISINESS is a AccompanyingType of type BUISINESS
+	AccompanyingTypeBUISINESS AccompanyingType = iota + 1
+	// AccompanyingTypeCOUPLE is a AccompanyingType of type COUPLE
+	AccompanyingTypeCOUPLE
+	// AccompanyingTypeFAMILY is a AccompanyingType of type FAMILY
+	AccompanyingTypeFAMILY
+	// AccompanyingTypeFRIEND is a AccompanyingType of type FRIEND
+	AccompanyingTypeFRIEND
+	// AccompanyingTypeONLY is a AccompanyingType of type ONLY
+	AccompanyingTypeONLY
+	// AccompanyingTypeWITHCHILD is a AccompanyingType of type WITHCHILD
+	AccompanyingTypeWITHCHILD
+)
+
+const _AccompanyingTypeName = "BUISINESSCOUPLEFAMILYFRIENDONLYWITHCHILD"
+
+var _AccompanyingTypeMap = map[AccompanyingType]string{
+	1: _AccompanyingTypeName[0:9],
+	2: _AccompanyingTypeName[9:15],
+	3: _AccompanyingTypeName[15:21],
+	4: _AccompanyingTypeName[21:27],
+	5: _AccompanyingTypeName[27:31],
+	6: _AccompanyingTypeName[31:40],
+}
+
+// String implements the Stringer interface.
+func (x AccompanyingType) String() string {
+	if str, ok := _AccompanyingTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("AccompanyingType(%d)", x)
+}
+
+var _AccompanyingTypeValue = map[string]AccompanyingType{
+	_AccompanyingTypeName[0:9]:   1,
+	_AccompanyingTypeName[9:15]:  2,
+	_AccompanyingTypeName[15:21]: 3,
+	_AccompanyingTypeName[21:27]: 4,
+	_AccompanyingTypeName[27:31]: 5,
+	_AccompanyingTypeName[31:40]: 6,
+}
+
+// ParseAccompanyingType attempts to convert a string to a AccompanyingType
+func ParseAccompanyingType(name string) (AccompanyingType, error) {
+	if x, ok := _AccompanyingTypeValue[name]; ok {
+		return x, nil
+	}
+	return AccompanyingType(0), fmt.Errorf("%s is not a valid AccompanyingType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x AccompanyingType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *AccompanyingType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseAccompanyingType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// CategoryTypeAreaGroup is a CategoryType of type AreaGroup
 	CategoryTypeAreaGroup CategoryType = iota + 1
 	// CategoryTypeArea is a CategoryType of type Area
@@ -165,6 +232,57 @@ func (x MediaSortBy) MarshalText() ([]byte, error) {
 func (x *MediaSortBy) UnmarshalText(text []byte) error {
 	name := string(text)
 	tmp, err := ParseMediaSortBy(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
+	// ReviewSortByNEW is a ReviewSortBy of type NEW
+	ReviewSortByNEW ReviewSortBy = iota + 1
+	// ReviewSortByRECOMMEND is a ReviewSortBy of type RECOMMEND
+	ReviewSortByRECOMMEND
+)
+
+const _ReviewSortByName = "NEWRECOMMEND"
+
+var _ReviewSortByMap = map[ReviewSortBy]string{
+	1: _ReviewSortByName[0:3],
+	2: _ReviewSortByName[3:12],
+}
+
+// String implements the Stringer interface.
+func (x ReviewSortBy) String() string {
+	if str, ok := _ReviewSortByMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("ReviewSortBy(%d)", x)
+}
+
+var _ReviewSortByValue = map[string]ReviewSortBy{
+	_ReviewSortByName[0:3]:  1,
+	_ReviewSortByName[3:12]: 2,
+}
+
+// ParseReviewSortBy attempts to convert a string to a ReviewSortBy
+func ParseReviewSortBy(name string) (ReviewSortBy, error) {
+	if x, ok := _ReviewSortByValue[name]; ok {
+		return x, nil
+	}
+	return ReviewSortBy(0), fmt.Errorf("%s is not a valid ReviewSortBy", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x ReviewSortBy) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *ReviewSortBy) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseReviewSortBy(name)
 	if err != nil {
 		return err
 	}

@@ -14,5 +14,6 @@ wordpress:
   base_url: "https://stayway.jp/tourism/"
   user: changeme
   password: changeme
+  callback_key: changeme
 
 # vim: set ft=yaml:
