@@ -95,7 +95,7 @@ func setRoutes(app *App) {
 
 	{
 		touristSpots := api.Group("/tourist_spots")
-		touristSpots.GET("/", app.TouristSpotQueryController.ListTouristSpot)
+		touristSpots.GET("", app.TouristSpotQueryController.ListTouristSpot)
 		touristSpots.GET("/recommend", app.TouristSpotQueryController.ListRecommendTouristSpot)
 		touristSpots.GET("/:id", app.TouristSpotQueryController.Show)
 	}
