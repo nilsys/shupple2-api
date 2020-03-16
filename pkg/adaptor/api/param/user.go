@@ -22,6 +22,19 @@ type (
 		PerPage int `query:"perPage"`
 		Page    int `query:"page"`
 	}
+
+	StoreUser struct {
+		Name         string       `json:"name"`
+		CognitoToken string       `json:"cognitoToken"`
+		UID          string       `json:"uid"`
+		Email        string       `json:"email"`
+		BirthDate    model.Date   `json:"birthDate"`
+		Gender       model.Gender `json:"gender"`
+		Profile      string       `json:"profile"`
+		PinnedPostID int          `json:"pinnedPostId"`
+		Interests    []int        `json:"interests"`
+		IconUUID     string       `json:"iconUuid"`
+	}
 )
 
 const getUsersDefaultPerPage = 30

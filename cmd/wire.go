@@ -6,11 +6,13 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/middleware"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 )
 
 var controllerSet = wire.NewSet(
@@ -26,8 +28,10 @@ var controllerSet = wire.NewSet(
 	api.VlogQueryControllerSet,
 	api.HashtagQueryControllerSet,
 	api.UserQueryControllerSet,
+	api.UserCommandControllerSet,
 	api.HealthCheckControllerSet,
 	api.WordpressCallbackControllerSet,
+	api.S3CommandControllerSet,
 	api.InterestQueryControllerSet,
 )
 
@@ -57,7 +61,14 @@ var serviceSet = wire.NewSet(
 	service.LcategoryCommandServiceSet,
 	service.WordpressCallbackServiceSet,
 	service.UserQueryServiceSet,
+	service.UserCommandServiceSet,
+	service.S3CommandServiceSet,
+	service.ProvideAuthService,
 	service.InterestQueryServiceSet,
+)
+
+var factorySet = wire.NewSet(
+	factory.S3SignatureFactorySet,
 )
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
@@ -71,10 +82,15 @@ func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {
 		client.NewClient,
 		wire.Value(&client.Config{}),
 		wire.FieldsOf(new(*config.Config), "Wordpress"),
+		wire.FieldsOf(new(*config.Config), "AWS"),
+		middleware.NewAuthorizeWrapper,
 		controllerSet,
 		scenarioSet,
 		serviceSet,
+		factorySet,
+		repository.ProvideAWSSession,
 		repository.RepositoriesSet,
+		repository.ProvideS3Uploader,
 	)
 
 	return new(App), nil

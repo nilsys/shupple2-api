@@ -2,6 +2,7 @@ package config
 
 import (
 	"net/url"
+	"time"
 
 	"go.uber.org/zap"
 	yaml "gopkg.in/yaml.v3"
@@ -24,7 +25,7 @@ type (
 	}
 
 	Development struct {
-		UserID int `validate:"required" yaml:"user_id"`
+		CognitoID string `validate:"required" yaml:"cognito_id"`
 	}
 
 	Logger struct {
@@ -44,9 +45,12 @@ type (
 	}
 
 	AWS struct {
-		Endpoint     string `validate:"" yaml:"endpoint"`
-		Region       string `validate:"required" yaml:"region"`
-		AvatarBucket string `validate:"required" yaml:"avatar_bucket"`
+		Endpoint     string        `validate:"" yaml:"endpoint"`
+		Region       string        `validate:"required" yaml:"region"`
+		AvatarBucket string        `validate:"required" yaml:"avatar_bucket"`
+		UserPoolID   string        `validate:"" yaml:"user_pool_id"`
+		ClientID     string        `validate:"" yaml:"client_id"`
+		UploadExpire time.Duration `validate:"required" yaml:"upload_expire"`
 	}
 
 	URL struct {

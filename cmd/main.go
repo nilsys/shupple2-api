@@ -27,6 +27,7 @@ func main() {
 type App struct {
 	Config                      *config.Config
 	Echo                        *echo.Echo
+	AuthorizeWrapper            staywayMiddleware.AuthorizeWrapper
 	PostCommandController       api.PostCommandController
 	PostQueryController         api.PostQueryController
 	CategoryQueryController     api.CategoryQueryController
@@ -38,8 +39,10 @@ type App struct {
 	FeatureQueryController      api.FeatureQueryController
 	VlogQueryController         api.VlogQueryController
 	UserQueryController         api.UserQueryController
+	UserCommandController       api.UserCommandController
 	HealthCheckController       api.HealthCheckController
 	WordpressCallbackController api.WordpressCallbackController
+	S3CommandController         api.S3CommandController
 	TouristSpotQueryController  api.TouristSpotQueryController
 	InteresetQueryController    api.InterestQueryController
 }
@@ -62,6 +65,7 @@ func run() error {
 
 func setRoutes(app *App) {
 	api := app.Echo.Group("/api")
+	auth := app.AuthorizeWrapper
 
 	{
 		posts := api.Group("/posts")
@@ -72,6 +76,7 @@ func setRoutes(app *App) {
 
 	{
 		users := api.Group("/users")
+		users.POST("", app.UserCommandController.SignUp)
 		users.GET("/:id/posts/feed", app.PostQueryController.ListFeedPost)
 		users.GET("/:id/reviews/feed", app.ReviewQueryController.ListFeedReview)
 		users.GET("/ranking", app.UserQueryController.ShowUserRanking)
@@ -129,6 +134,7 @@ func setRoutes(app *App) {
 		interests.GET("", app.InteresetQueryController.ListAll)
 	}
 
+	api.POST("/s3", auth(app.S3CommandController.Post))
 	api.GET("/healthcheck", app.HealthCheckController.HealthCheck)
 	api.GET("/search/suggestions", app.SearchQueryController.ListSearchSuggestion)
 	api.POST(

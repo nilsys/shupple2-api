@@ -13,8 +13,10 @@ type (
 
 	UserQueryRepository interface {
 		FindByID(id int) (*entity.User, error)
+		FindByCognitoID(cognitoID string) (*entity.User, error)
 		FindByWordpressID(id int) (*entity.User, error)
 		FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.QueryRankingUser, error)
+		IsExistByUID(uid string) (bool, error)
 		// name部分一致検索
 		SearchByName(name string) ([]*entity.User, error)
 		FindFolloweeByID(query *query.FindFollowUser) ([]*entity.User, error)

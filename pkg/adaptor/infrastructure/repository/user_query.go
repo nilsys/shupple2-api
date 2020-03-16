@@ -28,6 +28,14 @@ func (r *UserQueryRepositoryImpl) FindByID(id int) (*entity.User, error) {
 	return &row, nil
 }
 
+func (r *UserQueryRepositoryImpl) FindByCognitoID(cognitoID string) (*entity.User, error) {
+	var row entity.User
+	if err := r.DB.Where("cognito_id = ?", cognitoID).First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "user(cognito_id=%s)", cognitoID)
+	}
+	return &row, nil
+}
+
 func (r *UserQueryRepositoryImpl) FindByWordpressID(wordpressUserID int) (*entity.User, error) {
 	var row entity.User
 	if err := r.DB.Where("wordpress_id = ?", wordpressUserID).First(&row).Error; err != nil {
@@ -51,6 +59,14 @@ func (r *UserQueryRepositoryImpl) FindUserRankingListByParams(query *query.FindU
 	}
 
 	return rows, nil
+}
+
+func (r *UserQueryRepositoryImpl) IsExistByUID(uid string) (bool, error) {
+	var row entity.User
+
+	err := r.DB.Where("uid = ?", uid).First(&row).Error
+
+	return ErrorToIsExist(err, "user(uid=%s)", uid)
 }
 
 // name部分一致検索

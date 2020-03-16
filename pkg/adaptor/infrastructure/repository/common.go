@@ -144,6 +144,17 @@ func ErrorToFindSingleRecord(err error, resource string, args ...interface{}) er
 	return errors.Wrapf(err, "failed to get %s", resource)
 }
 
+func ErrorToIsExist(err error, resource string, args ...interface{}) (bool, error) {
+	resource = fmt.Sprintf(resource, args...)
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return false, nil
+		}
+		return true, errors.Wrapf(err, "failed to get %s", resource)
+	}
+	return true, nil
+}
+
 func wrapUpdateAssociationsCallback(base func(scope *gorm.Scope)) func(scope *gorm.Scope) {
 	return func(scope *gorm.Scope) {
 		db := scope.DB()

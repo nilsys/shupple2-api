@@ -9,11 +9,13 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/middleware"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 )
 
 import (
@@ -28,10 +30,18 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		return nil, err
 	}
 	echoEcho := echo.New()
+	authService, err := service.ProvideAuthService(configConfig)
+	if err != nil {
+		return nil, err
+	}
 	db, err := repository.ProvideDB(configConfig)
 	if err != nil {
 		return nil, err
 	}
+	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
+		DB: db,
+	}
+	authorizeWrapper := middleware.NewAuthorizeWrapper(configConfig, authService, userQueryRepositoryImpl)
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
 		DB: db,
 	}
@@ -43,9 +53,6 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	}
 	wordpress := configConfig.Wordpress
 	wordpressQueryRepository := repository.NewWordpressQueryRepositoryImpl(wordpress)
-	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
-		DB: db,
-	}
 	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
 		DB: db,
 	}
@@ -180,6 +187,25 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	userQueryController := api.UserQueryController{
 		UserQueryService: userQueryServiceImpl,
 	}
+	session, err := repository.ProvideAWSSession(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	uploader := repository.ProvideS3Uploader(session)
+	aws := configConfig.AWS
+	userCommandRepositoryImpl := &repository.UserCommandRepositoryImpl{
+		DB:            db,
+		MediaUploader: uploader,
+		AWSConfig:     aws,
+	}
+	userCommandServiceImpl := &service.UserCommandServiceImpl{
+		UserCommandRepository: userCommandRepositoryImpl,
+		UserQueryRepository:   userQueryRepositoryImpl,
+	}
+	userCommandController := api.UserCommandController{
+		UserCommandService: userCommandServiceImpl,
+		AuthService:        authService,
+	}
 	healthCheckRepositoryImpl := &repository.HealthCheckRepositoryImpl{
 		DB: db,
 	}
@@ -243,6 +269,16 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	wordpressCallbackController := api.WordpressCallbackController{
 		WordpressCallbackService: wordpressCallbackServiceImpl,
 	}
+	s3SignatureFactory := factory.S3SignatureFactory{
+		Session:   session,
+		AWSConfig: aws,
+	}
+	s3CommandServiceImpl := &service.S3CommandServiceImpl{
+		S3SignatureFactory: s3SignatureFactory,
+	}
+	s3CommandController := api.S3CommandController{
+		S3CommandService: s3CommandServiceImpl,
+	}
 	touristSpotQueryServiceImpl := &service.TouristSpotQueryServiceImpl{
 		TouristSpotQueryRepository: touristSpotQueryRepositoryImpl,
 	}
@@ -261,6 +297,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	app := &App{
 		Config:                      configConfig,
 		Echo:                        echoEcho,
+		AuthorizeWrapper:            authorizeWrapper,
 		PostCommandController:       postCommandController,
 		PostQueryController:         postQueryController,
 		CategoryQueryController:     categoryQueryController,
@@ -272,8 +309,10 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		FeatureQueryController:      featureQueryController,
 		VlogQueryController:         vlogQueryController,
 		UserQueryController:         userQueryController,
+		UserCommandController:       userCommandController,
 		HealthCheckController:       healthCheckController,
 		WordpressCallbackController: wordpressCallbackController,
+		S3CommandController:         s3CommandController,
 		TouristSpotQueryController:  touristSpotQueryController,
 		InteresetQueryController:    interestQueryController,
 	}
@@ -286,10 +325,12 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet, api.InterestQueryControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet)
 
 var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.InterestQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet)
+
+var factorySet = wire.NewSet(factory.S3SignatureFactorySet)
 
 var configSet = wire.FieldsOf(new(*config.Config), "Stayway")

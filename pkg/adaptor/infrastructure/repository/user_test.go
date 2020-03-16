@@ -145,6 +145,7 @@ func newUser(id int, name ...string) *entity.User {
 	user := &entity.User{
 		ID:        id,
 		Birthdate: time.Date(2020, 7, 7, 0, 0, 0, 0, time.Local),
+		Interests: []*entity.UserInterest{},
 		Gender:    model.GenderMale,
 	}
 	util.FillDymmyString(user, id)

@@ -1,6 +1,8 @@
 package converter
 
 import (
+	"time"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/response"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -40,6 +42,24 @@ func ConvertListFollowUserParamToQuery(param *param.ListFollowUser) *query.FindF
 		ID:     param.ID,
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffset(),
+	}
+}
+
+func ConvertStoreUserParamToEntity(param *param.StoreUser, cognitoID string) *entity.User {
+	interests := make([]*entity.UserInterest, len(param.Interests))
+	for i, interest := range param.Interests {
+		interests[i] = &entity.UserInterest{InterestID: interest}
+	}
+	return &entity.User{
+		UID:        param.UID,
+		CognitoID:  cognitoID,
+		Name:       param.Name,
+		Email:      param.Email,
+		Birthdate:  time.Time(param.BirthDate),
+		Gender:     param.Gender,
+		Profile:    param.Profile,
+		AvatarUUID: param.IconUUID,
+		Interests:  interests,
 	}
 }
 

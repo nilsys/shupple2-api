@@ -9,6 +9,7 @@ import (
 type (
 	User struct {
 		ID          int `gorm:"primary_key"`
+		UID         string
 		CognitoID   string
 		WordpressID int
 		Name        string
@@ -17,8 +18,9 @@ type (
 		Gender      model.Gender
 		Profile     string
 		AvatarUUID  string
-		CreatedAt   time.Time `gorm:"-;default:current_timestamp"`
-		UpdatedAt   time.Time `gorm:"-;default:current_timestamp"`
+		Interests   []*UserInterest `gorm:"foreignkey:UserID"`
+		CreatedAt   time.Time       `gorm:"-;default:current_timestamp"`
+		UpdatedAt   time.Time       `gorm:"-;default:current_timestamp"`
 		DeletedAt   *time.Time
 	}
 
@@ -26,6 +28,11 @@ type (
 	QueryRankingUser struct {
 		User
 		Interests []*Interest `gorm:"many2many:user_interest;jointable_foreignkey:user_id;"`
+	}
+
+	UserInterest struct {
+		UserID     int `gorm:"primary_key"`
+		InterestID int `gorm:"primary_key"`
 	}
 
 	Interest struct {

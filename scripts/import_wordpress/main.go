@@ -117,7 +117,7 @@ func (s Script) Run() error {
 func connectWordpressDatabase(db string) (*gorm.DB, error) {
 	return repositoryImpl.ProvideDB(&config.Config{
 		Database:    db,
-		Development: &config.Development{UserID: 1},
+		Development: &config.Development{CognitoID: "dummy"},
 	})
 }
 
