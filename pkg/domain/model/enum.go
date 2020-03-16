@@ -18,7 +18,7 @@ ENUM(NEW = 1, RECOMMEND)
 type ReviewSortBy int
 
 /*
-ENUM(RANKING, RECOMMEND)
+ENUM(RANKING = 1, RECOMMEND)
 */
 type UserSortBy int
 

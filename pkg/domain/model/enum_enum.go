@@ -359,7 +359,7 @@ func (x *SuggestionType) UnmarshalText(text []byte) error {
 
 const (
 	// UserSortByRANKING is a UserSortBy of type RANKING
-	UserSortByRANKING UserSortBy = iota
+	UserSortByRANKING UserSortBy = iota + 1
 	// UserSortByRECOMMEND is a UserSortBy of type RECOMMEND
 	UserSortByRECOMMEND
 )
@@ -367,8 +367,8 @@ const (
 const _UserSortByName = "RANKINGRECOMMEND"
 
 var _UserSortByMap = map[UserSortBy]string{
-	0: _UserSortByName[0:7],
-	1: _UserSortByName[7:16],
+	1: _UserSortByName[0:7],
+	2: _UserSortByName[7:16],
 }
 
 // String implements the Stringer interface.
@@ -380,8 +380,8 @@ func (x UserSortBy) String() string {
 }
 
 var _UserSortByValue = map[string]UserSortBy{
-	_UserSortByName[0:7]:  0,
-	_UserSortByName[7:16]: 1,
+	_UserSortByName[0:7]:  1,
+	_UserSortByName[7:16]: 2,
 }
 
 // ParseUserSortBy attempts to convert a string to a UserSortBy

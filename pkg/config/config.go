@@ -15,8 +15,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"gopkg.in/go-playground/validator.v9"
-	"gopkg.in/yaml.v3"
+	validator "gopkg.in/go-playground/validator.v9"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // build時にldflagで注入する
