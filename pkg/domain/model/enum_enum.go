@@ -76,7 +76,7 @@ func (x *AccompanyingType) UnmarshalText(text []byte) error {
 
 const (
 	// CategoryTypeAreaGroup is a CategoryType of type AreaGroup
-	CategoryTypeAreaGroup CategoryType = iota + 1
+	CategoryTypeAreaGroup CategoryType = iota
 	// CategoryTypeArea is a CategoryType of type Area
 	CategoryTypeArea
 	// CategoryTypeSubArea is a CategoryType of type SubArea
@@ -90,11 +90,11 @@ const (
 const _CategoryTypeName = "AreaGroupAreaSubAreaSubSubAreaTheme"
 
 var _CategoryTypeMap = map[CategoryType]string{
-	1: _CategoryTypeName[0:9],
-	2: _CategoryTypeName[9:13],
-	3: _CategoryTypeName[13:20],
-	4: _CategoryTypeName[20:30],
-	5: _CategoryTypeName[30:35],
+	0: _CategoryTypeName[0:9],
+	1: _CategoryTypeName[9:13],
+	2: _CategoryTypeName[13:20],
+	3: _CategoryTypeName[20:30],
+	4: _CategoryTypeName[30:35],
 }
 
 // String implements the Stringer interface.
@@ -106,11 +106,11 @@ func (x CategoryType) String() string {
 }
 
 var _CategoryTypeValue = map[string]CategoryType{
-	_CategoryTypeName[0:9]:   1,
-	_CategoryTypeName[9:13]:  2,
-	_CategoryTypeName[13:20]: 3,
-	_CategoryTypeName[20:30]: 4,
-	_CategoryTypeName[30:35]: 5,
+	_CategoryTypeName[0:9]:   0,
+	_CategoryTypeName[9:13]:  1,
+	_CategoryTypeName[13:20]: 2,
+	_CategoryTypeName[20:30]: 3,
+	_CategoryTypeName[30:35]: 4,
 }
 
 // ParseCategoryType attempts to convert a string to a CategoryType

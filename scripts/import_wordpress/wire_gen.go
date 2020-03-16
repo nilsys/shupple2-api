@@ -107,7 +107,7 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 		TransactionService:       transactionServiceImpl,
 	}
 	touristSpotCommandRepositoryImpl := &repository.TouristSpotCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	touristSpotCommandServiceImpl := &service.TouristSpotCommandServiceImpl{
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
