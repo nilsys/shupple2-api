@@ -1101,7 +1101,7 @@ paths:
           schema:
             type: integer
         - in: query
-          name: spotCategoryId
+          name: touristSpotCategoryId
           description: |
             観光スポットカテゴリID
             いずれか必須
