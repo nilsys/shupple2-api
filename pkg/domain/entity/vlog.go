@@ -6,22 +6,25 @@ import (
 
 type (
 	VlogTiny struct {
-		ID         int `gorm:"primary_key"`
-		UserID     int
-		Slug       string
-		Thumbnail  string
-		Title      string
-		Body       string
-		YoutubeURL string
-		Series     string
-		UserSNS    string
-		EditorName string
-		YearMonth  string `gorm:"column:yearmonth"`
-		PlayTime   string
-		Timeline   string
-		CreatedAt  time.Time `gorm:"default:current_timestamp"`
-		UpdatedAt  time.Time `gorm:"default:current_timestamp"`
-		DeletedAt  *time.Time
+		ID            int `gorm:"primary_key"`
+		UserID        int
+		Slug          string
+		Thumbnail     string
+		Title         string
+		Body          string
+		YoutubeURL    string
+		Series        string
+		UserSNS       string
+		EditorName    string
+		YearMonth     string `gorm:"column:yearmonth"`
+		PlayTime      string
+		Timeline      string
+		FacebookCount int
+		TwitterCount  int
+		Views         int
+		CreatedAt     time.Time `gorm:"default:current_timestamp"`
+		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
+		DeletedAt     *time.Time
 	}
 
 	Vlog struct {
@@ -40,10 +43,16 @@ type (
 		TouristSpotID int `gorm:"primary_key"`
 	}
 
-	QueryVlog struct {
+	VlogDetail struct {
 		VlogTiny
-		WordpressCategories []*Category    `gorm:"many2many:vlog_category;jointable_foreignkey:vlog_id;"`
-		TouristSpots        []*TouristSpot `gorm:"many2many:vlog_tourist_spot;jointable_foreignkey:vlog_id;"`
+		Categories []*Category `gorm:"many2many:vlog_category;jointable_foreignkey:vlog_id;"`
+	}
+
+	VlogDetailWithTouristSpots struct {
+		VlogTiny
+		User         *User          `gorm:"foreignkey:UserID"`
+		Categories   []*Category    `gorm:"many2many:vlog_category;jointable_foreignkey:vlog_id;"`
+		TouristSpots []*TouristSpot `gorm:"many2many:vlog_tourist_spot;jointable_foreignkey:vlog_id;"`
 	}
 )
 
@@ -71,6 +80,6 @@ func NewVlog(tiny VlogTiny, categoryIDs, touristSpotIDs []int) Vlog {
 	}
 }
 
-func (queryVlog *QueryVlog) TableName() string {
+func (queryVlog *VlogTiny) TableName() string {
 	return "vlog"
 }

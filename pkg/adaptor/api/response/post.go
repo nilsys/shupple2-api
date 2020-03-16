@@ -12,7 +12,14 @@ type (
 		Title           string             `json:"title"`
 		Creator         Creator            `json:"creator"`
 		LikeCount       int                `json:"likeCount"`
+		Views           int                `json:"views"`
+		CreatedAt       model.TimeResponse `json:"createdAt"`
 		UpdatedAt       model.TimeResponse `json:"updatedAt"`
+	}
+
+	PostList struct {
+		TotalNumber int     `json:"totalNumber"`
+		Posts       []*Post `json:"posts"`
 	}
 
 	PostShow struct {

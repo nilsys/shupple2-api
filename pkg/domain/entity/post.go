@@ -52,6 +52,11 @@ type (
 		Categories []*Category `gorm:"many2many:post_category;jointable_foreignkey:post_id;"`
 	}
 
+	PostDetailList struct {
+		TotalNumber int
+		Posts       []*PostDetail
+	}
+
 	// 参照用Post詳細
 	PostDetailWithHashtag struct {
 		PostTiny

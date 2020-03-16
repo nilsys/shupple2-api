@@ -45,12 +45,12 @@ func (c *PostQueryController) ListPost(ctx echo.Context) error {
 
 	query := converter.ConvertFindPostListParamToQuery(p)
 
-	posts, err := c.PostService.ShowListByParams(query)
+	posts, err := c.PostService.ListByParams(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to find post list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertPostToOutput(posts))
+	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailListToOutput(posts))
 }
 
 func (c *PostQueryController) ListFeedPost(ctx echo.Context) error {
@@ -61,10 +61,10 @@ func (c *PostQueryController) ListFeedPost(ctx echo.Context) error {
 
 	q := converter.ConvertListFeedPostParamToQuery(p)
 
-	posts, err := c.PostService.ShowListFeed(p.UserID, q)
+	posts, err := c.PostService.ListFeed(p.UserID, q)
 	if err != nil {
 		return errors.Wrap(err, "failed to show feed posts")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertPostToOutput(posts))
+	return ctx.JSON(http.StatusOK, converter.ConvertPostListToOutput(posts))
 }

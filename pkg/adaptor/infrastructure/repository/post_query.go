@@ -39,8 +39,8 @@ func (r *PostQueryRepositoryImpl) FindQueryShowByID(id int) (*entity.PostDetailW
 }
 
 // 検索条件に指定されたクエリ構造体を用い、postを複数参照
-func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuery) ([]*entity.PostDetail, error) {
-	var posts []*entity.PostDetail
+func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuery) (*entity.PostDetailList, error) {
+	var postDetailList entity.PostDetailList
 
 	q := r.buildFindListByParamsQuery(query)
 
@@ -48,11 +48,11 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 		Order(query.SortBy.GetPostOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
-		Find(&posts).Error; err != nil {
+		Find(&postDetailList.Posts).Count(&postDetailList.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get posts by params")
 	}
 
-	return posts, nil
+	return &postDetailList, nil
 }
 
 // クエリ構造体を用い、FindListByParams()で使用するsqlクエリを作成

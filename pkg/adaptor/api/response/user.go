@@ -2,7 +2,8 @@ package response
 
 type (
 	Creator struct {
-		Thumbnail string `json:"thumbnail"`
+		ID        int    `json:"id"`
+		Thumbnail string `json:"iconUrl"`
 		Name      string `json:"name"`
 		Profile   string `json:"profile,omitempty"`
 	}
@@ -30,8 +31,9 @@ type (
 	}
 )
 
-func NewCreator(thumbnail string, name string, profile string) Creator {
+func NewCreator(id int, thumbnail, name, profile string) Creator {
 	return Creator{
+		ID:        id,
 		Thumbnail: thumbnail,
 		Name:      name,
 		Profile:   profile,

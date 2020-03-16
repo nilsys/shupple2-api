@@ -7,13 +7,14 @@ type (
 		ID        int    `json:"id"`
 		Name      string `json:"name"`
 		Thumbnail string `json:"thumbnail"`
-		URL       string `json:"url,omitempty"`
+		URL       string `json:"url"`
 	}
 
 	ShowTouristSpot struct {
 		ID              int                `json:"id"`
 		Slug            string             `json:"slug"`
 		Name            string             `json:"name"`
+		Thumbnail       string             `json:"thumbnail"`
 		WebsiteURL      string             `json:"websiteUrl"`
 		City            string             `json:"city"`
 		Address         string             `json:"address"`
@@ -36,3 +37,11 @@ type (
 		UpdatedAt       model.TimeResponse `json:"updatedAt"`
 	}
 )
+
+func NewTouristSpots(id int, name, thumbnail string) TouristSpot {
+	return TouristSpot{
+		ID:        id,
+		Name:      name,
+		Thumbnail: thumbnail,
+	}
+}

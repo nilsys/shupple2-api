@@ -6,15 +6,18 @@ import (
 
 type (
 	FeatureTiny struct {
-		ID        int `gorm:"primary_key"`
-		UserID    int
-		Slug      string
-		Thumbnail string
-		Title     string
-		Body      string
-		CreatedAt time.Time
-		UpdatedAt time.Time
-		DeletedAt *time.Time
+		ID            int `gorm:"primary_key"`
+		UserID        int
+		Slug          string
+		Thumbnail     string
+		Title         string
+		Body          string
+		FacebookCount int
+		TwitterCount  int
+		Views         int
+		CreatedAt     time.Time
+		UpdatedAt     time.Time
+		DeletedAt     *time.Time
 	}
 
 	Feature struct {

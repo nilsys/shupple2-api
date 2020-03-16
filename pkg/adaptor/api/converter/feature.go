@@ -37,7 +37,11 @@ func ConvertQueryFeatureToOutput(feature *entity.QueryFeature) *response.ShowFea
 		Slug:          feature.Slug,
 		Thumbnail:     feature.Thumbnail,
 		Title:         feature.Title,
-		Creator:       response.NewCreator(feature.User.GenerateThumbnailURL(), feature.User.Name, feature.User.Profile),
+		FacebookCount: feature.FacebookCount,
+		TwitterCount:  feature.TwitterCount,
+		Views:         feature.Views,
+		Creator:       response.NewCreator(feature.User.ID, feature.User.GenerateThumbnailURL(), feature.User.Name, feature.User.Profile),
+		CreatedAt:     model.TimeResponse(feature.CreatedAt),
 		UpdatedAt:     model.TimeResponse(feature.UpdatedAt),
 		RelationPosts: relationPosts,
 	}

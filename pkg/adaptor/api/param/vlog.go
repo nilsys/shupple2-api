@@ -6,16 +6,22 @@ import (
 )
 
 // 動画一覧取得パラメータ
-type ListVlogParam struct {
-	AreaID        int               `query:"areaId"`
-	SubAreaID     int               `query:"subAreaId"`
-	SubSubAreaID  int               `query:"subSubAreaId"`
-	TouristSpotID int               `query:"touristSpotId"`
-	SortBy        model.MediaSortBy `query:"sortBy"`
-	Keyward       string            `query:"q"`
-	Page          int               `query:"page"`
-	PerPage       int               `query:"perPage"`
-}
+type (
+	ShowVlog struct {
+		ID int `param:"id" validat:"required"`
+	}
+
+	ListVlogParam struct {
+		AreaID        int               `query:"areaId"`
+		SubAreaID     int               `query:"subAreaId"`
+		SubSubAreaID  int               `query:"subSubAreaId"`
+		TouristSpotID int               `query:"touristSpotId"`
+		SortBy        model.MediaSortBy `query:"sortBy"`
+		Keyward       string            `query:"q"`
+		Page          int               `query:"page"`
+		PerPage       int               `query:"perPage"`
+	}
+)
 
 const listVlogDefaultPerPage = 10
 

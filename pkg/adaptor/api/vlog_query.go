@@ -19,6 +19,19 @@ var VlogQueryControllerSet = wire.NewSet(
 	wire.Struct(new(VlogQueryController), "*"),
 )
 
+func (c *VlogQueryController) Show(ctx echo.Context) error {
+	p := &param.ShowVlog{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "required vlog id")
+	}
+
+	vlog, err := c.VlogQueryService.Show(p.ID)
+	if err != nil {
+		return errors.Wrapf(err, "failed show vlog id=%d", p.ID)
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertVlogDetailWithTouristSpots(vlog))
+}
 func (c *VlogQueryController) ListVlog(ctx echo.Context) error {
 	param := &param.ListVlogParam{}
 	if err := BindAndValidate(ctx, param); err != nil {

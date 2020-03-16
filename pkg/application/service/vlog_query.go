@@ -10,7 +10,8 @@ import (
 
 type (
 	VlogQueryService interface {
-		ShowListByParams(query *query.FindVlogListQuery) ([]*entity.QueryVlog, error)
+		Show(id int) (*entity.VlogDetailWithTouristSpots, error)
+		ShowListByParams(query *query.FindVlogListQuery) ([]*entity.VlogDetail, error)
 	}
 
 	VlogQueryServiceImpl struct {
@@ -23,7 +24,11 @@ var VlogQueryServiceSet = wire.NewSet(
 	wire.Bind(new(VlogQueryService), new(*VlogQueryServiceImpl)),
 )
 
-func (s *VlogQueryServiceImpl) ShowListByParams(query *query.FindVlogListQuery) ([]*entity.QueryVlog, error) {
+func (s *VlogQueryServiceImpl) Show(id int) (*entity.VlogDetailWithTouristSpots, error) {
+	return s.VlogQueryRepository.FindWithTouristSpotsByID(id)
+}
+
+func (s *VlogQueryServiceImpl) ShowListByParams(query *query.FindVlogListQuery) ([]*entity.VlogDetail, error) {
 	vlogs, err := s.VlogQueryRepository.FindListByParams(query)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to find vlogs")

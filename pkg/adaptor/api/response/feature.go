@@ -16,7 +16,11 @@ type (
 		Slug          string `json:"slug"`
 		Thumbnail     string `json:"thumbnail"`
 		Title         string `json:"title"`
+		FacebookCount int    `json:"facebookCount"`
+		TwitterCount  int    `json:"twitterCount"`
+		Views         int    `json:"views"`
 		Creator       `json:"creator"`
+		CreatedAt     model.TimeResponse `json:"createdAt"`
 		UpdatedAt     model.TimeResponse `json:"updatedAt"`
 		RelationPosts []*RelationPost    `json:"relationPosts"`
 	}

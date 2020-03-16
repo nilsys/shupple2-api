@@ -62,6 +62,7 @@ func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.QueryTouristSpot) 
 		ID:              queryTouristSpot.ID,
 		Slug:            queryTouristSpot.Slug,
 		Name:            queryTouristSpot.Name,
+		Thumbnail:       queryTouristSpot.Thumbnail,
 		WebsiteURL:      queryTouristSpot.WebsiteURL,
 		City:            queryTouristSpot.City,
 		Address:         queryTouristSpot.Address,

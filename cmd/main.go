@@ -116,6 +116,7 @@ func setRoutes(app *App) {
 	{
 		vlogs := api.Group("/vlogs")
 		vlogs.GET("", app.VlogQueryController.ListVlog)
+		vlogs.GET("/:id", app.VlogQueryController.Show)
 	}
 
 	{

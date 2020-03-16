@@ -42,11 +42,24 @@ func ConvertListFeedPostParamToQuery(param *param.ListFeedPostParam) *query.Find
  * i -> o
  */
 // ConvertPostToOutput()のスライスバージョン
-func ConvertPostToOutput(queryPostList []*entity.PostDetail) []*response.Post {
-	responsePosts := make([]*response.Post, len(queryPostList))
+func ConvertPostDetailListToOutput(queryPostList *entity.PostDetailList) response.PostList {
+	responsePosts := make([]*response.Post, len(queryPostList.Posts))
 
-	for i, queryPost := range queryPostList {
+	for i, queryPost := range queryPostList.Posts {
 		responsePosts[i] = ConvertQueryPostToOutput(queryPost)
+	}
+
+	return response.PostList{
+		TotalNumber: queryPostList.TotalNumber,
+		Posts:       responsePosts,
+	}
+}
+
+func ConvertPostListToOutput(posts []*entity.PostDetail) []*response.Post {
+	responsePosts := make([]*response.Post, len(posts))
+
+	for i, post := range posts {
+		responsePosts[i] = ConvertQueryPostToOutput(post)
 	}
 
 	return responsePosts
@@ -76,6 +89,8 @@ func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
 			Name:      queryPost.User.Name,
 		},
 		LikeCount: queryPost.FavoriteCount,
+		Views:     queryPost.Views,
+		CreatedAt: model.TimeResponse(queryPost.CreatedAt),
 		UpdatedAt: model.TimeResponse(queryPost.UpdatedAt),
 	}
 }
@@ -110,7 +125,7 @@ func ConvertQueryShowPostToOutput(post *entity.PostDetailWithHashtag) *response.
 		FacebookCount:   post.FacebookCount,
 		TwitterCount:    post.TwitterCount,
 		Views:           post.Views,
-		Creator:         response.NewCreator(post.User.GenerateThumbnailURL(), post.User.Name, post.User.Profile),
+		Creator:         response.NewCreator(post.User.ID, post.User.GenerateThumbnailURL(), post.User.Name, post.User.Profile),
 		AreaCategories:  areaCategories,
 		ThemeCategories: themeCategories,
 		Hashtags:        hashtags,
