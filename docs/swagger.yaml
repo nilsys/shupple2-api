@@ -1209,7 +1209,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AreaList"
+                $ref: "#/components/schemas/CategoryList"
   /areas/{id}:
     get:
       tags:
@@ -1229,7 +1229,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Area"
+                $ref: "#/components/schemas/Category"
   /sub_areas:
     get:
       tags:
@@ -1261,7 +1261,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AreaList"
+                $ref: "#/components/schemas/CategoryList"
   /sub_areas/{id}:
     get:
       tags:
@@ -1281,7 +1281,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Area"
+                $ref: "#/components/schemas/Category"
   /sub_sub_areas:
     get:
       tags:
@@ -1313,7 +1313,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AreaList"
+                $ref: "#/components/schemas/CategoryList"
   /sub_sbu_areas/{id}:
     get:
       tags:
@@ -1333,7 +1333,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Area"
+                $ref: "#/components/schemas/Category"
   /interests:
     get:
       tags:
@@ -2287,21 +2287,6 @@ components:
           example: 2020-01-01T13:16+09:00
         creator:
           $ref: "#/components/schemas/Creator"
-    AreaList:
-      type: array
-      items:
-        $ref: "#/components/schemas/Area"
-    Area:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: エリアID
-          example: 1
-        name:
-          type: string
-          description: エリア名
-          example: 北海道
     InterestList:
       type: array
       items:
