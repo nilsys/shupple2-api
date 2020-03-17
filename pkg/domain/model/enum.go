@@ -23,7 +23,7 @@ ENUM(RANKING = 1, RECOMMEND)
 type UserSortBy int
 
 /*
-ENUM(AreaGroup, Area, SubArea, SubSubArea, Theme)
+ENUM(AreaGroup = 1, Area, SubArea, SubSubArea, Theme)
 */
 type CategoryType int
 

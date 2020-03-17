@@ -16,7 +16,9 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
+)
 
+import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
