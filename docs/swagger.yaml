@@ -373,6 +373,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - review
+      summary: レビュー削除
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: レビューID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: 自分のものでない投稿を更新しようとした時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /reviews/:id/comment:
     get:
       tags:
@@ -1186,9 +1220,9 @@ paths:
       description: エリア一覧取得
       parameters:
         - in: query
-          name: areaGroupId
+          name: parentCategoryId
           description: |
-            エリアグループID
+            親カテゴリID
           schema:
             type: integer
         - in: query
@@ -1238,9 +1272,9 @@ paths:
       description: 親IDに紐づくサブエリア一覧取得
       parameters:
         - in: query
-          name: areaId
+          name: parentCategoryId
           description: |
-            エリアID
+            親カテゴリID
           schema:
             type: integer
         - in: query
@@ -1290,9 +1324,9 @@ paths:
       description: 親IDに紐づくサブサブエリア一覧取得
       parameters:
         - in: query
-          name: subAreaId
+          name: parentCategoryId
           description: |
-            サブエリアID
+            親カテゴリID
           schema:
             type: integer
         - in: query
@@ -1314,7 +1348,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CategoryList"
-  /sub_sub_areas/{id}:
+  /sub_sbu_areas/{id}:
     get:
       tags:
         - subSubArea
