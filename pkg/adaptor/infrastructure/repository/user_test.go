@@ -29,7 +29,7 @@ var _ = Describe("UserRepositoryImpl", func() {
 
 		truncate(db)
 
-		Expect(prepareBucket(tests.AWS, tests.Config.AWS.AvatarBucket)).To(Succeed())
+		Expect(prepareBucket(tests.AWS, tests.Config.AWS.FilesBucket)).To(Succeed())
 	})
 
 	DescribeTable("Storeは引数のuserを作成するか、その状態になるように更新する",
@@ -131,7 +131,7 @@ var _ = Describe("UserRepositoryImpl", func() {
 func getS3ObjectSize(key string) (int, error) {
 	s3c := s3.New(tests.AWS)
 	out, err := s3c.HeadObject(&s3.HeadObjectInput{
-		Bucket: &tests.Config.AWS.AvatarBucket,
+		Bucket: &tests.Config.AWS.FilesBucket,
 		Key:    &key,
 	})
 	if err != nil {

@@ -3,16 +3,16 @@ package scenario
 import (
 	"github.com/google/wire"
 	"github.com/pkg/errors"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 )
 
 type (
 	// reviewコマンド系シナリオ
 	ReviewCommandScenario interface {
-		Create(param *param.StoreReviewParam, user *entity.User) error
+		Create(user *entity.User, params *command.CreateReview) error
 	}
 
 	// reviewコマンド系シナリオ実装
@@ -27,19 +27,12 @@ var ReviewCommandScenarioSet = wire.NewSet(
 	wire.Bind(new(ReviewCommandScenario), new(*ReviewCommandScenarioImpl)),
 )
 
-func (s *ReviewCommandScenarioImpl) Create(param *param.StoreReviewParam, user *entity.User) error {
+func (s *ReviewCommandScenarioImpl) Create(user *entity.User, param *command.CreateReview) error {
 	review := s.convertStoreReviewPramToEntity(param, user)
 
-	hashtagFromStr := s.convertStringSliceToHashtag(model.FindHashtags(review.Body))
-
-	hashtags := make([]*entity.Hashtag, len(hashtagFromStr))
-
-	for i, hashtag := range hashtagFromStr {
-		hashtagEntity, err := s.HashtagCommandService.FindOrCreateHashtag(hashtag)
-		if err != nil {
-			return errors.Wrap(err, "failed store and show hashtag")
-		}
-		hashtags[i] = hashtagEntity
+	hashtags, err := s.HashtagCommandService.FindOrCreateHashtags(model.FindHashtags(review.Body))
+	if err != nil {
+		return errors.Wrap(err, "failed store and show hashtag")
 	}
 
 	review.HashtagIDs = s.convertReviewAndHashtagToReviewHashtag(hashtags, review)
@@ -50,16 +43,6 @@ func (s *ReviewCommandScenarioImpl) Create(param *param.StoreReviewParam, user *
 	}
 
 	return s.ReviewCommandService.StoreInnReview(review)
-}
-
-func (s *ReviewCommandScenarioImpl) convertStringSliceToHashtag(stringList []string) []*entity.Hashtag {
-	hashtags := make([]*entity.Hashtag, len(stringList))
-	for i, str := range stringList {
-		hashtags[i] = &entity.Hashtag{
-			Name: str,
-		}
-	}
-	return hashtags
 }
 
 func (s *ReviewCommandScenarioImpl) convertReviewAndHashtagToReviewHashtag(hashtags []*entity.Hashtag, review *entity.Review) []*entity.ReviewHashtag {
@@ -74,7 +57,7 @@ func (s *ReviewCommandScenarioImpl) convertReviewAndHashtagToReviewHashtag(hasht
 }
 
 // MEMO: HashtagIDsはセットされない
-func (s *ReviewCommandScenarioImpl) convertStoreReviewPramToEntity(param *param.StoreReviewParam, user *entity.User) *entity.Review {
+func (s *ReviewCommandScenarioImpl) convertStoreReviewPramToEntity(param *command.CreateReview, user *entity.User) *entity.Review {
 	reviewMedias := make([]*entity.ReviewMedia, len(param.MediaUUIDs))
 	for i, media := range param.MediaUUIDs {
 		reviewMedias[i] = entity.NewReviewMedia(media.UUID, media.MimeType, i+1)
@@ -95,7 +78,7 @@ func (s *ReviewCommandScenarioImpl) convertStoreReviewPramToEntity(param *param.
 
 	return &entity.Review{
 		UserID:       user.ID,
-		InnID:        param.InnId,
+		InnID:        param.InnID,
 		Score:        param.Score,
 		MediaCount:   len(param.MediaUUIDs),
 		Body:         param.Body,

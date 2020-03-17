@@ -312,7 +312,7 @@ func (s *WordpressServiceImpl) getThumbnail(mediaID int) (string, error) {
 		return "", serror.NewResourcesNotFoundError(err, "thumbnail(id=%d)", mediaID)
 	}
 
-	thumbnail := media[0].MediaDetails.Sizes.Full.SourceURL
+	thumbnail := media[0].SourceURL
 	if strings.HasPrefix(thumbnail, thumbnailS3Prefix) {
 		thumbnail = "https://" + thumbnail[len(thumbnailS3Prefix):]
 	}

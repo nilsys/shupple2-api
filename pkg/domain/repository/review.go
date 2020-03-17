@@ -19,5 +19,6 @@ type (
 	// Reviewコマンド系レポジトリ
 	ReviewCommandRepository interface {
 		StoreReview(c context.Context, review *entity.Review) error
+		PersistReviewMedia(reviewMedia *entity.ReviewMedia) error
 	}
 )

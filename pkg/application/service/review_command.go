@@ -43,9 +43,14 @@ func (s *ReviewCommandServiceImpl) StoreTouristSpotReview(review *entity.Review)
 	// レビューに紐付くtouristSpotに紐付くカテゴリーとハッシュタグを紐付けるHashtagCategoryをgen
 	hashtagCategoryList := s.convertCategoryAndHashtagIDsToHashtagCategory(categories, review.HashtagIDs)
 
+	// TODO: lock時間長くなるのが気になる
 	return s.TransactionService.Do(func(c context.Context) error {
 		if err := s.ReviewCommandRepository.StoreReview(c, review); err != nil {
 			return errors.Wrap(err, "failed store review")
+		}
+
+		if err := s.persistReviewMedia(review.Medias); err != nil {
+			return errors.Wrap(err, "failed to persist media")
 		}
 
 		if len(review.HashtagIDs) <= 0 {
@@ -96,6 +101,10 @@ func (s *ReviewCommandServiceImpl) StoreInnReview(review *entity.Review) error {
 			return errors.Wrap(err, "failed store review")
 		}
 
+		if err := s.persistReviewMedia(review.Medias); err != nil {
+			return errors.Wrap(err, "failed to persist media")
+		}
+
 		if len(review.HashtagIDs) <= 0 {
 			return nil
 		}
@@ -126,4 +135,14 @@ func (s *ReviewCommandServiceImpl) convertCategoryAndHashtagIDsToHashtagCategory
 	}
 
 	return hashtagCategories
+}
+
+func (s *ReviewCommandServiceImpl) persistReviewMedia(medias []*entity.ReviewMedia) error {
+	for _, media := range medias {
+		if err := s.ReviewCommandRepository.PersistReviewMedia(media); err != nil {
+			return errors.Wrapf(err, "failed to presist media(id=%s)", media.ID)
+		}
+	}
+
+	return nil
 }

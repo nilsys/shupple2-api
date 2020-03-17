@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
@@ -71,4 +72,8 @@ func (r *ReviewMedia) GenerateURL() string {
 
 func (r *QueryReview) TableName() string {
 	return "review"
+}
+
+func (reviewMedia *ReviewMedia) S3Path() string {
+	return fmt.Sprintf("review/%d/%s", reviewMedia.ReviewID, reviewMedia.ID)
 }

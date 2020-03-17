@@ -124,8 +124,15 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	reviewQueryController := api.ReviewQueryController{
 		ReviewQueryService: reviewQueryServiceImpl,
 	}
+	session, err := repository.ProvideAWSSession(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	aws := configConfig.AWS
 	reviewCommandRepositoryImpl := &repository.ReviewCommandRepositoryImpl{
-		DAO: dao,
+		DAO:        dao,
+		AWSSession: session,
+		AWSConfig:  aws,
 	}
 	touristSpotCommandRepositoryImpl := &repository.TouristSpotCommandRepositoryImpl{
 		DAO: dao,
@@ -187,12 +194,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	userQueryController := api.UserQueryController{
 		UserQueryService: userQueryServiceImpl,
 	}
-	session, err := repository.ProvideAWSSession(configConfig)
-	if err != nil {
-		return nil, err
-	}
 	uploader := repository.ProvideS3Uploader(session)
-	aws := configConfig.AWS
 	userCommandRepositoryImpl := &repository.UserCommandRepositoryImpl{
 		DB:            db,
 		MediaUploader: uploader,
@@ -332,5 +334,3 @@ var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet)
 var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet)
 
 var factorySet = wire.NewSet(factory.S3SignatureFactorySet)
-
-var configSet = wire.FieldsOf(new(*config.Config), "Stayway")

@@ -71,24 +71,19 @@ var factorySet = wire.NewSet(
 	factory.S3SignatureFactorySet,
 )
 
-var configSet = wire.FieldsOf(new(*config.Config), "Stayway")
-
 func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {
 	wire.Build(
 		echo.New,
 		wire.Struct(new(App), "*"),
 		config.GetConfig,
-		configSet,
 		client.NewClient,
 		wire.Value(&client.Config{}),
-		wire.FieldsOf(new(*config.Config), "Wordpress"),
-		wire.FieldsOf(new(*config.Config), "AWS"),
+		wire.FieldsOf(new(*config.Config), "Wordpress", "Stayway", "AWS"),
 		middleware.NewAuthorizeWrapper,
 		controllerSet,
 		scenarioSet,
 		serviceSet,
 		factorySet,
-		repository.ProvideAWSSession,
 		repository.RepositoriesSet,
 		repository.ProvideS3Uploader,
 	)

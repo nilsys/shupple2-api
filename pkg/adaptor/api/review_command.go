@@ -8,6 +8,7 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 )
@@ -28,7 +29,7 @@ func (c *ReviewCommandController) Store(ctx echo.Context) error {
 	}
 
 	// TODO: 認証処理挟む
-	if err := c.ReviewCommandScenario.Create(p, &entity.User{ID: 1}); err != nil {
+	if err := c.ReviewCommandScenario.Create(&entity.User{ID: 1}, converter.ConvertCreateReviewParamToCommand(p)); err != nil {
 		return errors.Wrap(err, "failed to store review")
 	}
 

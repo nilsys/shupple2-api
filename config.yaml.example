@@ -9,7 +9,7 @@ stayway:
 aws:
   region: ap-northeast-1
   endpoint: http://localstack:4572
-  avatar_bucket: hoge
+  files_bucket: hoge
   upload_expire: 15m
 wordpress:
   base_url: "https://stayway.jp/tourism/"

@@ -35,7 +35,7 @@ func (f *S3SignatureFactory) GenerateS3SignatureEntity(contentType string) (*ent
 
 	svc := s3.New(f.Session)
 	resp, _ := svc.PutObjectRequest(&s3.PutObjectInput{
-		Bucket:      aws.String(f.AWSConfig.AvatarBucket),
+		Bucket:      aws.String(f.AWSConfig.FilesBucket),
 		Key:         aws.String(f.generateUploadURL(uuidStr)),
 		ContentType: aws.String(contentType),
 	})

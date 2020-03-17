@@ -38,7 +38,6 @@ func InitializeTest(configFilePath config.ConfigFilePath) (*Test, error) {
 		wire.Struct(new(Test), "*"),
 		config.GetConfig,
 		wire.FieldsOf(new(*config.Config), "AWS"),
-		ProvideAWSSession,
 		ProvideS3Uploader,
 		RepositoriesSet,
 	)

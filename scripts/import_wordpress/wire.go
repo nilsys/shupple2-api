@@ -29,7 +29,6 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 		wire.FieldsOf(new(*config.Config), "Wordpress", "AWS"),
 		serviceSet,
 		repository.RepositoriesSet,
-		repository.ProvideAWSSession,
 		repository.ProvideS3Uploader,
 	)
 

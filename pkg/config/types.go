@@ -47,7 +47,7 @@ type (
 	AWS struct {
 		Endpoint     string        `validate:"" yaml:"endpoint"`
 		Region       string        `validate:"required" yaml:"region"`
-		AvatarBucket string        `validate:"required" yaml:"avatar_bucket"`
+		FilesBucket  string        `validate:"required" yaml:"files_bucket"`
 		UserPoolID   string        `validate:"" yaml:"user_pool_id"`
 		ClientID     string        `validate:"" yaml:"client_id"`
 		UploadExpire time.Duration `validate:"required" yaml:"upload_expire"`

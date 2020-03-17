@@ -36,7 +36,7 @@ type (
 		TravelDate    model.YearMonth        `json:"travelDate" validate:"required"`
 		Accompanying  model.AccompanyingType `json:"accompanying" validate:"required"`
 		TouristSpotID int                    `json:"touristSpotId"`
-		InnId         int                    `json:"innId"`
+		InnID         int                    `json:"innId"`
 		Score         int                    `json:"score" validate:"required"`
 		Body          string                 `json:"body" validate:"required"`
 		MediaUUIDs    []MediasUUID           `json:"mediaUuids"`
@@ -108,7 +108,7 @@ func (param *StoreReviewParam) Validate() error {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid store review body")
 	}
 
-	if (param.TouristSpotID != 0 && param.InnId != 0) || (param.TouristSpotID == 0 && param.InnId == 0) {
+	if (param.TouristSpotID != 0 && param.InnID != 0) || (param.TouristSpotID == 0 && param.InnID == 0) {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid store review tourist_spot & inn_id")
 	}
 

@@ -40,7 +40,7 @@ func (r *UserCommandRepositoryImpl) StoreWithAvatar(user *entity.User, avatar []
 
 		key := fmt.Sprintf(avatarKeyFormat, user.ID)
 		_, err := r.MediaUploader.Upload(&s3manager.UploadInput{
-			Bucket: &r.AWSConfig.AvatarBucket,
+			Bucket: &r.AWSConfig.FilesBucket,
 			Key:    &key,
 			Body:   bytes.NewReader(avatar),
 		})

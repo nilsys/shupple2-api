@@ -5,6 +5,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/response"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
@@ -127,5 +128,25 @@ func ConvertQueryReviewShowToOutput(r *entity.QueryReview) *response.Review {
 		CommentCount:  r.CommentCount,
 		Hashtag:       hashtags,
 		Creator:       response.NewCreator(r.User.ID, r.User.GenerateThumbnailURL(), r.User.Name, r.Body),
+	}
+}
+
+func ConvertCreateReviewParamToCommand(param *param.StoreReviewParam) *command.CreateReview {
+	uuids := make([]*command.CreateReviewMedia, len(param.MediaUUIDs))
+	for i, media := range param.MediaUUIDs {
+		uuids[i] = &command.CreateReviewMedia{
+			UUID:     media.UUID,
+			MimeType: media.MimeType,
+		}
+	}
+
+	return &command.CreateReview{
+		TravelDate:    param.TravelDate,
+		Accompanying:  param.Accompanying,
+		TouristSpotID: param.TouristSpotID,
+		InnID:         param.InnID,
+		Score:         param.Score,
+		Body:          param.Body,
+		MediaUUIDs:    uuids,
 	}
 }
