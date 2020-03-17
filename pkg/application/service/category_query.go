@@ -11,16 +11,13 @@ import (
 
 type (
 	CategoryQueryService interface {
-		ListAreaByParams(parentID int, limit int, excludeID []int) ([]*entity.Category, error)
+		ListAreaByParams(areaGroupID int, limit int, excludeID []int) ([]*entity.Category, error)
+		ListSubAreaByParams(areaID int, limit int, excludeID []int) ([]*entity.Category, error)
+		ListSubSubAreaByParams(subAreaID int, limit int, excludeID []int) ([]*entity.Category, error)
+
 		ShowAreaByID(id int) (*entity.Category, error)
-
-		ListSubAreaByParams(parentID int, limit int, excludeID []int) ([]*entity.Category, error)
 		ShowSubAreaByID(id int) (*entity.Category, error)
-
-		ShowList(id int, parentCategoryType, categoryType model.CategoryType, limit int, excludeID []int) ([]*entity.Category, error)
-		ShowByID(id int, categoryType model.CategoryType) (*entity.Category, error)
-
-		IsTypeByID(id int, targetCategoryType model.CategoryType) (bool, error)
+		ShowSubSubAreaByID(id int) (*entity.Category, error)
 	}
 
 	CategoryQueryServiceImpl struct {
@@ -33,16 +30,24 @@ var CategoryQueryServiceSet = wire.NewSet(
 	wire.Bind(new(CategoryQueryService), new(*CategoryQueryServiceImpl)),
 )
 
-func (r *CategoryQueryServiceImpl) ListAreaByParams(parentID int, limit int, excludeID []int) ([]*entity.Category, error) {
-	categories, err := r.ShowList(parentID, model.CategoryTypeAreaGroup, model.CategoryTypeArea, limit, excludeID)
+func (r *CategoryQueryServiceImpl) ListAreaByParams(areaGroupID int, limit int, excludeID []int) ([]*entity.Category, error) {
+	categories, err := r.showList(areaGroupID, model.CategoryTypeAreaGroup, model.CategoryTypeArea, limit, excludeID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to ShowList")
 	}
 	return categories, nil
 }
 
-func (r *CategoryQueryServiceImpl) ListSubAreaByParams(parentID int, limit int, excludeID []int) ([]*entity.Category, error) {
-	categories, err := r.ShowList(parentID, model.CategoryTypeArea, model.CategoryTypeSubArea, limit, excludeID)
+func (r *CategoryQueryServiceImpl) ListSubAreaByParams(areaID int, limit int, excludeID []int) ([]*entity.Category, error) {
+	categories, err := r.showList(areaID, model.CategoryTypeArea, model.CategoryTypeSubArea, limit, excludeID)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to ShowList")
+	}
+	return categories, nil
+}
+
+func (r *CategoryQueryServiceImpl) ListSubSubAreaByParams(subAreaID int, limit int, excludeID []int) ([]*entity.Category, error) {
+	categories, err := r.showList(subAreaID, model.CategoryTypeSubArea, model.CategoryTypeSubSubArea, limit, excludeID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to ShowList")
 	}
@@ -50,7 +55,7 @@ func (r *CategoryQueryServiceImpl) ListSubAreaByParams(parentID int, limit int, 
 }
 
 func (r *CategoryQueryServiceImpl) ShowAreaByID(id int) (*entity.Category, error) {
-	category, err := r.ShowByID(id, model.CategoryTypeArea)
+	category, err := r.showByID(id, model.CategoryTypeArea)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to showByID")
 	}
@@ -59,7 +64,7 @@ func (r *CategoryQueryServiceImpl) ShowAreaByID(id int) (*entity.Category, error
 }
 
 func (r *CategoryQueryServiceImpl) ShowSubAreaByID(id int) (*entity.Category, error) {
-	category, err := r.ShowByID(id, model.CategoryTypeSubArea)
+	category, err := r.showByID(id, model.CategoryTypeSubArea)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to showByID")
 	}
@@ -67,17 +72,26 @@ func (r *CategoryQueryServiceImpl) ShowSubAreaByID(id int) (*entity.Category, er
 	return category, nil
 }
 
-// idをもとにCategoryテーブル内の該当レコードのTypeがtargetTypeと一致するか確認したのち、categoryを取得する
-func (r *CategoryQueryServiceImpl) ShowList(id int, parentCategoryType, categoryType model.CategoryType, limit int, excludeID []int) ([]*entity.Category, error) {
-	typeMatch, err := r.IsTypeByID(id, parentCategoryType)
+func (r *CategoryQueryServiceImpl) ShowSubSubAreaByID(id int) (*entity.Category, error) {
+	category, err := r.showByID(id, model.CategoryTypeSubSubArea)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to showByID")
+	}
+
+	return category, nil
+}
+
+// parentIDをもとにCategoryテーブル内の該当レコードのTypeがtargetTypeと一致するか確認したのち、categoryを取得する
+func (r *CategoryQueryServiceImpl) showList(parentID int, parentCategoryType, categoryType model.CategoryType, limit int, excludeID []int) ([]*entity.Category, error) {
+	typeMatch, err := r.isTypeByID(parentID, parentCategoryType)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to IsTypeByID")
 	}
 	if !typeMatch {
-		return nil, serror.New(nil, serror.CodeInvalidParam, "id:%d is not %s", id, parentCategoryType)
+		return nil, serror.New(nil, serror.CodeInvalidParam, "id:%d is not %s", parentID, parentCategoryType)
 	}
 
-	categories, err := r.Repository.FindListByParentID(id, limit, excludeID)
+	categories, err := r.Repository.FindListByParentID(parentID, limit, excludeID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to get Categories by FindListByID")
 	}
@@ -86,8 +100,8 @@ func (r *CategoryQueryServiceImpl) ShowList(id int, parentCategoryType, category
 }
 
 // idをもとにCategoryテーブル内の該当レコードのTypeがcategoryTypeと一致するか確認したのち、categoryを取得する
-func (r *CategoryQueryServiceImpl) ShowByID(id int, categoryType model.CategoryType) (*entity.Category, error) {
-	typeMatch, err := r.IsTypeByID(id, categoryType)
+func (r *CategoryQueryServiceImpl) showByID(id int, categoryType model.CategoryType) (*entity.Category, error) {
+	typeMatch, err := r.isTypeByID(id, categoryType)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to IsTypeByID")
 	}
@@ -103,13 +117,11 @@ func (r *CategoryQueryServiceImpl) ShowByID(id int, categoryType model.CategoryT
 	return category, nil
 }
 
-// idに該当するレコードがtargetCategoryTypeに一致するかを返す
-func (r *CategoryQueryServiceImpl) IsTypeByID(id int, targetCategoryType model.CategoryType) (bool, error) {
+func (r *CategoryQueryServiceImpl) isTypeByID(id int, targetCategoryType model.CategoryType) (bool, error) {
 	categoryType, err := r.Repository.FindTypeByID(id)
 	if err != nil {
 		return false, errors.Wrapf(err, "failed to FindTypeByID")
 	}
-
 	return *categoryType == targetCategoryType, nil
 }
 
@@ -120,6 +132,5 @@ func (r *CategoryQueryServiceImpl) filterByCategoryType(categories []*entity.Cat
 			resp = append(resp, category)
 		}
 	}
-
 	return resp
 }

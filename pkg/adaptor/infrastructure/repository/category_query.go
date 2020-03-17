@@ -39,7 +39,7 @@ func (r *CategoryQueryRepositoryImpl) FindListByParentID(parentID int, limit int
 	return rows, nil
 }
 
-// limitやexlucdeIDを指定する場合のqueryBuilder
+// limitやexcludeIDを指定する場合のqueryBuilder
 func (r *CategoryQueryRepositoryImpl) buildQueryByLimitAndExcludeID(limit int, excludeID []int) *gorm.DB {
 	if limit == 0 {
 		limit = defaultAcquisitionNumber

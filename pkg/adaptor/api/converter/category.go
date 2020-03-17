@@ -9,6 +9,7 @@ func ConvertCategoryToOutput(category *entity.Category) *response.Category {
 	return &response.Category{
 		ID:   category.ID,
 		Name: category.Name,
+		Type: category.Type,
 	}
 }
 

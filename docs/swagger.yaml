@@ -1290,9 +1290,9 @@ paths:
       description: 親IDに紐づくサブサブエリア一覧取得
       parameters:
         - in: query
-          name: parentCategoryId
+          name: subAreaId
           description: |
-            親カテゴリID
+            サブエリアID
           schema:
             type: integer
         - in: query
@@ -1314,7 +1314,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CategoryList"
-  /sub_sbu_areas/{id}:
+  /sub_sub_areas/{id}:
     get:
       tags:
         - subSubArea

@@ -125,6 +125,12 @@ func setRoutes(app *App) {
 	}
 
 	{
+		subSubAreas := api.Group("/sub_sub_areas")
+		subSubAreas.GET("", app.CategoryQueryController.ListSubSubArea)
+		subSubAreas.GET("/:id", app.CategoryQueryController.ShowSubSubAreaByID)
+	}
+
+	{
 		vlogs := api.Group("/vlogs")
 		vlogs.GET("", app.VlogQueryController.ListVlog)
 		vlogs.GET("/:id", app.VlogQueryController.Show)

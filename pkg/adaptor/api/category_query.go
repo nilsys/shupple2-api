@@ -48,7 +48,7 @@ func (c *CategoryQueryController) ShowAreaByID(ctx echo.Context) error {
 
 	category, err := c.CategoryQueryService.ShowAreaByID(q.ID)
 	if err != nil {
-		return errors.Wrap(err, "failed to ShowAreaByID")
+		return errors.Wrap(err, "failed to category")
 	}
 
 	return ctx.JSON(http.StatusOK, converter.ConvertCategoryToOutput(category))
@@ -78,7 +78,36 @@ func (c *CategoryQueryController) ShowSubAreaByID(ctx echo.Context) error {
 
 	category, err := c.CategoryQueryService.ShowSubAreaByID(q.ID)
 	if err != nil {
-		return errors.Wrap(err, "failed to FindByID")
+		return errors.Wrap(err, "failed to category")
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertCategoryToOutput(category))
+}
+
+// SubSubAreaのListを取得して返す
+func (c *CategoryQueryController) ListSubSubArea(ctx echo.Context) error {
+	q := param.ListSubSubAreaParams{}
+	if err := BindAndValidate(ctx, &q); err != nil {
+		return errors.Wrap(err, "failed to BindAndValidate CategoryParam")
+	}
+
+	categories, err := c.CategoryQueryService.ListSubSubAreaByParams(q.SubAreaID, q.PerPage, q.ExcludeID)
+	if err != nil {
+		return errors.Wrap(err, "failed to get categories")
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertCategoriesToOutput(categories))
+}
+
+func (c *CategoryQueryController) ShowSubSubAreaByID(ctx echo.Context) error {
+	q := param.GetArea{}
+	if err := BindAndValidate(ctx, &q); err != nil {
+		return errors.Wrapf(err, "ID is invalid")
+	}
+
+	category, err := c.CategoryQueryService.ShowSubSubAreaByID(q.ID)
+	if err != nil {
+		return errors.Wrap(err, "failed to category")
 	}
 
 	return ctx.JSON(http.StatusOK, converter.ConvertCategoryToOutput(category))
