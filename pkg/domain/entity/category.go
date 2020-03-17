@@ -20,6 +20,7 @@ type (
 	Category struct {
 		ID                     int `gorm:"primary_key"`
 		Name                   string
+		Slug                   string
 		Type                   model.CategoryType
 		MetasearchAreaID       int
 		MetasearchSubAreaID    int

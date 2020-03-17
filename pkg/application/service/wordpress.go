@@ -169,6 +169,7 @@ func (s *WordpressServiceImpl) ConvertCategory(wpCategory *wordpress.Category) (
 	category := &entity.Category{
 		ID:       wpCategory.ID,
 		Name:     wpCategory.Name,
+		Slug:     wpCategory.Slug,
 		Type:     categoryType,
 		ParentID: pParentID,
 	}
