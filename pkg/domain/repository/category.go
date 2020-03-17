@@ -13,7 +13,7 @@ type (
 	CategoryQueryRepository interface {
 		FindTypeByID(id int) (*model.CategoryType, error)
 		FindByID(id int) (*entity.Category, error)
-		FindListByParentCategoryID(parentCategoryID int, limit int, excludeID []int) ([]*entity.Category, error)
+		FindListByParentID(parentID int, limit int, excludeID []int) ([]*entity.Category, error)
 		FindByIDs(ids []int) ([]*entity.Category, error)
 		// name部分一致検索
 		SearchByName(name string) ([]*entity.Category, error)

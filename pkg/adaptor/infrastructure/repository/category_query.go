@@ -28,19 +28,19 @@ func (r *CategoryQueryRepositoryImpl) FindTypeByID(id int) (*model.CategoryType,
 	return &category.Type, nil
 }
 
-func (r *CategoryQueryRepositoryImpl) FindListByParentCategoryID(parentCategoryID int, limit int, excludeID []int) ([]*entity.Category, error) {
+func (r *CategoryQueryRepositoryImpl) FindListByParentID(parentID int, limit int, excludeID []int) ([]*entity.Category, error) {
 	var rows []*entity.Category
-	q := r.buildFindListByParentCategoryID(limit, excludeID)
+	q := r.buildQueryByLimitAndExcludeID(limit, excludeID)
 
-	if err := q.Where("parent_id = ?", parentCategoryID).Find(&rows).Error; err != nil {
-		return nil, errors.Wrapf(err, "category not found")
+	if err := q.Where("parent_id = ?", parentID).Find(&rows).Error; err != nil {
+		return nil, errors.Wrapf(err, "failed to category list by parent_id = %d", parentID)
 	}
 
 	return rows, nil
 }
 
-// FindListByParentCategoryID関数内でのqueryBuilder
-func (r *CategoryQueryRepositoryImpl) buildFindListByParentCategoryID(limit int, excludeID []int) *gorm.DB {
+// limitやexlucdeIDを指定する場合のqueryBuilder
+func (r *CategoryQueryRepositoryImpl) buildQueryByLimitAndExcludeID(limit int, excludeID []int) *gorm.DB {
 	if limit == 0 {
 		limit = defaultAcquisitionNumber
 	}

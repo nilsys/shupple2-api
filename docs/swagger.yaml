@@ -1186,9 +1186,9 @@ paths:
       description: エリア一覧取得
       parameters:
         - in: query
-          name: parentCategoryId
+          name: areaGroupId
           description: |
-            親カテゴリID
+            エリアグループID
           schema:
             type: integer
         - in: query
@@ -1238,9 +1238,9 @@ paths:
       description: 親IDに紐づくサブエリア一覧取得
       parameters:
         - in: query
-          name: parentCategoryId
+          name: areaId
           description: |
-            親カテゴリID
+            エリアID
           schema:
             type: integer
         - in: query
