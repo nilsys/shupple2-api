@@ -71,14 +71,18 @@ func (s *WordpressServiceImpl) ConvertPost(wpPost *wordpress.Post) (*entity.Post
 	}
 
 	post := entity.NewPost(entity.PostTiny{
-		ID:        wpPost.ID,
-		UserID:    user.ID,
-		Slug:      wpPost.Slug,
-		Thumbnail: thumbnail,
-		Title:     wpPost.Title.Rendered,
-		TOC:       toc,
-		CreatedAt: time.Time(wpPost.Date),
-		UpdatedAt: time.Time(wpPost.Modified),
+		ID:             wpPost.ID,
+		UserID:         user.ID,
+		Slug:           wpPost.Slug,
+		Thumbnail:      thumbnail,
+		Title:          wpPost.Title.Rendered,
+		TOC:            toc,
+		IsSticky:       wpPost.Sticky,
+		HideAds:        wpPost.Meta.IsAdsRemovedInPage,
+		SEOTitle:       wpPost.Meta.SEOTitle,
+		SEODescription: wpPost.Meta.MetaDescription,
+		CreatedAt:      time.Time(wpPost.Date),
+		UpdatedAt:      time.Time(wpPost.Modified),
 	}, bodies, wpPost.Categories, hashtagIDs)
 
 	return &post, nil

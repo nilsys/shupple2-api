@@ -21,10 +21,16 @@ type Post struct {
 	Sticky        bool            `json:"sticky"`
 	Template      string          `json:"template"`
 	Format        string          `json:"format"`
-	Meta          []interface{}   `json:"meta"`
+	Meta          PostMeta        `json:"meta"`
 	Categories    []int           `json:"categories"`
 	ArticleTheme  []interface{}   `json:"article_theme"`
 	Links         PostLinks       `json:"_links"`
+}
+
+type PostMeta struct {
+	SEOTitle           string `json:"seo_title"`
+	MetaDescription    string `json:"meta_description"`
+	IsAdsRemovedInPage bool   `json:"is_ads_removed_in_page"`
 }
 
 type About struct {

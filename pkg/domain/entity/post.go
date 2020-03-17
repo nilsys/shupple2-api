@@ -6,19 +6,23 @@ import (
 
 type (
 	PostTiny struct {
-		ID            int `gorm:"primary_key"`
-		UserID        int
-		Slug          string
-		Thumbnail     string
-		Title         string
-		TOC           string
-		FavoriteCount int
-		FacebookCount int
-		TwitterCount  int
-		Views         int
-		CreatedAt     time.Time `gorm:"default:current_timestamp"`
-		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
-		DeletedAt     *time.Time
+		ID             int `gorm:"primary_key"`
+		UserID         int
+		Slug           string
+		Thumbnail      string
+		Title          string
+		TOC            string
+		IsSticky       bool
+		HideAds        bool
+		FavoriteCount  int
+		FacebookCount  int
+		TwitterCount   int
+		Views          int
+		SEOTitle       string
+		SEODescription string
+		CreatedAt      time.Time `gorm:"default:current_timestamp"`
+		UpdatedAt      time.Time `gorm:"default:current_timestamp"`
+		DeletedAt      *time.Time
 	}
 
 	Post struct {
