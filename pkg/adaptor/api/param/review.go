@@ -32,6 +32,10 @@ type (
 		PerPage int `query:"perPage"`
 	}
 
+	StoreFavoriteReviewParam struct {
+		ReviewID int `param:"id" validate:"required"`
+	}
+
 	StoreReviewParam struct {
 		TravelDate    model.YearMonth        `json:"travelDate" validate:"required"`
 		Accompanying  model.AccompanyingType `json:"accompanying" validate:"required"`

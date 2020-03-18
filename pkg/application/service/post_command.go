@@ -38,7 +38,7 @@ func (r *PostCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Post, 
 	}
 
 	if wpPosts[0].Status != wordpress.StatusPublish {
-		if err := r.PostCommandRepository.DeleteByID(id); err != nil {
+		if err := r.PostCommandRepository.DeleteByID(context.TODO(), id); err != nil {
 			return nil, errors.Wrapf(err, "failed to delete post(id=%d)", id)
 		}
 

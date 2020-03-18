@@ -160,6 +160,24 @@ func (r *ReviewQueryRepositoryImpl) buildFindFeedListQuery(userID int) *gorm.DB 
 	return q
 }
 
+func (r *ReviewQueryRepositoryImpl) FindByID(reviewID int) (*entity.Review, error) {
+	var review entity.Review
+
+	if err := r.DB.Find(&review, reviewID).Error; err != nil {
+		return nil, errors.Wrapf(err, "Failed to get review")
+	}
+
+	return &review, nil
+}
+
+func (r *ReviewQueryRepositoryImpl) IsExist(id int) (bool, error) {
+	var review entity.Review
+
+	err := r.DB.Find(&review, id).Error
+
+	return ErrorToIsExist(err, "review(id=%d)", id)
+}
+
 func (r *ReviewQueryRepositoryImpl) FindReviewCommentListByReviewID(reviewID int, limit int) ([]*entity.ReviewComment, error) {
 	var results []*entity.ReviewComment
 
@@ -176,4 +194,3 @@ func (r *ReviewQueryRepositoryImpl) FindReviewCommentListByReviewID(reviewID int
 
 	return results, nil
 }
-

@@ -25,26 +25,28 @@ func main() {
 }
 
 type App struct {
-	Config                      *config.Config
-	Echo                        *echo.Echo
-	AuthorizeWrapper            staywayMiddleware.AuthorizeWrapper
-	PostCommandController       api.PostCommandController
-	PostQueryController         api.PostQueryController
-	CategoryQueryController     api.CategoryQueryController
-	ComicQueryController        api.ComicQueryController
-	ReviewQueryController       api.ReviewQueryController
-	ReviewCommandController     api.ReviewCommandController
-	HashtagQueryController      api.HashtagQueryController
-	SearchQueryController       api.SearchQueryController
-	FeatureQueryController      api.FeatureQueryController
-	VlogQueryController         api.VlogQueryController
-	UserQueryController         api.UserQueryController
-	UserCommandController       api.UserCommandController
-	HealthCheckController       api.HealthCheckController
-	WordpressCallbackController api.WordpressCallbackController
-	S3CommandController         api.S3CommandController
-	TouristSpotQueryController  api.TouristSpotQueryController
-	InteresetQueryController    api.InterestQueryController
+	Config                          *config.Config
+	Echo                            *echo.Echo
+	AuthorizeWrapper                staywayMiddleware.AuthorizeWrapper
+	PostCommandController           api.PostCommandController
+	PostQueryController             api.PostQueryController
+	PostFavoriteCommandController   api.PostFavoriteCommandController
+	CategoryQueryController         api.CategoryQueryController
+	ComicQueryController            api.ComicQueryController
+	ReviewQueryController           api.ReviewQueryController
+	ReviewCommandController         api.ReviewCommandController
+	ReviewFavoriteCommandController api.ReviewFavoriteCommandController
+	HashtagQueryController          api.HashtagQueryController
+	SearchQueryController           api.SearchQueryController
+	FeatureQueryController          api.FeatureQueryController
+	VlogQueryController             api.VlogQueryController
+	UserQueryController             api.UserQueryController
+	UserCommandController           api.UserCommandController
+	HealthCheckController           api.HealthCheckController
+	WordpressCallbackController     api.WordpressCallbackController
+	S3CommandController             api.S3CommandController
+	TouristSpotQueryController      api.TouristSpotQueryController
+	InteresetQueryController        api.InterestQueryController
 }
 
 func run() error {
@@ -72,6 +74,8 @@ func setRoutes(app *App) {
 		posts.GET("", app.PostQueryController.ListPost)
 		posts.POST("", app.PostCommandController.Store)
 		posts.GET("/:id", app.PostQueryController.Show)
+		posts.PUT("/:id/favorite", app.PostFavoriteCommandController.Store)
+		posts.DELETE("/:id/favorite", app.PostFavoriteCommandController.Delete)
 	}
 
 	{
@@ -90,6 +94,8 @@ func setRoutes(app *App) {
 		reviews.GET("/:id/comment", app.ReviewQueryController.ListReviewCommentByReviewID)
 		reviews.POST("", app.ReviewCommandController.Store)
 		reviews.GET("/:id", app.ReviewQueryController.ShowReview)
+		reviews.PUT("/:id/favorite", app.ReviewFavoriteCommandController.Store)
+		reviews.DELETE("/:id/favorite", app.ReviewFavoriteCommandController.Delete)
 	}
 
 	{

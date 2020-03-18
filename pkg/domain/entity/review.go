@@ -48,8 +48,19 @@ type (
 		User         *User      `gorm:"foreignkey:UserID"`
 		Hashtag      []*Hashtag `gorm:"many2many:review_hashtag;jointable_foreignkey:review_id;"`
 	}
+
+	UserFavoriteReview struct {
+		UserID   int
+		ReviewID int
+	}
 )
 
+func NewUserFavoriteReview(userID, reviewID int) *UserFavoriteReview {
+	return &UserFavoriteReview{
+		UserID:   userID,
+		ReviewID: reviewID,
+	}
+}
 func NewReviewMedia(id string, mimeType string, priority int) *ReviewMedia {
 	return &ReviewMedia{
 		ID:       id,

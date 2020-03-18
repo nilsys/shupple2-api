@@ -41,6 +41,10 @@ type (
 		Page    int `query:"page"`
 		PerPage int `query:"perPage"`
 	}
+
+	StoreFavoritePostParam struct {
+		PostID int `param:"id" validate:"required"`
+	}
 )
 
 const findPostListDefaultPerPage = 10

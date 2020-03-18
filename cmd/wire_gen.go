@@ -42,11 +42,20 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		DB: db,
 	}
 	authorizeWrapper := middleware.NewAuthorizeWrapper(configConfig, authService, userQueryRepositoryImpl)
-	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
-		DB: db,
-	}
 	dao := repository.DAO{
 		DB_: db,
+	}
+	transactionServiceImpl := &repository.TransactionServiceImpl{
+		DB: db,
+	}
+	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
+		DAO: dao,
+	}
+	postFavoriteCommandRepositoryImpl := &repository.PostFavoriteCommandRepositoryImpl{
+		DAO: dao,
+	}
+	postFavoriteQueryRepositoryImpl := &repository.PostFavoriteQueryRepositoryImpl{
+		DB: db,
 	}
 	hashtagCommandRepositoryImpl := &repository.HashtagCommandRepositoryImpl{
 		DAO: dao,
@@ -69,18 +78,12 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		CategoryQueryRepository:  categoryQueryRepositoryImpl,
 		HashtagCommandService:    hashtagCommandServiceImpl,
 	}
-	transactionServiceImpl := &repository.TransactionServiceImpl{
-		DB: db,
-	}
 	postCommandServiceImpl := &service.PostCommandServiceImpl{
 		PostCommandRepository:    postCommandRepositoryImpl,
 		HashtagCommandRepository: hashtagCommandRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepository,
 		WordpressService:         wordpressServiceImpl,
 		TransactionService:       transactionServiceImpl,
-	}
-	postCommandController := api.PostCommandController{
-		PostService: postCommandServiceImpl,
 	}
 	postQueryRepositoryImpl := &repository.PostQueryRepositoryImpl{
 		DB: db,
@@ -90,6 +93,20 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	}
 	postQueryController := api.PostQueryController{
 		PostService: postQueryServiceImpl,
+	}
+	postCommandController := api.PostCommandController{
+		PostService: postCommandServiceImpl,
+	}
+	postFavoriteCommandServiceImpl := &service.PostFavoriteCommandServiceImpl{
+		PostFavoriteCommandRepository: postFavoriteCommandRepositoryImpl,
+		PostFavoriteQueryRepository:   postFavoriteQueryRepositoryImpl,
+		PostQueryRepository:           postQueryRepositoryImpl,
+		PostCommandRepository:         postCommandRepositoryImpl,
+		TransactionService:            transactionServiceImpl,
+	}
+	postFavoriteCommandController := api.PostFavoriteCommandController{
+		PostQueryService:           postQueryServiceImpl,
+		PostFavoriteCommandService: postFavoriteCommandServiceImpl,
 	}
 	categoryQueryServiceImpl := &service.CategoryQueryServiceImpl{
 		Repository: categoryQueryRepositoryImpl,
@@ -124,6 +141,12 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	reviewQueryController := api.ReviewQueryController{
 		ReviewQueryService: reviewQueryServiceImpl,
 	}
+	reviewFavoriteCommandRepositoryImpl := &repository.ReviewFavoriteCommandRepositoryImpl{
+		DAO: dao,
+	}
+	reviewFavoriteQueryRepositoryImpl := &repository.ReviewFavoriteQueryRepositoryImpl{
+		DB: db,
+	}
 	session, err := repository.ProvideAWSSession(configConfig)
 	if err != nil {
 		return nil, err
@@ -133,6 +156,17 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		DAO:        dao,
 		AWSSession: session,
 		AWSConfig:  aws,
+	}
+	reviewFavoriteCommandServiceImpl := &service.ReviewFavoriteCommandServiceImpl{
+		ReviewFavoriteCommandRepository: reviewFavoriteCommandRepositoryImpl,
+		ReviewFavoriteQueryRepository:   reviewFavoriteQueryRepositoryImpl,
+		ReviewQueryRepository:           reviewQueryRepositoryImpl,
+		ReviewCommandRepository:         reviewCommandRepositoryImpl,
+		TransactionService:              transactionServiceImpl,
+	}
+	reviewFavoriteCommandController := api.ReviewFavoriteCommandController{
+		ReviewQueryService:           reviewQueryServiceImpl,
+		ReviewFavoriteCommandService: reviewFavoriteCommandServiceImpl,
 	}
 	touristSpotCommandRepositoryImpl := &repository.TouristSpotCommandRepositoryImpl{
 		DAO: dao,
@@ -297,26 +331,28 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		InterestQueryService: interestQueryServiceImpl,
 	}
 	app := &App{
-		Config:                      configConfig,
-		Echo:                        echoEcho,
-		AuthorizeWrapper:            authorizeWrapper,
-		PostCommandController:       postCommandController,
-		PostQueryController:         postQueryController,
-		CategoryQueryController:     categoryQueryController,
-		ComicQueryController:        comicQueryController,
-		ReviewQueryController:       reviewQueryController,
-		ReviewCommandController:     reviewCommandController,
-		HashtagQueryController:      hashtagQueryController,
-		SearchQueryController:       searchQueryController,
-		FeatureQueryController:      featureQueryController,
-		VlogQueryController:         vlogQueryController,
-		UserQueryController:         userQueryController,
-		UserCommandController:       userCommandController,
-		HealthCheckController:       healthCheckController,
-		WordpressCallbackController: wordpressCallbackController,
-		S3CommandController:         s3CommandController,
-		TouristSpotQueryController:  touristSpotQueryController,
-		InteresetQueryController:    interestQueryController,
+		Config:                          configConfig,
+		Echo:                            echoEcho,
+		AuthorizeWrapper:                authorizeWrapper,
+		PostCommandController:           postCommandController,
+		PostQueryController:             postQueryController,
+		PostFavoriteCommandController:   postFavoriteCommandController,
+		CategoryQueryController:         categoryQueryController,
+		ComicQueryController:            comicQueryController,
+		ReviewQueryController:           reviewQueryController,
+		ReviewCommandController:         reviewCommandController,
+		ReviewFavoriteCommandController: reviewFavoriteCommandController,
+		HashtagQueryController:          hashtagQueryController,
+		SearchQueryController:           searchQueryController,
+		FeatureQueryController:          featureQueryController,
+		VlogQueryController:             vlogQueryController,
+		UserQueryController:             userQueryController,
+		UserCommandController:           userCommandController,
+		HealthCheckController:           healthCheckController,
+		WordpressCallbackController:     wordpressCallbackController,
+		S3CommandController:             s3CommandController,
+		TouristSpotQueryController:      touristSpotQueryController,
+		InteresetQueryController:        interestQueryController,
 	}
 	return app, nil
 }
@@ -327,10 +363,10 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.PostFavoriteCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.TouristSpotQeuryControllerSet, api.ReviewFavoriteCommandControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet)
 
 var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.TouristSpotQueryServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet)
 
 var factorySet = wire.NewSet(factory.S3SignatureFactorySet)

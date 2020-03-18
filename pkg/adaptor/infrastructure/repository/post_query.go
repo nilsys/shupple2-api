@@ -138,3 +138,11 @@ func (r *PostQueryRepositoryImpl) buildFindFeedListQuery(userID int) *gorm.DB {
 
 	return q
 }
+
+func (r *PostQueryRepositoryImpl) IsExist(id int) (bool, error) {
+	var row entity.Post
+
+	err := r.DB.First(&row, id).Error
+
+	return ErrorToIsExist(err, "post(id=%d)", id)
+}

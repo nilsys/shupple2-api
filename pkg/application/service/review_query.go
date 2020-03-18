@@ -14,6 +14,7 @@ type (
 	ReviewQueryService interface {
 		ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.QueryReview, error)
 		ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
+		ShowByID(reviewID int) (*entity.Review, error)
 		ShowReview(id int) (*entity.QueryReview, error)
 		ListReviewCommentByReviewID(reviewID int, limit int) ([]*entity.ReviewComment, error)
 	}
@@ -50,6 +51,15 @@ func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewL
 
 func (s *ReviewQueryServiceImpl) ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error) {
 	return s.ReviewQueryRepository.FindFeedReviewListByUserID(userID, query)
+}
+
+func (s *ReviewQueryServiceImpl) ShowByID(reviewID int) (*entity.Review, error) {
+	review, err := s.ReviewQueryRepository.FindByID(reviewID)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed FindByID")
+	}
+
+	return review, nil
 }
 
 func (s *ReviewQueryServiceImpl) ShowReview(id int) (*entity.QueryReview, error) {

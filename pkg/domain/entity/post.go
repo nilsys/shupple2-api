@@ -56,6 +56,11 @@ type (
 		Categories []*Category `gorm:"many2many:post_category;jointable_foreignkey:post_id;"`
 	}
 
+	UserFavoritePost struct {
+		UserID int
+		PostID int
+	}
+
 	PostDetailList struct {
 		TotalNumber int
 		Posts       []*PostDetail
@@ -119,5 +124,12 @@ func NewPost(tiny PostTiny, bodies []string, categoryIDs []int, hashtagIDs []int
 		postBodies,
 		postCategoryIDs,
 		postHashtagIDs,
+	}
+}
+
+func NewUserFavoritePost(userID, postID int) *UserFavoritePost {
+	return &UserFavoritePost{
+		UserID: userID,
+		PostID: postID,
 	}
 }

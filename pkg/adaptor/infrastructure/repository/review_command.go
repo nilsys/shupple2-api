@@ -35,6 +35,14 @@ func (r *ReviewCommandRepositoryImpl) StoreReview(c context.Context, review *ent
 	return nil
 }
 
+func (r *ReviewCommandRepositoryImpl) IncrementFavoriteCount(c context.Context, reviewID int) error {
+	return errors.Wrapf(r.DB(c).Exec("UPDATE review SET favorite_count = favorite_count + 1 WHERE id = ?", reviewID).Error, "failed to update")
+}
+
+func (r *ReviewCommandRepositoryImpl) DecrementFavoriteCount(c context.Context, reviewID int) error {
+	return errors.Wrapf(r.DB(c).Exec("UPDATE review SET favorite_count = favorite_count - 1 WHERE id = ?", reviewID).Error, "failed to update")
+}
+
 func (r *ReviewCommandRepositoryImpl) PersistReviewMedia(reviewMedia *entity.ReviewMedia) error {
 	from := fmt.Sprint(r.AWSConfig.FilesBucket, "/", model.UploadedS3Path(reviewMedia.ID))
 	req := &s3.CopyObjectInput{

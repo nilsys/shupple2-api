@@ -66,7 +66,7 @@ func InitializeTest(configFilePath config.ConfigFilePath) (*Test, error) {
 		DB: db,
 	}
 	postCommandRepositoryImpl := &PostCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	postQueryRepositoryImpl := &PostQueryRepositoryImpl{
 		DB: db,
