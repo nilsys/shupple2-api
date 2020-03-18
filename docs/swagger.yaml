@@ -712,8 +712,6 @@ paths:
       tags:
         - post
       summary: 記事取得API
-      security:
-        - iDPCognito: []
       parameters:
         - in: path
           name: id
@@ -721,6 +719,31 @@ paths:
           description: 記事ID
           schema:
             type: integer
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostShow"
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /posts/:slug/slug:
+    get:
+      tags:
+        - post
+      summary: スラッグで記事取得API
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          description: 記事スラッグ
+          schema:
+            type: string
       responses:
         "200":
           description: 成功
@@ -1212,6 +1235,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SearchSuggestions"
+  /category/:slug/slug:
+    get:
+      tags:
+        - category
+      summary: スラッグでカテゴリ取得API
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+          description: スラッグ
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
   /areas:
     get:
       tags:
