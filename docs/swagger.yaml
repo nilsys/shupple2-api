@@ -1235,7 +1235,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SearchSuggestions"
-  /category/:slug/slug:
+  /categories/:slug/slug:
     get:
       tags:
         - category
