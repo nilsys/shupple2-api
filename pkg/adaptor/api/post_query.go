@@ -68,3 +68,19 @@ func (c *PostQueryController) ListFeedPost(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, converter.ConvertPostListToOutput(posts))
 }
+
+func (c *PostQueryController) ListFavoritePost(ctx echo.Context) error {
+	p := &param.ListFeedPostParam{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "validation list favorite post")
+	}
+
+	q := converter.ConvertListFeedPostParamToQuery(p)
+
+	posts, err := c.PostService.ListFavoritePost(p.UserID, q)
+	if err != nil {
+		return errors.Wrap(err, "failed list favorite post")
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertPostListToOutput(posts))
+}

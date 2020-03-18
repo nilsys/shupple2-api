@@ -55,7 +55,6 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 	return &postDetailList, nil
 }
 
-// クエリ構造体を用い、FindListByParams()で使用するsqlクエリを作成
 // ユーザーIDからフォローしているハッシュタグ or ユーザーのpost一覧を参照
 func (r *PostQueryRepositoryImpl) FindFeedListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error) {
 	var posts []*entity.PostDetail
@@ -71,6 +70,21 @@ func (r *PostQueryRepositoryImpl) FindFeedListByUserID(userID int, query *query.
 	}
 
 	return posts, nil
+}
+
+// 引数にとったUserID
+func (r *PostQueryRepositoryImpl) FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error) {
+	var rows []*entity.PostDetail
+
+	if err := r.DB.
+		Joins("INNER JOIN (SELECT post_id, updated_at FROM user_favorite_post WHERE user_id = ?) uf ON post.id = uf.post_id", userID).
+		Order("uf.updated_at DESC").
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Find(&rows).Error; err != nil {
+		return nil, errors.Wrapf(err, "failed find favorite posts by userID=%d", userID)
+	}
+	return rows, nil
 }
 
 // クエリ構造体を用い、検索クエリを作成

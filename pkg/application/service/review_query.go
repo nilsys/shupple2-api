@@ -17,6 +17,7 @@ type (
 		ShowByID(reviewID int) (*entity.Review, error)
 		ShowReview(id int) (*entity.QueryReview, error)
 		ListReviewCommentByReviewID(reviewID int, limit int) ([]*entity.ReviewComment, error)
+		ListFavoriteReview(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
 	}
 
 	// Review参照系サービス実装
@@ -68,4 +69,8 @@ func (s *ReviewQueryServiceImpl) ShowReview(id int) (*entity.QueryReview, error)
 
 func (s *ReviewQueryServiceImpl) ListReviewCommentByReviewID(reviewID int, limit int) ([]*entity.ReviewComment, error) {
 	return s.ReviewQueryRepository.FindReviewCommentListByReviewID(reviewID, limit)
+}
+
+func (s *ReviewQueryServiceImpl) ListFavoriteReview(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error) {
+	return s.ReviewQueryRepository.FindFavoriteListByUserID(userID, query)
 }

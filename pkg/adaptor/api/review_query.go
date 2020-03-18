@@ -46,7 +46,7 @@ func (c *ReviewQueryController) ListFeedReview(ctx echo.Context) error {
 
 	q := converter.ConvertListFeedReviewParamToQuery(p)
 
-	reviews, err := c.ReviewQueryService.ShowListFeed(p.ID, q)
+	reviews, err := c.ReviewQueryService.ShowListFeed(p.UserID, q)
 	if err != nil {
 		return errors.Wrap(err, "failed to show feed review list")
 	}
@@ -80,4 +80,20 @@ func (c *ReviewQueryController) ListReviewCommentByReviewID(ctx echo.Context) er
 	}
 
 	return ctx.JSON(http.StatusOK, converter.ConvertReviewCommentListToOutput(reviewComments))
+}
+
+func (c *ReviewQueryController) ListFavoriteReview(ctx echo.Context) error {
+	p := &param.ListFeedReviewParam{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "validation list favorite review")
+	}
+
+	q := converter.ConvertListFeedReviewParamToQuery(p)
+
+	reviews, err := c.ReviewQueryService.ListFavoriteReview(p.UserID, q)
+	if err != nil {
+		return errors.Wrap(err, "failed list favorite review")
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewListToOutput(reviews))
 }

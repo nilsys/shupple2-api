@@ -94,7 +94,7 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 		WordpressService:           wordpressServiceImpl,
 	}
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	transactionServiceImpl := &repository.TransactionServiceImpl{
 		DB: db,

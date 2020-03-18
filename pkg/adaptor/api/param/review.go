@@ -27,7 +27,7 @@ type (
 	}
 
 	ListFeedReviewParam struct {
-		ID      int `param:"id" validate:"required"`
+		UserID  int `param:"id" validate:"required"`
 		Page    int `query:"page"`
 		PerPage int `query:"perPage"`
 	}

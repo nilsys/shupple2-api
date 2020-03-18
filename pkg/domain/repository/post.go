@@ -20,6 +20,7 @@ type (
 		FindQueryShowByID(id int) (*entity.PostDetailWithHashtag, error)
 		FindListByParams(query *query.FindPostListQuery) (*entity.PostDetailList, error)
 		FindFeedListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
+		FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
 		IsExist(id int) (bool, error)
 	}
 

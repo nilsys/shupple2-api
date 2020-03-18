@@ -86,6 +86,10 @@ func setRoutes(app *App) {
 		users.GET("/ranking", app.UserQueryController.ShowUserRanking)
 		users.GET("/:id/followee", app.UserQueryController.ListFolloweeUsers)
 		users.GET("/:id/follower", app.UserQueryController.ListFollowerUsers)
+		users.GET("/:id/feed/posts", app.PostQueryController.ListFeedPost)
+		users.GET("/:id/feed/reviews", app.ReviewQueryController.ListFeedReview)
+		users.GET("/:id/favorite/posts", app.PostQueryController.ListFavoritePost)
+		users.GET("/:id/favorite/reviews", app.ReviewQueryController.ListFavoriteReview)
 	}
 
 	{

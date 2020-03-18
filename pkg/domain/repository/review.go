@@ -14,6 +14,7 @@ type (
 		FindFeedReviewListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
 		FindReviewCommentListByReviewID(reviewID int, limit int) ([]*entity.ReviewComment, error)
 		FindQueryReviewByID(id int) (*entity.QueryReview, error)
+		FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
 		FindByID(reviewID int) (*entity.Review, error)
 		IsExist(id int) (bool, error)
 	}

@@ -87,6 +87,21 @@ func (r *ReviewQueryRepositoryImpl) FindQueryReviewByID(id int) (*entity.QueryRe
 	return &row, nil
 }
 
+func (r *ReviewQueryRepositoryImpl) FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error) {
+	var rows []*entity.QueryReview
+
+	if err := r.DB.
+		Joins("INNER JOIN (SELECT review_id, updated_at FROM user_favorite_review WHERE user_id = ?) uf ON review.id = uf.review_id", userID).
+		Order("uf.updated_at DESC").
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Find(&rows).Error; err != nil {
+		return nil, errors.Wrapf(err, "failed find favorite reviews by userID=%d", userID)
+	}
+
+	return rows, nil
+}
+
 // パスパラメータで飛んで来た値によって検索クエリを切り替える
 func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowReviewListQuery) *gorm.DB {
 	q := r.DB

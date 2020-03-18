@@ -13,6 +13,7 @@ type (
 	PostQueryService interface {
 		ShowByID(id int) (*entity.Post, error)
 		ShowQueryByID(id int) (*entity.PostDetailWithHashtag, error)
+		ListFavoritePost(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
 		ListByParams(query *query.FindPostListQuery) (*entity.PostDetailList, error)
 		ListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
 	}
@@ -28,8 +29,8 @@ var PostQueryServiceSet = wire.NewSet(
 	wire.Bind(new(PostQueryService), new(*PostQueryServiceImpl)),
 )
 
-func (r *PostQueryServiceImpl) ShowByID(id int) (*entity.Post, error) {
-	post, err := r.PostQueryRepository.FindByID(id)
+func (s *PostQueryServiceImpl) ShowByID(id int) (*entity.Post, error) {
+	post, err := s.PostQueryRepository.FindByID(id)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get post")
 	}
@@ -52,6 +53,15 @@ func (r *PostQueryServiceImpl) ListByParams(query *query.FindPostListQuery) (*en
 }
 
 // ユーザーがフォローしたユーザー or ハッシュタグの記事一覧参照
+func (s *PostQueryServiceImpl) ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error) {
+	return s.PostQueryRepository.FindFeedListByUserID(userID, query)
+}
+
+// ユーザーがいいねした記事一覧参照
+func (s *PostQueryServiceImpl) ListFavoritePost(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error) {
+	return s.PostQueryRepository.FindFavoriteListByUserID(userID, query)
+}
+
 func (r *PostQueryServiceImpl) ListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error) {
 	return r.PostQueryRepository.FindFeedListByUserID(userID, query)
 }
