@@ -456,10 +456,6 @@ paths:
       responses:
         "200":
           description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Review"
         "400":
           description: バリデーションエラー
           content:
@@ -472,6 +468,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /reviews/comment/:id/reply:
+    post:
+      tags:
+        - review
+      summary: レビューのコメントに対するリプライ
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: コメントID
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewCommentRequest"
+      responses:
+        "200":
+          description: OK
+      
   /reviews/:id/favorite:
     put:
       tags:
@@ -515,6 +534,52 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /reviews/comment/:id/favorite:
+    put:
+      tags:
+        - review
+      summary: レビューのコメントをfav
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: コメントID
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: 成功
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - review
+      summary: レビューのコメントをunfav
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: コメントID
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: 成功
+        "404":
+          description: 存在しないレビュー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    
   /user/{userId}/feed/reviews:
     get:
       tags:
