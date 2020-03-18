@@ -1220,7 +1220,7 @@ paths:
       description: エリア一覧取得
       parameters:
         - in: query
-          name: parentCategoryId
+          name: areaGroupId
           description: |
             親カテゴリID
           schema:
@@ -1272,7 +1272,7 @@ paths:
       description: 親IDに紐づくサブエリア一覧取得
       parameters:
         - in: query
-          name: parentCategoryId
+          name: areaId
           description: |
             親カテゴリID
           schema:
@@ -1324,7 +1324,7 @@ paths:
       description: 親IDに紐づくサブサブエリア一覧取得
       parameters:
         - in: query
-          name: parentCategoryId
+          name: subAreaId
           description: |
             親カテゴリID
           schema:
