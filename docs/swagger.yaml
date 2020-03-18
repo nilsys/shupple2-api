@@ -351,7 +351,7 @@ paths:
           schema:
             type: integer
       requestBody:
-        $ref: "#/components/requestBodies/ReviewRequest"
+        $ref: "#/components/requestBodies/ReviewUpdateRequest"
       responses:
         "200":
           description: 成功
@@ -1573,6 +1573,12 @@ components:
           schema:
             $ref: "#/components/schemas/ReviewRequest"
       required: true
+    ReviewUpdateRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ReviewUpdateRequest"
+      required: true
   securitySchemes:
     iDPCognito:
       in: header
@@ -1747,6 +1753,42 @@ components:
           type: integer
         innId:
           type: integer
+        score:
+          type: integer
+        body:
+          type: string
+        mediaUuids:
+          type: array
+          items:
+            type: object
+            properties:
+              uuid:
+                type: string
+                description: アップロードファイルのUUID
+                example: uuid
+              mimeType:
+                type: string
+                description: 拡張子
+                example: png
+    ReviewUpdateRequest:
+      type: object
+      description: |
+        レビュー更新時request body
+        変更があった内容のみ送る事
+      properties:
+        travelDate:
+          type: string
+          description: |
+            旅行日
+            format yyyy-MM
+        accompanying:
+          $ref: "#/components/schemas/Accompanying"
+        hashtagId:
+          type: array
+          description: |
+            ハッシュタグID
+          items:
+            type: integer
         score:
           type: integer
         body:
