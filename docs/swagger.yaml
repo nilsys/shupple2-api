@@ -105,7 +105,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RankingUserList"
-  /users/{id}/followee:
+  /users/{id}/following:
     get:
       tags:
         - user
@@ -126,7 +126,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FollowUserList"
-  /users/{id}/follower:
+  /users/{id}/followed:
     get:
       tags:
         - user
