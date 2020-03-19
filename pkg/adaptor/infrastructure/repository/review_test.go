@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -16,6 +17,7 @@ import (
 var _ = Describe("ReviewRepositoryTest", func() {
 	var (
 		query   *ReviewQueryRepositoryImpl
+		command *ReviewCommandRepositoryImpl
 		hashtag *entity.Hashtag = newHashtag(hashtagID)
 	)
 
@@ -117,6 +119,62 @@ var _ = Describe("ReviewRepositoryTest", func() {
 			Entry("正常系_0件取得", 2),
 		)
 	})
+
+	Describe("CreateReviewCommentのテスト",
+		func() {
+			BeforeEach(func() {
+				command = &ReviewCommandRepositoryImpl{DAO: DAO{DB_: db}}
+
+				truncate(db)
+				Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
+				Expect(db.Save(newUser(1)).Error).To(Succeed())
+				Expect(db.Save(newReview(1, 1, touristSpotID, innID)).Error).To(Succeed())
+			})
+
+			DescribeTable("コメントを新規追加",
+				func() {
+					reviewComment := entity.NewReviewComment(1, 1, "dummy body")
+					err := command.CreateReviewComment(context.TODO(), reviewComment)
+					Expect(err).To(Succeed())
+
+					// コメントが一件増えているか
+					actualCount := 0
+					db.Table("review_comment").Count(&actualCount)
+					Expect(actualCount).To(Equal(1))
+				},
+				Entry("正常系"),
+			)
+		})
+
+	Describe("AddReviewCommentCountのテスト",
+		func() {
+			BeforeEach(func() {
+				command = &ReviewCommandRepositoryImpl{DAO: DAO{DB_: db}}
+
+				truncate(db)
+				Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
+
+				Expect(db.Save(newUser(1)).Error).To(Succeed())
+				Expect(db.Save(newReview(1, 1, touristSpotID, innID)).Error).To(Succeed())
+			})
+
+			DescribeTable("コメントを追加",
+				func() {
+					err := command.AddReviewCommentCount(context.TODO(), 1)
+					Expect(err).To(Succeed())
+
+					// コメントが一件増えているか
+					review := &entity.Review{}
+					err = db.
+						Where("id=?", 1).
+						Find(review).
+						Error
+					Expect(err).To(Succeed())
+					Expect(review.CommentCount).To(Equal(1))
+				},
+				Entry("正常系"),
+			)
+		})
 })
 
 func newReview(id, userID, touristSpotID, innID int) *entity.Review {

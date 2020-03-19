@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -15,7 +16,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
-// Review参照系レポジトリ実装
+// Review更新系レポジトリ実装
 type ReviewCommandRepositoryImpl struct {
 	DAO
 	AWSSession *session.Session
@@ -32,6 +33,20 @@ func (r *ReviewCommandRepositoryImpl) StoreReview(c context.Context, review *ent
 	if err := r.DB(c).Save(review).Error; err != nil {
 		return errors.Wrap(err, "failed store review")
 	}
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) CreateReviewComment(c context.Context, reviewComment *entity.ReviewComment) error {
+	return errors.Wrap(r.DB(c).Save(reviewComment).Error, "failed to save review comment")
+}
+
+func (r *ReviewCommandRepositoryImpl) IncrementReviewCommentCount(c context.Context, reviewID int) error {
+	if err := r.DB(c).
+		Exec("UPDATE review SET comment_count=comment_count+1 WHERE id = ?", reviewID).
+		Error; err != nil {
+		return errors.Wrapf(err, "Failed insert reviews")
+	}
+
 	return nil
 }
 

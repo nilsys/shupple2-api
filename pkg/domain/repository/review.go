@@ -28,9 +28,11 @@ type (
 		IsExist(userID, reviewID int) (bool, error)
 	}
 
-	// Reviewコマンド系レポジトリ
+	// Review更新系レポジトリ
 	ReviewCommandRepository interface {
 		StoreReview(c context.Context, review *entity.Review) error
+		CreateReviewComment(c context.Context, comment *entity.ReviewComment) error
+		IncrementReviewCommentCount(c context.Context, reviewID int) error
 		IncrementFavoriteCount(c context.Context, reviewID int) error
 		DecrementFavoriteCount(c context.Context, reviewID int) error
 		PersistReviewMedia(reviewMedia *entity.ReviewMedia) error

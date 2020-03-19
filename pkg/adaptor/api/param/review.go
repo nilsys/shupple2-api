@@ -59,6 +59,11 @@ type (
 		ID      int `param:"id" validate:"required"`
 		PerPage int `query:"perPage"`
 	}
+
+	CreateReviewCommand struct {
+		ID   int    `param:"id" validate:"required"`
+		Body string `json:"body" validate:"required"`
+	}
 )
 
 const getReviewsDefaultPerPage = 10

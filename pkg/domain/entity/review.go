@@ -18,6 +18,7 @@ type (
 		MediaCount    int
 		Body          string
 		FavoriteCount int
+		CommentCount  int
 		Views         int
 		TravelDate    time.Time
 		Accompanying  model.AccompanyingType

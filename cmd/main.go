@@ -96,6 +96,7 @@ func setRoutes(app *App) {
 	{
 		reviews := api.Group("/reviews")
 		reviews.GET("", app.ReviewQueryController.LisReview)
+		reviews.POST("/:id/comment", auth(app.ReviewCommandController.StoreReviewComment))
 		reviews.GET("/:id/comment", app.ReviewQueryController.ListReviewCommentByReviewID)
 		reviews.POST("", app.ReviewCommandController.Store)
 		reviews.GET("/:id", app.ReviewQueryController.ShowReview)

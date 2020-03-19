@@ -1,20 +1,20 @@
 package api
 
 import (
-	"net/http"
-
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
-
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
+	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"net/http"
 )
 
 type ReviewCommandController struct {
 	scenario.ReviewCommandScenario
+	service.ReviewCommandService
 }
 
 var ReviewCommandControllerSet = wire.NewSet(
@@ -34,4 +34,17 @@ func (c *ReviewCommandController) Store(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, "hoge")
+}
+
+func (c *ReviewCommandController) StoreReviewComment(ctx echo.Context, user entity.User) error {
+	reviewCommentParam := &param.CreateReviewCommand{}
+	if err := BindAndValidate(ctx, reviewCommentParam); err != nil {
+		return errors.Wrap(err, "Failed to bind parameters")
+	}
+
+	if err := c.ReviewCommandService.CreateReviewComment(&user, reviewCommentParam.ID, reviewCommentParam.Body); err != nil {
+		return errors.Wrap(err, "Failed to create review comment")
+	}
+
+	return ctx.JSON(http.StatusOK, nil)
 }

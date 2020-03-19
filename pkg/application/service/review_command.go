@@ -14,6 +14,7 @@ type (
 	ReviewCommandService interface {
 		StoreTouristSpotReview(review *entity.Review) error
 		StoreInnReview(review *entity.Review) error
+		CreateReviewComment(user *entity.User, reviewID int, body string) error
 	}
 
 	// Reviewコマンド系サービス実装
@@ -135,6 +136,24 @@ func (s *ReviewCommandServiceImpl) convertCategoryAndHashtagIDsToHashtagCategory
 	}
 
 	return hashtagCategories
+}
+
+func (s *ReviewCommandServiceImpl) CreateReviewComment(user *entity.User, reviewID int, body string) error {
+	reviewComment := entity.NewReviewComment(user.ID, reviewID, body)
+
+	return s.TransactionService.Do(func(c context.Context) error {
+		// レビューコメントを追加
+		if err := s.ReviewCommandRepository.CreateReviewComment(c, reviewComment); err != nil {
+			return err
+		}
+
+		// レビューにひもづくコメント数
+		if err := s.ReviewCommandRepository.IncrementReviewCommentCount(c, reviewID); err != nil {
+			return err
+		}
+
+		return nil
+	})
 }
 
 func (s *ReviewCommandServiceImpl) persistReviewMedia(medias []*entity.ReviewMedia) error {

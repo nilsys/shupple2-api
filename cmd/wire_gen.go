@@ -168,6 +168,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	}
 	reviewCommandController := api.ReviewCommandController{
 		ReviewCommandScenario: reviewCommandScenarioImpl,
+		ReviewCommandService:  reviewCommandServiceImpl,
 	}
 	reviewFavoriteCommandRepositoryImpl := &repository.ReviewFavoriteCommandRepositoryImpl{
 		DAO: dao,

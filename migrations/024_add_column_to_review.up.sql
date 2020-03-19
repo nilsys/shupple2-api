@@ -1,0 +1,1 @@
+ALTER TABLE review ADD comment_count INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'レビューにひもづくコメント数';
