@@ -160,7 +160,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 
 			DescribeTable("コメントを追加",
 				func() {
-					err := command.AddReviewCommentCount(context.TODO(), 1)
+					err := command.IncrementReviewCommentCount(context.TODO(), 1)
 					Expect(err).To(Succeed())
 
 					// コメントが一件増えているか
