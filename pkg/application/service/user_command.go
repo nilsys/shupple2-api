@@ -11,6 +11,8 @@ import (
 type (
 	UserCommandService interface {
 		SignUp(user *entity.User, cognitoID string) error
+		Follow(user *entity.User, targetID int) error
+		Unfollow(user *entity.User, targetID int) error
 	}
 
 	UserCommandServiceImpl struct {
@@ -37,4 +39,21 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoID string) err
 		return errors.Wrap(err, "failed to store user")
 	}
 	return nil
+}
+
+func (s *UserCommandServiceImpl) Follow(user *entity.User, targetID int) error {
+	if user.IsSelfID(targetID) {
+		return serror.New(nil, serror.CodeInvalidParam, "can not follow self")
+	}
+	following := entity.NewUserFollowing(user.ID, targetID)
+	followed := entity.NewUserFollowed(targetID, user.ID)
+
+	return s.UserCommandRepository.StoreFollow(following, followed)
+}
+
+func (s *UserCommandServiceImpl) Unfollow(user *entity.User, targetID int) error {
+	if user.IsSelfID(targetID) {
+		return serror.New(nil, serror.CodeInvalidParam, "can not un follow self")
+	}
+	return s.UserCommandRepository.DeleteFollow(user.ID, targetID)
 }

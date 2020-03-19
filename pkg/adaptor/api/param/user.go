@@ -35,6 +35,10 @@ type (
 		Interests    []int        `json:"interests"`
 		IconUUID     string       `json:"iconUuid"`
 	}
+
+	FollowParam struct {
+		ID int `param:"id" validate:"required"`
+	}
 )
 
 const getUsersDefaultPerPage = 30

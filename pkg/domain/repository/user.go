@@ -9,6 +9,8 @@ type (
 	UserCommandRepository interface {
 		Store(user *entity.User) error
 		StoreWithAvatar(user *entity.User, avatar []byte) error
+		StoreFollow(following *entity.UserFollowing, followed *entity.UserFollowed) error
+		DeleteFollow(userID, targetID int) error
 	}
 
 	UserQueryRepository interface {
@@ -19,7 +21,7 @@ type (
 		IsExistByUID(uid string) (bool, error)
 		// name部分一致検索
 		SearchByName(name string) ([]*entity.User, error)
-		FindFolloweeByID(query *query.FindFollowUser) ([]*entity.User, error)
-		FindFollowerByID(query *query.FindFollowUser) ([]*entity.User, error)
+		FindFollowingByID(query *query.FindFollowUser) ([]*entity.User, error)
+		FindFollowedByID(query *query.FindFollowUser) ([]*entity.User, error)
 	}
 )

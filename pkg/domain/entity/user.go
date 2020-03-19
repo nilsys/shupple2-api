@@ -35,6 +35,25 @@ type (
 		InterestID int `gorm:"primary_key"`
 	}
 
+	UserFollowHashtag struct {
+		UserID    int `gorm:"primary_key"`
+		HashtagID int `gorm:"primary_key"`
+	}
+
+	UserFollowed struct {
+		// フォローされた人
+		UserID int `gorm:"primary_key"`
+		// フォローした人
+		TargetID int `gorm:"primary_key"`
+	}
+
+	UserFollowing struct {
+		// フォローした人
+		UserID int `gorm:"primary_key"`
+		// フォローされた人
+		TargetID int `gorm:"primary_key"`
+	}
+
 	Interest struct {
 		ID   int    `gorm:"primary_key" json:"id"`
 		Name string `json:"name"`
@@ -44,4 +63,22 @@ type (
 // MEMO: サムネイルロジック仮置き
 func (user *User) GenerateThumbnailURL() string {
 	return "https://files.stayway.jp/avatar/" + user.AvatarUUID
+}
+
+func (user *User) IsSelfID(id int) bool {
+	return user.ID == id
+}
+
+func NewUserFollowing(userID, targetID int) *UserFollowing {
+	return &UserFollowing{
+		UserID:   userID,
+		TargetID: targetID,
+	}
+}
+
+func NewUserFollowed(userID, targetID int) *UserFollowed {
+	return &UserFollowed{
+		UserID:   userID,
+		TargetID: targetID,
+	}
 }

@@ -35,22 +35,22 @@ func (c *UserQueryController) ShowUserRanking(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, converter.ConvertUserRankingToOutput(users))
 }
 
-func (c *UserQueryController) ListFolloweeUsers(ctx echo.Context) error {
+func (c *UserQueryController) ListFollowingUsers(ctx echo.Context) error {
 	p := &param.ListFollowUser{}
 	if err := BindAndValidate(ctx, p); err != nil {
-		return errors.Wrap(err, "validation list followee user")
+		return errors.Wrap(err, "validation list following user")
 	}
 
 	q := converter.ConvertListFollowUserParamToQuery(p)
 
-	users, err := c.UserQueryService.ListFollowee(q)
+	users, err := c.UserQueryService.ListFollowing(q)
 	if err != nil {
 		return errors.Wrap(err, "failed to list user follow")
 	}
 	return ctx.JSON(http.StatusOK, converter.ConvertUsersToFollowUsers(users))
 }
 
-func (c *UserQueryController) ListFollowerUsers(ctx echo.Context) error {
+func (c *UserQueryController) ListFollowedUsers(ctx echo.Context) error {
 	p := &param.ListFollowUser{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list follower user")
@@ -58,7 +58,7 @@ func (c *UserQueryController) ListFollowerUsers(ctx echo.Context) error {
 
 	q := converter.ConvertListFollowUserParamToQuery(p)
 
-	users, err := c.UserQueryService.ListFollower(q)
+	users, err := c.UserQueryService.ListFollowed(q)
 	if err != nil {
 		return errors.Wrap(err, "failed to list user follower")
 	}

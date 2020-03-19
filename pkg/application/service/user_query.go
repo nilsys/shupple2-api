@@ -10,8 +10,8 @@ import (
 type (
 	UserQueryService interface {
 		ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.QueryRankingUser, error)
-		ListFollowee(query *query.FindFollowUser) ([]*entity.User, error)
-		ListFollower(query *query.FindFollowUser) ([]*entity.User, error)
+		ListFollowing(query *query.FindFollowUser) ([]*entity.User, error)
+		ListFollowed(query *query.FindFollowUser) ([]*entity.User, error)
 	}
 
 	UserQueryServiceImpl struct {
@@ -28,10 +28,10 @@ func (s *UserQueryServiceImpl) ShowUserRanking(query *query.FindUserRankingListQ
 	return s.UserQueryRepository.FindUserRankingListByParams(query)
 }
 
-func (s *UserQueryServiceImpl) ListFollowee(query *query.FindFollowUser) ([]*entity.User, error) {
-	return s.UserQueryRepository.FindFolloweeByID(query)
+func (s *UserQueryServiceImpl) ListFollowing(query *query.FindFollowUser) ([]*entity.User, error) {
+	return s.UserQueryRepository.FindFollowingByID(query)
 }
 
-func (s *UserQueryServiceImpl) ListFollower(query *query.FindFollowUser) ([]*entity.User, error) {
-	return s.UserQueryRepository.FindFollowerByID(query)
+func (s *UserQueryServiceImpl) ListFollowed(query *query.FindFollowUser) ([]*entity.User, error) {
+	return s.UserQueryRepository.FindFollowedByID(query)
 }
