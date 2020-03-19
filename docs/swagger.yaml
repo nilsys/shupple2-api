@@ -1934,6 +1934,14 @@ components:
           $ref: "#/components/schemas/UserSummary"
         body:
           type: string
+        replyCount:
+          type: integer
+          description: コメントに対するコメント数
+          example: 12
+        favoriteCount:
+          type: integer
+          description: コメントに対するいいね数
+          example: 5
         createdAt:
           type: string
           format: date-time
