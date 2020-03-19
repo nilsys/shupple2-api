@@ -5,10 +5,10 @@ package model
 func (sortBy ReviewSortBy) GetReviewOrderQuery() string {
 	switch sortBy {
 	case ReviewSortByNEW:
-		return "updated_at DESC"
+		return "created_at DESC"
 	case ReviewSortByRECOMMEND:
 		return "views DESC"
 	default:
-		return "updated_at DESC"
+		return "created_at DESC"
 	}
 }

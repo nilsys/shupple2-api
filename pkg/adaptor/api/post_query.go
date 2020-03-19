@@ -24,17 +24,31 @@ var PostQueryControllerSet = wire.NewSet(
 )
 
 func (c *PostQueryController) Show(ctx echo.Context) error {
-	q := &param.GetPost{}
-	if err := BindAndValidate(ctx, q); err != nil {
+	p := &param.GetPost{}
+	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrapf(err, "validation get post parameter")
 	}
 
-	post, err := c.PostService.ShowQueryByID(q.ID)
+	post, err := c.PostService.ShowQueryByID(p.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get post")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertQueryShowPostToOutput(post))
+	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailWithHashtagToOutput(post))
+}
+
+func (c *PostQueryController) ShowBySlug(ctx echo.Context) error {
+	p := &param.ShowPostBySlug{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "validation get post by slug parameter")
+	}
+
+	post, err := c.PostService.ShowQueryBySlug(p.Slug)
+	if err != nil {
+		return errors.Wrap(err, "failed to get post by slug")
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailWithHashtagToOutput(post))
 }
 
 func (c *PostQueryController) ListPost(ctx echo.Context) error {

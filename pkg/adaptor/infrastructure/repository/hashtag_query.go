@@ -32,16 +32,14 @@ func (r *HashtagQueryRepositoryImpl) FindByNames(names []string) (map[string]*en
 	return result, nil
 }
 
-// TODO: hashtagテーブルのscoreカラムで判断する様変更する
-// https://github.com/stayway-corp/stayway-media-api/pull/25#discussion_r380743507
 func (r *HashtagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSubAreaID int) ([]*entity.Hashtag, error) {
 	var rows []*entity.Hashtag
 
 	q := r.buildFindRecommendListQuery(areaID, subAreaID, subSubAreaID)
 
 	if err := q.
-		Select("*, (SELECT COUNT(post_id) FROM post_hashtag WHERE hashtag_id = id) AS post_rank, (SELECT COUNT(review_id) FROM review_hashtag WHERE hashtag_id = id) AS review_rank").
-		Order("post_rank + review_rank DESC").Find(&rows).
+		Order("score DESC").
+		Find(&rows).
 		Limit(defaultAcquisitionNumber).
 		Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to find get recommend reviews")

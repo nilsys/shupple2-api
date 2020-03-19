@@ -13,6 +13,7 @@ type (
 	PostQueryService interface {
 		ShowByID(id int) (*entity.Post, error)
 		ShowQueryByID(id int) (*entity.PostDetailWithHashtag, error)
+		ShowQueryBySlug(slug string) (*entity.PostDetailWithHashtag, error)
 		ListFavoritePost(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
 		ListByParams(query *query.FindPostListQuery) (*entity.PostDetailList, error)
 		ListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
@@ -39,7 +40,11 @@ func (s *PostQueryServiceImpl) ShowByID(id int) (*entity.Post, error) {
 }
 
 func (s *PostQueryServiceImpl) ShowQueryByID(id int) (*entity.PostDetailWithHashtag, error) {
-	return s.PostQueryRepository.FindQueryShowByID(id)
+	return s.PostQueryRepository.FindPostDetailWithHashtagByID(id)
+}
+
+func (s *PostQueryServiceImpl) ShowQueryBySlug(slug string) (*entity.PostDetailWithHashtag, error) {
+	return s.PostQueryRepository.FindPostDetailWithHashtagBySlug(slug)
 }
 
 // 記事一覧参照

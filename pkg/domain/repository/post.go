@@ -17,7 +17,8 @@ type (
 
 	PostQueryRepository interface {
 		FindByID(id int) (*entity.Post, error)
-		FindQueryShowByID(id int) (*entity.PostDetailWithHashtag, error)
+		FindPostDetailWithHashtagByID(id int) (*entity.PostDetailWithHashtag, error)
+		FindPostDetailWithHashtagBySlug(slug string) (*entity.PostDetailWithHashtag, error)
 		FindListByParams(query *query.FindPostListQuery) (*entity.PostDetailList, error)
 		FindFeedListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
 		FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)

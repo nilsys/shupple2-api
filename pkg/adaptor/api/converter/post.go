@@ -95,7 +95,7 @@ func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
 	}
 }
 
-func ConvertQueryShowPostToOutput(post *entity.PostDetailWithHashtag) *response.PostShow {
+func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *response.PostShow {
 	var areaCategories = make([]response.Category, 0)
 	var themeCategories = make([]response.Category, 0)
 	var hashtags = make([]response.Hashtag, len(post.Hashtag))

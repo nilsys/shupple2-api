@@ -28,11 +28,21 @@ func (r *PostQueryRepositoryImpl) FindByID(id int) (*entity.Post, error) {
 	return &row, nil
 }
 
-func (r *PostQueryRepositoryImpl) FindQueryShowByID(id int) (*entity.PostDetailWithHashtag, error) {
+func (r *PostQueryRepositoryImpl) FindPostDetailWithHashtagByID(id int) (*entity.PostDetailWithHashtag, error) {
 	var row entity.PostDetailWithHashtag
 
 	if err := r.DB.First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "post(id=%d)", id)
+	}
+
+	return &row, nil
+}
+
+func (r *PostQueryRepositoryImpl) FindPostDetailWithHashtagBySlug(slug string) (*entity.PostDetailWithHashtag, error) {
+	var row entity.PostDetailWithHashtag
+
+	if err := r.DB.Where("slug = ?", slug).First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "post(slug=%s)", slug)
 	}
 
 	return &row, nil

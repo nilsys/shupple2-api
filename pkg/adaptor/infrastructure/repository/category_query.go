@@ -72,6 +72,14 @@ func (r *CategoryQueryRepositoryImpl) FindByID(id int) (*entity.Category, error)
 	return &row, nil
 }
 
+func (r *CategoryQueryRepositoryImpl) FindBySlug(slug string) (*entity.Category, error) {
+	var row entity.Category
+	if err := r.DB.Where("slug = ?", slug).First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "category(slug=%s)", slug)
+	}
+	return &row, nil
+}
+
 func (r *CategoryQueryRepositoryImpl) SearchByName(name string) ([]*entity.Category, error) {
 	var rows []*entity.Category
 

@@ -15,6 +15,7 @@ type (
 		ListSubAreaByParams(areaID int, limit int, excludeID []int) ([]*entity.Category, error)
 		ListSubSubAreaByParams(subAreaID int, limit int, excludeID []int) ([]*entity.Category, error)
 
+		ShowBySlug(slug string) (*entity.Category, error)
 		ShowAreaByID(id int) (*entity.Category, error)
 		ShowSubAreaByID(id int) (*entity.Category, error)
 		ShowSubSubAreaByID(id int) (*entity.Category, error)
@@ -52,6 +53,10 @@ func (r *CategoryQueryServiceImpl) ListSubSubAreaByParams(subAreaID int, limit i
 		return nil, errors.Wrapf(err, "failed to ShowList")
 	}
 	return categories, nil
+}
+
+func (r *CategoryQueryServiceImpl) ShowBySlug(slug string) (*entity.Category, error) {
+	return r.Repository.FindBySlug(slug)
 }
 
 func (r *CategoryQueryServiceImpl) ShowAreaByID(id int) (*entity.Category, error) {

@@ -39,6 +39,20 @@ func (c *CategoryQueryController) ListArea(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, converter.ConvertCategoriesToOutput(categories))
 }
 
+func (c *CategoryQueryController) ShowBySlug(ctx echo.Context) error {
+	p := param.ShowPostBySlug{}
+	if err := BindAndValidate(ctx, &p); err != nil {
+		return errors.Wrap(err, "validation show by slug parameter")
+	}
+
+	category, err := c.CategoryQueryService.ShowBySlug(p.Slug)
+	if err != nil {
+		return errors.Wrap(err, "failed to show by slug")
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertCategoryToOutput(category))
+}
+
 // IDに紐づくAreaを返す
 func (c *CategoryQueryController) ShowAreaByID(ctx echo.Context) error {
 	q := param.GetArea{}

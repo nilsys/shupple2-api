@@ -74,6 +74,7 @@ func setRoutes(app *App) {
 		posts.GET("", app.PostQueryController.ListPost)
 		posts.POST("", app.PostCommandController.Store)
 		posts.GET("/:id", app.PostQueryController.Show)
+		posts.GET("/:slug/slug", app.PostQueryController.ShowBySlug)
 		posts.PUT("/:id/favorite", app.PostFavoriteCommandController.Store)
 		posts.DELETE("/:id/favorite", app.PostFavoriteCommandController.Delete)
 	}
@@ -120,6 +121,11 @@ func setRoutes(app *App) {
 
 		features.GET("", app.FeatureQueryController.ListFeature)
 		features.GET("/:id", app.FeatureQueryController.ShowQuery)
+	}
+
+	{
+		categories := api.Group("/categories")
+		categories.GET("/:slug/slug", app.CategoryQueryController.ShowBySlug)
 	}
 
 	{
