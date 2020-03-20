@@ -147,6 +147,21 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FollowUserList"
+  /notice:
+    get:
+      security:
+        - iDPCognito: []
+      tags:
+        - notice
+      summary: 通知取得API
+      description: 直近100件の通知を取得する
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NoticeList"
   /s3:
     post:
       security:
@@ -1554,7 +1569,7 @@ paths:
           schema:
             type: integer
             default: 10
-      response:
+      responses:
         "200":
           description: OK
           content:
@@ -1941,6 +1956,42 @@ components:
                 type: string
                 description: 拡張子
                 example: png
+    NoticeList:
+      type: object
+      properties:
+        notices:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notice"
+        unreadCount:
+          type: integer
+          description: 未読数
+          example: 7
+    Notice:
+      type: object
+      properties:
+        user:
+          type: object
+          description: 通知のフックとなったアクションを起こしたユーザー
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            iconUrl:
+              type: string
+        actionType:
+          $ref: "#/components/schemas/NoticeType"
+        actionTarget:
+          $ref: "#/components/schemas/NoticeTarget"
+        actionTaregetID:
+          type: integer
+          description: ターゲットのID
+          example: 120
+        isRead:
+          type: boolean
+          description: 既読かどうか
+          example: false
     Review:
       type: object
       properties:
@@ -2868,6 +2919,23 @@ components:
         - FRIEND
         - ONLY
         - WITHCHILD
+    NoticeType:
+      type: string
+      enum:
+        - FAVORITE
+        - COMMENT
+        - REPLY
+        - FOLLOW
+        - TAGGED
+    NoticeTarget:
+      type: string
+      enum:
+        - POST
+        - REVIEW
+        - VLOG
+        - COMMENT
+        - USER
+        - REPLY
     Error:
       type: object
       properties:
