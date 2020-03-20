@@ -746,7 +746,7 @@ paths:
           description: |
             宿タイプID
             いずれか1つ以上必須
-          schema: 
+          schema:
             type: integer
         - in: query
           name: innDiscerningType
@@ -1397,7 +1397,7 @@ paths:
   /sub_areas:
     get:
       tags:
-        - subArea
+        - sub_area
       summary: 親IDに紐づくサブエリア一覧取得API
       description: 親IDに紐づくサブエリア一覧取得
       parameters:
@@ -1429,7 +1429,7 @@ paths:
   /sub_areas/{id}:
     get:
       tags:
-        - subArea
+        - sub_area
       summary: IDに該当するサブエリアを取得するAPI
       description: IDに該当するサブエリア取得
       parameters:
@@ -1449,7 +1449,7 @@ paths:
   /sub_sub_areas:
     get:
       tags:
-        - subSubArea
+        - sub_sub_area
       summary: 親IDに紐づくサブサブエリア一覧取得API
       description: 親IDに紐づくサブサブエリア一覧取得
       parameters:
@@ -1478,10 +1478,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CategoryList"
-  /sub_sbu_areas/{id}:
+  /sub_sub_areas/{id}:
     get:
       tags:
-        - subSubArea
+        - sub_sub_area
       summary: IDに該当するサブサブエリアを取得するAPI
       description: IDに該当するサブサブエリア取得
       parameters:
@@ -1554,7 +1554,7 @@ paths:
           schema:
             type: integer
             default: 10
-      responses:
+      response:
         "200":
           description: OK
           content:
@@ -1566,17 +1566,64 @@ paths:
       tags:
       - theme
       summary: Theme取得API
-      description: IDに紐づくThemeの一覧を取得する
+      description: Area系パラメータIDに紐づく記事に紐づくThemeの一覧を取得する
       parameters:
-      - name: categoryId
+      - name: excludeId
         in: query
-        description: 取得するThemeが紐づくカテゴリーのID
-        required: true
+        description: 除外するカテゴリーのID
+        schema:
+          type: integer
+      - name: areaId
+        in: query
+        description: AreaのID
+        schema:
+          type: integer
+      - name: subAreaId
+        in: query
+        description: SubAreaのID
+        schema:
+          type: integer
+      - name: subSubAreaId
+        in: query
+        description: SubSubAreaのID
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryList"
+  /sub_theme:
+    get:
+      tags:
+      - sub_theme
+      summary: SubTheme取得API
+      description: Area系パラメータIDに紐づく記事に紐づくThemeの中からParentThemeIDに紐づくThemeをSubThemeとして取得する
+      parameters:
+      - name: parentThemeId
+        in: query
         schema:
           type: integer
       - name: excludeId
         in: query
         description: 除外するカテゴリーのID
+        schema:
+          type: integer
+      - name: areaId
+        in: query
+        description: AreaのID
+        schema:
+          type: integer
+      - name: subAreaId
+        in: query
+        description: SubAreaのID
+        schema:
+          type: integer
+      - name: subSubAreaId
+        in: query
+        description: SubSubAreaのID
         schema:
           type: integer
       responses:
@@ -1705,7 +1752,7 @@ components:
     UserRegisterRequest:
       type: object
       properties:
-        cognitoId: 
+        cognitoId:
           type: string
           description: cognitoのid
           example: "6a3e24ea-60ec-484b-b912-e854be261c95"
@@ -2621,7 +2668,7 @@ components:
     FollowUser:
       type: object
       properties:
-        id: 
+        id:
           type: integer
           description: ユーザーID
           example: 1
