@@ -1366,6 +1366,7 @@ paths:
       parameters:
         - in: query
           name: areaGroupId
+          required: true
           description: |
             親カテゴリID
           schema:
@@ -1418,6 +1419,7 @@ paths:
       parameters:
         - in: query
           name: areaId
+          required: true
           description: |
             親カテゴリID
           schema:
@@ -1470,6 +1472,7 @@ paths:
       parameters:
         - in: query
           name: subAreaId
+          required: true
           description: |
             親カテゴリID
           schema:
