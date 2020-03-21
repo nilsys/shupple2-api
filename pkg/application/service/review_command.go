@@ -2,12 +2,11 @@ package service
 
 import (
 	"context"
-
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
-
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
@@ -21,6 +20,7 @@ type (
 		//*************************************************
 		CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) error
 		CreateReviewComment(user *entity.User, reviewID int, body string) error
+		DeleteReviewComment(user *entity.User, commentID int) error
 		FavoriteReviewComment(user *entity.User, reviewCommentID int) error
 		UnFavoriteReviewComment(user *entity.User, reviewCommentID int) error
 	}
@@ -206,7 +206,7 @@ func (s *ReviewCommandServiceImpl) CreateReviewComment(user *entity.User, review
 			return err
 		}
 
-		// レビューにひもづくコメント数
+		// レビューにひもづくコメント数をインクリメント
 		if err := s.ReviewCommandRepository.IncrementReviewCommentCount(c, reviewID); err != nil {
 			return err
 		}
@@ -223,6 +223,26 @@ func (s *ReviewCommandServiceImpl) persistReviewMedia(medias []*entity.ReviewMed
 	}
 
 	return nil
+}
+
+func (s *ReviewCommandServiceImpl) DeleteReviewComment(user *entity.User, commentID int) error {
+	return s.TransactionService.Do(func(c context.Context) error {
+		comment, err := s.ReviewCommandRepository.ShowReviewComment(c, commentID)
+		if err != nil {
+			return errors.Wrap(err, "failed to find review comment")
+		}
+		// ユーザに削除権限がなければForbidden
+		if !comment.IsOwner(user.ID) {
+			return serror.New(nil, serror.CodeForbidden, "forbidden")
+		}
+
+		// レビューにひもづくコメント数をデクリメント
+		if err := s.ReviewCommandRepository.DecrementReviewCommentCount(c, comment.ReviewID); err != nil {
+			return err
+		}
+
+		return s.ReviewCommandRepository.DeleteReviewCommentByID(c, comment)
+	})
 }
 
 func (s *ReviewCommandServiceImpl) convertCreateReviewCommentReplyToEntity(user *entity.User, cmd *command.CreateReviewCommentReply) *entity.ReviewCommentReply {

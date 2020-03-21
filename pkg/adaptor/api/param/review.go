@@ -32,6 +32,10 @@ type (
 		PerPage int `query:"perPage"`
 	}
 
+	DeleteReviewCommentParam struct {
+		ID int `param:"id" validate:"required"`
+	}
+
 	StoreFavoriteReviewParam struct {
 		ReviewID int `param:"id" validate:"required"`
 	}

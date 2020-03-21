@@ -50,6 +50,19 @@ func (c *ReviewCommandController) StoreReviewComment(ctx echo.Context, user enti
 	return ctx.JSON(http.StatusOK, "ok")
 }
 
+func (c *ReviewCommandController) DeleteReviewComment(ctx echo.Context, user entity.User) error {
+	reviewCommentParam := &param.DeleteReviewCommentParam{}
+	if err := BindAndValidate(ctx, reviewCommentParam); err != nil {
+		return errors.Wrap(err, "Failed to bind parameters")
+	}
+
+	if err := c.ReviewCommandService.DeleteReviewComment(&user, reviewCommentParam.ID); err != nil {
+		return errors.Wrap(err, "Failed to delete review comment")
+	}
+
+	return ctx.JSON(http.StatusOK, nil)
+}
+
 func (c *ReviewCommandController) StoreReviewCommentReply(ctx echo.Context, user entity.User) error {
 	p := &param.CreateReviewCommentReply{}
 	if err := BindAndValidate(ctx, p); err != nil {

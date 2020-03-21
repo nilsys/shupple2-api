@@ -24,9 +24,12 @@ type (
 	ReviewCommandRepository interface {
 		StoreReview(c context.Context, review *entity.Review) error
 		IncrementReviewCommentCount(c context.Context, reviewID int) error
+		DecrementReviewCommentCount(c context.Context, reviewID int) error
 		IncrementFavoriteCount(c context.Context, reviewID int) error
 		DecrementFavoriteCount(c context.Context, reviewID int) error
 		PersistReviewMedia(reviewMedia *entity.ReviewMedia) error
+		ShowReviewComment(c context.Context, commentID int) (*entity.ReviewComment, error)
+		DeleteReviewCommentByID(c context.Context, reviewComment *entity.ReviewComment) error
 		CreateReviewComment(c context.Context, comment *entity.ReviewComment) error
 		StoreReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply) error
 		IncrementReviewCommentReplyCount(c context.Context, reviewCommentID int) error

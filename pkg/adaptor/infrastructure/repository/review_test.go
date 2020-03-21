@@ -146,7 +146,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 			)
 		})
 
-	Describe("AddReviewCommentCountのテスト",
+	Describe("IncrementReviewCommentCountのテスト",
 		func() {
 			BeforeEach(func() {
 				command = &ReviewCommandRepositoryImpl{DAO: DAO{DB_: db}}
@@ -175,6 +175,101 @@ var _ = Describe("ReviewRepositoryTest", func() {
 				Entry("正常系"),
 			)
 		})
+
+	Describe("DecrementReviewCommentCountのテスト",
+		func() {
+			BeforeEach(func() {
+				command = &ReviewCommandRepositoryImpl{DAO: DAO{DB_: db}}
+
+				truncate(db)
+				Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
+
+				Expect(db.Save(newUser(1)).Error).To(Succeed())
+				Expect(db.Save(newReview(1, 1, touristSpotID, innID)).Error).To(Succeed())
+
+				// コメント数を1にしておく
+				err := command.IncrementReviewCommentCount(context.TODO(), 1)
+				Expect(err).To(Succeed())
+			})
+
+			DescribeTable("コメントを追加",
+				func() {
+					err := command.DecrementReviewCommentCount(context.TODO(), 1)
+					Expect(err).To(Succeed())
+
+					// コメントが一件減っているか
+					review := &entity.Review{}
+					err = db.
+						Where("id=?", 1).
+						Find(review).
+						Error
+					Expect(err).To(Succeed())
+					Expect(review.CommentCount).To(Equal(0))
+				},
+				Entry("正常系"),
+			)
+		})
+
+	Describe("ShowReviewCommentのテスト", func() {
+		BeforeEach(func() {
+			command = &ReviewCommandRepositoryImpl{DAO: DAO{DB_: db}}
+
+			truncate(db)
+			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
+			Expect(db.Save(newUser(userID)).Error).To(Succeed())
+			Expect(db.Save(newReview(reviewID, userID, touristSpotID, innID)).Error).To(Succeed())
+
+			Expect(db.Exec("INSERT INTO review_comment(id, user_id, review_id, body, created_at, updated_at) VALUES (1, ?, ?, 'dummy 1', '2020-01-01 10:10:10', '2020-01-01 10:10:10');", userID, reviewID).Error).To(Succeed())
+		})
+
+		DescribeTable("コメントを取得_正常系",
+			func() {
+				comment, err := command.ShowReviewComment(context.TODO(), 1)
+				Expect(err).To(Succeed())
+
+				Expect(comment.ID).To(Equal(1))
+			},
+			Entry("正常系"),
+		)
+
+		DescribeTable("コメントを取得_異常系_コメントが存在しない場合",
+			func() {
+				_, err := command.ShowReviewComment(context.TODO(), 2)
+
+				// エラーがnilじゃない
+				Expect(err).NotTo(Succeed())
+			},
+			Entry("異常系"),
+		)
+	})
+
+	Describe("DeleteReviewCommentのテスト", func() {
+		BeforeEach(func() {
+			command = &ReviewCommandRepositoryImpl{DAO: DAO{DB_: db}}
+
+			truncate(db)
+			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
+			Expect(db.Save(newUser(userID)).Error).To(Succeed())
+			Expect(db.Save(newReview(reviewID, userID, touristSpotID, innID)).Error).To(Succeed())
+			Expect(db.Exec("INSERT INTO review_comment(id, user_id, review_id, body, created_at, updated_at) VALUES (1, ?, ?, 'dummy 1', '2020-01-01 10:10:10', '2020-01-01 10:10:10');", userID, reviewID).Error).To(Succeed())
+		})
+
+		DescribeTable("コメントを削除_正常系",
+			func() {
+				comment, err := command.ShowReviewComment(context.TODO(), 1)
+				Expect(err).To(Succeed())
+				err = command.DeleteReviewCommentByID(context.TODO(), comment)
+				Expect(err).To(Succeed())
+
+				// 削除されているか
+				var count int
+				db.Table("review_comment").Where("deleted_at IS NULL").Count(&count)
+				Expect(count).To(Equal(0))
+			},
+			Entry("正常系"),
+		)
+	})
+
 })
 
 func newReview(id, userID, touristSpotID, innID int) *entity.Review {

@@ -2,9 +2,7 @@ package repository
 
 import (
 	"context"
-
 	"fmt"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -40,9 +38,43 @@ func (r *ReviewCommandRepositoryImpl) CreateReviewComment(c context.Context, rev
 	return errors.Wrap(r.DB(c).Save(reviewComment).Error, "failed to save review comment")
 }
 
+func (r *ReviewCommandRepositoryImpl) ShowReviewComment(c context.Context, commentID int) (*entity.ReviewComment, error) {
+	reviewComment := &entity.ReviewComment{}
+	err := r.DB(c).
+		Where("id=?", commentID).
+		Find(reviewComment).
+		Error
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed get review comment by comment id")
+	}
+
+	return reviewComment, nil
+}
+
+func (r *ReviewCommandRepositoryImpl) DeleteReviewCommentByID(c context.Context, reviewComment *entity.ReviewComment) error {
+	err := r.DB(c).Delete(reviewComment).Error
+
+	if err != nil {
+		return errors.Wrapf(err, "failed delete review comment")
+	}
+
+	return nil
+}
+
 func (r *ReviewCommandRepositoryImpl) IncrementReviewCommentCount(c context.Context, reviewID int) error {
 	if err := r.DB(c).
 		Exec("UPDATE review SET comment_count=comment_count+1 WHERE id = ?", reviewID).
+		Error; err != nil {
+		return errors.Wrapf(err, "Failed insert reviews")
+	}
+
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) DecrementReviewCommentCount(c context.Context, reviewID int) error {
+	if err := r.DB(c).
+		Exec("UPDATE review SET comment_count=comment_count-1 WHERE id = ?", reviewID).
 		Error; err != nil {
 		return errors.Wrapf(err, "Failed insert reviews")
 	}

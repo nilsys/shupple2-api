@@ -11,8 +11,9 @@ type (
 		Body          string
 		ReplyCount    int
 		FavoriteCount int
-		CreatedAt     time.Time `gorm:"default:current_timestamp"`
-		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
+		CreatedAt time.Time `gorm:"default:current_timestamp"`
+		UpdatedAt time.Time `gorm:"default:current_timestamp"`
+		DeletedAt *time.Time
 	}
 
 	ReviewCommentReply struct {
@@ -45,4 +46,8 @@ func NewUserFavoriteReviewComment(userID, reviewCommentID int) *UserFavoriteRevi
 		UserID:          userID,
 		ReviewCommentID: reviewCommentID,
 	}
+}
+
+func (r *ReviewComment) IsOwner(userID int) bool {
+	return r.UserID == userID
 }
