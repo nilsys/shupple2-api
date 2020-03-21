@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
+
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -12,13 +14,20 @@ import (
 type (
 	// Reviewコマンド系サービス
 	ReviewCommandService interface {
+		// 以下2つは処理が特別複雑なので、別途シナリオクラスを作成している
+		//*************************************************
 		StoreTouristSpotReview(review *entity.Review) error
 		StoreInnReview(review *entity.Review) error
+		//*************************************************
+		CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) error
 		CreateReviewComment(user *entity.User, reviewID int, body string) error
+		FavoriteReviewComment(user *entity.User, reviewCommentID int) error
+		UnFavoriteReviewComment(user *entity.User, reviewCommentID int) error
 	}
 
 	// Reviewコマンド系サービス実装
 	ReviewCommandServiceImpl struct {
+		repository.ReviewQueryRepository
 		repository.ReviewCommandRepository
 		repository.HashtagCommandRepository
 		repository.CategoryQueryRepository
@@ -126,6 +135,56 @@ func (s *ReviewCommandServiceImpl) StoreInnReview(review *entity.Review) error {
 	})
 }
 
+func (s *ReviewCommandServiceImpl) CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) error {
+	reply := s.convertCreateReviewCommentReplyToEntity(user, cmd)
+
+	return s.TransactionService.Do(func(c context.Context) error {
+		if err := s.ReviewCommandRepository.StoreReviewCommentReply(c, reply); err != nil {
+			return errors.Wrap(err, "failed to store review_comment_reply")
+		}
+
+		if err := s.ReviewCommandRepository.IncrementReviewCommentReplyCount(c, reply.ReviewCommentID); err != nil {
+			return errors.Wrap(err, "failed to increment review_comment.favorite_count")
+		}
+
+		return nil
+	})
+}
+
+func (s *ReviewCommandServiceImpl) FavoriteReviewComment(user *entity.User, reviewCommentID int) error {
+	favorite := entity.NewUserFavoriteReviewComment(user.ID, reviewCommentID)
+
+	return s.TransactionService.Do(func(c context.Context) error {
+		// レビューコメントへのいいねを永続化
+		if err := s.ReviewCommandRepository.StoreReviewCommentFavorite(c, favorite); err != nil {
+			return errors.Wrap(err, "failed to store user_favorite_review_comment")
+		}
+
+		// レビューコメントのいいね数を1インクリメント
+		if err := s.ReviewCommandRepository.IncrementReviewCommentFavoriteCount(c, reviewCommentID); err != nil {
+			return errors.Wrap(err, "failed to increment review_comment.favorite_count")
+		}
+
+		return nil
+	})
+}
+
+func (s *ReviewCommandServiceImpl) UnFavoriteReviewComment(user *entity.User, reviewCommentID int) error {
+	return s.TransactionService.Do(func(c context.Context) error {
+		// レビューコメントへのいいねを物理削除
+		if err := s.ReviewCommandRepository.DeleteReviewCommentFavoriteByID(c, user.ID, reviewCommentID); err != nil {
+			return errors.Wrap(err, "failed to delete user_favorite_review_comment")
+		}
+
+		// レビューコメントへのいいね数を1デクリメント
+		if err := s.ReviewCommandRepository.DecrementReviewCommentFavoriteCount(c, reviewCommentID); err != nil {
+			return errors.Wrap(err, "failed to decrement review_comment.favorite_count")
+		}
+
+		return nil
+	})
+}
+
 func (s *ReviewCommandServiceImpl) convertCategoryAndHashtagIDsToHashtagCategory(categories []*entity.Category, hashtagIDs []*entity.ReviewHashtag) []*entity.HashtagCategory {
 	var hashtagCategories []*entity.HashtagCategory
 
@@ -164,4 +223,12 @@ func (s *ReviewCommandServiceImpl) persistReviewMedia(medias []*entity.ReviewMed
 	}
 
 	return nil
+}
+
+func (s *ReviewCommandServiceImpl) convertCreateReviewCommentReplyToEntity(user *entity.User, cmd *command.CreateReviewCommentReply) *entity.ReviewCommentReply {
+	return &entity.ReviewCommentReply{
+		UserID:          user.ID,
+		ReviewCommentID: cmd.ReviewCommentID,
+		Body:            cmd.Body,
+	}
 }

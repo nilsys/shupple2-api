@@ -70,13 +70,6 @@ func NewReviewMedia(id string, mimeType string, priority int) *ReviewMedia {
 	}
 }
 
-func NewReviewHashtag(reviewID, hashtagID int) *ReviewHashtag {
-	return &ReviewHashtag{
-		ReviewID:  reviewID,
-		HashtagID: hashtagID,
-	}
-}
-
 // TODO: 仮置き
 func (r *ReviewMedia) GenerateURL() string {
 	return "https://stayway.jp/image/" + r.ID

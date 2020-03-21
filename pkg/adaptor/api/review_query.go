@@ -97,3 +97,17 @@ func (c *ReviewQueryController) ListFavoriteReview(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewListToOutput(reviews))
 }
+
+func (c *ReviewQueryController) ListReviewCommentReply(ctx echo.Context) error {
+	p := &param.ListReviewCommentReply{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "validation list review comment reply")
+	}
+
+	replies, err := c.ReviewQueryService.ListReviewCommentReplyByReviewCommentID(p.ReviewCommentID)
+	if err != nil {
+		return errors.Wrap(err, "failed list review comment reply")
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertReviewCommentReplyListToOutput(replies))
+}

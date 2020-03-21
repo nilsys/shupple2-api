@@ -38,16 +38,29 @@ type (
 	}
 
 	ReviewComment struct {
+		ID            int                `json:"id"`
+		UserSummary   *UserSummary       `json:"user"`
+		Body          string             `json:"body"`
+		ReplyCount    int                `json:"replyCount"`
+		FavoriteCount int                `json:"favoriteCount"`
+		CreatedAt     model.TimeResponse `json:"createdAt"`
+	}
+
+	ReviewCommentReply struct {
+		ID          int                `json:"id"`
 		UserSummary *UserSummary       `json:"user"`
 		Body        string             `json:"body"`
 		CreatedAt   model.TimeResponse `json:"createdAt"`
 	}
 )
 
-func NewReviewComment(userSummary *UserSummary, body string, createdAt model.TimeResponse) *ReviewComment {
+func NewReviewComment(userSummary *UserSummary, body string, createdAt model.TimeResponse, id, replyCount, favoriteCount int) *ReviewComment {
 	return &ReviewComment{
-		UserSummary: userSummary,
-		Body:        body,
-		CreatedAt:   createdAt,
+		ID:            id,
+		UserSummary:   userSummary,
+		Body:          body,
+		ReplyCount:    replyCount,
+		FavoriteCount: favoriteCount,
+		CreatedAt:     createdAt,
 	}
 }

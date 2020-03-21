@@ -155,6 +155,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		DAO: dao,
 	}
 	reviewCommandServiceImpl := &service.ReviewCommandServiceImpl{
+		ReviewQueryRepository:        reviewQueryRepositoryImpl,
 		ReviewCommandRepository:      reviewCommandRepositoryImpl,
 		HashtagCommandRepository:     hashtagCommandRepositoryImpl,
 		CategoryQueryRepository:      categoryQueryRepositoryImpl,

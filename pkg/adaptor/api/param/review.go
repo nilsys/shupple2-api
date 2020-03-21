@@ -60,7 +60,7 @@ type (
 		PerPage int `query:"perPage"`
 	}
 
-	CreateReviewCommand struct {
+	CreateReviewComment struct {
 		ID   int    `param:"id" validate:"required"`
 		Body string `json:"body" validate:"required"`
 	}

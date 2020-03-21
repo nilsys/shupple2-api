@@ -73,3 +73,45 @@ func (r *ReviewCommandRepositoryImpl) PersistReviewMedia(reviewMedia *entity.Rev
 
 	return nil
 }
+
+func (r *ReviewCommandRepositoryImpl) StoreReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply) error {
+	if err := r.DB(c).Save(reply).Error; err != nil {
+		return errors.Wrap(err, "failed to store review comment reply")
+	}
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) IncrementReviewCommentReplyCount(c context.Context, reviewCommentID int) error {
+	if err := r.DB(c).Exec("UPDATE review_comment SET reply_count=reply_count+1 WHERE id = ?", reviewCommentID).Error; err != nil {
+		return errors.Wrap(err, "failed to increment review_comment.reply_count")
+	}
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) IncrementReviewCommentFavoriteCount(c context.Context, reviewCommentID int) error {
+	if err := r.DB(c).Exec("UPDATE review_comment SET favorite_count=favorite_count+1 WHERE id = ?", reviewCommentID).Error; err != nil {
+		return errors.Wrap(err, "failed to increment review_comment.favorite_count")
+	}
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) DecrementReviewCommentFavoriteCount(c context.Context, reviewCommentID int) error {
+	if err := r.DB(c).Exec("UPDATE review_comment SET favorite_count=favorite_count-1 WHERE id = ?", reviewCommentID).Error; err != nil {
+		return errors.Wrap(err, "failed to decrement review_comment.favorite_count")
+	}
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) StoreReviewCommentFavorite(c context.Context, favorite *entity.UserFavoriteReviewComment) error {
+	if err := r.DB(c).Save(favorite).Error; err != nil {
+		return errors.Wrap(err, "failed to save review_comment_favorite")
+	}
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) DeleteReviewCommentFavoriteByID(c context.Context, userID, reviewCommentID int) error {
+	if err := r.DB(c).Where("user_id = ? AND review_comment_id = ?", userID, reviewCommentID).Delete(entity.UserFavoriteReviewComment{}).Error; err != nil {
+		return errors.Wrap(err, "failed to delete review_comment_favorite")
+	}
+	return nil
+}

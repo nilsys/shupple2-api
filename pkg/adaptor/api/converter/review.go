@@ -50,6 +50,9 @@ func convertReviewCommentToOutput(reviewComment *entity.ReviewComment) *response
 		userSummary,
 		reviewComment.Body,
 		model.TimeResponse(reviewComment.CreatedAt),
+		reviewComment.ID,
+		reviewComment.ReplyCount,
+		reviewComment.FavoriteCount,
 	)
 }
 

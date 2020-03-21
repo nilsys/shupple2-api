@@ -98,10 +98,14 @@ func setRoutes(app *App) {
 	{
 		reviews := api.Group("/reviews")
 		reviews.GET("", app.ReviewQueryController.LisReview)
-		reviews.POST("/:id/comment", auth(app.ReviewCommandController.StoreReviewComment))
-		reviews.GET("/:id/comment", app.ReviewQueryController.ListReviewCommentByReviewID)
 		reviews.POST("", app.ReviewCommandController.Store)
 		reviews.GET("/:id", app.ReviewQueryController.ShowReview)
+		reviews.POST("/:id/comment", auth(app.ReviewCommandController.StoreReviewComment))
+		reviews.GET("/:id/comment", app.ReviewQueryController.ListReviewCommentByReviewID)
+		reviews.GET("/comment/:id/reply", app.ReviewQueryController.ListReviewCommentReply)
+		reviews.POST("/comment/:id/reply", auth(app.ReviewCommandController.StoreReviewCommentReply))
+		reviews.PUT("/comment/:id/favorite", auth(app.ReviewCommandController.FavoriteReviewComment))
+		reviews.DELETE("/comment/:id/favorite", auth(app.ReviewCommandController.UnFavoriteReviewComment))
 		reviews.PUT("/:id/favorite", app.ReviewFavoriteCommandController.Store)
 		reviews.DELETE("/:id/favorite", app.ReviewFavoriteCommandController.Delete)
 	}

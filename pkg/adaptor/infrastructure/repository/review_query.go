@@ -209,3 +209,16 @@ func (r *ReviewQueryRepositoryImpl) FindReviewCommentListByReviewID(reviewID int
 
 	return results, nil
 }
+
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyListByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error) {
+	var rows []*entity.ReviewCommentReply
+
+	if err := r.DB.Where("review_comment_id = ?", reviewCommentID).
+		Order("created_at DESC").
+		Limit(defaultAcquisitionNumber).
+		Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find review comment replies")
+	}
+
+	return rows, nil
+}

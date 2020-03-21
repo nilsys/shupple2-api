@@ -17,6 +17,23 @@ type (
 		FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
 		FindByID(reviewID int) (*entity.Review, error)
 		IsExist(id int) (bool, error)
+		FindReviewCommentReplyListByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error)
+	}
+
+	// Review更新系レポジトリ
+	ReviewCommandRepository interface {
+		StoreReview(c context.Context, review *entity.Review) error
+		IncrementReviewCommentCount(c context.Context, reviewID int) error
+		IncrementFavoriteCount(c context.Context, reviewID int) error
+		DecrementFavoriteCount(c context.Context, reviewID int) error
+		PersistReviewMedia(reviewMedia *entity.ReviewMedia) error
+		CreateReviewComment(c context.Context, comment *entity.ReviewComment) error
+		StoreReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply) error
+		IncrementReviewCommentReplyCount(c context.Context, reviewCommentID int) error
+		IncrementReviewCommentFavoriteCount(c context.Context, reviewCommentID int) error
+		DecrementReviewCommentFavoriteCount(c context.Context, reviewCommentID int) error
+		StoreReviewCommentFavorite(c context.Context, favorite *entity.UserFavoriteReviewComment) error
+		DeleteReviewCommentFavoriteByID(c context.Context, userID, reviewCommentID int) error
 	}
 
 	ReviewFavoriteCommandRepository interface {
@@ -26,15 +43,5 @@ type (
 
 	ReviewFavoriteQueryRepository interface {
 		IsExist(userID, reviewID int) (bool, error)
-	}
-
-	// Review更新系レポジトリ
-	ReviewCommandRepository interface {
-		StoreReview(c context.Context, review *entity.Review) error
-		CreateReviewComment(c context.Context, comment *entity.ReviewComment) error
-		IncrementReviewCommentCount(c context.Context, reviewID int) error
-		IncrementFavoriteCount(c context.Context, reviewID int) error
-		DecrementFavoriteCount(c context.Context, reviewID int) error
-		PersistReviewMedia(reviewMedia *entity.ReviewMedia) error
 	}
 )
