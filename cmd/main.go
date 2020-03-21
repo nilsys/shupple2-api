@@ -75,8 +75,8 @@ func setRoutes(app *App) {
 		posts.POST("", app.PostCommandController.Store)
 		posts.GET("/:id", app.PostQueryController.Show)
 		posts.GET("/:slug/slug", app.PostQueryController.ShowBySlug)
-		posts.PUT("/:id/favorite", app.PostFavoriteCommandController.Store)
-		posts.DELETE("/:id/favorite", app.PostFavoriteCommandController.Delete)
+		posts.PUT("/:id/favorite", auth(app.PostFavoriteCommandController.Store))
+		posts.DELETE("/:id/favorite", auth(app.PostFavoriteCommandController.Delete))
 	}
 
 	{
@@ -106,8 +106,8 @@ func setRoutes(app *App) {
 		reviews.POST("/comment/:id/reply", auth(app.ReviewCommandController.StoreReviewCommentReply))
 		reviews.PUT("/comment/:id/favorite", auth(app.ReviewCommandController.FavoriteReviewComment))
 		reviews.DELETE("/comment/:id/favorite", auth(app.ReviewCommandController.UnFavoriteReviewComment))
-		reviews.PUT("/:id/favorite", app.ReviewFavoriteCommandController.Store)
-		reviews.DELETE("/:id/favorite", app.ReviewFavoriteCommandController.Delete)
+		reviews.PUT("/:id/favorite", auth(app.ReviewFavoriteCommandController.Store))
+		reviews.DELETE("/:id/favorite", auth(app.ReviewFavoriteCommandController.Delete))
 	}
 
 	{

@@ -105,7 +105,6 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		TransactionService:            transactionServiceImpl,
 	}
 	postFavoriteCommandController := api.PostFavoriteCommandController{
-		PostQueryService:           postQueryServiceImpl,
 		PostFavoriteCommandService: postFavoriteCommandServiceImpl,
 	}
 	categoryQueryServiceImpl := &service.CategoryQueryServiceImpl{
@@ -185,7 +184,6 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		TransactionService:              transactionServiceImpl,
 	}
 	reviewFavoriteCommandController := api.ReviewFavoriteCommandController{
-		ReviewQueryService:           reviewQueryServiceImpl,
 		ReviewFavoriteCommandService: reviewFavoriteCommandServiceImpl,
 	}
 	hashtagQueryServiceImpl := &service.HashtagQueryServiceImpl{
