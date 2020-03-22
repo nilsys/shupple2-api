@@ -71,6 +71,16 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
 		WordpressService:          wordpressServiceImpl,
 	}
+	authService, err := service.ProvideAuthService(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	userCommandServiceImpl := &service.UserCommandServiceImpl{
+		UserCommandRepository:    userCommandRepositoryImpl,
+		UserQueryRepository:      userQueryRepositoryImpl,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
+		AuthService:              authService,
+	}
 	comicCommandRepositoryImpl := &repository.ComicCommandRepositoryImpl{
 		DB: db,
 	}
@@ -131,6 +141,7 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 		UserRepo:            userCommandRepositoryImpl,
 		CategoryCommandRepo: categoryCommandRepositoryImpl,
 		CategoryService:     categoryCommandServiceImpl,
+		UserService:         userCommandServiceImpl,
 		ComicService:        comicCommandServiceImpl,
 		FeatureService:      featureCommandServiceImpl,
 		LcategoryService:    lcategoryCommandServiceImpl,
@@ -143,4 +154,4 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.CategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.LcategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet)
+var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.LcategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet)

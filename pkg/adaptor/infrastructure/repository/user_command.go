@@ -52,6 +52,13 @@ func (r *UserCommandRepositoryImpl) StoreWithAvatar(user *entity.User, avatar []
 	})
 }
 
+func (r *UserCommandRepositoryImpl) UpdateWordpressID(userID, wordpressUserID int) error {
+	return errors.Wrap(
+		r.DB.Exec("UPDATE user SET wordpress_id = ? WHERE wordpress_id = 0 AND id = ?", wordpressUserID, userID).Error,
+		"failed to update user wordpress id",
+	)
+}
+
 func (r *UserCommandRepositoryImpl) StoreFollow(following *entity.UserFollowing, followed *entity.UserFollowed) error {
 	return Transaction(r.DB, func(tx *gorm.DB) error {
 		if err := tx.Save(followed).Error; err != nil {

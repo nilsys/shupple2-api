@@ -9,6 +9,7 @@ type (
 	UserCommandRepository interface {
 		Store(user *entity.User) error
 		StoreWithAvatar(user *entity.User, avatar []byte) error
+		UpdateWordpressID(userID, wordpressUserID int) error
 		StoreFollow(following *entity.UserFollowing, followed *entity.UserFollowed) error
 		DeleteFollow(userID, targetID int) error
 	}
@@ -17,6 +18,7 @@ type (
 		FindByID(id int) (*entity.User, error)
 		FindByCognitoID(cognitoID string) (*entity.User, error)
 		FindByWordpressID(id int) (*entity.User, error)
+		FindByMigrationCode(code string) (*entity.User, error)
 		FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.QueryRankingUser, error)
 		IsExistByUID(uid string) (bool, error)
 		// name部分一致検索

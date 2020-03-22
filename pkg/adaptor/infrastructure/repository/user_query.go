@@ -44,6 +44,14 @@ func (r *UserQueryRepositoryImpl) FindByWordpressID(wordpressUserID int) (*entit
 	return &row, nil
 }
 
+func (r *UserQueryRepositoryImpl) FindByMigrationCode(code string) (*entity.User, error) {
+	var row entity.User
+	if err := r.DB.Where("migration_code = ?", code).First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "user(migration_code=%s)", code)
+	}
+	return &row, nil
+}
+
 // TODO: テスト
 func (r *UserQueryRepositoryImpl) FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.QueryRankingUser, error) {
 	var rows []*entity.QueryRankingUser

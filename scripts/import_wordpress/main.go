@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"sort"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -46,6 +45,7 @@ type Script struct {
 	UserRepo            repository.UserCommandRepository
 	CategoryCommandRepo repository.CategoryCommandRepository
 	CategoryService     service.CategoryCommandService
+	UserService         service.UserCommandService
 	ComicService        service.ComicCommandService
 	FeatureService      service.FeatureCommandService
 	LcategoryService    service.LcategoryCommandService
@@ -151,19 +151,9 @@ func (s Script) importUser(wordpressDB *gorm.DB) error {
 			break
 		}
 
-		users, err := s.WordpressRepo.FindUsersByIDs(ids)
-		if err != nil {
-			return errors.WithStack(err)
-		}
-		sort.Slice(users, func(i, j int) bool { return users[i].ID < users[j].ID })
-
-		for _, user := range users {
-			avatar, err := s.WordpressRepo.DownloadAvatar(user.AvatarURLs.Num96)
+		for _, id := range ids {
+			err := s.UserService.RegisterWordpressUser(id)
 			if err != nil {
-				return errors.WithStack(err)
-			}
-
-			if err := s.UserRepo.StoreWithAvatar(s.convertUser(user), avatar); err != nil {
 				return errors.WithStack(err)
 			}
 		}

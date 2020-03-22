@@ -1,14 +1,18 @@
 package wordpress
 
 type User struct {
-	ID          int           `json:"id"`
-	Name        string        `json:"name"`
-	URL         string        `json:"url"`
-	Description string        `json:"description"`
-	Link        string        `json:"link"`
-	Slug        string        `json:"slug"`
-	AvatarURLs  AvatarURLs    `json:"avatar_urls"`
-	Meta        []interface{} `json:"meta"`
+	ID          int            `json:"id"`
+	Name        string         `json:"name"`
+	URL         string         `json:"url"`
+	Description string         `json:"description"`
+	Link        string         `json:"link"`
+	Slug        string         `json:"slug"`
+	AvatarURLs  AvatarURLs     `json:"avatar_urls"`
+	Attributes  UserAttributes `json:"acf"`
+}
+
+type UserAttributes struct {
+	MediaUserID int `json:"media_user_id"`
 }
 
 type AvatarURLs struct {

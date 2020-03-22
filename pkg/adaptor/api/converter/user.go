@@ -45,14 +45,13 @@ func ConvertListFollowUserParamToQuery(param *param.ListFollowUser) *query.FindF
 	}
 }
 
-func ConvertStoreUserParamToEntity(param *param.StoreUser, cognitoID string) *entity.User {
+func ConvertStoreUserParamToEntity(param *param.StoreUser) *entity.User {
 	interests := make([]*entity.UserInterest, len(param.Interests))
 	for i, interest := range param.Interests {
 		interests[i] = &entity.UserInterest{InterestID: interest}
 	}
 	return &entity.User{
 		UID:        param.UID,
-		CognitoID:  cognitoID,
 		Name:       param.Name,
 		Email:      param.Email,
 		Birthdate:  time.Time(param.BirthDate),

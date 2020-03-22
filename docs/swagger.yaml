@@ -8,11 +8,8 @@ paths:
       tags:
         - user
       summary: ユーザー登録
-      description: |
-        アイコン、ヘッダ画像はフロント側でS3にアップロードし、UUIDを送信する。
-        そのUUIDからアップロードされた画像を特定し、S3上の/users/icon/${userID}に移動する。
       requestBody:
-        $ref: "#/components/requestBodies/UserRequest"
+        $ref: "#/components/requestBodies/UserRegisterRequest"
       responses:
         "200":
           description: 成功
@@ -28,7 +25,12 @@ paths:
       tags:
         - user
       summary: プロフィール更新
-      description: ユーザープロフィール更新
+      description: |
+        ユーザープロフィール更新
+
+        アイコン、ヘッダ画像はフロント側でS3にアップロードし、UUIDを送信する。
+
+        そのUUIDからアップロードされた画像を特定し、S3上の/users/icon/${userID}に移動する。
       requestBody:
         $ref: "#/components/requestBodies/UserRequest"
       responses:
@@ -1713,7 +1715,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/UserRequest"
+            $ref: "#/components/schemas/UserRegisterRequest"
     UserRequest:
       content:
         application/json:
@@ -1759,7 +1761,12 @@ components:
           type: string
         iconUuid:
           type: string
-          description: S3アップロードAPIから返却されたUUIDを指定
+          description: アイコンをs3投稿時に返却されるUUID
+          example: "6a3e24ea-60ec-484b-b912-e854be261c95"
+        headerUuid:
+          type: string
+          description: ヘッダーをs3投稿時に返却されるUUID
+          example: "6a3e24ea-60ec-484b-b912-e854be261c95"
         pinnedPostId:
           type: integer
           description: 一番上に表示される記事
@@ -1770,9 +1777,13 @@ components:
     UserRegisterRequest:
       type: object
       properties:
-        cognitoId:
+        cognitoToken: 
           type: string
-          description: cognitoのid
+          description: cognitoで認証して得られたJWT
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NzcifQ.Gu9mozICWKVRA-32hPAIPNPWe-fNPCQbnV8MKt8vRag"
+        migrationCode:
+          type: string
+          description: 先にwordpressで登録したユーザーがsign upする際に紐付けるためのキー
           example: "6a3e24ea-60ec-484b-b912-e854be261c95"
         name:
           type: string
@@ -1789,10 +1800,8 @@ components:
           description: email
         birthdate:
           type: string
-          description: |
-            生年月日
-            formatはexampleに合わせる事
-          example: 2010-10-01
+          format: date
+          description: 生年月日
         gender:
           type: string
           enum:
@@ -1803,14 +1812,6 @@ components:
           type: string
           description: プロフィール文
           example: 香川出身24歳です！旅大好き！
-        iconUuid:
-          type: string
-          description: アイコンをs3投稿時に返却されるUUID
-          example: "6a3e24ea-60ec-484b-b912-e854be261c95"
-        headerUuid:
-          type: string
-          description: ヘッダーをs3投稿時に返却されるUUID
-          example: "6a3e24ea-60ec-484b-b912-e854be261c95"
         url:
           type: string
           description: ユーザーが自由に設定するURL

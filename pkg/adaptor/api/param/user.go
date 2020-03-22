@@ -24,16 +24,17 @@ type (
 	}
 
 	StoreUser struct {
-		Name         string       `json:"name"`
-		CognitoToken string       `json:"cognitoToken"`
-		UID          string       `json:"uid"`
-		Email        string       `json:"email"`
-		BirthDate    model.Date   `json:"birthDate"`
-		Gender       model.Gender `json:"gender"`
-		Profile      string       `json:"profile"`
-		PinnedPostID int          `json:"pinnedPostId"`
-		Interests    []int        `json:"interests"`
-		IconUUID     string       `json:"iconUuid"`
+		Name          string       `json:"name"`
+		CognitoToken  string       `json:"cognitoToken"`
+		MigrationCode *string      `json:"migrationCode"`
+		UID           string       `json:"uid"`
+		Email         string       `json:"email"`
+		BirthDate     model.Date   `json:"birthDate"`
+		Gender        model.Gender `json:"gender"`
+		Profile       string       `json:"profile"`
+		PinnedPostID  int          `json:"pinnedPostId"`
+		Interests     []int        `json:"interests"`
+		IconUUID      string       `json:"iconUuid"`
 	}
 
 	FollowParam struct {

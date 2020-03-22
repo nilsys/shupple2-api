@@ -21,7 +21,6 @@ require (
 	github.com/jinzhu/gorm v1.9.2
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/jinzhu/now v1.0.1 // indirect
-	github.com/k0kubun/pp v3.0.1+incompatible
 	github.com/labstack/echo/v4 v4.1.13
 	github.com/labstack/gommon v0.3.0
 	github.com/leodido/go-urn v1.1.0 // indirect
@@ -29,8 +28,7 @@ require (
 	github.com/onsi/ginkgo v1.11.0
 	github.com/onsi/gomega v1.8.1
 	github.com/pkg/errors v0.9.1
-	github.com/satori/uuid v1.2.0 // indirect
-	github.com/urfave/cli v1.22.3 // indirect
+	github.com/satori/go.uuid v1.2.0
 	go.uber.org/zap v1.10.0
 	golang.org/x/arch v0.0.0-20191126211547-368ea8f32fff // indirect
 	golang.org/x/crypto v0.0.0-20200117160349-530e935923ad // indirect

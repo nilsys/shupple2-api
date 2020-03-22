@@ -10,9 +10,11 @@ import (
 )
 
 var serviceSet = wire.NewSet(
+	service.ProvideAuthService,
 	service.PostQueryServiceSet,
 	service.PostCommandServiceSet,
 	service.WordpressServiceSet,
+	service.UserCommandServiceSet,
 	service.CategoryCommandServiceSet,
 	service.ComicCommandServiceSet,
 	service.FeatureCommandServiceSet,

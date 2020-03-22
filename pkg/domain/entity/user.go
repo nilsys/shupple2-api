@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
@@ -8,20 +9,21 @@ import (
 
 type (
 	User struct {
-		ID          int `gorm:"primary_key"`
-		UID         string
-		CognitoID   string
-		WordpressID int
-		Name        string
-		Email       string
-		Birthdate   time.Time
-		Gender      model.Gender
-		Profile     string
-		AvatarUUID  string
-		Interests   []*UserInterest `gorm:"foreignkey:UserID"`
-		CreatedAt   time.Time       `gorm:"-;default:current_timestamp"`
-		UpdatedAt   time.Time       `gorm:"-;default:current_timestamp"`
-		DeletedAt   *time.Time
+		ID            int `gorm:"primary_key"`
+		UID           string
+		CognitoID     string
+		WordpressID   int
+		MigrationCode sql.NullString
+		Name          string
+		Email         string
+		Birthdate     time.Time
+		Gender        model.Gender
+		Profile       string
+		AvatarUUID    string
+		Interests     []*UserInterest `gorm:"foreignkey:UserID"`
+		CreatedAt     time.Time       `gorm:"-;default:current_timestamp"`
+		UpdatedAt     time.Time       `gorm:"-;default:current_timestamp"`
+		DeletedAt     *time.Time
 	}
 
 	// MEMO: 他でも使う様になったら名前変更

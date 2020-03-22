@@ -237,12 +237,13 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		AWSConfig:     aws,
 	}
 	userCommandServiceImpl := &service.UserCommandServiceImpl{
-		UserCommandRepository: userCommandRepositoryImpl,
-		UserQueryRepository:   userQueryRepositoryImpl,
+		UserCommandRepository:    userCommandRepositoryImpl,
+		UserQueryRepository:      userQueryRepositoryImpl,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
+		AuthService:              authService,
 	}
 	userCommandController := api.UserCommandController{
 		UserCommandService: userCommandServiceImpl,
-		AuthService:        authService,
 	}
 	healthCheckRepositoryImpl := &repository.HealthCheckRepositoryImpl{
 		DB: db,

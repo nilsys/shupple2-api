@@ -13,12 +13,10 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 )
 
 type UserCommandController struct {
 	service.UserCommandService
-	service.AuthService
 }
 
 var UserCommandControllerSet = wire.NewSet(
@@ -31,14 +29,7 @@ func (c *UserCommandController) SignUp(ctx echo.Context) error {
 		return errors.Wrap(err, "validation store user param")
 	}
 
-	cognitoID, err := c.AuthService.Authorize(p.CognitoToken)
-	if err != nil {
-		return serror.New(err, serror.CodeUnauthorized, "unauthorized")
-	}
-
-	user := converter.ConvertStoreUserParamToEntity(&p, cognitoID)
-
-	err = c.UserCommandService.SignUp(user, cognitoID)
+	err := c.UserCommandService.SignUp(converter.ConvertStoreUserParamToEntity(&p), p.CognitoToken, p.MigrationCode)
 	if err != nil {
 		return errors.Wrap(err, "failed to store user")
 	}
