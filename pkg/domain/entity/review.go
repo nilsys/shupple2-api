@@ -70,6 +70,17 @@ func NewReviewMedia(id string, mimeType string, priority int) *ReviewMedia {
 	}
 }
 
+func NewReviewHashtag(reviewID, hashtagID int) *ReviewHashtag {
+	return &ReviewHashtag{
+		ReviewID:  reviewID,
+		HashtagID: hashtagID,
+	}
+}
+
+func (r *ReviewMedia) S3Path() string {
+	return fmt.Sprintf("review/%d/%s", r.ReviewID, r.ID)
+}
+
 // TODO: 仮置き
 func (r *ReviewMedia) GenerateURL() string {
 	return "https://stayway.jp/image/" + r.ID
@@ -77,8 +88,4 @@ func (r *ReviewMedia) GenerateURL() string {
 
 func (r *QueryReview) TableName() string {
 	return "review"
-}
-
-func (reviewMedia *ReviewMedia) S3Path() string {
-	return fmt.Sprintf("review/%d/%s", reviewMedia.ReviewID, reviewMedia.ID)
 }

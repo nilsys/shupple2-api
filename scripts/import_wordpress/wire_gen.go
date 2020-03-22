@@ -7,7 +7,9 @@ package main
 
 import (
 	"github.com/google/wire"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
+	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 )
@@ -23,16 +25,19 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 	if err != nil {
 		return nil, err
 	}
-	wordpress := configConfig.Wordpress
-	stayway := configConfig.Stayway
-	staywayMedia := stayway.Media
-	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
 	session, err := repository.ProvideAWSSession(configConfig)
 	if err != nil {
 		return nil, err
 	}
 	uploader := repository.ProvideS3Uploader(session)
 	aws := configConfig.AWS
+	wordpress := configConfig.Wordpress
+	stayway := configConfig.Stayway
+	staywayMedia := stayway.Media
+	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
+	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
+		DB: db,
+	}
 	userCommandRepositoryImpl := &repository.UserCommandRepositoryImpl{
 		DB:            db,
 		MediaUploader: uploader,
@@ -41,8 +46,15 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 	categoryCommandRepositoryImpl := &repository.CategoryCommandRepositoryImpl{
 		DB: db,
 	}
-	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
-		DB: db,
+	authService, err := service.ProvideAuthService(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	userCommandServiceImpl := &service.UserCommandServiceImpl{
+		UserCommandRepository:    userCommandRepositoryImpl,
+		UserQueryRepository:      userQueryRepositoryImpl,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
+		AuthService:              authService,
 	}
 	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
 		DB: db,
@@ -70,16 +82,6 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 		CategoryCommandRepository: categoryCommandRepositoryImpl,
 		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
 		WordpressService:          wordpressServiceImpl,
-	}
-	authService, err := service.ProvideAuthService(configConfig)
-	if err != nil {
-		return nil, err
-	}
-	userCommandServiceImpl := &service.UserCommandServiceImpl{
-		UserCommandRepository:    userCommandRepositoryImpl,
-		UserQueryRepository:      userQueryRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepositoryImpl,
-		AuthService:              authService,
 	}
 	comicCommandRepositoryImpl := &repository.ComicCommandRepositoryImpl{
 		DB: db,
@@ -134,24 +136,60 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
 	}
+	reviewQueryRepositoryImpl := &repository.ReviewQueryRepositoryImpl{
+		DB: db,
+	}
+	reviewCommandRepositoryImpl := &repository.ReviewCommandRepositoryImpl{
+		DAO:        dao,
+		AWSSession: session,
+		AWSConfig:  aws,
+	}
+	staywayMetasearch := stayway.Metasearch
+	clientConfig := _wireConfigValue
+	clientClient := client.NewClient(clientConfig)
+	innQueryRepositoryImpl := &repository.InnQueryRepositoryImpl{
+		MetasearchConfig: staywayMetasearch,
+		Client:           clientClient,
+	}
+	reviewCommandServiceImpl := &service.ReviewCommandServiceImpl{
+		ReviewQueryRepository:        reviewQueryRepositoryImpl,
+		ReviewCommandRepository:      reviewCommandRepositoryImpl,
+		HashtagCommandRepository:     hashtagCommandRepositoryImpl,
+		CategoryQueryRepository:      categoryQueryRepositoryImpl,
+		InnQueryRepository:           innQueryRepositoryImpl,
+		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
+		TransactionService:           transactionServiceImpl,
+	}
+	reviewCommandScenarioImpl := &scenario.ReviewCommandScenarioImpl{
+		ReviewCommandService:  reviewCommandServiceImpl,
+		HashtagCommandService: hashtagCommandServiceImpl,
+	}
 	script := &Script{
-		DB:                  db,
-		Config:              configConfig,
-		WordpressRepo:       wordpressQueryRepositoryImpl,
-		UserRepo:            userCommandRepositoryImpl,
-		CategoryCommandRepo: categoryCommandRepositoryImpl,
-		CategoryService:     categoryCommandServiceImpl,
-		UserService:         userCommandServiceImpl,
-		ComicService:        comicCommandServiceImpl,
-		FeatureService:      featureCommandServiceImpl,
-		LcategoryService:    lcategoryCommandServiceImpl,
-		PostService:         postCommandServiceImpl,
-		TouristSpotService:  touristSpotCommandServiceImpl,
-		VlogService:         vlogCommandServiceImpl,
+		DB:                    db,
+		Config:                configConfig,
+		MediaUploader:         uploader,
+		AWSConfig:             aws,
+		WordpressRepo:         wordpressQueryRepositoryImpl,
+		UserQueryRepository:   userQueryRepositoryImpl,
+		UserRepo:              userCommandRepositoryImpl,
+		CategoryCommandRepo:   categoryCommandRepositoryImpl,
+		UserService:           userCommandServiceImpl,
+		CategoryService:       categoryCommandServiceImpl,
+		ComicService:          comicCommandServiceImpl,
+		FeatureService:        featureCommandServiceImpl,
+		LcategoryService:      lcategoryCommandServiceImpl,
+		PostService:           postCommandServiceImpl,
+		TouristSpotService:    touristSpotCommandServiceImpl,
+		VlogService:           vlogCommandServiceImpl,
+		ReviewCommandScenario: reviewCommandScenarioImpl,
 	}
 	return script, nil
 }
 
+var (
+	_wireConfigValue = &client.Config{}
+)
+
 // wire.go:
 
-var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.LcategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet)
+var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.LcategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, scenario.ReviewCommandScenarioSet)

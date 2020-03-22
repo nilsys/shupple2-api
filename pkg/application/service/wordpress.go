@@ -108,9 +108,12 @@ func (s *WordpressServiceImpl) ConvertLocation(wpLocation *wordpress.Location) (
 		return nil, errors.Wrap(err, "failed to parse lng")
 	}
 
-	thumbnail, err := s.getThumbnail(wpLocation.FeaturedMedia)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get thumbnail")
+	var thumbnail string
+	if wpLocation.FeaturedMedia != 0 {
+		thumbnail, err = s.getThumbnail(wpLocation.FeaturedMedia)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get thumbnail")
+		}
 	}
 
 	touristSpot := entity.NewTouristSpot(entity.TouristSpotTiny{

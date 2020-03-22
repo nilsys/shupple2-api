@@ -6,10 +6,12 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	repositoryImpl "github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
+	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -39,19 +41,23 @@ type Config struct {
 }
 
 type Script struct {
-	DB                  *gorm.DB
-	Config              *config.Config
-	WordpressRepo       repository.WordpressQueryRepository
-	UserRepo            repository.UserCommandRepository
-	CategoryCommandRepo repository.CategoryCommandRepository
-	CategoryService     service.CategoryCommandService
-	UserService         service.UserCommandService
-	ComicService        service.ComicCommandService
-	FeatureService      service.FeatureCommandService
-	LcategoryService    service.LcategoryCommandService
-	PostService         service.PostCommandService
-	TouristSpotService  service.TouristSpotCommandService
-	VlogService         service.VlogCommandService
+	DB                    *gorm.DB
+	Config                *config.Config
+	MediaUploader         *s3manager.Uploader
+	AWSConfig             config.AWS
+	WordpressRepo         repository.WordpressQueryRepository
+	UserQueryRepository   repository.UserQueryRepository
+	UserRepo              repository.UserCommandRepository
+	CategoryCommandRepo   repository.CategoryCommandRepository
+	UserService           service.UserCommandService
+	CategoryService       service.CategoryCommandService
+	ComicService          service.ComicCommandService
+	FeatureService        service.FeatureCommandService
+	LcategoryService      service.LcategoryCommandService
+	PostService           service.PostCommandService
+	TouristSpotService    service.TouristSpotCommandService
+	VlogService           service.VlogCommandService
+	ReviewCommandScenario scenario.ReviewCommandScenario
 }
 
 func main() {
@@ -71,7 +77,6 @@ func run() error {
 
 func (s Script) Entries() []Entry {
 	return []Entry{
-		Entry{true, "category", "category", s.WordpressRepo.FindCategoriesByIDs, s.CategoryService.ImportFromWordpressByID},
 		Entry{true, "lcategory", "location__cat", s.WordpressRepo.FindLocationCategoriesByIDs, s.LcategoryService.ImportFromWordpressByID},
 		Entry{false, "post", "post", s.WordpressRepo.FindPostsByIDs, s.PostService.ImportFromWordpressByID},
 		Entry{false, "feature", "feature", s.WordpressRepo.FindFeaturesByIDs, s.FeatureService.ImportFromWordpressByID},
@@ -111,7 +116,7 @@ func (s Script) Run() error {
 		}
 	}
 
-	return nil
+	return s.importReview(db)
 }
 
 func connectWordpressDatabase(db string) (*gorm.DB, error) {

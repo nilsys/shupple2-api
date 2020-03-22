@@ -34,7 +34,6 @@ func (s *ReviewCommandScenarioImpl) Create(user *entity.User, param *command.Cre
 	if err != nil {
 		return errors.Wrap(err, "failed store and show hashtag")
 	}
-
 	review.HashtagIDs = s.convertReviewAndHashtagToReviewHashtag(hashtags, review)
 
 	// touristSpotと紐付くレビューの場合
