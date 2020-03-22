@@ -26,7 +26,8 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 	wire.Build(
 		wire.Struct(new(Script), "*"),
 		config.GetConfig,
-		wire.FieldsOf(new(*config.Config), "Wordpress", "AWS"),
+		wire.FieldsOf(new(*config.Config), "Wordpress", "AWS", "Stayway"),
+		wire.FieldsOf(new(config.Stayway), "Media"),
 		serviceSet,
 		repository.RepositoriesSet,
 		repository.ProvideS3Uploader,

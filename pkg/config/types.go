@@ -13,12 +13,12 @@ type (
 
 	Config struct {
 		Version     string
-		Development *Development  `validate:"omitempty" yaml:"development"`
-		Database    string        `validate:"required" yaml:"database"`
-		Logger      *Logger       `validate:"" yaml:"logger"`
-		Stayway     StaywayConfig `validate:"required" yaml:"stayway"`
-		Wordpress   Wordpress     `validate:"required" yaml:"wordpress"`
-		AWS         AWS           `validate:"required" yaml:"aws"`
+		Development *Development `validate:"omitempty" yaml:"development"`
+		Database    string       `validate:"required" yaml:"database"`
+		Logger      *Logger      `validate:"" yaml:"logger"`
+		Stayway     Stayway      `validate:"required" yaml:"stayway"`
+		Wordpress   Wordpress    `validate:"required" yaml:"wordpress"`
+		AWS         AWS          `validate:"required" yaml:"aws"`
 
 		// scripts配下のスクリプト固有の設定
 		Scripts yaml.Node `validate:"" yaml:"scripts"`
@@ -33,8 +33,18 @@ type (
 		Level zap.AtomicLevel
 	}
 
-	StaywayConfig struct {
-		BaseURL string `validate:"required" yaml:"base_url"`
+	Stayway struct {
+		Metasearch StaywayMetasearch `validate:"required" yaml:"metasearch"`
+		Media      StaywayMedia      `validate:"required" yaml:"media"`
+	}
+
+	StaywayMetasearch struct {
+		BaseURL URL `validate:"required" yaml:"base_url"`
+	}
+
+	StaywayMedia struct {
+		BaseURL  URL `validate:"required" yaml:"base_url"`
+		FilesURL URL `validate:"required" yaml:"files_url"`
 	}
 
 	Wordpress struct {

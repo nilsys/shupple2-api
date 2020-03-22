@@ -52,7 +52,9 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		DAO: dao,
 	}
 	wordpress := configConfig.Wordpress
-	wordpressQueryRepository := repository.NewWordpressQueryRepositoryImpl(wordpress)
+	stayway := configConfig.Stayway
+	staywayMedia := stayway.Media
+	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
 	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
 		DB: db,
 	}
@@ -64,7 +66,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		HashtagCommandRepository: hashtagCommandRepositoryImpl,
 	}
 	wordpressServiceImpl := &service.WordpressServiceImpl{
-		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		UserQueryRepository:      userQueryRepositoryImpl,
 		CategoryQueryRepository:  categoryQueryRepositoryImpl,
 		HashtagCommandService:    hashtagCommandServiceImpl,
@@ -75,7 +77,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	postCommandServiceImpl := &service.PostCommandServiceImpl{
 		PostCommandRepository:    postCommandRepositoryImpl,
 		HashtagCommandRepository: hashtagCommandRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
 		TransactionService:       transactionServiceImpl,
 	}
@@ -126,12 +128,12 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	reviewQueryRepositoryImpl := &repository.ReviewQueryRepositoryImpl{
 		DB: db,
 	}
-	staywayConfig := configConfig.Stayway
+	staywayMetasearch := stayway.Metasearch
 	clientConfig := _wireConfigValue
 	clientClient := client.NewClient(clientConfig)
 	innQueryRepositoryImpl := &repository.InnQueryRepositoryImpl{
-		StaywayConfig: staywayConfig,
-		Client:        clientClient,
+		MetasearchConfig: staywayMetasearch,
+		Client:           clientClient,
 	}
 	reviewQueryServiceImpl := &service.ReviewQueryServiceImpl{
 		ReviewQueryRepository: reviewQueryRepositoryImpl,
@@ -253,7 +255,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	}
 	categoryCommandServiceImpl := &service.CategoryCommandServiceImpl{
 		CategoryCommandRepository: categoryCommandRepositoryImpl,
-		WordpressQueryRepository:  wordpressQueryRepository,
+		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
 		WordpressService:          wordpressServiceImpl,
 	}
 	comicCommandRepositoryImpl := &repository.ComicCommandRepositoryImpl{
@@ -261,7 +263,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	}
 	comicCommandServiceImpl := &service.ComicCommandServiceImpl{
 		ComicCommandRepository:   comicCommandRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
 	}
 	featureCommandRepositoryImpl := &repository.FeatureCommandRepositoryImpl{
@@ -269,7 +271,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	}
 	featureCommandServiceImpl := &service.FeatureCommandServiceImpl{
 		FeatureCommandRepository: featureCommandRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
 	}
 	lcategoryCommandRepositoryImpl := &repository.LcategoryCommandRepositoryImpl{
@@ -277,12 +279,12 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	}
 	lcategoryCommandServiceImpl := &service.LcategoryCommandServiceImpl{
 		LcategoryCommandRepository: lcategoryCommandRepositoryImpl,
-		WordpressQueryRepository:   wordpressQueryRepository,
+		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
 		WordpressService:           wordpressServiceImpl,
 	}
 	touristSpotCommandServiceImpl := &service.TouristSpotCommandServiceImpl{
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
-		WordpressQueryRepository:     wordpressQueryRepository,
+		WordpressQueryRepository:     wordpressQueryRepositoryImpl,
 		WordpressService:             wordpressServiceImpl,
 	}
 	vlogCommandRepositoryImpl := &repository.VlogCommandRepositoryImpl{
@@ -290,7 +292,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	}
 	vlogCommandServiceImpl := &service.VlogCommandServiceImpl{
 		VlogCommandRepository:    vlogCommandRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
 	}
 	wordpressCallbackServiceImpl := &service.WordpressCallbackServiceImpl{

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"path"
 	"strconv"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
@@ -19,8 +20,8 @@ import (
 type (
 	// Inn参照系レポジトリ実装
 	InnQueryRepositoryImpl struct {
-		config.StaywayConfig
-		Client client.Client
+		MetasearchConfig config.StaywayMetasearch
+		Client           client.Client
 	}
 )
 
@@ -41,8 +42,10 @@ func (r *InnQueryRepositoryImpl) FindIDsByAreaID(areaId, subAreaId, subSubAreaId
 	opts := buildFindIDsByAreaIDQuery(areaId, subAreaId, subSubAreaId)
 
 	var res dto.Inns
-	u := r.StaywayConfig.BaseURL + staywayInnAPIPath
-	if err := r.Client.GetJSON(u, opts, &res); err != nil {
+
+	u := r.MetasearchConfig.BaseURL
+	u.Path = path.Join(u.Path, staywayInnAPIPath)
+	if err := r.Client.GetJSON(u.String(), opts, &res); err != nil {
 		return nil, errors.Wrapf(err, "failed to get inns from stayway api by areaID: %d subAreaID: %d subSubAreaID: %d", areaId, subAreaId, subSubAreaId)
 	}
 
@@ -51,8 +54,11 @@ func (r *InnQueryRepositoryImpl) FindIDsByAreaID(areaId, subAreaId, subSubAreaId
 
 func (r *InnQueryRepositoryImpl) FindAreaIDsByID(id int) (*entity.InnAreaTypeIDs, error) {
 	var res dto.InnArea
-	url := fmt.Sprintf(r.StaywayConfig.BaseURL+staywayInnAPIPath+"/%d/area", id)
-	if err := r.Client.GetJSON(url, nil, &res); err != nil {
+
+	u := r.MetasearchConfig.BaseURL
+	u.Path = path.Join(u.Path, staywayInnAPIPath, fmt.Sprintf("/%d/area", id))
+
+	if err := r.Client.GetJSON(u.String(), nil, &res); err != nil {
 		return nil, errors.Wrapf(err, "failed to get inn area details from stayway api by innID: %d", id)
 	}
 

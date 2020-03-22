@@ -24,7 +24,9 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 		return nil, err
 	}
 	wordpress := configConfig.Wordpress
-	wordpressQueryRepository := repository.NewWordpressQueryRepositoryImpl(wordpress)
+	stayway := configConfig.Stayway
+	staywayMedia := stayway.Media
+	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
 	session, err := repository.ProvideAWSSession(configConfig)
 	if err != nil {
 		return nil, err
@@ -59,14 +61,14 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 		HashtagCommandRepository: hashtagCommandRepositoryImpl,
 	}
 	wordpressServiceImpl := &service.WordpressServiceImpl{
-		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		UserQueryRepository:      userQueryRepositoryImpl,
 		CategoryQueryRepository:  categoryQueryRepositoryImpl,
 		HashtagCommandService:    hashtagCommandServiceImpl,
 	}
 	categoryCommandServiceImpl := &service.CategoryCommandServiceImpl{
 		CategoryCommandRepository: categoryCommandRepositoryImpl,
-		WordpressQueryRepository:  wordpressQueryRepository,
+		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
 		WordpressService:          wordpressServiceImpl,
 	}
 	comicCommandRepositoryImpl := &repository.ComicCommandRepositoryImpl{
@@ -74,7 +76,7 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 	}
 	comicCommandServiceImpl := &service.ComicCommandServiceImpl{
 		ComicCommandRepository:   comicCommandRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
 	}
 	featureCommandRepositoryImpl := &repository.FeatureCommandRepositoryImpl{
@@ -82,7 +84,7 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 	}
 	featureCommandServiceImpl := &service.FeatureCommandServiceImpl{
 		FeatureCommandRepository: featureCommandRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
 	}
 	lcategoryCommandRepositoryImpl := &repository.LcategoryCommandRepositoryImpl{
@@ -90,7 +92,7 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 	}
 	lcategoryCommandServiceImpl := &service.LcategoryCommandServiceImpl{
 		LcategoryCommandRepository: lcategoryCommandRepositoryImpl,
-		WordpressQueryRepository:   wordpressQueryRepository,
+		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
 		WordpressService:           wordpressServiceImpl,
 	}
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
@@ -102,7 +104,7 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 	postCommandServiceImpl := &service.PostCommandServiceImpl{
 		PostCommandRepository:    postCommandRepositoryImpl,
 		HashtagCommandRepository: hashtagCommandRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
 		TransactionService:       transactionServiceImpl,
 	}
@@ -111,7 +113,7 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 	}
 	touristSpotCommandServiceImpl := &service.TouristSpotCommandServiceImpl{
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
-		WordpressQueryRepository:     wordpressQueryRepository,
+		WordpressQueryRepository:     wordpressQueryRepositoryImpl,
 		WordpressService:             wordpressServiceImpl,
 	}
 	vlogCommandRepositoryImpl := &repository.VlogCommandRepositoryImpl{
@@ -119,13 +121,13 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 	}
 	vlogCommandServiceImpl := &service.VlogCommandServiceImpl{
 		VlogCommandRepository:    vlogCommandRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepository,
+		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
 	}
 	script := &Script{
 		DB:                  db,
 		Config:              configConfig,
-		WordpressRepo:       wordpressQueryRepository,
+		WordpressRepo:       wordpressQueryRepositoryImpl,
 		UserRepo:            userCommandRepositoryImpl,
 		CategoryCommandRepo: categoryCommandRepositoryImpl,
 		CategoryService:     categoryCommandServiceImpl,

@@ -8,8 +8,10 @@ package repository
 import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	"net/url"
 )
 
 import (
@@ -86,6 +88,9 @@ func InitializeTest(configFilePath config.ConfigFilePath) (*Test, error) {
 	vlogQueryRepositoryImpl := &VlogQueryRepositoryImpl{
 		DB: db,
 	}
+	wordpress := _wireWordpressValue
+	staywayMedia := _wireStaywayMediaValue
+	wordpressQueryRepositoryImpl := NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
 	test := &Test{
 		Config:                           configConfig,
 		DB:                               db,
@@ -107,9 +112,37 @@ func InitializeTest(configFilePath config.ConfigFilePath) (*Test, error) {
 		UserCommandRepositoryImpl:        userCommandRepositoryImpl,
 		VlogCommandRepositoryImpl:        vlogCommandRepositoryImpl,
 		VlogQueryRepositoryImpl:          vlogQueryRepositoryImpl,
+		WordpressQueryRepositoryImpl:     wordpressQueryRepositoryImpl,
 	}
 	return test, nil
 }
+
+var (
+	_wireWordpressValue = config.Wordpress{
+		BaseURL: config.URL{
+			URL: url.URL{
+				Scheme: "https",
+				Host:   "stg-admin.stayway.jp",
+				Path:   "/tourism",
+			},
+		},
+	}
+	_wireStaywayMediaValue = config.StaywayMedia{
+		BaseURL: config.URL{
+			URL: url.URL{
+				Scheme: "https",
+				Host:   "stg.stayway.jp",
+				Path:   "/tourism",
+			},
+		},
+		FilesURL: config.URL{
+			URL: url.URL{
+				Scheme: "https",
+				Host:   "stg-files.stayway.jp",
+			},
+		},
+	}
+)
 
 // wire.go:
 
@@ -134,4 +167,30 @@ type Test struct {
 	*UserCommandRepositoryImpl
 	*VlogCommandRepositoryImpl
 	*VlogQueryRepositoryImpl
+	*WordpressQueryRepositoryImpl
 }
+
+var configValuesSet = wire.NewSet(wire.Value(config.Wordpress{
+	BaseURL: config.URL{
+		URL: url.URL{
+			Scheme: "https",
+			Host:   "stg-admin.stayway.jp",
+			Path:   "/tourism",
+		},
+	},
+}), wire.Value(config.StaywayMedia{
+	BaseURL: config.URL{
+		URL: url.URL{
+			Scheme: "https",
+			Host:   "stg.stayway.jp",
+			Path:   "/tourism",
+		},
+	},
+	FilesURL: config.URL{
+		URL: url.URL{
+			Scheme: "https",
+			Host:   "stg-files.stayway.jp",
+		},
+	},
+}),
+)

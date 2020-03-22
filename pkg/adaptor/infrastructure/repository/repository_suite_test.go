@@ -1,6 +1,9 @@
 package repository
 
 import (
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -12,6 +15,7 @@ import (
 	"github.com/jinzhu/gorm"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -128,4 +132,19 @@ func prepareBucket(sess *session.Session, bucket string) error {
 	}
 
 	return err
+}
+
+func responseTestdata(name string) (*http.Response, error) {
+	body, err := ioutil.ReadFile("testdata/" + name)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to read testdata/%s", name)
+	}
+
+	recoder := httptest.NewRecorder()
+	recoder.WriteHeader(http.StatusOK)
+	if _, err := recoder.Write(body); err != nil {
+		return nil, errors.Wrap(err, "failed to write body")
+	}
+
+	return recoder.Result(), nil
 }

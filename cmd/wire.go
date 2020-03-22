@@ -80,6 +80,7 @@ func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {
 		echo.New,
 		wire.Struct(new(App), "*"),
 		config.GetConfig,
+		wire.FieldsOf(new(config.Stayway), "Metasearch", "Media"),
 		client.NewClient,
 		wire.Value(&client.Config{}),
 		wire.FieldsOf(new(*config.Config), "Wordpress", "Stayway", "AWS"),

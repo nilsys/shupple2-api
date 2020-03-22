@@ -1,11 +1,13 @@
 package repository
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"path"
+	"regexp"
 
 	"github.com/google/wire"
 	"github.com/pkg/errors"
@@ -32,21 +34,32 @@ const (
 	maxPerPage = 100
 )
 
+var (
+	wpContentPrefix = []byte("/wp-content")
+)
+
 type (
 	WordpressQueryRepositoryImpl struct {
 		config.Wordpress
-		Client http.Client
+		Client           http.Client
+		wordpressBaseURL []byte
+		mediaBaseURL     []byte
+		filesBaseURL     []byte
 	}
 )
 
 var WordpressQueryRepositorySet = wire.NewSet(
 	NewWordpressQueryRepositoryImpl,
+	wire.Bind(new(repository.WordpressQueryRepository), new(*WordpressQueryRepositoryImpl)),
 )
 
-func NewWordpressQueryRepositoryImpl(config config.Wordpress) repository.WordpressQueryRepository {
+func NewWordpressQueryRepositoryImpl(config config.Wordpress, mediaConfig config.StaywayMedia) *WordpressQueryRepositoryImpl {
 	return &WordpressQueryRepositoryImpl{
 		config,
 		http.Client{},
+		[]byte(config.BaseURL.String()),
+		[]byte(mediaConfig.BaseURL.String()),
+		[]byte(mediaConfig.FilesURL.String()),
 	}
 }
 
@@ -183,9 +196,41 @@ func (r *WordpressQueryRepositoryImpl) getJSON(url string, result interface{}) e
 		return errors.Wrapf(err, "wordpress returns %d", resp.StatusCode)
 	}
 
-	if err := json.NewDecoder(resp.Body).Decode(result); err != nil {
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Wrap(err, "failed to read response body")
+	}
+
+	body = r.replaceDomain(body)
+	body = r.replaceMediaURL(body)
+
+	if err := json.Unmarshal(body, result); err != nil {
 		return errors.Wrap(err, "failed to decode json")
 	}
 
 	return nil
+}
+
+func (r *WordpressQueryRepositoryImpl) replaceDomain(str []byte) []byte {
+	return bytes.ReplaceAll(str, r.wordpressBaseURL, r.mediaBaseURL)
+}
+
+// 移行前後は、負荷の問題でpluginのURL置換機能をonにできないので、こちら側で置換する。
+// TODO: WP Offload Media LiteのURL置換機能をonにして、このメソッドを削除する
+var (
+	mediaURLRegexp = regexp.MustCompile(`https://([-a-z]+\.)?stayway.jp/tourism/wp-content/uploads/\S+\.[A-Za-z]+`)
+)
+
+func (r *WordpressQueryRepositoryImpl) replaceMediaURL(str []byte) []byte {
+	return mediaURLRegexp.ReplaceAllFunc(str, func(url []byte) []byte {
+		start := bytes.Index(url, wpContentPrefix)
+		if start < 0 {
+			return url
+		}
+		url = url[start:]
+
+		result := make([]byte, len(r.filesBaseURL), len(r.filesBaseURL)+len(url))
+		copy(result, r.filesBaseURL)
+		return append(result, url...)
+	})
 }

@@ -1,21 +1,18 @@
 package wordpress
 
-import "time"
+import (
+	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
+)
 
 const (
 	timeJSONFormat = `"2006-01-02T15:04:05"`
-	locationString = "Asia/Tokyo"
 )
 
-var location *time.Location
-
-func init() {
-	l, err := time.LoadLocation(locationString)
-	if err != nil {
-		panic(err)
-	}
-	location = l
-}
+var (
+	arrayJSONBytes = []byte("[]")
+)
 
 type (
 	Text struct {
@@ -39,7 +36,7 @@ type (
 )
 
 func (t *Time) UnmarshalJSON(data []byte) error {
-	parsed, err := time.ParseInLocation(timeJSONFormat, string(data), location)
+	parsed, err := time.ParseInLocation(timeJSONFormat, string(data), util.JSTLoc)
 	*t = Time(parsed)
 	return err
 }

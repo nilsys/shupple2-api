@@ -4,14 +4,18 @@ logger:
   json: false
   level: info
 stayway:
-  base_url: "http://host.docker.internal:3000"
+  metasearch:
+    base_url: http://host.docker.internal:3000
+  media:
+    base_url: http://localhost:5000/tourism
+    files_url: TBD
 aws:
   region: ap-northeast-1
   endpoint: http://localstack:4572
   files_bucket: hoge
   upload_expire: 15m
 wordpress:
-  base_url: "https://stayway.jp/tourism/"
+  base_url: https://stg.stayway.jp/tourism
   user: changeme
   password: changeme
   callback_key: hoge

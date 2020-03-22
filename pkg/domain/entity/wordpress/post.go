@@ -1,5 +1,10 @@
 package wordpress
 
+import (
+	"bytes"
+	"encoding/json"
+)
+
 type Post struct {
 	ID            int             `json:"id"`
 	Date          Time            `json:"date"`
@@ -10,22 +15,14 @@ type Post struct {
 	Slug          string          `json:"slug"`
 	Status        Status          `json:"status"`
 	Type          string          `json:"type"`
-	Link          string          `json:"link"`
 	Title         Text            `json:"title"`
 	Content       ProtectableText `json:"content"`
-	Excerpt       ProtectableText `json:"excerpt"`
 	Author        int             `json:"author"`
 	FeaturedMedia int             `json:"featured_media"`
-	CommentStatus string          `json:"comment_status"`
-	PingStatus    string          `json:"ping_status"`
 	Sticky        bool            `json:"sticky"`
-	Template      string          `json:"template"`
-	Format        string          `json:"format"`
 	Meta          PostMeta        `json:"meta"`
 	Categories    []int           `json:"categories"`
 	Tags          []int           `json:"tags"`
-	ArticleTheme  []interface{}   `json:"article_theme"`
-	Links         PostLinks       `json:"_links"`
 }
 
 type PostMeta struct {
@@ -34,61 +31,10 @@ type PostMeta struct {
 	IsAdsRemovedInPage bool   `json:"is_ads_removed_in_page"`
 }
 
-type About struct {
-	Href string `json:"href"`
-}
+func (p *PostMeta) UnmarshalJSON(body []byte) error {
+	if bytes.Equal(body, arrayJSONBytes) {
+		return nil
+	}
 
-type Author struct {
-	Embeddable bool   `json:"embeddable"`
-	Href       string `json:"href"`
-}
-
-type Replies struct {
-	Embeddable bool   `json:"embeddable"`
-	Href       string `json:"href"`
-}
-
-type VersionHistory struct {
-	Count int    `json:"count"`
-	Href  string `json:"href"`
-}
-
-type PredecessorVersion struct {
-	ID   int    `json:"id"`
-	Href string `json:"href"`
-}
-
-type WpFeaturedmedia struct {
-	Embeddable bool   `json:"embeddable"`
-	Href       string `json:"href"`
-}
-
-type WpAttachment struct {
-	Href string `json:"href"`
-}
-
-type WpTerm struct {
-	Taxonomy   string `json:"taxonomy"`
-	Embeddable bool   `json:"embeddable"`
-	Href       string `json:"href"`
-}
-
-type Curies struct {
-	Name      string `json:"name"`
-	Href      string `json:"href"`
-	Templated bool   `json:"templated"`
-}
-
-type PostLinks struct {
-	Self               []Self               `json:"self"`
-	Collection         []Collection         `json:"collection"`
-	About              []About              `json:"about"`
-	Author             []Author             `json:"author"`
-	Replies            []Replies            `json:"replies"`
-	VersionHistory     []VersionHistory     `json:"version-history"`
-	PredecessorVersion []PredecessorVersion `json:"predecessor-version"`
-	WpFeaturedmedia    []WpFeaturedmedia    `json:"wp:featuredmedia"`
-	WpAttachment       []WpAttachment       `json:"wp:attachment"`
-	WpTerm             []WpTerm             `json:"wp:term"`
-	Curies             []Curies             `json:"curies"`
+	return json.Unmarshal(body, p)
 }
