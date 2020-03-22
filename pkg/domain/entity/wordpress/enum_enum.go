@@ -67,8 +67,10 @@ func (x *CategoryType) UnmarshalText(text []byte) error {
 }
 
 const (
+	// EntityTypeUser is a EntityType of type User
+	EntityTypeUser EntityType = iota + 1
 	// EntityTypePost is a EntityType of type Post
-	EntityTypePost EntityType = iota + 1
+	EntityTypePost
 	// EntityTypeLocation is a EntityType of type Location
 	EntityTypeLocation
 	// EntityTypeMovie is a EntityType of type Movie
@@ -83,16 +85,17 @@ const (
 	EntityTypeLocationCat
 )
 
-const _EntityTypeName = "postlocationmoviecomicfeaturecategorylocation__cat"
+const _EntityTypeName = "userpostlocationmoviecomicfeaturecategorylocation__cat"
 
 var _EntityTypeMap = map[EntityType]string{
 	1: _EntityTypeName[0:4],
-	2: _EntityTypeName[4:12],
-	3: _EntityTypeName[12:17],
-	4: _EntityTypeName[17:22],
-	5: _EntityTypeName[22:29],
-	6: _EntityTypeName[29:37],
-	7: _EntityTypeName[37:50],
+	2: _EntityTypeName[4:8],
+	3: _EntityTypeName[8:16],
+	4: _EntityTypeName[16:21],
+	5: _EntityTypeName[21:26],
+	6: _EntityTypeName[26:33],
+	7: _EntityTypeName[33:41],
+	8: _EntityTypeName[41:54],
 }
 
 // String implements the Stringer interface.
@@ -105,12 +108,13 @@ func (x EntityType) String() string {
 
 var _EntityTypeValue = map[string]EntityType{
 	_EntityTypeName[0:4]:   1,
-	_EntityTypeName[4:12]:  2,
-	_EntityTypeName[12:17]: 3,
-	_EntityTypeName[17:22]: 4,
-	_EntityTypeName[22:29]: 5,
-	_EntityTypeName[29:37]: 6,
-	_EntityTypeName[37:50]: 7,
+	_EntityTypeName[4:8]:   2,
+	_EntityTypeName[8:16]:  3,
+	_EntityTypeName[16:21]: 4,
+	_EntityTypeName[21:26]: 5,
+	_EntityTypeName[26:33]: 6,
+	_EntityTypeName[33:41]: 7,
+	_EntityTypeName[41:54]: 8,
 }
 
 // ParseEntityType attempts to convert a string to a EntityType

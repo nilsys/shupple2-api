@@ -14,6 +14,7 @@ type (
 	}
 
 	WordpressCallbackServiceImpl struct {
+		UserCommandService
 		CategoryCommandService
 		ComicCommandService
 		FeatureCommandService
@@ -32,6 +33,8 @@ var WordpressCallbackServiceSet = wire.NewSet(
 func (s *WordpressCallbackServiceImpl) Import(entityType wordpress.EntityType, id int) error {
 	var err error
 	switch entityType {
+	case wordpress.EntityTypeUser:
+		err = s.UserCommandService.RegisterWordpressUser(id)
 	case wordpress.EntityTypePost:
 		_, err = s.PostCommandService.ImportFromWordpressByID(id)
 	case wordpress.EntityTypeLocation:

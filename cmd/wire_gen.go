@@ -297,6 +297,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		WordpressService:         wordpressServiceImpl,
 	}
 	wordpressCallbackServiceImpl := &service.WordpressCallbackServiceImpl{
+		UserCommandService:        userCommandServiceImpl,
 		CategoryCommandService:    categoryCommandServiceImpl,
 		ComicCommandService:       comicCommandServiceImpl,
 		FeatureCommandService:     featureCommandServiceImpl,
