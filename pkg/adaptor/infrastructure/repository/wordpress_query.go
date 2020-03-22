@@ -21,6 +21,7 @@ const (
 	listUsersPath              = "/wp-json/wp/v2/users/"
 	listPostsPath              = "/wp-json/wp/v2/posts/"
 	listLocationsPath          = "/wp-json/wp/v2/locations/"
+	listPostTagsPath           = "/wp-json/wp/v2/tags/"
 	listCategoriesPath         = "/wp-json/wp/v2/categories/"
 	listLocationCategoriesPath = "/wp-json/wp/v2/location__cat/"
 	listComicPath              = "/wp-json/wp/v2/comic/"
@@ -62,6 +63,11 @@ func (r *WordpressQueryRepositoryImpl) FindPostsByIDs(ids []int) ([]*wordpress.P
 func (r *WordpressQueryRepositoryImpl) FindLocationsByIDs(ids []int) ([]*wordpress.Location, error) {
 	var res []*wordpress.Location
 	return res, r.gets(listLocationsPath, ids, &res)
+}
+
+func (r *WordpressQueryRepositoryImpl) FindPostTagsByIDs(ids []int) ([]*wordpress.PostTag, error) {
+	var res []*wordpress.PostTag
+	return res, r.gets(listPostTagsPath, ids, &res)
 }
 
 func (r *WordpressQueryRepositoryImpl) FindCategoriesByIDs(ids []int) ([]*wordpress.Category, error) {

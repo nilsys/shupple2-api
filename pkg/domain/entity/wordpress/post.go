@@ -23,6 +23,7 @@ type Post struct {
 	Format        string          `json:"format"`
 	Meta          PostMeta        `json:"meta"`
 	Categories    []int           `json:"categories"`
+	Tags          []int           `json:"tags"`
 	ArticleTheme  []interface{}   `json:"article_theme"`
 	Links         PostLinks       `json:"_links"`
 }

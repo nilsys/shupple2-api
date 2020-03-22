@@ -55,19 +55,28 @@ func (s *WordpressServiceImpl) ConvertPost(wpPost *wordpress.Post) (*entity.Post
 		return nil, errors.Wrap(err, "failed to get thumbnail")
 	}
 
+	wpPostTags, err := s.WordpressQueryRepository.FindPostTagsByIDs(wpPost.Tags)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get post tags")
+	}
+	hashtags := make([]string, len(wpPostTags))
+	for i, wpPostTag := range wpPostTags {
+		hashtags[i] = wpPostTag.Name
+	}
+
 	toc, err := s.extractTOC(wpPost)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to extract toc")
 	}
 	bodies := strings.Split(wpPost.Content.Rendered, wpPageDelimiter)
 
-	hashtags, err := s.HashtagCommandService.FindOrCreateHashtags(model.FindHashtags(wpPost.Content.Rendered))
+	hashtagEntieis, err := s.HashtagCommandService.FindOrCreateHashtags(hashtags)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to find hashtags")
 	}
-	hashtagIDs := make([]int, len(hashtags))
-	for i, hashtag := range hashtags {
-		hashtagIDs[i] = hashtag.ID
+	hashtagIDs := make([]int, len(hashtagEntieis))
+	for i, hashtagEntity := range hashtagEntieis {
+		hashtagIDs[i] = hashtagEntity.ID
 	}
 
 	post := entity.NewPost(entity.PostTiny{
