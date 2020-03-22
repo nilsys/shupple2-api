@@ -250,6 +250,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	}
 	healthCheckController := api.HealthCheckController{
 		HealthCheckRepository: healthCheckRepositoryImpl,
+		Config:                configConfig,
 	}
 	categoryCommandRepositoryImpl := &repository.CategoryCommandRepositoryImpl{
 		DB: db,
