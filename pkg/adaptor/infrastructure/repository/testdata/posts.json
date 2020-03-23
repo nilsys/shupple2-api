@@ -30,7 +30,9 @@
     "sticky": false,
     "template": "",
     "format": "standard",
-    "meta": [],
+    "meta": {
+      "seo_tile": "SOEOタイトル"
+    },
     "categories": [
       1
     ],
