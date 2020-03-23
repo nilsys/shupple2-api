@@ -22,16 +22,27 @@ var ReviewCommandControllerSet = wire.NewSet(
 	wire.Struct(new(ReviewCommandController), "*"),
 )
 
-// TODO: 認証処理挟む
-func (c *ReviewCommandController) Store(ctx echo.Context) error {
+func (c *ReviewCommandController) Store(ctx echo.Context, user entity.User) error {
 	p := &param.StoreReviewParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation store review param")
 	}
 
-	// TODO: 認証処理挟む
-	if err := c.ReviewCommandScenario.Create(&entity.User{ID: 1}, converter.ConvertCreateReviewParamToCommand(p)); err != nil {
+	if err := c.ReviewCommandScenario.Create(&user, converter.ConvertCreateReviewParamToCommand(p)); err != nil {
 		return errors.Wrap(err, "failed to store review")
+	}
+
+	return ctx.JSON(http.StatusOK, "ok")
+}
+
+func (c *ReviewCommandController) Update(ctx echo.Context, user entity.User) error {
+	p := &param.UpdateReviewParam{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "validation update review param")
+	}
+
+	if err := c.ReviewCommandScenario.UpdateReview(&user, converter.ConvertUpdateReviewParamToCommand(p)); err != nil {
+		return errors.Wrap(err, "failed to update review")
 	}
 
 	return ctx.JSON(http.StatusOK, "ok")
@@ -84,6 +95,19 @@ func (c *ReviewCommandController) FavoriteReviewComment(ctx echo.Context, user e
 
 	if err := c.ReviewCommandService.FavoriteReviewComment(&user, p.ReviewCommentID); err != nil {
 		return errors.Wrap(err, "failed to favorite review_comment")
+	}
+
+	return ctx.JSON(http.StatusOK, "ok")
+}
+
+func (c *ReviewCommandController) Delete(ctx echo.Context, user entity.User) error {
+	p := &param.DeleteReviewParam{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "validation delete review param")
+	}
+
+	if err := c.ReviewCommandScenario.DeleteReview(p.ID, &user); err != nil {
+		return errors.Wrap(err, "failed to delete review")
 	}
 
 	return ctx.JSON(http.StatusOK, "ok")

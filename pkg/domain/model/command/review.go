@@ -17,4 +17,13 @@ type (
 		UUID     string
 		MimeType string
 	}
+
+	UpdateReview struct {
+		ID           int
+		TravelDate   model.YearMonth
+		Accompanying model.AccompanyingType
+		Score        int
+		Body         string
+		MediaUUIDs   []*CreateReviewMedia
+	}
 )

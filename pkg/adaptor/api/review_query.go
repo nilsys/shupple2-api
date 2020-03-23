@@ -60,7 +60,7 @@ func (c *ReviewQueryController) ShowReview(ctx echo.Context) error {
 		return errors.Wrap(err, "required review id")
 	}
 
-	review, err := c.ReviewQueryService.ShowReview(p.ID)
+	review, err := c.ReviewQueryService.ShowQueryReview(p.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed show review")
 	}

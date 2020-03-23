@@ -139,17 +139,21 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 	reviewQueryRepositoryImpl := &repository.ReviewQueryRepositoryImpl{
 		DB: db,
 	}
-	reviewCommandRepositoryImpl := &repository.ReviewCommandRepositoryImpl{
-		DAO:        dao,
-		AWSSession: session,
-		AWSConfig:  aws,
-	}
 	staywayMetasearch := stayway.Metasearch
 	clientConfig := _wireConfigValue
 	clientClient := client.NewClient(clientConfig)
 	innQueryRepositoryImpl := &repository.InnQueryRepositoryImpl{
 		MetasearchConfig: staywayMetasearch,
 		Client:           clientClient,
+	}
+	reviewQueryServiceImpl := &service.ReviewQueryServiceImpl{
+		ReviewQueryRepository: reviewQueryRepositoryImpl,
+		InnQueryRepository:    innQueryRepositoryImpl,
+	}
+	reviewCommandRepositoryImpl := &repository.ReviewCommandRepositoryImpl{
+		DAO:        dao,
+		AWSSession: session,
+		AWSConfig:  aws,
 	}
 	reviewCommandServiceImpl := &service.ReviewCommandServiceImpl{
 		ReviewQueryRepository:        reviewQueryRepositoryImpl,
@@ -161,6 +165,7 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 		TransactionService:           transactionServiceImpl,
 	}
 	reviewCommandScenarioImpl := &scenario.ReviewCommandScenarioImpl{
+		ReviewQueryService:    reviewQueryServiceImpl,
 		ReviewCommandService:  reviewCommandServiceImpl,
 		HashtagCommandService: hashtagCommandServiceImpl,
 	}
@@ -192,4 +197,4 @@ var (
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.LcategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, scenario.ReviewCommandScenarioSet)
+var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.LcategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, service.ReviewQueryServiceSet, scenario.ReviewCommandScenarioSet)

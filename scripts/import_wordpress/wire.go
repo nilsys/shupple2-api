@@ -25,6 +25,7 @@ var serviceSet = wire.NewSet(
 	service.VlogCommandServiceSet,
 	service.HashtagCommandServiceSet,
 	service.ReviewCommandServiceSet,
+	service.ReviewQueryServiceSet,
 	scenario.ReviewCommandScenarioSet,
 )
 

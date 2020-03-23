@@ -50,6 +50,19 @@ type (
 		MediaUUIDs    []MediasUUID           `json:"mediaUuids"`
 	}
 
+	UpdateReviewParam struct {
+		ID           int                    `param:"id" validate:"required"`
+		TravelDate   model.YearMonth        `json:"travelDate"`
+		Accompanying model.AccompanyingType `json:"accompanying"`
+		Score        int                    `json:"score"`
+		Body         string                 `json:"body"`
+		MediaUUIDs   []MediasUUID           `json:"mediaUuids"`
+	}
+
+	DeleteReviewParam struct {
+		ID int `param:"id" validate:"required"`
+	}
+
 	MediasUUID struct {
 		UUID     string `json:"uuid"`
 		MimeType string `json:"mimeType"`
@@ -123,6 +136,14 @@ func (param *StoreReviewParam) Validate() error {
 
 	if (param.TouristSpotID != 0 && param.InnID != 0) || (param.TouristSpotID == 0 && param.InnID == 0) {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid store review tourist_spot & inn_id")
+	}
+
+	return nil
+}
+
+func (param *UpdateReviewParam) Validate() error {
+	if param.Body != "" && utf8.RuneCountInString(param.Body) < storeBodyMinimumLimit {
+		return serror.New(nil, serror.CodeInvalidParam, "Invalid store review body")
 	}
 
 	return nil

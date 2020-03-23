@@ -153,3 +153,21 @@ func ConvertCreateReviewParamToCommand(param *param.StoreReviewParam) *command.C
 		MediaUUIDs:    uuids,
 	}
 }
+
+func ConvertUpdateReviewParamToCommand(param *param.UpdateReviewParam) *command.UpdateReview {
+	uuids := make([]*command.CreateReviewMedia, len(param.MediaUUIDs))
+	for i, media := range param.MediaUUIDs {
+		uuids[i] = &command.CreateReviewMedia{
+			UUID:     media.UUID,
+			MimeType: media.MimeType,
+		}
+	}
+
+	return &command.UpdateReview{
+		TravelDate:   param.TravelDate,
+		Accompanying: param.Accompanying,
+		Score:        param.Score,
+		Body:         param.Body,
+		MediaUUIDs:   uuids,
+	}
+}

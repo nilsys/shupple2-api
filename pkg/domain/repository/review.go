@@ -10,12 +10,12 @@ import (
 type (
 	// Review参照系レポジトリ
 	ReviewQueryRepository interface {
+		FindByID(id int) (*entity.Review, error)
 		ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.QueryReview, error)
 		FindFeedReviewListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
 		FindReviewCommentListByReviewID(reviewID int, limit int) ([]*entity.ReviewComment, error)
 		FindQueryReviewByID(id int) (*entity.QueryReview, error)
 		FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
-		FindByID(reviewID int) (*entity.Review, error)
 		IsExist(id int) (bool, error)
 		IsExistReviewComment(id int) (bool, error)
 		IsExistReviewCommentFavorite(userID, reviewCommentID int) (bool, error)
@@ -25,6 +25,7 @@ type (
 	// Review更新系レポジトリ
 	ReviewCommandRepository interface {
 		StoreReview(c context.Context, review *entity.Review) error
+		DeleteReview(c context.Context, review *entity.Review) error
 		IncrementReviewCommentCount(c context.Context, reviewID int) error
 		DecrementReviewCommentCount(c context.Context, reviewID int) error
 		IncrementFavoriteCount(c context.Context, reviewID int) error

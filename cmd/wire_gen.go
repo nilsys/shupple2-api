@@ -165,6 +165,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		TransactionService:           transactionServiceImpl,
 	}
 	reviewCommandScenarioImpl := &scenario.ReviewCommandScenarioImpl{
+		ReviewQueryService:    reviewQueryServiceImpl,
 		ReviewCommandService:  reviewCommandServiceImpl,
 		HashtagCommandService: hashtagCommandServiceImpl,
 	}

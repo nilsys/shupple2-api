@@ -175,10 +175,10 @@ func (r *ReviewQueryRepositoryImpl) buildFindFeedListQuery(userID int) *gorm.DB 
 	return q
 }
 
-func (r *ReviewQueryRepositoryImpl) FindByID(reviewID int) (*entity.Review, error) {
+func (r *ReviewQueryRepositoryImpl) FindByID(id int) (*entity.Review, error) {
 	var review entity.Review
 
-	if err := r.DB.Find(&review, reviewID).Error; err != nil {
+	if err := r.DB.Find(&review, id).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed to get review")
 	}
 

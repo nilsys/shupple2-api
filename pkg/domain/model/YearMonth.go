@@ -6,7 +6,7 @@ import (
 )
 
 type YearMonth struct {
-	time.Time `validate:"required"`
+	time.Time
 }
 
 const yearMonthFmt = `"2006-01"`

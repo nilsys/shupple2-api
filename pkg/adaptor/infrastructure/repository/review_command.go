@@ -27,10 +27,16 @@ var ReviewCommandRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.ReviewCommandRepository), new(*ReviewCommandRepositoryImpl)),
 )
 
-// TODO: updateの時にSaveの挙動確認
 func (r *ReviewCommandRepositoryImpl) StoreReview(c context.Context, review *entity.Review) error {
 	if err := r.DB(c).Save(review).Error; err != nil {
 		return errors.Wrap(err, "failed store review")
+	}
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) DeleteReview(c context.Context, review *entity.Review) error {
+	if err := r.DB(c).Delete(review).Error; err != nil {
+		return errors.Wrap(err, "failed delete review")
 	}
 	return nil
 }

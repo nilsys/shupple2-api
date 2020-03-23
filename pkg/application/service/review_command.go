@@ -3,11 +3,12 @@ package service
 import (
 	"context"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
+
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
@@ -19,6 +20,8 @@ type (
 		StoreTouristSpotReview(review *entity.Review) error
 		StoreInnReview(review *entity.Review) error
 		//*************************************************
+		UpdateReview(review *entity.Review) error
+		DeleteReview(review *entity.Review) error
 		CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) error
 		CreateReviewComment(user *entity.User, reviewID int, body string) error
 		DeleteReviewComment(user *entity.User, commentID int) error
@@ -64,7 +67,7 @@ func (s *ReviewCommandServiceImpl) StoreTouristSpotReview(review *entity.Review)
 			return errors.Wrap(err, "failed to persist media")
 		}
 
-		if len(review.HashtagIDs) <= 0 {
+		if !review.HashHashtagIDs() {
 			return nil
 		}
 
@@ -116,10 +119,9 @@ func (s *ReviewCommandServiceImpl) StoreInnReview(review *entity.Review) error {
 			return errors.Wrap(err, "failed to persist media")
 		}
 
-		if len(review.HashtagIDs) <= 0 {
+		if !review.HashHashtagIDs() {
 			return nil
 		}
-		// TODO: forで回したく無い...
 		for _, hashtagCategory := range hashtagCategoryList {
 			// HashtagCategoryを永続化
 			if err := s.HashtagCommandRepository.StoreHashtagCategory(c, hashtagCategory); err != nil {
@@ -132,6 +134,21 @@ func (s *ReviewCommandServiceImpl) StoreInnReview(review *entity.Review) error {
 				return errors.Wrap(err, "failed increment hashtag.score")
 			}
 		}
+		return nil
+	})
+}
+
+func (s *ReviewCommandServiceImpl) UpdateReview(review *entity.Review) error {
+	return s.TransactionService.Do(func(c context.Context) error {
+
+		if err := s.ReviewCommandRepository.StoreReview(c, review); err != nil {
+			return errors.Wrap(err, "failed store review")
+		}
+
+		if err := s.persistReviewMedia(review.Medias); err != nil {
+			return errors.Wrap(err, "failed to persist media")
+		}
+
 		return nil
 	})
 }
@@ -176,6 +193,13 @@ func (s *ReviewCommandServiceImpl) FavoriteReviewComment(user *entity.User, revi
 
 		return nil
 	})
+}
+
+func (s *ReviewCommandServiceImpl) DeleteReview(review *entity.Review) error {
+	if err := s.ReviewCommandRepository.DeleteReview(context.TODO(), review); err != nil {
+		return errors.Wrap(err, "failed to delete delete")
+	}
+	return nil
 }
 
 // TODO: lock取る
