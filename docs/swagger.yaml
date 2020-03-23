@@ -2003,6 +2003,18 @@ components:
           type: integer
           description: レビューID
           example: 1
+        innId:
+          type: integer
+          description: |
+            InnID
+            どちらかが必ず0になる
+          example: 0
+        touristSpotId:
+          type: integer
+          description: |
+            TouristSpotID
+            どちらかが必ず0になる
+          example: 1
         score:
           type: integer
           description: 評価
