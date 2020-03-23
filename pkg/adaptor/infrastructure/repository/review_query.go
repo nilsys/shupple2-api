@@ -222,3 +222,19 @@ func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyListByReviewCommentID(
 
 	return rows, nil
 }
+
+func (r *ReviewQueryRepositoryImpl) IsExistReviewComment(id int) (bool, error) {
+	var row entity.ReviewComment
+
+	err := r.DB.Find(&row, id).Error
+
+	return ErrorToIsExist(err, "review_comment(id=%d)", id)
+}
+
+func (r *ReviewQueryRepositoryImpl) IsExistReviewCommentFavorite(userID, reviewCommentID int) (bool, error) {
+	var row entity.UserFavoriteReviewComment
+
+	err := r.DB.Where("user_id = ? AND review_comment_id = ?", userID, reviewCommentID).First(&row).Error
+
+	return ErrorToIsExist(err, "review_comment_favorite(user_id=%d,review_comment_id=%d)", userID, reviewCommentID)
+}

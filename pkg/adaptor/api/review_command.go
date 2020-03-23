@@ -89,13 +89,13 @@ func (c *ReviewCommandController) FavoriteReviewComment(ctx echo.Context, user e
 	return ctx.JSON(http.StatusOK, "ok")
 }
 
-func (c *ReviewCommandController) UnFavoriteReviewComment(ctx echo.Context, user entity.User) error {
+func (c *ReviewCommandController) UnfavoriteReviewComment(ctx echo.Context, user entity.User) error {
 	p := &param.FavoriteReviewComment{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation un favorite review comment param")
 	}
 
-	if err := c.ReviewCommandService.UnFavoriteReviewComment(&user, p.ReviewCommentID); err != nil {
+	if err := c.ReviewCommandService.UnfavoriteReviewComment(&user, p.ReviewCommentID); err != nil {
 		return errors.Wrap(err, "failed to un favorite review_comment")
 	}
 

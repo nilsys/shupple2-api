@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -22,7 +23,7 @@ type (
 		CreateReviewComment(user *entity.User, reviewID int, body string) error
 		DeleteReviewComment(user *entity.User, commentID int) error
 		FavoriteReviewComment(user *entity.User, reviewCommentID int) error
-		UnFavoriteReviewComment(user *entity.User, reviewCommentID int) error
+		UnfavoriteReviewComment(user *entity.User, reviewCommentID int) error
 	}
 
 	// Reviewコマンド系サービス実装
@@ -152,6 +153,14 @@ func (s *ReviewCommandServiceImpl) CreateReviewCommentReply(user *entity.User, c
 }
 
 func (s *ReviewCommandServiceImpl) FavoriteReviewComment(user *entity.User, reviewCommentID int) error {
+	isExist, err := s.ReviewQueryRepository.IsExistReviewComment(reviewCommentID)
+	if err != nil {
+		return errors.Wrap(err, "failed to is exist")
+	}
+	if !isExist {
+		return serror.New(nil, serror.CodeNotFound, "review_comment not found")
+	}
+
 	favorite := entity.NewUserFavoriteReviewComment(user.ID, reviewCommentID)
 
 	return s.TransactionService.Do(func(c context.Context) error {
@@ -169,7 +178,16 @@ func (s *ReviewCommandServiceImpl) FavoriteReviewComment(user *entity.User, revi
 	})
 }
 
-func (s *ReviewCommandServiceImpl) UnFavoriteReviewComment(user *entity.User, reviewCommentID int) error {
+// TODO: lock取る
+func (s *ReviewCommandServiceImpl) UnfavoriteReviewComment(user *entity.User, reviewCommentID int) error {
+	isExist, err := s.ReviewQueryRepository.IsExistReviewCommentFavorite(user.ID, reviewCommentID)
+	if err != nil {
+		return errors.Wrap(err, "failed to is exist")
+	}
+	if !isExist {
+		return serror.New(nil, serror.CodeNotFound, "review_comment_favorite not found")
+	}
+
 	return s.TransactionService.Do(func(c context.Context) error {
 		// レビューコメントへのいいねを物理削除
 		if err := s.ReviewCommandRepository.DeleteReviewCommentFavoriteByID(c, user.ID, reviewCommentID); err != nil {

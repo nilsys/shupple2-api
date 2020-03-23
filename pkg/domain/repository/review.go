@@ -17,6 +17,8 @@ type (
 		FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
 		FindByID(reviewID int) (*entity.Review, error)
 		IsExist(id int) (bool, error)
+		IsExistReviewComment(id int) (bool, error)
+		IsExistReviewCommentFavorite(userID, reviewCommentID int) (bool, error)
 		FindReviewCommentReplyListByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error)
 	}
 
