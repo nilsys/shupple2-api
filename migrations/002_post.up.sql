@@ -7,13 +7,11 @@ CREATE TABLE IF NOT EXISTS post (
   facebook_count    INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'facebookシェア数',
   twitter_count     INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'twitterシェア数',
   slug              VARCHAR(255) NOT NULL COMMENT 'wordpressのslugを入れる',
-  views             BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '閲覧数',
   created_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   deleted_at        DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   UNIQUE INDEX post_slug(slug),
-  FULLTEXT KEY(title) WITH PARSER NGRAM,
   CONSTRAINT post_user_id FOREIGN KEY(user_id) REFERENCES user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 COMMENT = 'サイムネイルURLはIDから生成する';
@@ -26,7 +24,6 @@ CREATE TABLE IF NOT EXISTS post_body (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   deleted_at DATETIME DEFAULT NULL,
   PRIMARY KEY (post_id, page),
-  FULLTEXT KEY(body) WITH PARSER NGRAM,
   CONSTRAINT post_body_post_id FOREIGN KEY(post_id) REFERENCES post(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -35,11 +32,14 @@ CREATE TABLE IF NOT EXISTS category (
   parent_id                  BIGINT UNSIGNED DEFAULT NULL COMMENT 'wordpressのIDをそのまま用いる',
   name                       VARCHAR(255) NOT NULL COMMENT '名前',
   type                       TINYINT NOT NULL COMMENT 'カテゴリ種別',
+  metasearch_area_id         BIGINT COMMENT '宿泊検索側のarea_id',
+  metasearch_sub_area_id     BIGINT COMMENT '宿泊検索側のsub_area_id',
+  metasearch_sub_sub_area_id BIGINT COMMENT '宿泊検索側のsub_sub_area_id',
+  metasearch_inn_type_id     BIGINT COMMENT '宿泊検索側の宿タイプid',
   created_at                 DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at                 DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   deleted_at                 DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
-  FULLTEXT KEY(name) WITH PARSER NGRAM,
   CONSTRAINT category_parent_id FOREIGN KEY(parent_id) REFERENCES category(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 COMMENT = 'wordpressのcategoryに相当する';
@@ -55,14 +55,13 @@ CREATE TABLE IF NOT EXISTS post_category (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 COMMENT = 'postに紐づくcategoryを保存するテーブル';
 
-CREATE TABLE hashtag (
+CREATE TABLE IF NOT EXISTS hashtag (
   id         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   name       VARCHAR(255) NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   deleted_at DATETIME DEFAULT NULL,
-  PRIMARY KEY(id),
-  FULLTEXT KEY(name) WITH PARSER NGRAM
+  PRIMARY KEY(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS post_hashtag (
@@ -76,3 +75,14 @@ CREATE TABLE IF NOT EXISTS post_hashtag (
   CONSTRAINT post_hashtag_hashtag_id FOREIGN KEY(hashtag_id) REFERENCES hashtag(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 COMMENT = 'postに紐づくhashtagを保存するテーブル';
+
+CREATE TABLE IF NOT EXISTS user_favorite_post (
+  user_id BIGINT UNSIGNED NOT NULL,
+  post_id BIGINT UNSIGNED NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY(user_id, post_id),
+  CONSTRAINT post_favorite_user_id FOREIGN KEY(user_id) REFERENCES user(id),
+  CONSTRAINT post_favorite_post_id FOREIGN KEY(post_id) REFERENCES post(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+COMMENT = 'ユーザーがお気に入りした投稿';

@@ -7,14 +7,10 @@ CREATE TABLE IF NOT EXISTS review (
   media_count    TINYINT UNSIGNED DEFAULT NULL COMMENT '添付した画像、動画の数',
   body           TEXT NOT NULL COMMENT '本文',
   favorite_count INT UNSIGNED DEFAULT 0 COMMENT 'お気に入りされた数',
-  views          BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '閲覧数',
   created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   deleted_at     DATETIME DEFAULT NULL,
-  PRIMARY KEY(id),
-  CONSTRAINT review_user_id FOREIGN KEY(user_id) REFERENCES user(id),
-  FULLTEXT KEY(body) WITH PARSER NGRAM,
-  CONSTRAINT review_tourist_spot_id FOREIGN KEY(tourist_spot_id) REFERENCES tourist_spot(id)
+  PRIMARY KEY(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS review_media (
