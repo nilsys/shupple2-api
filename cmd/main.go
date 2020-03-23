@@ -37,6 +37,7 @@ type App struct {
 	ReviewCommandController         api.ReviewCommandController
 	ReviewFavoriteCommandController api.ReviewFavoriteCommandController
 	HashtagQueryController          api.HashtagQueryController
+	HashtagCommandController        api.HashtagCommandController
 	SearchQueryController           api.SearchQueryController
 	FeatureQueryController          api.FeatureQueryController
 	VlogQueryController             api.VlogQueryController
@@ -167,6 +168,8 @@ func setRoutes(app *App) {
 	{
 		hashtags := api.Group("/hashtags")
 		hashtags.GET("/recommend", app.HashtagQueryController.ListRecommendHashtag)
+		hashtags.POST("/:id/follow", auth(app.HashtagCommandController.FollowHashtag))
+		hashtags.DELETE("/:id/follow", auth(app.HashtagCommandController.UnfollowHashtag))
 	}
 
 	{

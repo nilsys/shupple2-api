@@ -29,6 +29,7 @@ var controllerSet = wire.NewSet(
 	api.FeatureQueryControllerSet,
 	api.VlogQueryControllerSet,
 	api.HashtagQueryControllerSet,
+	api.HashtagCommandControllerSet,
 	api.UserQueryControllerSet,
 	api.UserCommandControllerSet,
 	api.HealthCheckControllerSet,

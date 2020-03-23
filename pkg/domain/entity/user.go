@@ -84,3 +84,10 @@ func NewUserFollowed(userID, targetID int) *UserFollowed {
 		TargetID: targetID,
 	}
 }
+
+func NewUserFollowHashtag(userID, hashtagID int) *UserFollowHashtag {
+	return &UserFollowHashtag{
+		UserID:    userID,
+		HashtagID: hashtagID,
+	}
+}

@@ -21,5 +21,7 @@ type (
 		Store(hashtag *entity.Hashtag) error
 		IncrementPostCountByPostID(c context.Context, postID int) error
 		DecrementPostCountByPostID(c context.Context, postID int) error
+		StoreHashtagFollow(following *entity.UserFollowHashtag) error
+		DeleteHashtagFollow(userID, hashtagID int) error
 	}
 )

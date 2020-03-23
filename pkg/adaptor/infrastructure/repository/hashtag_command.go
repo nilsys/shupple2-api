@@ -56,3 +56,17 @@ func (r *HashtagCommandRepositoryImpl) DecrementPostCountByPostID(c context.Cont
 	const stmt = "UPDATE hashtag h JOIN post_hashtag ph ON h.id = ph.hashtag_id SET post_count = post_count - 1, score = score - 1 WHERE ph.post_id = ?"
 	return errors.Wrap(r.DB(c).Exec(stmt, postID).Error, "failed to decrement hashtag.post_count")
 }
+
+func (r *HashtagCommandRepositoryImpl) StoreHashtagFollow(following *entity.UserFollowHashtag) error {
+	if err := r.DB(context.TODO()).Save(following).Error; err != nil {
+		return errors.Wrap(err, "failed to store user_follow_hashtag")
+	}
+	return nil
+}
+
+func (r *HashtagCommandRepositoryImpl) DeleteHashtagFollow(userID, hashtagID int) error {
+	if err := r.DB(context.TODO()).Where("user_id = ? AND hashtag_id = ?", userID, hashtagID).Delete(entity.UserFollowHashtag{}).Error; err != nil {
+		return errors.Wrap(err, "failed to delete user_follow_hashtag")
+	}
+	return nil
+}

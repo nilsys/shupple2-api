@@ -11,6 +11,8 @@ type (
 	HashtagCommandService interface {
 		FindOrCreateHashtag(hashtag *entity.Hashtag) (*entity.Hashtag, error)
 		FindOrCreateHashtags(hashtags []string) ([]*entity.Hashtag, error)
+		FollowHashtag(user *entity.User, hashtagID int) error
+		UnfollowHashtag(user *entity.User, hashtagID int) error
 	}
 
 	HashtagCommandServiceImpl struct {
@@ -49,4 +51,13 @@ func (s *HashtagCommandServiceImpl) FindOrCreateHashtags(hashtags []string) ([]*
 	}
 
 	return result, nil
+}
+
+func (s *HashtagCommandServiceImpl) FollowHashtag(user *entity.User, hashtagID int) error {
+	following := entity.NewUserFollowHashtag(user.ID, hashtagID)
+	return s.HashtagCommandRepository.StoreHashtagFollow(following)
+}
+
+func (s *HashtagCommandServiceImpl) UnfollowHashtag(user *entity.User, hashtagID int) error {
+	return s.HashtagCommandRepository.DeleteHashtagFollow(user.ID, hashtagID)
 }

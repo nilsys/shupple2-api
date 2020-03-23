@@ -195,6 +195,9 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	hashtagQueryController := api.HashtagQueryController{
 		HashtagQueryService: hashtagQueryServiceImpl,
 	}
+	hashtagCommandController := api.HashtagCommandController{
+		HashtagCommandService: hashtagCommandServiceImpl,
+	}
 	touristSpotQueryRepositoryImpl := &repository.TouristSpotQueryRepositoryImpl{
 		DB: db,
 	}
@@ -349,6 +352,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		ReviewCommandController:         reviewCommandController,
 		ReviewFavoriteCommandController: reviewFavoriteCommandController,
 		HashtagQueryController:          hashtagQueryController,
+		HashtagCommandController:        hashtagCommandController,
 		SearchQueryController:           searchQueryController,
 		FeatureQueryController:          featureQueryController,
 		VlogQueryController:             vlogQueryController,
@@ -369,7 +373,7 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.PostFavoriteCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet)
+var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.PostFavoriteCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet)
 
 var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet)
 
