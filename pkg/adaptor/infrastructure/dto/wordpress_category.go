@@ -32,6 +32,12 @@ func (wc WordpressCategory) ToEntity() (*wordpress.Category, error) {
 		return nil, errors.Wrap(err, "failed to unmarshal wordpress category attributes")
 	}
 
+	// CategoryTypeが未設定の場合
+	if attrs.CategoryType == "" {
+		wc.Category.Type = wordpress.CategoryTypeUndefined
+		return &wc.Category, nil
+	}
+
 	typeKey := strings.TrimSpace(strings.Split(attrs.CategoryType, ":")[0])
 	typeValue, err := wordpress.ParseCategoryType(typeKey)
 	if err != nil {
