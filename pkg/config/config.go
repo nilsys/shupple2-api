@@ -1,10 +1,12 @@
 package config
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 	"unicode/utf8"
 
 	"github.com/labstack/gommon/log"
@@ -15,16 +17,19 @@ import (
 
 	"github.com/pkg/errors"
 
-	validator "gopkg.in/go-playground/validator.v9"
-	yaml "gopkg.in/yaml.v3"
+	"gopkg.in/go-playground/validator.v9"
+	"gopkg.in/yaml.v3"
 )
 
 // build時にldflagで注入する
 var Version = "unknown"
 
 const (
-	Region = "ap-northeast-1"
-	SSMKEY = "sw-stg-media-api-config"
+	Region           = "ap-northeast-1"
+	StgSsmKey        = "sw-stg-media-api-config"
+	PrdSsmKey        = "sw-prd-media-api-config"
+	StgContainerName = "sw-stg-media-api"
+	PrdContainerName = "sw-prd-media-api"
 )
 
 func GetConfig(filename ConfigFilePath) (*Config, error) {
@@ -33,12 +38,17 @@ func GetConfig(filename ConfigFilePath) (*Config, error) {
 	if utf8.RuneCountInString(url) > 0 {
 		resp, err := http.Get(url)
 		if err != nil || resp.StatusCode == http.StatusOK {
+			var metaData MetaData
 			bodyBytes, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
 				log.Debug("failed aws meta data read response body")
 			}
+			err = json.Unmarshal(bodyBytes, &metaData)
+			if err != nil {
+				log.Debug("failed aws meta data unmarshal")
+			}
 			log.Debugf("ECS CONTAINER METADATA: %s", string(bodyBytes))
-			return getConfigFromSSM()
+			return getConfigFromSSM(metaData.GetSSMKEY())
 		}
 		defer func() {
 			err := resp.Body.Close()
@@ -68,9 +78,9 @@ func GetConfig(filename ConfigFilePath) (*Config, error) {
 	return &config, nil
 }
 
-func getConfigFromSSM() (*Config, error) {
+func getConfigFromSSM(ssmKey string) (*Config, error) {
 	var config Config
-	res, err := fetchParameterStore(SSMKEY)
+	res, err := fetchParameterStore(ssmKey)
 	if err != nil {
 		return nil, err
 	}
@@ -101,4 +111,39 @@ func fetchParameterStore(param string) (string, error) {
 
 	value := *res.Parameter.Value
 	return value, nil
+}
+
+type MetaData struct {
+	DockerID   string `json:"DockerId"`
+	Name       string `json:"Name"`
+	DockerName string `json:"DockerName"`
+	Image      string `json:"Image"`
+	ImageID    string `json:"ImageID"`
+	Labels     struct {
+		ComAmazonawsEcsCluster               string `json:"com.amazonaws.ecs.cluster"`
+		ComAmazonawsEcsContainerName         string `json:"com.amazonaws.ecs.container-name"`
+		ComAmazonawsEcsTaskArn               string `json:"com.amazonaws.ecs.task-arn"`
+		ComAmazonawsEcsTaskDefinitionFamily  string `json:"com.amazonaws.ecs.task-definition-family"`
+		ComAmazonawsEcsTaskDefinitionVersion string `json:"com.amazonaws.ecs.task-definition-version"`
+	} `json:"Labels"`
+	DesiredStatus string `json:"DesiredStatus"`
+	KnownStatus   string `json:"KnownStatus"`
+	Limits        struct {
+		CPU    int `json:"CPU"`
+		Memory int `json:"Memory"`
+	} `json:"Limits"`
+	CreatedAt time.Time `json:"CreatedAt"`
+	Type      string    `json:"Type"`
+	Networks  []struct {
+		NetworkMode   string   `json:"NetworkMode"`
+		IPv4Addresses []string `json:"IPv4Addresses"`
+	} `json:"Networks"`
+}
+
+// SSMKEYを環境で切り替え
+func (m *MetaData) GetSSMKEY() string {
+	if m.Name == PrdContainerName {
+		return PrdSsmKey
+	}
+	return StgSsmKey
 }
