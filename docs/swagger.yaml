@@ -1581,7 +1581,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InnList"
-  /theme:
+  /themes:
     get:
       tags:
       - theme
@@ -1615,14 +1615,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CategoryList"
-  /sub_theme:
+  /sub_themes:
     get:
       tags:
       - sub_theme
       summary: SubTheme取得API
       description: Area系パラメータIDに紐づく記事に紐づくThemeの中からParentThemeIDに紐づくThemeをSubThemeとして取得する
       parameters:
-      - name: parentThemeId
+      - name: themeId
         in: query
         schema:
           type: integer
