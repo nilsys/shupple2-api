@@ -48,6 +48,7 @@ type App struct {
 	S3CommandController             api.S3CommandController
 	TouristSpotQueryController      api.TouristSpotQueryController
 	InteresetQueryController        api.InterestQueryController
+	AreaQueryController             api.AreaQueryController
 	InnQueryController              api.InnQueryController
 }
 
@@ -144,20 +145,20 @@ func setRoutes(app *App) {
 
 	{
 		areas := api.Group("/areas")
-		areas.GET("", app.CategoryQueryController.ListArea)
-		areas.GET("/:id", app.CategoryQueryController.ShowAreaByID)
+		areas.GET("", app.AreaQueryController.ListArea)
+		areas.GET("/:id", app.AreaQueryController.ShowAreaByID)
 	}
 
 	{
 		subAreas := api.Group("/sub_areas")
-		subAreas.GET("", app.CategoryQueryController.ListSubArea)
-		subAreas.GET("/:id", app.CategoryQueryController.ShowSubAreaByID)
+		subAreas.GET("", app.AreaQueryController.ListSubArea)
+		subAreas.GET("/:id", app.AreaQueryController.ShowSubAreaByID)
 	}
 
 	{
 		subSubAreas := api.Group("/sub_sub_areas")
-		subSubAreas.GET("", app.CategoryQueryController.ListSubSubArea)
-		subSubAreas.GET("/:id", app.CategoryQueryController.ShowSubSubAreaByID)
+		subSubAreas.GET("", app.AreaQueryController.ListSubSubArea)
+		subSubAreas.GET("/:id", app.AreaQueryController.ShowSubSubAreaByID)
 	}
 
 	{
