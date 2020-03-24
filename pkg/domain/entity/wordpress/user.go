@@ -12,7 +12,7 @@ type User struct {
 }
 
 type UserAttributes struct {
-	MediaUserID int `json:"media_user_id"`
+	MediaUserID string `json:"media_user_id"`
 }
 
 type AvatarURLs struct {

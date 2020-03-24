@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"path"
 	"regexp"
+	"strings"
 
 	"github.com/google/wire"
 	"github.com/pkg/errors"
@@ -180,6 +181,13 @@ func (r *WordpressQueryRepositoryImpl) gets(wPath string, ids []int, result inte
 }
 
 func (r *WordpressQueryRepositoryImpl) getJSON(url string, result interface{}) error {
+	// query stringがあるとキャッシュが無効になるように設定されているのでここで付与
+	if strings.Contains(url, "?") {
+		url += "&cache_busting"
+	} else {
+		url += "?cache_busting"
+	}
+
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return errors.Wrap(err, "failed to create request")

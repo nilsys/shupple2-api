@@ -2,6 +2,7 @@ package service
 
 import (
 	"database/sql"
+	"strconv"
 	"time"
 
 	"github.com/google/wire"
@@ -81,7 +82,7 @@ func (s *UserCommandServiceImpl) RegisterWordpressUser(wordpressUserID int) erro
 	}
 	wpUser := wpUsers[0]
 
-	if wpUser.Attributes.MediaUserID != 0 {
+	if wpUser.Attributes.MediaUserID != "" {
 		return s.updateMapping(wpUser)
 	}
 
@@ -89,7 +90,12 @@ func (s *UserCommandServiceImpl) RegisterWordpressUser(wordpressUserID int) erro
 }
 
 func (s *UserCommandServiceImpl) updateMapping(wpUser *wordpress.User) error {
-	targetUser, err := s.UserQueryRepository.FindByID(wpUser.Attributes.MediaUserID)
+	mediaUserID, err := strconv.Atoi(wpUser.Attributes.MediaUserID)
+	if err != nil {
+		return errors.Wrap(err, "invalid media_user_id")
+	}
+
+	targetUser, err := s.UserQueryRepository.FindByID(mediaUserID)
 	if err != nil {
 		return errors.Wrap(err, "failed to find target user")
 	}
