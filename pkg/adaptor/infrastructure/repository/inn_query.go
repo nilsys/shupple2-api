@@ -70,8 +70,9 @@ func (r *InnQueryRepositoryImpl) FindByParams(query *query.FindInn) (*entity.Inn
 	opts := buildFindByParamQuery(query)
 
 	var res dto.Inns
-	u := path.Join(r.MetasearchConfig.BaseURL.Path, staywayInnAPIPath)
-	if err := r.Client.GetJSON(u, opts, &res); err != nil {
+	u := r.MetasearchConfig.BaseURL
+	u.Path = path.Join(u.Path, staywayInnAPIPath)
+	if err := r.Client.GetJSON(u.String(), opts, &res); err != nil {
 		return nil, errors.Wrap(err, "failed to get inns from stayway api")
 	}
 
