@@ -67,8 +67,8 @@ func ConvertPostListToOutput(posts []*entity.PostDetail) []*response.Post {
 
 // outputの構造体へconvert
 func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
-	var areaCategories []response.Category
-	var themeCategories []response.Category
+	var areaCategories = make([]response.Category, 0)
+	var themeCategories = make([]response.Category, 0)
 
 	for _, category := range queryPost.Categories {
 		if category.Type.IsAreaKind() {
