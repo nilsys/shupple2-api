@@ -103,3 +103,93 @@ func (innArea *InnArea) ToInnAreaTypeIDs() *entity.InnAreaTypeIDs {
 		SubSubAreaID: innArea.SubSubArea.ID,
 	}
 }
+
+// TODO: 構造体毎、配列含めて各々のコンバータ用意する
+func (inns Inns) ConvertToEntity() *entity.Inns {
+	innsEntity := make([]entity.Inn, len(inns.Inns))
+	for i, InnsDto := range inns.Inns {
+		brand := entity.InnBrand{
+			ID:   InnsDto.Brand.ID,
+			Name: InnsDto.Brand.Name,
+		}
+		innTypes := make([]entity.InnType, len(inns.Inns[i].InnTypes))
+		for n, innType := range inns.Inns[i].InnTypes {
+			innTypes[n] = entity.InnType{
+				ID:   innType.ID,
+				Name: innType.Name,
+				URL:  innType.URL,
+			}
+		}
+		availableCards := make([]entity.AvailableCard, len(inns.Inns[i].AvailableCards))
+		for t, availableCard := range inns.Inns[i].AvailableCards {
+			availableCards[t] = entity.AvailableCard{
+				ID:   availableCard.ID,
+				Name: availableCard.Name,
+			}
+		}
+		roomTypes := make([]entity.RoomType, len(inns.Inns[i].RoomTypes))
+		for s, roomType := range inns.Inns[i].RoomTypes {
+			roomTypes[s] = entity.RoomType{
+				ID:   roomType.ID,
+				Name: roomType.Name,
+			}
+		}
+		trueTags := make([]entity.InnTag, len(inns.Inns[i].TrueTags))
+		for m, trueTag := range inns.Inns[i].TrueTags {
+			trueTags[m] = entity.InnTag{
+				ID:   trueTag.ID,
+				Name: trueTag.Name,
+				URL:  trueTag.URL,
+			}
+		}
+		falseTags := make([]entity.InnTag, len(inns.Inns[i].FalseTags))
+		for c, falseTag := range inns.Inns[i].FalseTags {
+			falseTags[c] = entity.InnTag{
+				ID:   falseTag.ID,
+				Name: falseTag.Name,
+				URL:  falseTag.URL,
+			}
+		}
+		innsEntity[i] = entity.Inn{
+			ID:             InnsDto.ID,
+			Name:           InnsDto.Name,
+			Description:    InnsDto.Description,
+			URL:            InnsDto.URL,
+			Brand:          brand,
+			Thumbnail:      InnsDto.Thumbnail,
+			Latitude:       InnsDto.Latitude,
+			Longitude:      InnsDto.Longitude,
+			CountryCode:    InnsDto.CountryCode,
+			Address:        InnsDto.Address,
+			PostCode:       InnsDto.PostCode,
+			Phone:          InnsDto.Phone,
+			Access:         InnsDto.Access,
+			StayDaysMin:    InnsDto.StayDaysMin,
+			StayDaysMax:    InnsDto.StayDaysMax,
+			CheckInTime:    InnsDto.CheckInTime,
+			CheckOutTime:   InnsDto.CheckOutTime,
+			RoomCount:      InnsDto.RoomCount,
+			BedCount:       InnsDto.BedCount,
+			Score:          InnsDto.Score,
+			ReviewCount:    InnsDto.ReviewCount,
+			MinPrice:       InnsDto.MinPrice,
+			MaxPrice:       InnsDto.MaxPrice,
+			InnTypes:       innTypes,
+			AvailableCards: availableCards,
+			RoomTypes:      roomTypes,
+			TrueTags:       trueTags,
+			FalseTags:      falseTags,
+		}
+	}
+	return &entity.Inns{
+		Count: inns.Count,
+		Rectangle: struct {
+			LatNE float64 `json:"latNE"`
+			LngNE float64 `json:"lngNE"`
+			LatSW float64 `json:"latSW"`
+			LngSW float64 `json:"lngSW"`
+		}{LatNE: inns.Rectangle.LatNE, LngNE: inns.Rectangle.LngNE, LatSW: inns.Rectangle.LatSW, LngSW: inns.Rectangle.LngSW},
+		Inns:    innsEntity,
+		HasNext: inns.HasNext,
+	}
+}

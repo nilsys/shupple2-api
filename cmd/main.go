@@ -48,6 +48,7 @@ type App struct {
 	S3CommandController             api.S3CommandController
 	TouristSpotQueryController      api.TouristSpotQueryController
 	InteresetQueryController        api.InterestQueryController
+	InnQueryController              api.InnQueryController
 }
 
 func run() error {
@@ -175,6 +176,11 @@ func setRoutes(app *App) {
 	{
 		interests := api.Group("/interests")
 		interests.GET("", app.InteresetQueryController.ListAll)
+	}
+
+	{
+		inns := api.Group("/inns")
+		inns.GET("", app.InnQueryController.ListByParams)
 	}
 
 	api.POST("/s3", auth(app.S3CommandController.Post))

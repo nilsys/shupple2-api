@@ -5,6 +5,8 @@ import (
 	"path"
 	"strconv"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
@@ -48,7 +50,6 @@ func (r *InnQueryRepositoryImpl) FindIDsByAreaID(areaId, subAreaId, subSubAreaId
 	if err := r.Client.GetJSON(u.String(), opts, &res); err != nil {
 		return nil, errors.Wrapf(err, "failed to get inns from stayway api by areaID: %d subAreaID: %d subSubAreaID: %d", areaId, subAreaId, subSubAreaId)
 	}
-
 	return res.InnsToIDs(), nil
 }
 
@@ -63,6 +64,18 @@ func (r *InnQueryRepositoryImpl) FindAreaIDsByID(id int) (*entity.InnAreaTypeIDs
 	}
 
 	return res.ToInnAreaTypeIDs(), nil
+}
+
+func (r *InnQueryRepositoryImpl) FindByParams(query *query.FindInn) (*entity.Inns, error) {
+	opts := buildFindByParamQuery(query)
+
+	var res dto.Inns
+	u := path.Join(r.MetasearchConfig.BaseURL.Path, staywayInnAPIPath)
+	if err := r.Client.GetJSON(u, opts, &res); err != nil {
+		return nil, errors.Wrap(err, "failed to get inns from stayway api")
+	}
+
+	return res.ConvertToEntity(), nil
 }
 
 func buildFindIDsByAreaIDQuery(areaId, subAreaId, subSubAreaId int) *client.Option {
@@ -80,6 +93,31 @@ func buildFindIDsByAreaIDQuery(areaId, subAreaId, subSubAreaId int) *client.Opti
 
 	if subSubAreaId != 0 {
 		opts.QueryParams.Add("sub_sub_are_id", strconv.Itoa(subSubAreaId))
+	}
+
+	opts.QueryParams.Add("per_page", strconv.Itoa(defaultAcquisitionNumber))
+
+	return opts
+}
+
+func buildFindByParamQuery(query *query.FindInn) *client.Option {
+	opts := &client.Option{
+		QueryParams: map[string][]string{},
+	}
+
+	if query.MetasearchAreaId != 0 {
+		opts.QueryParams.Add("area_id", strconv.Itoa(query.MetasearchAreaId))
+	}
+
+	if query.MetasearchSubAreaID != 0 {
+		opts.QueryParams.Add("sub_area_id", strconv.Itoa(query.MetasearchSubAreaID))
+	}
+
+	if query.MetasearchSubSubAreaID != 0 {
+		opts.QueryParams.Add("sub_sub_area_id", strconv.Itoa(query.MetasearchSubSubAreaID))
+	}
+	if query.Latitude != 0 && query.Longitude != 0 {
+		opts.QueryParams.Add("geocode", query.GetGeoCode())
 	}
 
 	opts.QueryParams.Add("per_page", strconv.Itoa(defaultAcquisitionNumber))

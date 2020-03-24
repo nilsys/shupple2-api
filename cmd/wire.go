@@ -36,6 +36,7 @@ var controllerSet = wire.NewSet(
 	api.WordpressCallbackControllerSet,
 	api.S3CommandControllerSet,
 	api.InterestQueryControllerSet,
+	api.InnQueryControllerSet,
 )
 
 var scenarioSet = wire.NewSet(
@@ -70,6 +71,7 @@ var serviceSet = wire.NewSet(
 	service.S3CommandServiceSet,
 	service.ProvideAuthService,
 	service.InterestQueryServiceSet,
+	service.InnQueryServiceSet,
 )
 
 var factorySet = wire.NewSet(
