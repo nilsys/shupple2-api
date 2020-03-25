@@ -32,7 +32,7 @@ paths:
 
         そのUUIDからアップロードされた画像を特定し、S3上の/users/icon/${userID}に移動する。
       requestBody:
-        $ref: "#/components/requestBodies/UserRequest"
+        $ref: "#/components/requestBodies/UserUpdateRequest"
       responses:
         "200":
           description: 成功
@@ -1090,7 +1090,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VlogList"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  vlogs:
+                    $ref: "#/components/schemas/VlogList"
   /vlogs/{id}:
     get:
       tags:
@@ -1145,7 +1152,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ComicList"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  posts:
+                    $ref: "#/components/schemas/ComicList"
   "/comics/{id}":
     get:
       tags:
@@ -1716,11 +1730,11 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/UserRegisterRequest"
-    UserRequest:
+    UserUpdateRequest:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/UserRequest"
+            $ref: "#/components/schemas/UserUpdateRequest"
       required: true
     ReviewRequest:
       content:
@@ -1741,7 +1755,7 @@ components:
       type: apiKey
       description: CognitoIDPから取得するDToken
   schemas:
-    UserRequest:
+    UserUpdateRequest:
       type: object
       properties:
         name:
@@ -1770,6 +1784,26 @@ components:
         pinnedPostId:
           type: integer
           description: 一番上に表示される記事
+        url:
+          type: string
+          description: 任意のurl
+          example: https://hoge.com
+        facebookUrl:
+          type: string
+          description: facebookのurl
+          example: https://facebook.com
+        instagramUrl:
+          type: string
+          description: instagramのurl
+          example: https://instagram.com
+        twitterUrl:
+          type: string
+          description: twitterのurl
+          example: https://twitter.com
+        livingArea:
+          type: string
+          description: 居住エリア
+          example: 東北
         interests:
           type: array
           items:
