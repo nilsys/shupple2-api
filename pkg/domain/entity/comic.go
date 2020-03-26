@@ -15,6 +15,11 @@ type (
 		DeletedAt *time.Time
 	}
 
+	ComicList struct {
+		TotalNumber int
+		Comics      []*Comic
+	}
+
 	QueryComic struct {
 		Comic
 		User *User `gorm:"foreignkey:UserID"`

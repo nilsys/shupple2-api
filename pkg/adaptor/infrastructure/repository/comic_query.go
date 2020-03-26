@@ -27,12 +27,12 @@ func (r *ComicQueryRepositoryImpl) FindByID(id int) (*entity.QueryComic, error) 
 }
 
 // 作成日時降順に指定されたlimit, offsetで一覧取得
-func (r *ComicQueryRepositoryImpl) FindListOrderByCreatedAt(query *query.FindListPaginationQuery) ([]*entity.Comic, error) {
-	var rows []*entity.Comic
+func (r *ComicQueryRepositoryImpl) FindListOrderByCreatedAt(query *query.FindListPaginationQuery) (*entity.ComicList, error) {
+	var rows entity.ComicList
 
-	if err := r.DB.Order("created_at desc").Limit(query.Limit).Offset(query.Offset).Find(&rows).Error; err != nil {
+	if err := r.DB.Order("created_at desc").Limit(query.Limit).Offset(query.Offset).Find(&rows.Comics).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed find comics")
 	}
 
-	return rows, nil
+	return &rows, nil
 }

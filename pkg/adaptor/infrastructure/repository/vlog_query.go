@@ -35,8 +35,8 @@ func (r *VlogQueryRepositoryImpl) FindWithTouristSpotsByID(id int) (*entity.Vlog
 	return &row, nil
 }
 
-func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuery) ([]*entity.VlogDetail, error) {
-	var rows []*entity.VlogDetail
+func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuery) (*entity.VlogDetailList, error) {
+	var rows entity.VlogDetailList
 
 	q := r.buildFindByParamsQuery(query)
 
@@ -44,11 +44,11 @@ func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuer
 		Order(query.SortBy.GetVlogOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
-		Find(&rows).Error; err != nil {
+		Find(&rows.Vlogs).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find vlogs by params")
 	}
 
-	return rows, nil
+	return &rows, nil
 }
 
 // クエリ構造体を用い、FindListByParams()で使用するsqlクエリを作成

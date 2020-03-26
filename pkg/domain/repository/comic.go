@@ -13,6 +13,6 @@ type (
 
 	ComicQueryRepository interface {
 		FindByID(id int) (*entity.QueryComic, error)
-		FindListOrderByCreatedAt(query *query.FindListPaginationQuery) ([]*entity.Comic, error)
+		FindListOrderByCreatedAt(query *query.FindListPaginationQuery) (*entity.ComicList, error)
 	}
 )

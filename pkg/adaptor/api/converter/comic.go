@@ -17,14 +17,17 @@ func ConvertShowComicListParamToQuery(param *param.ShowComicListParam) *query.Fi
 }
 
 // ConvertComicToOutput()のスライスバージョン
-func ConvertComicListToOutput(comics []*entity.Comic) []*response.Comic {
-	responseComics := make([]*response.Comic, len(comics))
+func ConvertComicListToOutput(comics *entity.ComicList) response.ComicList {
+	responseComics := make([]*response.Comic, len(comics.Comics))
 
-	for i, comic := range comics {
+	for i, comic := range comics.Comics {
 		responseComics[i] = convertComicToOutput(comic)
 	}
 
-	return responseComics
+	return response.ComicList{
+		TotalNumber: comics.TotalNumber,
+		Comics:      responseComics,
+	}
 }
 
 func ConvertQueryComicOutput(queryComic *entity.QueryComic) *response.ShowComic {

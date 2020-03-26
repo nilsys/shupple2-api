@@ -22,14 +22,17 @@ func ConvertListVlogParamToQuery(param *param.ListVlogParam) *query.FindVlogList
 	}
 }
 
-func ConvertVlogListToOutput(queryVlogs []*entity.VlogDetail) []*response.Vlog {
-	responseVlogs := make([]*response.Vlog, len(queryVlogs))
+func ConvertVlogDetailListToOutput(queryVlogs *entity.VlogDetailList) response.VlogList {
+	responseVlogs := make([]*response.Vlog, len(queryVlogs.Vlogs))
 
-	for i, queryVlog := range queryVlogs {
+	for i, queryVlog := range queryVlogs.Vlogs {
 		responseVlogs[i] = convertVlogToOutput(queryVlog)
 	}
 
-	return responseVlogs
+	return response.VlogList{
+		TotalNumber: queryVlogs.TotalNumber,
+		Vlogs:       responseVlogs,
+	}
 }
 
 func ConvertVlogDetailWithTouristSpots(vlog *entity.VlogDetailWithTouristSpots) *response.VlogDetail {

@@ -11,6 +11,11 @@ type (
 		ThemeCategories []Category `json:"themeCategories"`
 	}
 
+	VlogList struct {
+		TotalNumber int     `json:"totalNumber"`
+		Vlogs       []*Vlog `json:"vlogs"`
+	}
+
 	VlogDetail struct {
 		ID              int                `json:"id"`
 		Thumbnail       string             `json:"thumbnail"`

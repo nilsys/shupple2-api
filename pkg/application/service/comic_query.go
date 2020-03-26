@@ -12,7 +12,7 @@ type (
 	// Comic参照系サービス
 	ComicQueryService interface {
 		Show(id int) (*entity.QueryComic, error)
-		ShowList(query *query.FindListPaginationQuery) ([]*entity.Comic, error)
+		ShowList(query *query.FindListPaginationQuery) (*entity.ComicList, error)
 	}
 
 	// Comic参照系サービス実装
@@ -38,6 +38,6 @@ func (s *ComicQueryServiceImpl) Show(id int) (*entity.QueryComic, error) {
 }
 
 // Comic一覧参照
-func (s *ComicQueryServiceImpl) ShowList(query *query.FindListPaginationQuery) ([]*entity.Comic, error) {
+func (s *ComicQueryServiceImpl) ShowList(query *query.FindListPaginationQuery) (*entity.ComicList, error) {
 	return s.ComicQueryRepository.FindListOrderByCreatedAt(query)
 }

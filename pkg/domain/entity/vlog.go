@@ -48,6 +48,11 @@ type (
 		Categories []*Category `gorm:"many2many:vlog_category;jointable_foreignkey:vlog_id;"`
 	}
 
+	VlogDetailList struct {
+		TotalNumber int
+		Vlogs       []*VlogDetail
+	}
+
 	VlogDetailWithTouristSpots struct {
 		VlogTiny
 		User         *User          `gorm:"foreignkey:UserID"`

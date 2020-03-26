@@ -43,5 +43,5 @@ func (c *VlogQueryController) ListVlog(ctx echo.Context) error {
 		return errors.Wrap(err, "failed show vlog list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertVlogListToOutput(vlogs))
+	return ctx.JSON(http.StatusOK, converter.ConvertVlogDetailListToOutput(vlogs))
 }
