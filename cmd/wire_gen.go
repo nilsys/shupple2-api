@@ -41,7 +41,10 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
 		DB: db,
 	}
-	authorizeWrapper := middleware.NewAuthorizeWrapper(configConfig, authService, userQueryRepositoryImpl)
+	authorize := middleware.Authorize{
+		AuthService: authService,
+		UserRepo:    userQueryRepositoryImpl,
+	}
 	dao := repository.DAO{
 		DB_: db,
 	}
@@ -356,7 +359,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 	app := &App{
 		Config:                          configConfig,
 		Echo:                            echoEcho,
-		AuthorizeWrapper:                authorizeWrapper,
+		AuthorizeWrapper:                authorize,
 		PostCommandController:           postCommandController,
 		PostQueryController:             postQueryController,
 		PostFavoriteCommandController:   postFavoriteCommandController,

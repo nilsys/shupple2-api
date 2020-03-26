@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
@@ -62,5 +64,33 @@ func (c *UserQueryController) ListFollowedUsers(ctx echo.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to list user follower")
 	}
+	return ctx.JSON(http.StatusOK, converter.ConvertUsersToFollowUsers(users))
+}
+
+func (c *UserQueryController) ListFavoritePostUser(ctx echo.Context, user entity.OptionalUser) error {
+	p := &param.ListFavoriteMediaUser{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "")
+	}
+
+	users, err := c.UserQueryService.ListFavoritePostUser(p.MediaID, &user, converter.ConvertListFavoriteMediaUserToQuery(p))
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertUsersToFollowUsers(users))
+}
+
+func (c *UserQueryController) ListFavoriteReviewUser(ctx echo.Context, user entity.OptionalUser) error {
+	p := &param.ListFavoriteMediaUser{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "")
+	}
+
+	users, err := c.UserQueryService.ListFavoriteReviewUser(p.MediaID, &user, converter.ConvertListFavoriteMediaUserToQuery(p))
+	if err != nil {
+		return err
+	}
+
 	return ctx.JSON(http.StatusOK, converter.ConvertUsersToFollowUsers(users))
 }

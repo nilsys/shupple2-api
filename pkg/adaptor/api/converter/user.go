@@ -62,6 +62,13 @@ func ConvertStoreUserParamToEntity(param *param.StoreUser) *entity.User {
 	}
 }
 
+func ConvertListFavoriteMediaUserToQuery(param *param.ListFavoriteMediaUser) *query.FindListPaginationQuery {
+	return &query.FindListPaginationQuery{
+		Limit:  param.GetLimit(),
+		Offset: param.GetOffset(),
+	}
+}
+
 /*
  * i -> o
  */

@@ -55,7 +55,7 @@ func ConvertVlogDetailWithTouristSpots(vlog *entity.VlogDetailWithTouristSpots) 
 		Title:           vlog.Title,
 		Body:            vlog.Body,
 		Series:          vlog.Series,
-		Creator:         response.NewCreator(vlog.User.ID, vlog.User.GenerateThumbnailURL(), vlog.User.Name, vlog.User.Profile),
+		Creator:         response.NewCreator(vlog.User.ID, vlog.User.UID, vlog.User.GenerateThumbnailURL(), vlog.User.Name, vlog.User.Profile),
 		CreatorSNS:      vlog.UserSNS,
 		EditorName:      vlog.EditorName,
 		YoutubeURL:      vlog.YoutubeURL,

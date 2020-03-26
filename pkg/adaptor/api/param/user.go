@@ -40,6 +40,13 @@ type (
 	FollowParam struct {
 		ID int `param:"id" validate:"required"`
 	}
+
+	// 記事、レビューにいいねしているユーザー一覧
+	ListFavoriteMediaUser struct {
+		MediaID int `param:"id" validate:"required"`
+		PerPage int `query:"perPage"`
+		Page    int `query:"page"`
+	}
 )
 
 const getUsersDefaultPerPage = 30
@@ -96,4 +103,18 @@ func (param *ListFollowUser) GetOffset() int {
 		return 0
 	}
 	return param.GetLimit()*(param.Page-1) + 1
+}
+
+func (p *ListFavoriteMediaUser) GetLimit() int {
+	if p.PerPage == 0 {
+		return getUsersDefaultPerPage
+	}
+	return p.PerPage
+}
+
+func (p *ListFavoriteMediaUser) GetOffset() int {
+	if p.Page == 1 || p.Page == 0 {
+		return 0
+	}
+	return p.GetLimit()*(p.Page-1) + 1
 }

@@ -26,6 +26,11 @@ type (
 		DeletedAt     *time.Time
 	}
 
+	OptionalUser struct {
+		User
+		Authenticated bool
+	}
+
 	// MEMO: 他でも使う様になったら名前変更
 	QueryRankingUser struct {
 		User
@@ -90,4 +95,8 @@ func NewUserFollowHashtag(userID, hashtagID int) *UserFollowHashtag {
 		UserID:    userID,
 		HashtagID: hashtagID,
 	}
+}
+
+func (u *OptionalUser) IsAuthorized() bool {
+	return u.Authenticated
 }

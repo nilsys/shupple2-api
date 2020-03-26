@@ -89,7 +89,7 @@ func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {
 		client.NewClient,
 		wire.Value(&client.Config{}),
 		wire.FieldsOf(new(*config.Config), "Wordpress", "Stayway", "AWS"),
-		middleware.NewAuthorizeWrapper,
+		middleware.AuthorizeSet,
 		controllerSet,
 		scenarioSet,
 		serviceSet,

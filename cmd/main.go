@@ -27,7 +27,7 @@ func main() {
 type App struct {
 	Config                          *config.Config
 	Echo                            *echo.Echo
-	AuthorizeWrapper                staywayMiddleware.AuthorizeWrapper
+	AuthorizeWrapper                staywayMiddleware.Authorize
 	PostCommandController           api.PostCommandController
 	PostQueryController             api.PostQueryController
 	PostFavoriteCommandController   api.PostFavoriteCommandController
@@ -78,8 +78,8 @@ func setRoutes(app *App) {
 		posts.POST("", app.PostCommandController.Store)
 		posts.GET("/:id", app.PostQueryController.Show)
 		posts.GET("/:slug/slug", app.PostQueryController.ShowBySlug)
-		posts.PUT("/:id/favorite", auth(app.PostFavoriteCommandController.Store))
-		posts.DELETE("/:id/favorite", auth(app.PostFavoriteCommandController.Delete))
+		posts.PUT("/:id/favorite", auth.Require(app.PostFavoriteCommandController.Store))
+		posts.DELETE("/:id/favorite", auth.Require(app.PostFavoriteCommandController.Delete))
 	}
 
 	{
@@ -88,34 +88,36 @@ func setRoutes(app *App) {
 		users.GET("/:id/posts/feed", app.PostQueryController.ListFeedPost)
 		users.GET("/:id/reviews/feed", app.ReviewQueryController.ListFeedReview)
 		users.GET("/ranking", app.UserQueryController.ShowUserRanking)
-		users.POST("/:id/follow", auth(app.UserCommandController.Follow))
-		users.DELETE("/:id/follow", auth(app.UserCommandController.Unfollow))
+		users.POST("/:id/follow", auth.Require(app.UserCommandController.Follow))
+		users.DELETE("/:id/follow", auth.Require(app.UserCommandController.Unfollow))
 		users.GET("/:id/following", app.UserQueryController.ListFollowingUsers)
 		users.GET("/:id/followed", app.UserQueryController.ListFollowedUsers)
 		users.GET("/:id/feed/posts", app.PostQueryController.ListFeedPost)
 		users.GET("/:id/feed/reviews", app.ReviewQueryController.ListFeedReview)
 		users.GET("/:id/favorite/posts", app.PostQueryController.ListFavoritePost)
 		users.GET("/:id/favorite/reviews", app.ReviewQueryController.ListFavoriteReview)
+		users.GET("/favorite/reviews/:id", auth.Optional(app.UserQueryController.ListFavoriteReviewUser))
+		users.GET("/favorite/posts/:id", auth.Optional(app.UserQueryController.ListFavoritePostUser))
 	}
 
 	{
 		reviews := api.Group("/reviews")
 		reviews.GET("", app.ReviewQueryController.LisReview)
-		reviews.DELETE("/comment/:id", auth(app.ReviewCommandController.DeleteReviewComment))
-		reviews.POST("/:id/comment", auth(app.ReviewCommandController.StoreReviewComment))
+		reviews.DELETE("/comment/:id", auth.Require(app.ReviewCommandController.DeleteReviewComment))
+		reviews.POST("/:id/comment", auth.Require(app.ReviewCommandController.StoreReviewComment))
 		reviews.GET("/:id/comment", app.ReviewQueryController.ListReviewCommentByReviewID)
-		reviews.POST("", auth(app.ReviewCommandController.Store))
-		reviews.PUT("/:id", auth(app.ReviewCommandController.Update))
-		reviews.DELETE("/:id", auth(app.ReviewCommandController.Delete))
+		reviews.POST("", auth.Require(app.ReviewCommandController.Store))
+		reviews.PUT("/:id", auth.Require(app.ReviewCommandController.Update))
+		reviews.DELETE("/:id", auth.Require(app.ReviewCommandController.Delete))
 		reviews.GET("/:id", app.ReviewQueryController.ShowReview)
-		reviews.POST("/:id/comment", auth(app.ReviewCommandController.StoreReviewComment))
+		reviews.POST("/:id/comment", auth.Require(app.ReviewCommandController.StoreReviewComment))
 		reviews.GET("/:id/comment", app.ReviewQueryController.ListReviewCommentByReviewID)
 		reviews.GET("/comment/:id/reply", app.ReviewQueryController.ListReviewCommentReply)
-		reviews.POST("/comment/:id/reply", auth(app.ReviewCommandController.StoreReviewCommentReply))
-		reviews.PUT("/comment/:id/favorite", auth(app.ReviewCommandController.FavoriteReviewComment))
-		reviews.DELETE("/comment/:id/favorite", auth(app.ReviewCommandController.UnfavoriteReviewComment))
-		reviews.PUT("/:id/favorite", auth(app.ReviewFavoriteCommandController.Store))
-		reviews.DELETE("/:id/favorite", auth(app.ReviewFavoriteCommandController.Delete))
+		reviews.POST("/comment/:id/reply", auth.Require(app.ReviewCommandController.StoreReviewCommentReply))
+		reviews.PUT("/comment/:id/favorite", auth.Require(app.ReviewCommandController.FavoriteReviewComment))
+		reviews.DELETE("/comment/:id/favorite", auth.Require(app.ReviewCommandController.UnfavoriteReviewComment))
+		reviews.PUT("/:id/favorite", auth.Require(app.ReviewFavoriteCommandController.Store))
+		reviews.DELETE("/:id/favorite", auth.Require(app.ReviewFavoriteCommandController.Delete))
 	}
 
 	{
@@ -170,8 +172,8 @@ func setRoutes(app *App) {
 	{
 		hashtags := api.Group("/hashtags")
 		hashtags.GET("/recommend", app.HashtagQueryController.ListRecommendHashtag)
-		hashtags.POST("/:id/follow", auth(app.HashtagCommandController.FollowHashtag))
-		hashtags.DELETE("/:id/follow", auth(app.HashtagCommandController.UnfollowHashtag))
+		hashtags.POST("/:id/follow", auth.Require(app.HashtagCommandController.FollowHashtag))
+		hashtags.DELETE("/:id/follow", auth.Require(app.HashtagCommandController.UnfollowHashtag))
 	}
 
 	{
@@ -184,7 +186,7 @@ func setRoutes(app *App) {
 		inns.GET("", app.InnQueryController.ListByParams)
 	}
 
-	api.POST("/s3", auth(app.S3CommandController.Post))
+	api.POST("/s3", auth.Require(app.S3CommandController.Post))
 	api.GET("/healthcheck", app.HealthCheckController.HealthCheck)
 	api.GET("/search/suggestions", app.SearchQueryController.ListSearchSuggestion)
 	api.POST(

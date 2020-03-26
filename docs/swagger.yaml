@@ -127,7 +127,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FollowUserList"
+                $ref: "#/components/schemas/MinorUserList"
   /users/{id}/followed:
     get:
       tags:
@@ -148,7 +148,45 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FollowUserList"
+                $ref: "#/components/schemas/MinorUserList"
+  /users/favorite/reviews/:id:
+    get:
+      tags:
+        - user
+      summary: レビューにfavしているユーザー一覧取得API
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: reviewId
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MinorUserList"
+  /users/favorite/posts/:id:
+    get:
+      tags:
+        - user
+      summary: 記事にfavしているユーザー一覧取得API
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: reviewId
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MinorUserList"
   /notice:
     get:
       security:
@@ -530,7 +568,7 @@ paths:
       responses:
         "200":
           description: OK
-      
+
   /reviews/:id/favorite:
     put:
       tags:
@@ -619,7 +657,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-    
+
   /user/{userId}/feed/reviews:
     get:
       tags:
@@ -1598,30 +1636,30 @@ paths:
   /themes:
     get:
       tags:
-      - theme
+        - theme
       summary: Theme取得API
       description: Area系パラメータIDに紐づく記事に紐づくThemeの一覧を取得する
       parameters:
-      - name: excludeId
-        in: query
-        description: 除外するカテゴリーのID
-        schema:
-          type: integer
-      - name: areaId
-        in: query
-        description: AreaのID
-        schema:
-          type: integer
-      - name: subAreaId
-        in: query
-        description: SubAreaのID
-        schema:
-          type: integer
-      - name: subSubAreaId
-        in: query
-        description: SubSubAreaのID
-        schema:
-          type: integer
+        - name: excludeId
+          in: query
+          description: 除外するカテゴリーのID
+          schema:
+            type: integer
+        - name: areaId
+          in: query
+          description: AreaのID
+          schema:
+            type: integer
+        - name: subAreaId
+          in: query
+          description: SubAreaのID
+          schema:
+            type: integer
+        - name: subSubAreaId
+          in: query
+          description: SubSubAreaのID
+          schema:
+            type: integer
       responses:
         "200":
           description: OK
@@ -1632,34 +1670,34 @@ paths:
   /sub_themes:
     get:
       tags:
-      - sub_theme
+        - sub_theme
       summary: SubTheme取得API
       description: Area系パラメータIDに紐づく記事に紐づくThemeの中からParentThemeIDに紐づくThemeをSubThemeとして取得する
       parameters:
-      - name: themeId
-        in: query
-        schema:
-          type: integer
-      - name: excludeId
-        in: query
-        description: 除外するカテゴリーのID
-        schema:
-          type: integer
-      - name: areaId
-        in: query
-        description: AreaのID
-        schema:
-          type: integer
-      - name: subAreaId
-        in: query
-        description: SubAreaのID
-        schema:
-          type: integer
-      - name: subSubAreaId
-        in: query
-        description: SubSubAreaのID
-        schema:
-          type: integer
+        - name: themeId
+          in: query
+          schema:
+            type: integer
+        - name: excludeId
+          in: query
+          description: 除外するカテゴリーのID
+          schema:
+            type: integer
+        - name: areaId
+          in: query
+          description: AreaのID
+          schema:
+            type: integer
+        - name: subAreaId
+          in: query
+          description: SubAreaのID
+          schema:
+            type: integer
+        - name: subSubAreaId
+          in: query
+          description: SubSubAreaのID
+          schema:
+            type: integer
       responses:
         "200":
           description: OK
@@ -1811,7 +1849,7 @@ components:
     UserRegisterRequest:
       type: object
       properties:
-        cognitoToken: 
+        cognitoToken:
           type: string
           description: cognitoで認証して得られたJWT
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NzcifQ.Gu9mozICWKVRA-32hPAIPNPWe-fNPCQbnV8MKt8vRag"
@@ -2204,7 +2242,7 @@ components:
           items:
             $ref: "#/components/schemas/Category"
         hashtags:
-            $ref: "#/components/schemas/HashtagList"
+          $ref: "#/components/schemas/HashtagList"
         title:
           type: string
           description: 記事タイトル
@@ -2689,6 +2727,10 @@ components:
           type: integer
           description: ユーザーID
           example: 1
+        uid:
+          type: string
+          description: ユーザーが一意に決めるID
+          example: "yuta0817"
         iconUrl:
           type: string
           description: アイコンURL
@@ -2740,6 +2782,10 @@ components:
           type: integer
           description: ユーザーID
           example: 1
+        uid:
+          type: string
+          description: ユーザーが一意に決めるID
+          example: "yuta0817"
         name:
           type: string
           description: 名前
@@ -2762,17 +2808,21 @@ components:
           example:
             - 沖縄
             - 夜景
-    FollowUserList:
+    MinorUserList:
       type: array
       items:
-        $ref: "#/components/schemas/FollowUser"
-    FollowUser:
+        $ref: "#/components/schemas/MinorUser"
+    MinorUser:
       type: object
       properties:
         id:
           type: integer
           description: ユーザーID
           example: 1
+        uid:
+          type: string
+          description: ユーザーが一意に決めるID
+          example: "yuta0817"
         name:
           type: string
           description: 名前

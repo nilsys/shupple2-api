@@ -25,5 +25,9 @@ type (
 		SearchByName(name string) ([]*entity.User, error)
 		FindFollowingByID(query *query.FindFollowUser) ([]*entity.User, error)
 		FindFollowedByID(query *query.FindFollowUser) ([]*entity.User, error)
+		FindFavoritePostUser(postID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
+		FindFavoriteReviewUser(reviewID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
+		FindFavoritePostUserByUserID(postID, userID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
+		FindFavoriteReviewUserByUserID(reviewID, userID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
 	}
 )

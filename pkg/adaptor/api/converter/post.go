@@ -125,7 +125,7 @@ func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *r
 		FacebookCount:   post.FacebookCount,
 		TwitterCount:    post.TwitterCount,
 		Views:           post.Views,
-		Creator:         response.NewCreator(post.User.ID, post.User.GenerateThumbnailURL(), post.User.Name, post.User.Profile),
+		Creator:         response.NewCreator(post.User.ID, post.User.UID, post.User.GenerateThumbnailURL(), post.User.Name, post.User.Profile),
 		AreaCategories:  areaCategories,
 		ThemeCategories: themeCategories,
 		Hashtags:        hashtags,

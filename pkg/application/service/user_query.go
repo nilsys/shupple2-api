@@ -12,6 +12,8 @@ type (
 		ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.QueryRankingUser, error)
 		ListFollowing(query *query.FindFollowUser) ([]*entity.User, error)
 		ListFollowed(query *query.FindFollowUser) ([]*entity.User, error)
+		ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.User, error)
+		ListFavoriteReviewUser(reviewID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.User, error)
 	}
 
 	UserQueryServiceImpl struct {
@@ -34,4 +36,20 @@ func (s *UserQueryServiceImpl) ListFollowing(query *query.FindFollowUser) ([]*en
 
 func (s *UserQueryServiceImpl) ListFollowed(query *query.FindFollowUser) ([]*entity.User, error) {
 	return s.UserQueryRepository.FindFollowedByID(query)
+}
+
+func (s *UserQueryServiceImpl) ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.User, error) {
+	if user.IsAuthorized() {
+		return s.UserQueryRepository.FindFavoritePostUserByUserID(postID, user.ID, query)
+	}
+
+	return s.UserQueryRepository.FindFavoritePostUser(postID, query)
+}
+
+func (s *UserQueryServiceImpl) ListFavoriteReviewUser(reviewID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.User, error) {
+	if user.IsAuthorized() {
+		return s.UserQueryRepository.FindFavoriteReviewUserByUserID(reviewID, user.ID, query)
+	}
+
+	return s.UserQueryRepository.FindFavoriteReviewUser(reviewID, query)
 }
