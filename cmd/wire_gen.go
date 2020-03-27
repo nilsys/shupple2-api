@@ -16,6 +16,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
+	service2 "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 )
 
 import (
@@ -158,6 +159,16 @@ func InitializeApp(configFilePath2 config.FilePath) (*App, error) {
 	touristSpotCommandRepositoryImpl := &repository.TouristSpotCommandRepositoryImpl{
 		DAO: dao,
 	}
+	noticeCommandRepositoryImpl := &repository.NoticeCommandRepositoryImpl{
+		DAO: dao,
+	}
+	taggedUserDomainServiceImpl := service2.TaggedUserDomainServiceImpl{
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
+	noticeDomainServiceImpl := service2.NoticeDomainServiceImpl{
+		NoticeCommandRepository: noticeCommandRepositoryImpl,
+		TaggedUserDomainService: taggedUserDomainServiceImpl,
+	}
 	reviewCommandServiceImpl := &service.ReviewCommandServiceImpl{
 		ReviewQueryRepository:        reviewQueryRepositoryImpl,
 		ReviewCommandRepository:      reviewCommandRepositoryImpl,
@@ -165,6 +176,7 @@ func InitializeApp(configFilePath2 config.FilePath) (*App, error) {
 		CategoryQueryRepository:      categoryQueryRepositoryImpl,
 		InnQueryRepository:           innQueryRepositoryImpl,
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
+		NoticeDomainService:          noticeDomainServiceImpl,
 		TransactionService:           transactionServiceImpl,
 	}
 	reviewCommandScenarioImpl := &scenario.ReviewCommandScenarioImpl{
@@ -395,6 +407,8 @@ var (
 var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostCommandControllerSet, api.PostFavoriteCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.WordpressCallbackControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet, api.AreaQueryControllerSet, api.InnQueryControllerSet)
 
 var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet)
+
+var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
 
 var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.AreaQueryServiceSet, service.InnQueryServiceSet)
 

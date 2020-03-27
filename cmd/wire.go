@@ -12,6 +12,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	domain_service "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 )
 
@@ -42,6 +43,11 @@ var controllerSet = wire.NewSet(
 
 var scenarioSet = wire.NewSet(
 	scenario.ReviewCommandScenarioSet,
+)
+
+var domainServiceSet = wire.NewSet(
+	domain_service.NoticeDomainServiceSet,
+	domain_service.TaggedUserDomainServiceSet,
 )
 
 var serviceSet = wire.NewSet(
@@ -92,6 +98,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		middleware.AuthorizeSet,
 		controllerSet,
 		scenarioSet,
+		domainServiceSet,
 		serviceSet,
 		factorySet,
 		repository.RepositoriesSet,

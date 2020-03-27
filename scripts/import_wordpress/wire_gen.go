@@ -12,6 +12,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	service2 "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 )
 
 // Injectors from wire.go:
@@ -155,6 +156,16 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		AWSSession: session,
 		AWSConfig:  aws,
 	}
+	noticeCommandRepositoryImpl := &repository.NoticeCommandRepositoryImpl{
+		DAO: dao,
+	}
+	taggedUserDomainServiceImpl := service2.TaggedUserDomainServiceImpl{
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
+	noticeDomainServiceImpl := service2.NoticeDomainServiceImpl{
+		NoticeCommandRepository: noticeCommandRepositoryImpl,
+		TaggedUserDomainService: taggedUserDomainServiceImpl,
+	}
 	reviewCommandServiceImpl := &service.ReviewCommandServiceImpl{
 		ReviewQueryRepository:        reviewQueryRepositoryImpl,
 		ReviewCommandRepository:      reviewCommandRepositoryImpl,
@@ -162,6 +173,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		CategoryQueryRepository:      categoryQueryRepositoryImpl,
 		InnQueryRepository:           innQueryRepositoryImpl,
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
+		NoticeDomainService:          noticeDomainServiceImpl,
 		TransactionService:           transactionServiceImpl,
 	}
 	reviewCommandScenarioImpl := &scenario.ReviewCommandScenarioImpl{
@@ -197,4 +209,4 @@ var (
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.LcategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, service.ReviewQueryServiceSet, scenario.ReviewCommandScenarioSet)
+var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.LcategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, service.ReviewQueryServiceSet, scenario.ReviewCommandScenarioSet, service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)

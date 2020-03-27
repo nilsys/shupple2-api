@@ -73,6 +73,7 @@ var RepositoriesSet = wire.NewSet(
 	HealthCheckRepositorySet,
 	TransactionServiceSet,
 	InterestQueryRepositorySet,
+	NoticeCommandRepositorySet,
 	ProvideAWSSession,
 )
 

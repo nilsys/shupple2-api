@@ -52,6 +52,38 @@ var _ = Describe("UserRepositoryImpl", func() {
 		Entry("フィールドに変更がある場合", newUser(userID), newUser(userID, "changed")),
 	)
 
+	Describe("FindByUIDs", func() {
+		BeforeEach(func() {
+			query = &UserQueryRepositoryImpl{DB: db}
+			truncate(db)
+
+			Expect(db.Save(newUser(1)).Error).To(Succeed())
+			Expect(db.Save(newUser(2)).Error).To(Succeed())
+			Expect(db.Save(newUser(3)).Error).To(Succeed())
+		})
+
+		DescribeTable("ユーザを取得できた場合", func() {
+			users, err := query.FindByUIDs([]string{"UID1", "UID2"})
+
+			Expect(err).To(Succeed())
+			Expect(len(users)).To(Equal(2))
+			Expect(users[0].ID).To(Equal(1))
+			Expect(users[1].ID).To(Equal(2))
+		},
+			Entry("正常系"),
+		)
+
+		DescribeTable("ユーザを取得できなかった場合", func() {
+			users, err := query.FindByUIDs([]string{"InvalidUID"})
+
+			// エラーにならない
+			Expect(err).To(Succeed())
+			Expect(len(users)).To(Equal(0))
+		},
+			Entry("正常系"),
+		)
+	})
+
 	Describe("StoreWithAvatar", func() {
 		var (
 			base       *entity.User

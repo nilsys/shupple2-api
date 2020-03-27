@@ -38,6 +38,16 @@ ENUM(BUISINESS = 1, COUPLE, FAMILY, FRIEND, ONLY, WITHCHILD)
 type AccompanyingType int
 
 /*
+ENUM(FAVORITE = 1, COMMENT, REPLY, FOLLOW, TAGGED)
+*/
+type NoticeActionType int
+
+/*
+ENUM(POST = 1, VLOG, REVIEW, COMMENT, REPLY, USER)
+*/
+type NoticeActionTargetType int
+
+/*
 ENUM(Transaction = 1)
 */
 type ContextKey int

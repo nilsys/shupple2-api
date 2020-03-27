@@ -3,13 +3,13 @@ package service
 import (
 	"context"
 
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
-
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 )
 
 type (
@@ -37,6 +37,7 @@ type (
 		repository.CategoryQueryRepository
 		repository.InnQueryRepository
 		repository.TouristSpotCommandRepository
+		service.NoticeDomainService
 		TransactionService
 	}
 )
@@ -253,7 +254,12 @@ func (s *ReviewCommandServiceImpl) CreateReviewComment(user *entity.User, review
 			return err
 		}
 
-		return nil
+		review, err := s.ReviewQueryRepository.FindByID(reviewID)
+		if err != nil {
+			return err
+		}
+
+		return s.NoticeDomainService.ReviewComment(c, reviewComment, review)
 	})
 }
 

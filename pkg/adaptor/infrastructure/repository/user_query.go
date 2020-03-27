@@ -28,6 +28,14 @@ func (r *UserQueryRepositoryImpl) FindByID(id int) (*entity.User, error) {
 	return &row, nil
 }
 
+func (r *UserQueryRepositoryImpl) FindByUIDs(uIDs []string) ([]*entity.User, error) {
+	var rows []*entity.User
+	if err := r.DB.Where("uid IN (?)", uIDs).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find user by UIDs")
+	}
+	return rows, nil
+}
+
 func (r *UserQueryRepositoryImpl) FindByCognitoID(cognitoID string) (*entity.User, error) {
 	var row entity.User
 	if err := r.DB.Where("cognito_id = ?", cognitoID).First(&row).Error; err != nil {

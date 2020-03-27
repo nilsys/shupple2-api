@@ -287,6 +287,136 @@ func (x *MediaSortBy) UnmarshalText(text []byte) error {
 }
 
 const (
+	// NoticeActionTargetTypePOST is a NoticeActionTargetType of type POST
+	NoticeActionTargetTypePOST NoticeActionTargetType = iota + 1
+	// NoticeActionTargetTypeVLOG is a NoticeActionTargetType of type VLOG
+	NoticeActionTargetTypeVLOG
+	// NoticeActionTargetTypeREVIEW is a NoticeActionTargetType of type REVIEW
+	NoticeActionTargetTypeREVIEW
+	// NoticeActionTargetTypeCOMMENT is a NoticeActionTargetType of type COMMENT
+	NoticeActionTargetTypeCOMMENT
+	// NoticeActionTargetTypeREPLY is a NoticeActionTargetType of type REPLY
+	NoticeActionTargetTypeREPLY
+	// NoticeActionTargetTypeUSER is a NoticeActionTargetType of type USER
+	NoticeActionTargetTypeUSER
+)
+
+const _NoticeActionTargetTypeName = "POSTVLOGREVIEWCOMMENTREPLYUSER"
+
+var _NoticeActionTargetTypeMap = map[NoticeActionTargetType]string{
+	1: _NoticeActionTargetTypeName[0:4],
+	2: _NoticeActionTargetTypeName[4:8],
+	3: _NoticeActionTargetTypeName[8:14],
+	4: _NoticeActionTargetTypeName[14:21],
+	5: _NoticeActionTargetTypeName[21:26],
+	6: _NoticeActionTargetTypeName[26:30],
+}
+
+// String implements the Stringer interface.
+func (x NoticeActionTargetType) String() string {
+	if str, ok := _NoticeActionTargetTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("NoticeActionTargetType(%d)", x)
+}
+
+var _NoticeActionTargetTypeValue = map[string]NoticeActionTargetType{
+	_NoticeActionTargetTypeName[0:4]:   1,
+	_NoticeActionTargetTypeName[4:8]:   2,
+	_NoticeActionTargetTypeName[8:14]:  3,
+	_NoticeActionTargetTypeName[14:21]: 4,
+	_NoticeActionTargetTypeName[21:26]: 5,
+	_NoticeActionTargetTypeName[26:30]: 6,
+}
+
+// ParseNoticeActionTargetType attempts to convert a string to a NoticeActionTargetType
+func ParseNoticeActionTargetType(name string) (NoticeActionTargetType, error) {
+	if x, ok := _NoticeActionTargetTypeValue[name]; ok {
+		return x, nil
+	}
+	return NoticeActionTargetType(0), fmt.Errorf("%s is not a valid NoticeActionTargetType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x NoticeActionTargetType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *NoticeActionTargetType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseNoticeActionTargetType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
+	// NoticeActionTypeFAVORITE is a NoticeActionType of type FAVORITE
+	NoticeActionTypeFAVORITE NoticeActionType = iota + 1
+	// NoticeActionTypeCOMMENT is a NoticeActionType of type COMMENT
+	NoticeActionTypeCOMMENT
+	// NoticeActionTypeREPLY is a NoticeActionType of type REPLY
+	NoticeActionTypeREPLY
+	// NoticeActionTypeFOLLOW is a NoticeActionType of type FOLLOW
+	NoticeActionTypeFOLLOW
+	// NoticeActionTypeTAGGED is a NoticeActionType of type TAGGED
+	NoticeActionTypeTAGGED
+)
+
+const _NoticeActionTypeName = "FAVORITECOMMENTREPLYFOLLOWTAGGED"
+
+var _NoticeActionTypeMap = map[NoticeActionType]string{
+	1: _NoticeActionTypeName[0:8],
+	2: _NoticeActionTypeName[8:15],
+	3: _NoticeActionTypeName[15:20],
+	4: _NoticeActionTypeName[20:26],
+	5: _NoticeActionTypeName[26:32],
+}
+
+// String implements the Stringer interface.
+func (x NoticeActionType) String() string {
+	if str, ok := _NoticeActionTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("NoticeActionType(%d)", x)
+}
+
+var _NoticeActionTypeValue = map[string]NoticeActionType{
+	_NoticeActionTypeName[0:8]:   1,
+	_NoticeActionTypeName[8:15]:  2,
+	_NoticeActionTypeName[15:20]: 3,
+	_NoticeActionTypeName[20:26]: 4,
+	_NoticeActionTypeName[26:32]: 5,
+}
+
+// ParseNoticeActionType attempts to convert a string to a NoticeActionType
+func ParseNoticeActionType(name string) (NoticeActionType, error) {
+	if x, ok := _NoticeActionTypeValue[name]; ok {
+		return x, nil
+	}
+	return NoticeActionType(0), fmt.Errorf("%s is not a valid NoticeActionType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x NoticeActionType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *NoticeActionType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseNoticeActionType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// ReviewSortByNEW is a ReviewSortBy of type NEW
 	ReviewSortByNEW ReviewSortBy = iota + 1
 	// ReviewSortByRECOMMEND is a ReviewSortBy of type RECOMMEND

@@ -16,6 +16,7 @@ type (
 
 	UserQueryRepository interface {
 		FindByID(id int) (*entity.User, error)
+		FindByUIDs(uIDs []string) ([]*entity.User, error)
 		FindByCognitoID(cognitoID string) (*entity.User, error)
 		FindByWordpressID(id int) (*entity.User, error)
 		FindByMigrationCode(code string) (*entity.User, error)

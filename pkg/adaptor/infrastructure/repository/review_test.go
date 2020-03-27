@@ -301,6 +301,14 @@ func newQueryReview(hashtagName string, hashtagID int) *entity.QueryReview {
 	return queryReview
 }
 
+func newReviewComment(userID, reviewID int) *entity.ReviewComment {
+	return entity.NewReviewComment(
+		userID,
+		reviewID,
+		"dummy_body",
+	)
+}
+
 func newShowReviewListParam(userID, innID, touristSpotID int, hashtag string) *param.ListReviewParams {
 	return &param.ListReviewParams{
 		UserID:        userID,
