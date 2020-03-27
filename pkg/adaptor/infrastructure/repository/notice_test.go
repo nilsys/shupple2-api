@@ -24,7 +24,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 			command = &NoticeCommandRepositoryImpl{DAO: DAO{UnderlyingDB: db}}
 
 			truncate(db)
-			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
+			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil, nil)))
 
 			Expect(db.Save(newUser(targetUserID)).Error).To(Succeed())
 			Expect(db.Save(newUser(triggeredUserID)).Error).To(Succeed())

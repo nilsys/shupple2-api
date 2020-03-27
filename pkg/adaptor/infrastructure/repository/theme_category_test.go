@@ -8,29 +8,30 @@ import (
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
-var _ = Describe("LcategoryRepositoryImpl", func() {
+var _ = Describe("ThemeCategoryRepositoryImpl", func() {
 	var (
-		command *LcategoryCommandRepositoryImpl
-		query   *LcategoryQueryRepositoryImpl
+		command *ThemeCategoryCommandRepositoryImpl
+		query   *ThemeCategoryQueryRepositoryImpl
 	)
 
 	BeforeEach(func() {
-		command = tests.LcategoryCommandRepositoryImpl
-		query = tests.LcategoryQueryRepositoryImpl
+		command = tests.ThemeCategoryCommandRepositoryImpl
+		query = tests.ThemeCategoryQueryRepositoryImpl
 
-		truncate(db)
+		truncate(tests.DB)
 		Expect(db.Save(newUser(userID)).Error).To(Succeed())
 	})
 
-	base := newLcategory(lcategoryID)
-	baseChanged := newLcategory(lcategoryID)
+	base := newThemeCategory(themeCategoryID)
+	baseChanged := newThemeCategory(themeCategoryID)
 	baseChanged.Name = "changed"
 
-	DescribeTable("Saveは引数のlcategoryを作成するか、その状態になるように更新する",
-		func(before *entity.Lcategory, saved *entity.Lcategory) {
+	DescribeTable("Saveは引数のthemeCategoryを作成するか、その状態になるように更新する",
+		func(before *entity.ThemeCategory, saved *entity.ThemeCategory) {
 			if before != nil {
 				Expect(command.Store(context.Background(), before)).To(Succeed())
 			}
@@ -50,10 +51,11 @@ var _ = Describe("LcategoryRepositoryImpl", func() {
 	)
 })
 
-func newLcategory(id int) *entity.Lcategory {
-	lcategory := entity.Lcategory{}
-	lcategory.ID = id
-	util.FillDummyString(&lcategory, id)
-
-	return &lcategory
+func newThemeCategory(id int) *entity.ThemeCategory {
+	themeCategory := &entity.ThemeCategory{}
+	themeCategory.ID = id
+	themeCategory.ThemeID = id
+	themeCategory.Type = model.ThemeCategoryTypeTheme
+	util.FillDummyString(themeCategory, id)
+	return themeCategory
 }

@@ -23,11 +23,6 @@ ENUM(RANKING = 1, RECOMMEND)
 type UserSortBy int
 
 /*
-ENUM(AreaGroup = 1, Area, SubArea, SubSubArea, Theme)
-*/
-type CategoryType int
-
-/*
 ENUM(Area = 1, SubArea, SubSubArea, TouristSpot, HashTag, User)
 */
 type SuggestionType int
@@ -36,6 +31,21 @@ type SuggestionType int
 ENUM(BUISINESS = 1, COUPLE, FAMILY, FRIEND, ONLY, WITHCHILD)
 */
 type AccompanyingType int
+
+/*
+ENUM(japan = 1, world=2)
+*/
+type AreaGroup int
+
+/*
+ENUM(Area = 1, SubArea, SubSubArea)
+*/
+type AreaCategoryType int
+
+/*
+ENUM(Theme = 1, SubTheme)
+*/
+type ThemeCategoryType int
 
 /*
 ENUM(FAVORITE = 1, COMMENT, REPLY, FOLLOW, TAGGED)

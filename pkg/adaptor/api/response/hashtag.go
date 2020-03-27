@@ -7,8 +7,8 @@ type (
 	}
 )
 
-func NewHashtag(id int, name string) Hashtag {
-	return Hashtag{
+func NewHashtag(id int, name string) *Hashtag {
+	return &Hashtag{
 		ID:   id,
 		Name: name,
 	}

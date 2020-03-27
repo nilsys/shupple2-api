@@ -32,13 +32,19 @@ type (
 
 	TouristSpot struct {
 		TouristSpotTiny
-		CategoryIDs  []*TouristSpotCategory  `gorm:"foreignkey:TouristSpotID"`
-		LcategoryIDs []*TouristSpotLcategory `gorm:"foreignkey:TouristSpotID"`
+		AreaCategoryIDs  []*TouristSpotAreaCategory  `gorm:"foreignkey:TouristSpotID"`
+		ThemeCategoryIDs []*TouristSpotThemeCategory `gorm:"foreignkey:TouristSpotID"`
+		LcategoryIDs     []*TouristSpotLcategory     `gorm:"foreignkey:TouristSpotID"`
 	}
 
-	TouristSpotCategory struct {
-		TouristSpotID int `gorm:"primary_key"`
-		CategoryID    int `gorm:"primary_key"`
+	TouristSpotAreaCategory struct {
+		TouristSpotID  int `gorm:"primary_key"`
+		AreaCategoryID int `gorm:"primary_key"`
+	}
+
+	TouristSpotThemeCategory struct {
+		TouristSpotID   int `gorm:"primary_key"`
+		ThemeCategoryID int `gorm:"primary_key"`
 	}
 
 	TouristSpotLcategory struct {
@@ -48,25 +54,37 @@ type (
 
 	QueryTouristSpot struct {
 		TouristSpotTiny
-		Categories  []*Category  `gorm:"many2many:tourist_spot_category;jointable_foreignkey:tourist_spot_id;"`
-		Lcategories []*Lcategory `gorm:"many2many:tourist_spot_lcategory;jointable_foreignkey:tourist_spot_id;"`
+		AreaCategories  []*AreaCategory  `gorm:"many2many:tourist_spot_area_category;jointable_foreignkey:tourist_spot_id;"`
+		ThemeCategories []*ThemeCategory `gorm:"many2many:tourist_spot_theme_category;jointable_foreignkey:tourist_spot_id;"`
+		Lcategories     []*Lcategory     `gorm:"many2many:tourist_spot_lcategory;jointable_foreignkey:tourist_spot_id;"`
 	}
 )
 
-func NewTouristSpot(tiny TouristSpotTiny, categoryIDs, lcategoryIDs []int) TouristSpot {
+func NewTouristSpot(tiny TouristSpotTiny, areaCategoryIDs, themeCategoryIDs, lcategoryIDs []int) TouristSpot {
 	touristSpot := TouristSpot{TouristSpotTiny: tiny}
-	touristSpot.SetCategories(categoryIDs)
+	touristSpot.SetAreaCategories(areaCategoryIDs)
+	touristSpot.SetThemeCategories(themeCategoryIDs)
 	touristSpot.SetLcategories(lcategoryIDs)
 
 	return touristSpot
 }
 
-func (ts *TouristSpot) SetCategories(categoryIDs []int) {
-	ts.CategoryIDs = make([]*TouristSpotCategory, len(categoryIDs))
-	for i, c := range categoryIDs {
-		ts.CategoryIDs[i] = &TouristSpotCategory{
-			TouristSpotID: ts.ID,
-			CategoryID:    c,
+func (ts *TouristSpot) SetAreaCategories(areaCategoryIDs []int) {
+	ts.AreaCategoryIDs = make([]*TouristSpotAreaCategory, len(areaCategoryIDs))
+	for i, c := range areaCategoryIDs {
+		ts.AreaCategoryIDs[i] = &TouristSpotAreaCategory{
+			TouristSpotID:  ts.ID,
+			AreaCategoryID: c,
+		}
+	}
+}
+
+func (ts *TouristSpot) SetThemeCategories(themeCategoryIDs []int) {
+	ts.ThemeCategoryIDs = make([]*TouristSpotThemeCategory, len(themeCategoryIDs))
+	for i, c := range themeCategoryIDs {
+		ts.ThemeCategoryIDs[i] = &TouristSpotThemeCategory{
+			TouristSpotID:   ts.ID,
+			ThemeCategoryID: c,
 		}
 	}
 }

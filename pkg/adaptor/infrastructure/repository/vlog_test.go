@@ -22,16 +22,19 @@ var _ = Describe("VlogRepositoryImpl", func() {
 
 		truncate(db)
 		Expect(db.Save(newUser(userID)).Error).To(Succeed())
-		for _, cat := range append(categoryIDs, addedCategoryID) {
-			Expect(db.Save(newCategory(cat)).Error).To(Succeed())
+		for _, cat := range append(areaCategoryIDs, addedAreaCategoryID) {
+			Expect(db.Save(newAreaCategory(cat)).Error).To(Succeed())
+		}
+		for _, cat := range append(themeCategoryIDs, addedThemeCategoryID) {
+			Expect(db.Save(newThemeCategory(cat)).Error).To(Succeed())
 		}
 		for _, loc := range append(touristSpotIDs, addedTouristSpotID) {
-			Expect(db.Save(newTouristSpot(loc, nil, nil)).Error).To(Succeed())
+			Expect(db.Save(newTouristSpot(loc, nil, nil, nil)).Error).To(Succeed())
 		}
 	})
 
-	base := newVlog(vlogID, categoryIDs, touristSpotIDs)
-	baseChanged := newVlog(vlogID, categoryIDs, touristSpotIDs)
+	base := newVlog(vlogID, areaCategoryIDs, themeCategoryIDs, touristSpotIDs)
+	baseChanged := newVlog(vlogID, areaCategoryIDs, themeCategoryIDs, touristSpotIDs)
 	baseChanged.Title = "changed"
 
 	DescribeTable("Saveは引数のvlogを作成するか、その状態になるように更新する",
@@ -48,22 +51,24 @@ var _ = Describe("VlogRepositoryImpl", func() {
 		},
 		Entry("新規作成", nil, base),
 		Entry("フィールドに変更がある場合", base, baseChanged),
-		Entry("categoryが追加される場合", base, newVlog(vlogID, append(categoryIDs, addedCategoryID), touristSpotIDs)),
-		Entry("touristSpotが追加される場合", base, newVlog(vlogID, categoryIDs, append(touristSpotIDs, addedTouristSpotID))),
-		Entry("categoryが削除される場合", base, newVlog(vlogID, categoryIDs[:1], touristSpotIDs)),
-		Entry("touristSpotが削除される場合", base, newVlog(vlogID, categoryIDs, touristSpotIDs[:1])),
+		Entry("areaCategoryが追加される場合", base, newVlog(vlogID, append(areaCategoryIDs, addedAreaCategoryID), themeCategoryIDs, touristSpotIDs)),
+		Entry("themeCategoryが追加される場合", base, newVlog(vlogID, areaCategoryIDs, append(themeCategoryIDs, addedThemeCategoryID), touristSpotIDs)),
+		Entry("touristSpotが追加される場合", base, newVlog(vlogID, areaCategoryIDs, themeCategoryIDs, append(touristSpotIDs, addedTouristSpotID))),
+		Entry("areaCategoryが削除される場合", base, newVlog(vlogID, areaCategoryIDs[:1], themeCategoryIDs, touristSpotIDs)),
+		Entry("themeCategoryが削除される場合", base, newVlog(vlogID, areaCategoryIDs, themeCategoryIDs[:1], touristSpotIDs)),
+		Entry("touristSpotが削除される場合", base, newVlog(vlogID, areaCategoryIDs, themeCategoryIDs, touristSpotIDs[:1])),
 	)
 })
 
-func newVlog(id int, categoryIDs, touristSpotIDs []int) *entity.Vlog {
+func newVlog(id int, areaCategoryIDs, themeCategoryIDs, touristSpotIDs []int) *entity.Vlog {
 	vlog := entity.VlogTiny{
 		ID:        id,
 		UserID:    userID,
 		CreatedAt: sampleTime,
 		UpdatedAt: sampleTime,
 	}
-	util.FillDymmyString(&vlog, id)
+	util.FillDummyString(&vlog, id)
 
-	v := entity.NewVlog(vlog, categoryIDs, touristSpotIDs)
+	v := entity.NewVlog(vlog, areaCategoryIDs, themeCategoryIDs, touristSpotIDs)
 	return &v
 }

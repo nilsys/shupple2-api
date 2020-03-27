@@ -61,14 +61,15 @@ func (r *HashtagQueryRepositoryImpl) SearchByName(name string) ([]*entity.Hashta
 func (r *HashtagQueryRepositoryImpl) buildFindRecommendListQuery(areaID, subAreaID, subSubAreaID int) *gorm.DB {
 	q := r.DB
 
+	// TODO: area_category_typeをチェックしていない
 	if areaID != 0 {
-		q = q.Where("id IN (SELECT id FROM hashtag_category WHERE category_id = ?)", areaID)
+		q = q.Where("id IN (SELECT post_hashtag WHERE post_id IN (SELECT post_id FROM post_area_category WHERE area_category_id = ?))", areaID)
 	}
 	if subAreaID != 0 {
-		q = q.Where("id IN (SELECT id FROM hashtag_category WHERE category_id = ?)", subAreaID)
+		q = q.Where("id IN (SELECT post_hashtag WHERE post_id IN (SELECT post_id FROM post_area_category WHERE area_category_id = ?))", areaID)
 	}
 	if subSubAreaID != 0 {
-		q = q.Where("id IN (SELECT id FROM hashtag_category WHERE category_id = ?)", subSubAreaID)
+		q = q.Where("id IN (SELECT post_hashtag WHERE post_id IN (SELECT post_id FROM post_area_category WHERE area_category_id = ?))", areaID)
 	}
 
 	return q

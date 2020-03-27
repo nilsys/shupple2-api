@@ -64,5 +64,9 @@ func (r *VlogCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Vlog, 
 		return nil
 	})
 
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
 	return vlog, nil
 }

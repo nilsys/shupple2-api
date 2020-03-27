@@ -36,64 +36,42 @@ func ConvertVlogDetailListToOutput(queryVlogs *entity.VlogDetailList) response.V
 }
 
 func ConvertVlogDetailWithTouristSpots(vlog *entity.VlogDetailWithTouristSpots) *response.VlogDetail {
-	areaCategories := make([]response.Category, 0, len(vlog.Categories))
-	themeCategories := make([]response.Category, 0, len(vlog.Categories))
-	touristSpots := make([]response.TouristSpot, len(vlog.TouristSpots))
-
-	for _, category := range vlog.Categories {
-		if category.Type.IsAreaKind() {
-			areaCategories = append(areaCategories, response.NewCategory(category.ID, category.Name, category.Type))
-		} else {
-			themeCategories = append(themeCategories, response.NewCategory(category.ID, category.Name, category.Type))
-		}
-	}
+	touristSpots := make([]*response.TouristSpot, len(vlog.TouristSpots))
 
 	for i, touristSpot := range vlog.TouristSpots {
 		touristSpots[i] = response.NewTouristSpots(touristSpot.ID, touristSpot.Name, touristSpot.Thumbnail)
 	}
 
 	return &response.VlogDetail{
-		ID:              vlog.ID,
-		Thumbnail:       vlog.Thumbnail,
-		Title:           vlog.Title,
-		Body:            vlog.Body,
-		Series:          vlog.Series,
-		Creator:         response.NewCreator(vlog.User.ID, vlog.User.UID, vlog.User.GenerateThumbnailURL(), vlog.User.Name, vlog.User.Profile),
-		CreatorSNS:      vlog.UserSNS,
-		EditorName:      vlog.EditorName,
-		YoutubeURL:      vlog.YoutubeURL,
-		Views:           vlog.Views,
-		PhotoYearMonth:  vlog.YearMonth,
-		PlayTime:        vlog.PlayTime,
-		Timeline:        vlog.Timeline,
-		FacebookCount:   vlog.FacebookCount,
-		TwitterCount:    vlog.TwitterCount,
-		AreaCategories:  areaCategories,
-		ThemeCategories: themeCategories,
-		CreatedAt:       model.TimeResponse(vlog.CreatedAt),
-		UpdatedAt:       model.TimeResponse(vlog.UpdatedAt),
-		TouristSpot:     touristSpots,
+		ID:                      vlog.ID,
+		Thumbnail:               vlog.Thumbnail,
+		Title:                   vlog.Title,
+		Body:                    vlog.Body,
+		Series:                  vlog.Series,
+		Creator:                 response.NewCreator(vlog.User.ID, vlog.User.UID, vlog.User.GenerateThumbnailURL(), vlog.User.Name, vlog.User.Profile),
+		CreatorSNS:              vlog.UserSNS,
+		EditorName:              vlog.EditorName,
+		YoutubeURL:              vlog.YoutubeURL,
+		Views:                   vlog.Views,
+		PhotoYearMonth:          vlog.YearMonth,
+		PlayTime:                vlog.PlayTime,
+		Timeline:                vlog.Timeline,
+		FacebookCount:           vlog.FacebookCount,
+		TwitterCount:            vlog.TwitterCount,
+		AreaCategories:          ConvertAreaCategoriesToOutput(vlog.AreaCategories),
+		ThemeCategoryCategories: ConvertThemeCategoriesToOutput(vlog.ThemeCategories),
+		CreatedAt:               model.TimeResponse(vlog.CreatedAt),
+		UpdatedAt:               model.TimeResponse(vlog.UpdatedAt),
+		TouristSpot:             touristSpots,
 	}
 }
 
 func convertVlogToOutput(queryVlog *entity.VlogDetail) *response.Vlog {
-	var areaCategories []response.Category
-	var themeCategories []response.Category
-
-	for _, category := range queryVlog.Categories {
-		if category.Type == model.CategoryTypeArea || category.Type == model.CategoryTypeSubArea || category.Type == model.CategoryTypeSubSubArea {
-			areaCategories = append(areaCategories, response.NewCategory(category.ID, category.Name, category.Type))
-		}
-		if category.Type == model.CategoryTypeTheme {
-			themeCategories = append(themeCategories, response.NewCategory(category.ID, category.Name, category.Type))
-		}
-	}
-
 	return &response.Vlog{
-		ID:              queryVlog.ID,
-		Thumbnail:       queryVlog.Thumbnail,
-		AreaCategories:  areaCategories,
-		ThemeCategories: themeCategories,
-		Title:           queryVlog.VlogTiny.Title,
+		ID:                      queryVlog.ID,
+		Thumbnail:               queryVlog.Thumbnail,
+		AreaCategories:          ConvertAreaCategoriesToOutput(queryVlog.AreaCategories),
+		ThemeCategoryCategories: ConvertThemeCategoriesToOutput(queryVlog.ThemeCategories),
+		Title:                   queryVlog.VlogTiny.Title,
 	}
 }

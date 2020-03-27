@@ -29,13 +29,19 @@ type (
 
 	Vlog struct {
 		VlogTiny
-		CategoryIDs    []*VlogCategory
-		TouristSpotIDs []*VlogTouristSpot
+		AreaCategoryIDs  []*VlogAreaCategory
+		ThemeCategoryIDs []*VlogThemeCategory
+		TouristSpotIDs   []*VlogTouristSpot
 	}
 
-	VlogCategory struct {
-		VlogID     int `gorm:"primary_key"`
-		CategoryID int `gorm:"primary_key"`
+	VlogAreaCategory struct {
+		VlogID         int `gorm:"primary_key"`
+		AreaCategoryID int `gorm:"primary_key"`
+	}
+
+	VlogThemeCategory struct {
+		VlogID          int `gorm:"primary_key"`
+		ThemeCategoryID int `gorm:"primary_key"`
 	}
 
 	VlogTouristSpot struct {
@@ -45,7 +51,8 @@ type (
 
 	VlogDetail struct {
 		VlogTiny
-		Categories []*Category `gorm:"many2many:vlog_category;jointable_foreignkey:vlog_id;"`
+		AreaCategories  []*AreaCategory  `gorm:"many2many:vlog_area_category;jointable_foreignkey:vlog_id;"`
+		ThemeCategories []*ThemeCategory `gorm:"many2many:vlog_theme_category;jointable_foreignkey:vlog_id;"`
 	}
 
 	VlogDetailList struct {
@@ -55,26 +62,38 @@ type (
 
 	VlogDetailWithTouristSpots struct {
 		VlogTiny
-		User         *User          `gorm:"foreignkey:UserID"`
-		Categories   []*Category    `gorm:"many2many:vlog_category;jointable_foreignkey:vlog_id;"`
-		TouristSpots []*TouristSpot `gorm:"many2many:vlog_tourist_spot;jointable_foreignkey:vlog_id;"`
+		User            *User            `gorm:"foreignkey:UserID"`
+		AreaCategories  []*AreaCategory  `gorm:"many2many:vlog_area_category;jointable_foreignkey:vlog_id;"`
+		ThemeCategories []*ThemeCategory `gorm:"many2many:vlog_theme_category;jointable_foreignkey:vlog_id;"`
+		TouristSpots    []*TouristSpot   `gorm:"many2many:vlog_tourist_spot;jointable_foreignkey:vlog_id;"`
 	}
 )
 
-func NewVlog(tiny VlogTiny, categoryIDs, touristSpotIDs []int) Vlog {
+func NewVlog(tiny VlogTiny, areaCategoryIDs, themeCategoryIDs, touristSpotIDs []int) Vlog {
 	vlog := Vlog{VlogTiny: tiny}
-	vlog.SetCategories(categoryIDs)
+	vlog.SetAreaCategories(areaCategoryIDs)
+	vlog.SetThemeCategories(themeCategoryIDs)
 	vlog.SetTouristSpots(touristSpotIDs)
 
 	return vlog
 }
 
-func (vlog *Vlog) SetCategories(categoryIDs []int) {
-	vlog.CategoryIDs = make([]*VlogCategory, len(categoryIDs))
-	for i, c := range categoryIDs {
-		vlog.CategoryIDs[i] = &VlogCategory{
-			VlogID:     vlog.ID,
-			CategoryID: c,
+func (vlog *Vlog) SetAreaCategories(areaCategoryIDs []int) {
+	vlog.AreaCategoryIDs = make([]*VlogAreaCategory, len(areaCategoryIDs))
+	for i, c := range areaCategoryIDs {
+		vlog.AreaCategoryIDs[i] = &VlogAreaCategory{
+			VlogID:         vlog.ID,
+			AreaCategoryID: c,
+		}
+	}
+}
+
+func (vlog *Vlog) SetThemeCategories(themeCategoryIDs []int) {
+	vlog.ThemeCategoryIDs = make([]*VlogThemeCategory, len(themeCategoryIDs))
+	for i, c := range themeCategoryIDs {
+		vlog.ThemeCategoryIDs[i] = &VlogThemeCategory{
+			VlogID:          vlog.ID,
+			ThemeCategoryID: c,
 		}
 	}
 }

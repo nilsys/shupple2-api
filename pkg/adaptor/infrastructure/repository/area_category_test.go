@@ -8,29 +8,30 @@ import (
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
-var _ = Describe("CategoryRepositoryImpl", func() {
+var _ = Describe("AreaCategoryRepositoryImpl", func() {
 	var (
-		command *CategoryCommandRepositoryImpl
-		query   *CategoryQueryRepositoryImpl
+		command *AreaCategoryCommandRepositoryImpl
+		query   *AreaCategoryQueryRepositoryImpl
 	)
 
 	BeforeEach(func() {
-		command = tests.CategoryCommandRepositoryImpl
-		query = tests.CategoryQueryRepositoryImpl
+		command = tests.AreaCategoryCommandRepositoryImpl
+		query = tests.AreaCategoryQueryRepositoryImpl
 
 		truncate(tests.DB)
 		Expect(db.Save(newUser(userID)).Error).To(Succeed())
 	})
 
-	base := newCategory(categoryID)
-	baseChanged := newCategory(categoryID)
+	base := newAreaCategory(areaCategoryID)
+	baseChanged := newAreaCategory(areaCategoryID)
 	baseChanged.Name = "changed"
 
-	DescribeTable("Saveは引数のcategoryを作成するか、その状態になるように更新する",
-		func(before *entity.Category, saved *entity.Category) {
+	DescribeTable("Saveは引数のareaCategoryを作成するか、その状態になるように更新する",
+		func(before *entity.AreaCategory, saved *entity.AreaCategory) {
 			if before != nil {
 				Expect(command.Store(context.Background(), before)).To(Succeed())
 			}
@@ -50,8 +51,11 @@ var _ = Describe("CategoryRepositoryImpl", func() {
 	)
 })
 
-func newCategory(id int) *entity.Category {
-	category := &entity.Category{ID: id}
-	util.FillDymmyString(category, id)
-	return category
+func newAreaCategory(id int) *entity.AreaCategory {
+	areaCategory := &entity.AreaCategory{}
+	areaCategory.ID = id
+	areaCategory.AreaID = id
+	areaCategory.Type = model.AreaCategoryTypeArea
+	util.FillDummyString(areaCategory, id)
+	return areaCategory
 }

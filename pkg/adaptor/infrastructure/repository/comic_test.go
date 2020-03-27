@@ -60,7 +60,7 @@ func newComic(id int) entity.Comic {
 		CreatedAt: sampleTime,
 		UpdatedAt: sampleTime,
 	}
-	util.FillDymmyString(&comic, id)
+	util.FillDummyString(&comic, id)
 
 	return comic
 }

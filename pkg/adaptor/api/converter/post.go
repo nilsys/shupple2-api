@@ -67,23 +67,12 @@ func ConvertPostListToOutput(posts []*entity.PostDetail) []*response.Post {
 
 // outputの構造体へconvert
 func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
-	var areaCategories = make([]response.Category, 0)
-	var themeCategories = make([]response.Category, 0)
-
-	for _, category := range queryPost.Categories {
-		if category.Type.IsAreaKind() {
-			areaCategories = append(areaCategories, response.NewCategory(category.ID, category.Name, category.Type))
-		} else {
-			themeCategories = append(themeCategories, response.NewCategory(category.ID, category.Name, category.Type))
-		}
-	}
-
 	return &response.Post{
-		ID:              queryPost.ID,
-		Thumbnail:       queryPost.Thumbnail,
-		Title:           queryPost.Title,
-		AreaCategories:  areaCategories,
-		ThemeCategories: themeCategories,
+		ID:                      queryPost.ID,
+		Thumbnail:               queryPost.Thumbnail,
+		Title:                   queryPost.Title,
+		AreaCategories:          ConvertAreaCategoriesToOutput(queryPost.AreaCategories),
+		ThemeCategoryCategories: ConvertThemeCategoriesToOutput(queryPost.ThemeCategories),
 		Creator: response.Creator{
 			Thumbnail: queryPost.User.GenerateThumbnailURL(),
 			Name:      queryPost.User.Name,
@@ -96,18 +85,9 @@ func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
 }
 
 func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *response.PostShow {
-	var areaCategories = make([]response.Category, 0)
-	var themeCategories = make([]response.Category, 0)
-	var hashtags = make([]response.Hashtag, len(post.Hashtag))
-	var bodies = make([]response.PostBody, len(post.Bodies))
+	var hashtags = make([]*response.Hashtag, len(post.Hashtag))
+	var bodies = make([]*response.PostBody, len(post.Bodies))
 
-	for _, category := range post.Categories {
-		if category.Type.IsAreaKind() {
-			areaCategories = append(areaCategories, response.NewCategory(category.ID, category.Name, category.Type))
-		} else {
-			themeCategories = append(themeCategories, response.NewCategory(category.ID, category.Name, category.Type))
-		}
-	}
 	for i, hashtag := range post.Hashtag {
 		hashtags[i] = response.NewHashtag(hashtag.ID, hashtag.Name)
 	}
@@ -116,20 +96,20 @@ func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *r
 	}
 
 	return &response.PostShow{
-		ID:              post.ID,
-		Thumbnail:       post.PostTiny.Thumbnail,
-		Title:           post.Title,
-		Body:            bodies,
-		TOC:             post.TOC,
-		FavoriteCount:   post.FavoriteCount,
-		FacebookCount:   post.FacebookCount,
-		TwitterCount:    post.TwitterCount,
-		Views:           post.Views,
-		Creator:         response.NewCreator(post.User.ID, post.User.UID, post.User.GenerateThumbnailURL(), post.User.Name, post.User.Profile),
-		AreaCategories:  areaCategories,
-		ThemeCategories: themeCategories,
-		Hashtags:        hashtags,
-		CreatedAt:       model.TimeFmtToFrontStr(post.CreatedAt),
-		UpdatedAt:       model.TimeFmtToFrontStr(post.UpdatedAt),
+		ID:                      post.ID,
+		Thumbnail:               post.PostTiny.Thumbnail,
+		Title:                   post.Title,
+		Body:                    bodies,
+		TOC:                     post.TOC,
+		FavoriteCount:           post.FavoriteCount,
+		FacebookCount:           post.FacebookCount,
+		TwitterCount:            post.TwitterCount,
+		Views:                   post.Views,
+		Creator:                 response.NewCreator(post.User.ID, post.User.UID, post.User.GenerateThumbnailURL(), post.User.Name, post.User.Profile),
+		AreaCategories:          ConvertAreaCategoriesToOutput(post.AreaCategories),
+		ThemeCategoryCategories: ConvertThemeCategoriesToOutput(post.ThemeCategories),
+		Hashtags:                hashtags,
+		CreatedAt:               model.TimeFmtToFrontStr(post.CreatedAt),
+		UpdatedAt:               model.TimeFmtToFrontStr(post.UpdatedAt),
 	}
 }

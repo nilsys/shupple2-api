@@ -15,8 +15,8 @@ type (
 		FacebookCount int
 		TwitterCount  int
 		Views         int
-		CreatedAt     time.Time
-		UpdatedAt     time.Time
+		CreatedAt     time.Time `gorm:"default:current_timestamp"`
+		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
 		DeletedAt     *time.Time
 	}
 

@@ -66,6 +66,10 @@ func (r *PostCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Post, 
 		return nil
 	})
 
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
 	return post, nil
 }
 

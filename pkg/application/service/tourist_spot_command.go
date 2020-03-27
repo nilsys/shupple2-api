@@ -64,5 +64,9 @@ func (r *TouristSpotCommandServiceImpl) ImportFromWordpressByID(id int) (*entity
 		return nil
 	})
 
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
 	return touristSpot, nil
 }

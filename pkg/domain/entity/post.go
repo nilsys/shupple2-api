@@ -27,9 +27,10 @@ type (
 
 	Post struct {
 		PostTiny
-		Bodies      []*PostBody
-		CategoryIDs []*PostCategory
-		HashtagIDs  []*PostHashtag
+		Bodies           []*PostBody
+		AreaCategoryIDs  []*PostAreaCategory
+		ThemeCategoryIDs []*PostThemeCategory
+		HashtagIDs       []*PostHashtag
 	}
 
 	PostBody struct {
@@ -38,9 +39,14 @@ type (
 		Body   string
 	}
 
-	PostCategory struct {
-		PostID     int `gorm:"primary_key"`
-		CategoryID int `gorm:"primary_key"`
+	PostAreaCategory struct {
+		PostID         int `gorm:"primary_key"`
+		AreaCategoryID int `gorm:"primary_key"`
+	}
+
+	PostThemeCategory struct {
+		PostID          int `gorm:"primary_key"`
+		ThemeCategoryID int `gorm:"primary_key"`
 	}
 
 	PostHashtag struct {
@@ -51,9 +57,10 @@ type (
 	// 参照用Post
 	PostDetail struct {
 		PostTiny
-		Bodies     []*PostBody `gorm:"foreignkey:PostID"`
-		User       *User       `gorm:"foreignkey:UserID"`
-		Categories []*Category `gorm:"many2many:post_category;jointable_foreignkey:post_id;"`
+		Bodies          []*PostBody      `gorm:"foreignkey:PostID"`
+		User            *User            `gorm:"foreignkey:UserID"`
+		AreaCategories  []*AreaCategory  `gorm:"many2many:post_area_category;jointable_foreignkey:post_id;"`
+		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
 	}
 
 	UserFavoritePost struct {
@@ -69,21 +76,13 @@ type (
 	// 参照用Post詳細
 	PostDetailWithHashtag struct {
 		PostTiny
-		Bodies     []*PostBody `gorm:"foreignkey:PostID"`
-		User       *User       `gorm:"foreignkey:UserID"`
-		Categories []*Category `gorm:"many2many:post_category;jointable_foreignkey:post_id;"`
-		Hashtag    []*Hashtag  `gorm:"many2many:post_hashtag;jointable_foreignkey:post_id;"`
+		Bodies          []*PostBody      `gorm:"foreignkey:PostID"`
+		User            *User            `gorm:"foreignkey:UserID"`
+		AreaCategories  []*AreaCategory  `gorm:"many2many:post_area_category;jointable_foreignkey:post_id;"`
+		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
+		Hashtag         []*Hashtag       `gorm:"many2many:post_hashtag;jointable_foreignkey:post_id;"`
 	}
 )
-
-// Postが持つCategoryID(int)を配列で返す
-func (p *Post) GetCategoryIDs() []int {
-	var ids []int
-	for _, postCategory := range p.CategoryIDs {
-		ids = append(ids, postCategory.CategoryID)
-	}
-	return ids
-}
 
 func (post *PostDetail) TableName() string {
 	return "post"
@@ -93,11 +92,12 @@ func (post *PostDetailWithHashtag) TableName() string {
 	return "post"
 }
 
-func NewPost(tiny PostTiny, bodies []string, categoryIDs []int, hashtagIDs []int) Post {
+func NewPost(tiny PostTiny, bodies []string, areaCategoryIDs, themeCategoryIDs, hashtagIDs []int) Post {
 	post := Post{PostTiny: tiny}
 
 	post.SetBodies(bodies)
-	post.SetCategories(categoryIDs)
+	post.SetAreaCategories(areaCategoryIDs)
+	post.SetThemeCategories(themeCategoryIDs)
 	post.SetHashtags(hashtagIDs)
 
 	return post
@@ -114,12 +114,22 @@ func (p *Post) SetBodies(bodies []string) {
 	}
 }
 
-func (p *Post) SetCategories(categoryIDs []int) {
-	p.CategoryIDs = make([]*PostCategory, len(categoryIDs))
-	for i, c := range categoryIDs {
-		p.CategoryIDs[i] = &PostCategory{
-			PostID:     p.ID,
-			CategoryID: c,
+func (p *Post) SetAreaCategories(areaCategoryIDs []int) {
+	p.AreaCategoryIDs = make([]*PostAreaCategory, len(areaCategoryIDs))
+	for i, c := range areaCategoryIDs {
+		p.AreaCategoryIDs[i] = &PostAreaCategory{
+			PostID:         p.ID,
+			AreaCategoryID: c,
+		}
+	}
+}
+
+func (p *Post) SetThemeCategories(themeCategoryIDs []int) {
+	p.ThemeCategoryIDs = make([]*PostThemeCategory, len(themeCategoryIDs))
+	for i, c := range themeCategoryIDs {
+		p.ThemeCategoryIDs[i] = &PostThemeCategory{
+			PostID:          p.ID,
+			ThemeCategoryID: c,
 		}
 	}
 }

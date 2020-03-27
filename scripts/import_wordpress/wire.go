@@ -19,6 +19,8 @@ var serviceSet = wire.NewSet(
 	service.WordpressServiceSet,
 	service.UserCommandServiceSet,
 	service.CategoryCommandServiceSet,
+	service.AreaCategoryCommandServiceSet,
+	service.ThemeCategoryCommandServiceSet,
 	service.ComicCommandServiceSet,
 	service.FeatureCommandServiceSet,
 	service.LcategoryCommandServiceSet,

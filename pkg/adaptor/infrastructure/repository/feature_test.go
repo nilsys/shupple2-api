@@ -23,7 +23,7 @@ var _ = Describe("FeatureRepositoryImpl", func() {
 		truncate(db)
 		Expect(db.Save(newUser(userID)).Error).To(Succeed())
 		for _, post := range append(postIDs, addedPostID) {
-			Expect(db.Save(newPost(post, nil, nil, nil)).Error).To(Succeed())
+			Expect(db.Save(newPost(post, nil, nil, nil, nil)).Error).To(Succeed())
 		}
 	})
 
@@ -57,7 +57,7 @@ func newFeature(id int, postIDs []int) *entity.Feature {
 		CreatedAt: sampleTime,
 		UpdatedAt: sampleTime,
 	}
-	util.FillDymmyString(&feature, id)
+	util.FillDummyString(&feature, id)
 
 	f := entity.NewFeature(feature, postIDs)
 	return &f

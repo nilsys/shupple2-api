@@ -64,5 +64,9 @@ func (r *FeatureCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Fea
 		return nil
 	})
 
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
 	return feature, nil
 }

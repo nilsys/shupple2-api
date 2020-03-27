@@ -180,7 +180,7 @@ func newUser(id int, name ...string) *entity.User {
 		Interests: []*entity.UserInterest{},
 		Gender:    model.GenderMale,
 	}
-	util.FillDymmyString(user, id)
+	util.FillDummyString(user, id)
 	if len(name) > 0 {
 		user.Name = name[0]
 	}

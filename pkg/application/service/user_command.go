@@ -100,7 +100,7 @@ func (s *UserCommandServiceImpl) updateMapping(wpUser *wordpress.User) error {
 		return errors.Wrap(err, "failed to find target user")
 	}
 	if targetUser.WordpressID != 0 {
-		return serror.New(nil, serror.CodeInvalidParam, "already mapped user; wordpress_user_id=%d", targetUser.WordpressID)
+		return serror.New(nil, serror.CodeInvalidParam, "already mapped user; wordpress_user_id=%d, target_user_id=%d", wpUser.ID, mediaUserID)
 	}
 
 	return s.UserCommandRepository.UpdateWordpressID(targetUser.ID, wpUser.ID)

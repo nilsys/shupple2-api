@@ -42,47 +42,37 @@ func convertTouristSpotToOutput(touristSpot *entity.TouristSpot) *response.Touri
 }
 
 func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.QueryTouristSpot) *response.ShowTouristSpot {
-	areaCategories := make([]response.Category, 0, len(queryTouristSpot.Categories))
-	themeCategories := make([]response.Category, 0, len(queryTouristSpot.Categories))
-	lcategories := make([]response.Lcategory, len(queryTouristSpot.Lcategories))
-
-	for _, category := range queryTouristSpot.Categories {
-		if category.Type.IsAreaKind() {
-			areaCategories = append(areaCategories, response.NewCategory(category.ID, category.Name, category.Type))
-		} else {
-			themeCategories = append(themeCategories, response.NewCategory(category.ID, category.Name, category.Type))
-		}
-	}
+	lcategories := make([]*response.Lcategory, len(queryTouristSpot.Lcategories))
 
 	for i, lcategory := range queryTouristSpot.Lcategories {
 		lcategories[i] = response.NewLcategory(lcategory.ID, lcategory.Name)
 	}
 
 	return &response.ShowTouristSpot{
-		ID:              queryTouristSpot.ID,
-		Slug:            queryTouristSpot.Slug,
-		Name:            queryTouristSpot.Name,
-		Thumbnail:       queryTouristSpot.Thumbnail,
-		WebsiteURL:      queryTouristSpot.WebsiteURL,
-		City:            queryTouristSpot.City,
-		Address:         queryTouristSpot.Address,
-		Latitude:        queryTouristSpot.Lat,
-		Longitude:       queryTouristSpot.Lng,
-		AccessCar:       queryTouristSpot.AccessCar,
-		AccessTrain:     queryTouristSpot.AccessTrain,
-		AccessBus:       queryTouristSpot.AccessBus,
-		OpeningHours:    queryTouristSpot.OpeningHours,
-		Tel:             queryTouristSpot.TEL,
-		Price:           queryTouristSpot.Price,
-		InstagramURL:    queryTouristSpot.InstagramURL,
-		SearchInnURL:    queryTouristSpot.SearchInnURL,
-		Rate:            queryTouristSpot.Rate,
-		VendorRate:      queryTouristSpot.VendorRate,
-		AreaCategories:  areaCategories,
-		ThemeCategories: themeCategories,
-		Lcategories:     lcategories,
-		CreatedAt:       model.TimeResponse(queryTouristSpot.CreatedAt),
-		UpdatedAt:       model.TimeResponse(queryTouristSpot.UpdatedAt),
+		ID:                      queryTouristSpot.ID,
+		Slug:                    queryTouristSpot.Slug,
+		Name:                    queryTouristSpot.Name,
+		Thumbnail:               queryTouristSpot.Thumbnail,
+		WebsiteURL:              queryTouristSpot.WebsiteURL,
+		City:                    queryTouristSpot.City,
+		Address:                 queryTouristSpot.Address,
+		Latitude:                queryTouristSpot.Lat,
+		Longitude:               queryTouristSpot.Lng,
+		AccessCar:               queryTouristSpot.AccessCar,
+		AccessTrain:             queryTouristSpot.AccessTrain,
+		AccessBus:               queryTouristSpot.AccessBus,
+		OpeningHours:            queryTouristSpot.OpeningHours,
+		Tel:                     queryTouristSpot.TEL,
+		Price:                   queryTouristSpot.Price,
+		InstagramURL:            queryTouristSpot.InstagramURL,
+		SearchInnURL:            queryTouristSpot.SearchInnURL,
+		Rate:                    queryTouristSpot.Rate,
+		VendorRate:              queryTouristSpot.VendorRate,
+		AreaCategories:          ConvertAreaCategoriesToOutput(queryTouristSpot.AreaCategories),
+		ThemeCategoryCategories: ConvertThemeCategoriesToOutput(queryTouristSpot.ThemeCategories),
+		Lcategories:             lcategories,
+		CreatedAt:               model.TimeResponse(queryTouristSpot.CreatedAt),
+		UpdatedAt:               model.TimeResponse(queryTouristSpot.UpdatedAt),
 	}
 }
 

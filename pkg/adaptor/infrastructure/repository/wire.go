@@ -17,8 +17,10 @@ type Test struct {
 	DB       *gorm.DB
 	AWS      *session.Session
 	Uploader *s3manager.Uploader
-	*CategoryCommandRepositoryImpl
-	*CategoryQueryRepositoryImpl
+	*AreaCategoryCommandRepositoryImpl
+	*AreaCategoryQueryRepositoryImpl
+	*ThemeCategoryCommandRepositoryImpl
+	*ThemeCategoryQueryRepositoryImpl
 	*ComicCommandRepositoryImpl
 	*ComicQueryRepositoryImpl
 	*FeatureCommandRepositoryImpl

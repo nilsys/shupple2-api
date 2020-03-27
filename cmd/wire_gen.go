@@ -59,7 +59,10 @@ func InitializeApp(configFilePath2 config.FilePath) (*App, error) {
 	stayway := configConfig.Stayway
 	staywayMedia := stayway.Media
 	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
-	categoryQueryRepositoryImpl := &repository.CategoryQueryRepositoryImpl{
+	areaCategoryQueryRepositoryImpl := &repository.AreaCategoryQueryRepositoryImpl{
+		DB: db,
+	}
+	themeCategoryQueryRepositoryImpl := &repository.ThemeCategoryQueryRepositoryImpl{
 		DB: db,
 	}
 	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
@@ -70,10 +73,11 @@ func InitializeApp(configFilePath2 config.FilePath) (*App, error) {
 		HashtagCommandRepository: hashtagCommandRepositoryImpl,
 	}
 	wordpressServiceImpl := &service.WordpressServiceImpl{
-		WordpressQueryRepository: wordpressQueryRepositoryImpl,
-		UserQueryRepository:      userQueryRepositoryImpl,
-		CategoryQueryRepository:  categoryQueryRepositoryImpl,
-		HashtagCommandService:    hashtagCommandServiceImpl,
+		WordpressQueryRepository:     wordpressQueryRepositoryImpl,
+		UserQueryRepository:          userQueryRepositoryImpl,
+		AreaCategoryQueryRepository:  areaCategoryQueryRepositoryImpl,
+		ThemeCategoryQueryRepository: themeCategoryQueryRepositoryImpl,
+		HashtagCommandService:        hashtagCommandServiceImpl,
 	}
 	transactionServiceImpl := &repository.TransactionServiceImpl{
 		DB: db,
@@ -113,8 +117,13 @@ func InitializeApp(configFilePath2 config.FilePath) (*App, error) {
 	postFavoriteCommandController := api.PostFavoriteCommandController{
 		PostFavoriteCommandService: postFavoriteCommandServiceImpl,
 	}
+	lcategoryQueryRepositoryImpl := &repository.LcategoryQueryRepositoryImpl{
+		DB: db,
+	}
 	categoryQueryServiceImpl := &service.CategoryQueryServiceImpl{
-		Repository: categoryQueryRepositoryImpl,
+		AreaCategoryRepository:  areaCategoryQueryRepositoryImpl,
+		ThemeCategoryRepository: themeCategoryQueryRepositoryImpl,
+		LcategoryRepository:     lcategoryQueryRepositoryImpl,
 	}
 	categoryQueryController := api.CategoryQueryController{
 		CategoryQueryService: categoryQueryServiceImpl,
@@ -173,7 +182,6 @@ func InitializeApp(configFilePath2 config.FilePath) (*App, error) {
 		ReviewQueryRepository:        reviewQueryRepositoryImpl,
 		ReviewCommandRepository:      reviewCommandRepositoryImpl,
 		HashtagCommandRepository:     hashtagCommandRepositoryImpl,
-		CategoryQueryRepository:      categoryQueryRepositoryImpl,
 		InnQueryRepository:           innQueryRepositoryImpl,
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
 		NoticeDomainService:          noticeDomainServiceImpl,
@@ -217,10 +225,11 @@ func InitializeApp(configFilePath2 config.FilePath) (*App, error) {
 		DB: db,
 	}
 	searchQueryServiceImpl := &service.SearchQueryServiceImpl{
-		CategoryQueryRepository:    categoryQueryRepositoryImpl,
-		TouristSpotQueryRepository: touristSpotQueryRepositoryImpl,
-		HashtagQueryRepository:     hashtagQueryRepositoryImpl,
-		UserQueryRepository:        userQueryRepositoryImpl,
+		AreaCategoryQueryRepository:  areaCategoryQueryRepositoryImpl,
+		ThemeCategoryQueryRepository: themeCategoryQueryRepositoryImpl,
+		TouristSpotQueryRepository:   touristSpotQueryRepositoryImpl,
+		HashtagQueryRepository:       hashtagQueryRepositoryImpl,
+		UserQueryRepository:          userQueryRepositoryImpl,
 	}
 	searchQueryController := api.SearchQueryController{
 		SearchQueryService: searchQueryServiceImpl,
@@ -271,14 +280,31 @@ func InitializeApp(configFilePath2 config.FilePath) (*App, error) {
 		HealthCheckRepository: healthCheckRepositoryImpl,
 		Config:                configConfig,
 	}
-	categoryCommandRepositoryImpl := &repository.CategoryCommandRepositoryImpl{
+	areaCategoryCommandRepositoryImpl := &repository.AreaCategoryCommandRepositoryImpl{
 		DAO: dao,
 	}
+	areaCategoryCommandServiceImpl := &service.AreaCategoryCommandServiceImpl{
+		AreaCategoryCommandRepository: areaCategoryCommandRepositoryImpl,
+		AreaCategoryQueryRepository:   areaCategoryQueryRepositoryImpl,
+		WordpressQueryRepository:      wordpressQueryRepositoryImpl,
+		WordpressService:              wordpressServiceImpl,
+		TransactionService:            transactionServiceImpl,
+	}
+	themeCategoryCommandRepositoryImpl := &repository.ThemeCategoryCommandRepositoryImpl{
+		DAO: dao,
+	}
+	themeCategoryCommandServiceImpl := &service.ThemeCategoryCommandServiceImpl{
+		ThemeCategoryCommandRepository: themeCategoryCommandRepositoryImpl,
+		ThemeCategoryQueryRepository:   themeCategoryQueryRepositoryImpl,
+		WordpressQueryRepository:       wordpressQueryRepositoryImpl,
+		WordpressService:               wordpressServiceImpl,
+		TransactionService:             transactionServiceImpl,
+	}
 	categoryCommandServiceImpl := &service.CategoryCommandServiceImpl{
-		CategoryCommandRepository: categoryCommandRepositoryImpl,
-		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
-		WordpressService:          wordpressServiceImpl,
-		TransactionService:        transactionServiceImpl,
+		AreaCategoryCommandService:    areaCategoryCommandServiceImpl,
+		ThemeCategoryCommandService:   themeCategoryCommandServiceImpl,
+		AreaCategoryCommandRepository: areaCategoryCommandRepositoryImpl,
+		WordpressQueryRepository:      wordpressQueryRepositoryImpl,
 	}
 	comicCommandRepositoryImpl := &repository.ComicCommandRepositoryImpl{
 		DAO: dao,
@@ -361,15 +387,15 @@ func InitializeApp(configFilePath2 config.FilePath) (*App, error) {
 		InterestQueryService: interestQueryServiceImpl,
 	}
 	areaQueryServiceImpl := &service.AreaQueryServiceImpl{
-		Repository: categoryQueryRepositoryImpl,
+		Repository: areaCategoryQueryRepositoryImpl,
 	}
 	areaQueryController := api.AreaQueryController{
 		AreaQueryService: areaQueryServiceImpl,
 	}
 	innQueryServiceImpl := &service.InnQueryServiceImpl{
-		InnQueryRepository:         innQueryRepositoryImpl,
-		CategoryQueryRepository:    categoryQueryRepositoryImpl,
-		TouristSpotQueryRepository: touristSpotQueryRepositoryImpl,
+		InnQueryRepository:          innQueryRepositoryImpl,
+		AreaCategoryQueryRepository: areaCategoryQueryRepositoryImpl,
+		TouristSpotQueryRepository:  touristSpotQueryRepositoryImpl,
 	}
 	innQueryController := api.InnQueryController{
 		InnQueryService: innQueryServiceImpl,
@@ -416,6 +442,6 @@ var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet)
 
 var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.AreaQueryServiceSet, service.InnQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet)
 
 var factorySet = wire.NewSet(factory.S3SignatureFactorySet)

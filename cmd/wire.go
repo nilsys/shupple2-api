@@ -56,6 +56,9 @@ var serviceSet = wire.NewSet(
 	service.PostFavoriteCommandServiceSet,
 	service.CategoryQueryServiceSet,
 	service.CategoryCommandServiceSet,
+	service.AreaCategoryQueryServiceSet,
+	service.AreaCategoryCommandServiceSet,
+	service.ThemeCategoryCommandServiceSet,
 	service.ComicQueryServiceSet,
 	service.ComicCommandServiceSet,
 	service.ReviewQueryServiceSet,
@@ -78,7 +81,6 @@ var serviceSet = wire.NewSet(
 	service.S3CommandServiceSet,
 	service.ProvideAuthService,
 	service.InterestQueryServiceSet,
-	service.AreaQueryServiceSet,
 	service.InnQueryServiceSet,
 )
 

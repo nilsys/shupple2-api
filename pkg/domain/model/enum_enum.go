@@ -75,61 +75,104 @@ func (x *AccompanyingType) UnmarshalText(text []byte) error {
 }
 
 const (
-	// CategoryTypeAreaGroup is a CategoryType of type AreaGroup
-	CategoryTypeAreaGroup CategoryType = iota + 1
-	// CategoryTypeArea is a CategoryType of type Area
-	CategoryTypeArea
-	// CategoryTypeSubArea is a CategoryType of type SubArea
-	CategoryTypeSubArea
-	// CategoryTypeSubSubArea is a CategoryType of type SubSubArea
-	CategoryTypeSubSubArea
-	// CategoryTypeTheme is a CategoryType of type Theme
-	CategoryTypeTheme
+	// AreaCategoryTypeArea is a AreaCategoryType of type Area
+	AreaCategoryTypeArea AreaCategoryType = iota + 1
+	// AreaCategoryTypeSubArea is a AreaCategoryType of type SubArea
+	AreaCategoryTypeSubArea
+	// AreaCategoryTypeSubSubArea is a AreaCategoryType of type SubSubArea
+	AreaCategoryTypeSubSubArea
 )
 
-const _CategoryTypeName = "AreaGroupAreaSubAreaSubSubAreaTheme"
+const _AreaCategoryTypeName = "AreaSubAreaSubSubArea"
 
-var _CategoryTypeMap = map[CategoryType]string{
-	1: _CategoryTypeName[0:9],
-	2: _CategoryTypeName[9:13],
-	3: _CategoryTypeName[13:20],
-	4: _CategoryTypeName[20:30],
-	5: _CategoryTypeName[30:35],
+var _AreaCategoryTypeMap = map[AreaCategoryType]string{
+	1: _AreaCategoryTypeName[0:4],
+	2: _AreaCategoryTypeName[4:11],
+	3: _AreaCategoryTypeName[11:21],
 }
 
 // String implements the Stringer interface.
-func (x CategoryType) String() string {
-	if str, ok := _CategoryTypeMap[x]; ok {
+func (x AreaCategoryType) String() string {
+	if str, ok := _AreaCategoryTypeMap[x]; ok {
 		return str
 	}
-	return fmt.Sprintf("CategoryType(%d)", x)
+	return fmt.Sprintf("AreaCategoryType(%d)", x)
 }
 
-var _CategoryTypeValue = map[string]CategoryType{
-	_CategoryTypeName[0:9]:   1,
-	_CategoryTypeName[9:13]:  2,
-	_CategoryTypeName[13:20]: 3,
-	_CategoryTypeName[20:30]: 4,
-	_CategoryTypeName[30:35]: 5,
+var _AreaCategoryTypeValue = map[string]AreaCategoryType{
+	_AreaCategoryTypeName[0:4]:   1,
+	_AreaCategoryTypeName[4:11]:  2,
+	_AreaCategoryTypeName[11:21]: 3,
 }
 
-// ParseCategoryType attempts to convert a string to a CategoryType
-func ParseCategoryType(name string) (CategoryType, error) {
-	if x, ok := _CategoryTypeValue[name]; ok {
+// ParseAreaCategoryType attempts to convert a string to a AreaCategoryType
+func ParseAreaCategoryType(name string) (AreaCategoryType, error) {
+	if x, ok := _AreaCategoryTypeValue[name]; ok {
 		return x, nil
 	}
-	return CategoryType(0), fmt.Errorf("%s is not a valid CategoryType", name)
+	return AreaCategoryType(0), fmt.Errorf("%s is not a valid AreaCategoryType", name)
 }
 
 // MarshalText implements the text marshaller method
-func (x CategoryType) MarshalText() ([]byte, error) {
+func (x AreaCategoryType) MarshalText() ([]byte, error) {
 	return []byte(x.String()), nil
 }
 
 // UnmarshalText implements the text unmarshaller method
-func (x *CategoryType) UnmarshalText(text []byte) error {
+func (x *AreaCategoryType) UnmarshalText(text []byte) error {
 	name := string(text)
-	tmp, err := ParseCategoryType(name)
+	tmp, err := ParseAreaCategoryType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
+	// AreaGroupJapan is a AreaGroup of type Japan
+	AreaGroupJapan AreaGroup = iota + 1
+	// AreaGroupWorld is a AreaGroup of type World
+	AreaGroupWorld
+)
+
+const _AreaGroupName = "japanworld"
+
+var _AreaGroupMap = map[AreaGroup]string{
+	1: _AreaGroupName[0:5],
+	2: _AreaGroupName[5:10],
+}
+
+// String implements the Stringer interface.
+func (x AreaGroup) String() string {
+	if str, ok := _AreaGroupMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("AreaGroup(%d)", x)
+}
+
+var _AreaGroupValue = map[string]AreaGroup{
+	_AreaGroupName[0:5]:  1,
+	_AreaGroupName[5:10]: 2,
+}
+
+// ParseAreaGroup attempts to convert a string to a AreaGroup
+func ParseAreaGroup(name string) (AreaGroup, error) {
+	if x, ok := _AreaGroupValue[name]; ok {
+		return x, nil
+	}
+	return AreaGroup(0), fmt.Errorf("%s is not a valid AreaGroup", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x AreaGroup) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *AreaGroup) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseAreaGroup(name)
 	if err != nil {
 		return err
 	}
@@ -527,6 +570,57 @@ func (x SuggestionType) MarshalText() ([]byte, error) {
 func (x *SuggestionType) UnmarshalText(text []byte) error {
 	name := string(text)
 	tmp, err := ParseSuggestionType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
+	// ThemeCategoryTypeTheme is a ThemeCategoryType of type Theme
+	ThemeCategoryTypeTheme ThemeCategoryType = iota + 1
+	// ThemeCategoryTypeSubTheme is a ThemeCategoryType of type SubTheme
+	ThemeCategoryTypeSubTheme
+)
+
+const _ThemeCategoryTypeName = "ThemeSubTheme"
+
+var _ThemeCategoryTypeMap = map[ThemeCategoryType]string{
+	1: _ThemeCategoryTypeName[0:5],
+	2: _ThemeCategoryTypeName[5:13],
+}
+
+// String implements the Stringer interface.
+func (x ThemeCategoryType) String() string {
+	if str, ok := _ThemeCategoryTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("ThemeCategoryType(%d)", x)
+}
+
+var _ThemeCategoryTypeValue = map[string]ThemeCategoryType{
+	_ThemeCategoryTypeName[0:5]:  1,
+	_ThemeCategoryTypeName[5:13]: 2,
+}
+
+// ParseThemeCategoryType attempts to convert a string to a ThemeCategoryType
+func ParseThemeCategoryType(name string) (ThemeCategoryType, error) {
+	if x, ok := _ThemeCategoryTypeValue[name]; ok {
+		return x, nil
+	}
+	return ThemeCategoryType(0), fmt.Errorf("%s is not a valid ThemeCategoryType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x ThemeCategoryType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *ThemeCategoryType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseThemeCategoryType(name)
 	if err != nil {
 		return err
 	}

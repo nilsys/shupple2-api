@@ -9,6 +9,6 @@ func newHashtag(id int) *entity.Hashtag {
 	hashtag := &entity.Hashtag{
 		ID: id,
 	}
-	util.FillDymmyString(hashtag, id)
+	util.FillDummyString(hashtag, id)
 	return hashtag
 }

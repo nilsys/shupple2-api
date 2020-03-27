@@ -54,8 +54,10 @@ func (d DAO) LockDB(c context.Context) *gorm.DB {
 var RepositoriesSet = wire.NewSet(
 	ProvideDB,
 	wire.Struct(new(DAO), "*"),
-	CategoryCommandRepositorySet,
-	CategoryQueryRepositorySet,
+	AreaCategoryCommandRepositorySet,
+	AreaCategoryQueryRepositorySet,
+	ThemeCategoryCommandRepositorySet,
+	ThemeCategoryQueryRepositorySet,
 	ComicCommandRepositorySet,
 	ComicQueryRepositorySet,
 	FeatureCommandRepositorySet,

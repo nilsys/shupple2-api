@@ -28,7 +28,7 @@ var TouristSpotQueryServiceSet = wire.NewSet(
 
 // TouristSpot参照
 func (s *TouristSpotQueryServiceImpl) Show(id int) (*entity.QueryTouristSpot, error) {
-	return s.TouristSpotQueryRepository.FindByID(id)
+	return s.TouristSpotQueryRepository.FindDetailByID(id)
 }
 
 // TouristSpot一覧参照

@@ -34,7 +34,7 @@ type (
 		repository.ReviewQueryRepository
 		repository.ReviewCommandRepository
 		repository.HashtagCommandRepository
-		repository.CategoryQueryRepository
+		// repository.CategoryQueryRepository
 		repository.InnQueryRepository
 		repository.TouristSpotCommandRepository
 		service.NoticeDomainService
@@ -49,15 +49,6 @@ var ReviewCommandServiceSet = wire.NewSet(
 
 // touristSpotと紐付くレビューの場合
 func (s *ReviewCommandServiceImpl) StoreTouristSpotReview(review *entity.Review) error {
-
-	// レビューに紐付くtouristSpotに紐付くカテゴリーを取得
-	categories, err := s.CategoryQueryRepository.FindByTouristSpotID(review.TouristSpotID)
-	if err != nil {
-		return errors.Wrap(err, "failed find category list by tourist_spot")
-	}
-	// レビューに紐付くtouristSpotに紐付くカテゴリーとハッシュタグを紐付けるHashtagCategoryをgen
-	hashtagCategoryList := s.convertCategoryAndHashtagIDsToHashtagCategory(categories, review.HashtagIDs)
-
 	// TODO: lock時間長くなるのが気になる
 	return s.TransactionService.Do(func(c context.Context) error {
 		if err := s.ReviewCommandRepository.StoreReview(c, review); err != nil {
@@ -66,24 +57,6 @@ func (s *ReviewCommandServiceImpl) StoreTouristSpotReview(review *entity.Review)
 
 		if err := s.persistReviewMedia(review.Medias); err != nil {
 			return errors.Wrap(err, "failed to persist media")
-		}
-
-		if !review.HashHashtagIDs() {
-			return nil
-		}
-
-		// TODO: forで回したく無い...
-		for _, hashtagCategory := range hashtagCategoryList {
-			// HashtagCategoryを永続化
-			if err := s.HashtagCommandRepository.StoreHashtagCategory(c, hashtagCategory); err != nil {
-				return errors.Wrap(err, "failed store hashtag_category")
-			}
-		}
-		for _, hashtagCategory := range hashtagCategoryList {
-			// 紐付けられたハッシュタグのscoreをインクリメント
-			if err := s.HashtagCommandRepository.IncrementScoreByID(c, hashtagCategory.HashtagID); err != nil {
-				return errors.Wrap(err, "failed increment hashtag.score")
-			}
 		}
 
 		// 紐づくtourist_spotの平均値を更新
@@ -97,20 +70,6 @@ func (s *ReviewCommandServiceImpl) StoreTouristSpotReview(review *entity.Review)
 
 // innと紐付くレビューの場合
 func (s *ReviewCommandServiceImpl) StoreInnReview(review *entity.Review) error {
-
-	// レビューに紐付くinnに紐付くカテゴリーIDをタイプ別に取得
-	innAreaTypeIDs, err := s.InnQueryRepository.FindAreaIDsByID(review.InnID)
-	if err != nil {
-		return errors.Wrap(err, "failed get inn area details from stayway api")
-	}
-
-	// stayway APIから取得したカテゴリーIDはcategoryテーブルのmetasearchIDと紐づいているので
-	categories, err := s.CategoryQueryRepository.FindByMetaSearchID(innAreaTypeIDs)
-	if err != nil {
-		return errors.Wrap(err, "failed get category list by metasearch id")
-	}
-	hashtagCategoryList := s.convertCategoryAndHashtagIDsToHashtagCategory(categories, review.HashtagIDs)
-
 	return s.TransactionService.Do(func(c context.Context) error {
 		if err := s.ReviewCommandRepository.StoreReview(c, review); err != nil {
 			return errors.Wrap(err, "failed store review")
@@ -120,21 +79,6 @@ func (s *ReviewCommandServiceImpl) StoreInnReview(review *entity.Review) error {
 			return errors.Wrap(err, "failed to persist media")
 		}
 
-		if !review.HashHashtagIDs() {
-			return nil
-		}
-		for _, hashtagCategory := range hashtagCategoryList {
-			// HashtagCategoryを永続化
-			if err := s.HashtagCommandRepository.StoreHashtagCategory(c, hashtagCategory); err != nil {
-				return errors.Wrap(err, "failed store hashtag_category")
-			}
-		}
-		for _, hashtagCategory := range hashtagCategoryList {
-			// 紐付けられたハッシュタグのscoreをインクリメント
-			if err := s.HashtagCommandRepository.IncrementScoreByID(c, hashtagCategory.HashtagID); err != nil {
-				return errors.Wrap(err, "failed increment hashtag.score")
-			}
-		}
 		return nil
 	})
 }
@@ -226,18 +170,6 @@ func (s *ReviewCommandServiceImpl) UnfavoriteReviewComment(user *entity.User, re
 
 		return nil
 	})
-}
-
-func (s *ReviewCommandServiceImpl) convertCategoryAndHashtagIDsToHashtagCategory(categories []*entity.Category, hashtagIDs []*entity.ReviewHashtag) []*entity.HashtagCategory {
-	var hashtagCategories []*entity.HashtagCategory
-
-	for _, id := range hashtagIDs {
-		for _, category := range categories {
-			hashtagCategories = append(hashtagCategories, entity.NewHashtagCategory(id.HashtagID, category.ID))
-		}
-	}
-
-	return hashtagCategories
 }
 
 func (s *ReviewCommandServiceImpl) CreateReviewComment(user *entity.User, reviewID int, body string) error {

@@ -28,14 +28,6 @@ func (r *HashtagCommandRepositoryImpl) FirstOrCreate(hashtag *entity.Hashtag) (*
 	return &row, nil
 }
 
-// hashtag_idとcategory_idの組み合わせが無ければInsert、あれば何もしない
-func (r *HashtagCommandRepositoryImpl) StoreHashtagCategory(c context.Context, hashtagCategory *entity.HashtagCategory) error {
-	if err := r.DB(c).Where(hashtagCategory).Attrs(hashtagCategory).FirstOrCreate(hashtagCategory).Error; err != nil {
-		return errors.Wrap(err, "failed to find or create hashtag_category")
-	}
-	return nil
-}
-
 func (r HashtagCommandRepositoryImpl) IncrementScoreByID(c context.Context, id int) error {
 	if err := r.DB(c).Exec("UPDATE hashtag SET score=score+1 WHERE id = ?", id).Error; err != nil {
 		return errors.Wrap(err, "failed increment review score")

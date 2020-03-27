@@ -46,7 +46,7 @@ func (s *WordpressCallbackServiceImpl) Import(entityType wordpress.EntityType, i
 	case wordpress.EntityTypeFeature:
 		_, err = s.FeatureCommandService.ImportFromWordpressByID(id)
 	case wordpress.EntityTypeCategory:
-		_, err = s.CategoryCommandService.ImportFromWordpressByID(id)
+		err = s.CategoryCommandService.ImportFromWordpressByID(id)
 	case wordpress.EntityTypeLocationCat:
 		_, err = s.LcategoryCommandService.ImportFromWordpressByID(id)
 	default:

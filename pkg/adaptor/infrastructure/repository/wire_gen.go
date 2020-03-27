@@ -37,10 +37,16 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 	dao := DAO{
 		UnderlyingDB: db,
 	}
-	categoryCommandRepositoryImpl := &CategoryCommandRepositoryImpl{
+	areaCategoryCommandRepositoryImpl := &AreaCategoryCommandRepositoryImpl{
 		DAO: dao,
 	}
-	categoryQueryRepositoryImpl := &CategoryQueryRepositoryImpl{
+	areaCategoryQueryRepositoryImpl := &AreaCategoryQueryRepositoryImpl{
+		DB: db,
+	}
+	themeCategoryCommandRepositoryImpl := &ThemeCategoryCommandRepositoryImpl{
+		DAO: dao,
+	}
+	themeCategoryQueryRepositoryImpl := &ThemeCategoryQueryRepositoryImpl{
 		DB: db,
 	}
 	comicCommandRepositoryImpl := &ComicCommandRepositoryImpl{
@@ -100,29 +106,31 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 	staywayMedia := _wireStaywayMediaValue
 	wordpressQueryRepositoryImpl := NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
 	test := &Test{
-		Config:                           configConfig,
-		DB:                               db,
-		AWS:                              session,
-		Uploader:                         uploader,
-		CategoryCommandRepositoryImpl:    categoryCommandRepositoryImpl,
-		CategoryQueryRepositoryImpl:      categoryQueryRepositoryImpl,
-		ComicCommandRepositoryImpl:       comicCommandRepositoryImpl,
-		ComicQueryRepositoryImpl:         comicQueryRepositoryImpl,
-		FeatureCommandRepositoryImpl:     featureCommandRepositoryImpl,
-		FeatureQueryRepositoryImpl:       featureQueryRepositoryImpl,
-		LcategoryCommandRepositoryImpl:   lcategoryCommandRepositoryImpl,
-		LcategoryQueryRepositoryImpl:     lcategoryQueryRepositoryImpl,
-		TouristSpotCommandRepositoryImpl: touristSpotCommandRepositoryImpl,
-		TouristSpotQueryRepositoryImpl:   touristSpotQueryRepositoryImpl,
-		PostCommandRepositoryImpl:        postCommandRepositoryImpl,
-		PostQueryRepositoryImpl:          postQueryRepositoryImpl,
-		UserQueryRepositoryImpl:          userQueryRepositoryImpl,
-		UserCommandRepositoryImpl:        userCommandRepositoryImpl,
-		VlogCommandRepositoryImpl:        vlogCommandRepositoryImpl,
-		VlogQueryRepositoryImpl:          vlogQueryRepositoryImpl,
-		ReviewCommandRepositoryImpl:      reviewCommandRepositoryImpl,
-		ReviewQueryRepositoryImpl:        reviewQueryRepositoryImpl,
-		WordpressQueryRepositoryImpl:     wordpressQueryRepositoryImpl,
+		Config:                             configConfig,
+		DB:                                 db,
+		AWS:                                session,
+		Uploader:                           uploader,
+		AreaCategoryCommandRepositoryImpl:  areaCategoryCommandRepositoryImpl,
+		AreaCategoryQueryRepositoryImpl:    areaCategoryQueryRepositoryImpl,
+		ThemeCategoryCommandRepositoryImpl: themeCategoryCommandRepositoryImpl,
+		ThemeCategoryQueryRepositoryImpl:   themeCategoryQueryRepositoryImpl,
+		ComicCommandRepositoryImpl:         comicCommandRepositoryImpl,
+		ComicQueryRepositoryImpl:           comicQueryRepositoryImpl,
+		FeatureCommandRepositoryImpl:       featureCommandRepositoryImpl,
+		FeatureQueryRepositoryImpl:         featureQueryRepositoryImpl,
+		LcategoryCommandRepositoryImpl:     lcategoryCommandRepositoryImpl,
+		LcategoryQueryRepositoryImpl:       lcategoryQueryRepositoryImpl,
+		TouristSpotCommandRepositoryImpl:   touristSpotCommandRepositoryImpl,
+		TouristSpotQueryRepositoryImpl:     touristSpotQueryRepositoryImpl,
+		PostCommandRepositoryImpl:          postCommandRepositoryImpl,
+		PostQueryRepositoryImpl:            postQueryRepositoryImpl,
+		UserQueryRepositoryImpl:            userQueryRepositoryImpl,
+		UserCommandRepositoryImpl:          userCommandRepositoryImpl,
+		VlogCommandRepositoryImpl:          vlogCommandRepositoryImpl,
+		VlogQueryRepositoryImpl:            vlogQueryRepositoryImpl,
+		ReviewCommandRepositoryImpl:        reviewCommandRepositoryImpl,
+		ReviewQueryRepositoryImpl:          reviewQueryRepositoryImpl,
+		WordpressQueryRepositoryImpl:       wordpressQueryRepositoryImpl,
 	}
 	return test, nil
 }
@@ -161,8 +169,10 @@ type Test struct {
 	DB       *gorm.DB
 	AWS      *session.Session
 	Uploader *s3manager.Uploader
-	*CategoryCommandRepositoryImpl
-	*CategoryQueryRepositoryImpl
+	*AreaCategoryCommandRepositoryImpl
+	*AreaCategoryQueryRepositoryImpl
+	*ThemeCategoryCommandRepositoryImpl
+	*ThemeCategoryQueryRepositoryImpl
 	*ComicCommandRepositoryImpl
 	*ComicQueryRepositoryImpl
 	*FeatureCommandRepositoryImpl

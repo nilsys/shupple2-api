@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"reflect"
@@ -17,7 +16,6 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 	"go.uber.org/zap"
 )
@@ -49,7 +47,6 @@ type Script struct {
 	WordpressRepo         repository.WordpressQueryRepository
 	UserQueryRepository   repository.UserQueryRepository
 	UserRepo              repository.UserCommandRepository
-	CategoryCommandRepo   repository.CategoryCommandRepository
 	UserService           service.UserCommandService
 	CategoryService       service.CategoryCommandService
 	ComicService          service.ComicCommandService
@@ -220,24 +217,6 @@ func (s Script) importData(wordpressDB *gorm.DB, entry Entry) error {
 }
 
 func (s Script) importCategory(wordpressDB *gorm.DB) error {
-	japan := entity.Category{
-		ID:   entity.AreaGroupIDJapan,
-		Name: "国内",
-		Type: model.CategoryTypeAreaGroup,
-	}
-	if err := s.CategoryCommandRepo.Store(context.Background(), &japan); err != nil {
-		return errors.Wrap(err, "failed to save japan category")
-	}
-
-	world := entity.Category{
-		ID:   entity.AreaGroupIDWorld,
-		Name: "海外",
-		Type: model.CategoryTypeAreaGroup,
-	}
-	if err := s.CategoryCommandRepo.Store(context.Background(), &world); err != nil {
-		return errors.Wrap(err, "failed to save world category")
-	}
-
 	return errors.Wrap(s.importCategorySub(wordpressDB, 0), "failed to import categories")
 }
 
@@ -252,7 +231,7 @@ func (s Script) importCategorySub(wordpressDB *gorm.DB, parentID int) error {
 	}
 
 	for _, c := range categories {
-		if _, err := s.CategoryService.ImportFromWordpressByID(c.ID); err != nil {
+		if err := s.CategoryService.ImportFromWordpressByID(c.ID); err != nil {
 			return errors.Wrapf(err, "failed to import wordpress category; id=%d", c.ID)
 		}
 

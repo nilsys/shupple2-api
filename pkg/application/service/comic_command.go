@@ -64,5 +64,9 @@ func (r *ComicCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Comic
 		return nil
 	})
 
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
 	return comic, nil
 }

@@ -17,7 +17,8 @@ type (
 	}
 
 	TouristSpotQueryRepository interface {
-		FindByID(id int) (*entity.QueryTouristSpot, error)
+		FindByID(id int) (*entity.TouristSpot, error)
+		FindDetailByID(id int) (*entity.QueryTouristSpot, error)
 		FindListByParams(query *query.FindTouristSpotListQuery) ([]*entity.TouristSpot, error)
 		FindRecommendListByParams(query *query.FindRecommendTouristSpotListQuery) ([]*entity.TouristSpot, error)
 		// name部分一致検索

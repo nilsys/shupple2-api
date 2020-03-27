@@ -24,7 +24,8 @@ type (
 	WordpressService interface {
 		PatchPost(*entity.Post, *wordpress.Post) error
 		PatchTouristSpot(*entity.TouristSpot, *wordpress.Location) error
-		PatchCategory(*entity.Category, *wordpress.Category) error
+		PatchAreaCategory(*entity.AreaCategory, *wordpress.Category) error
+		PatchThemeCategory(*entity.ThemeCategory, *wordpress.Category) error
 		PatchLcategory(*entity.Lcategory, *wordpress.LocationCategory) error
 		PatchVlog(*entity.Vlog, *wordpress.Vlog) error
 		PatchFeature(*entity.Feature, *wordpress.Feature) error
@@ -34,7 +35,8 @@ type (
 	WordpressServiceImpl struct {
 		repository.WordpressQueryRepository
 		repository.UserQueryRepository
-		repository.CategoryQueryRepository
+		repository.AreaCategoryQueryRepository
+		repository.ThemeCategoryQueryRepository
 		HashtagCommandService
 	}
 )
@@ -79,6 +81,11 @@ func (s *WordpressServiceImpl) PatchPost(post *entity.Post, wpPost *wordpress.Po
 		hashtagIDs[i] = hashtagEntity.ID
 	}
 
+	areaCategoryIDs, themeCategoryIDs, err := s.splitCategories(wpPost.Categories)
+	if err != nil {
+		return errors.Wrap(err, "failed to split post categories")
+	}
+
 	post.ID = wpPost.ID
 	post.UserID = user.ID
 	post.Slug = wpPost.Slug
@@ -91,7 +98,8 @@ func (s *WordpressServiceImpl) PatchPost(post *entity.Post, wpPost *wordpress.Po
 	post.SEODescription = wpPost.Meta.MetaDescription
 	post.CreatedAt = time.Time(wpPost.Date)
 	post.SetBodies(bodies)
-	post.SetCategories(wpPost.Categories)
+	post.SetAreaCategories(areaCategoryIDs)
+	post.SetThemeCategories(themeCategoryIDs)
 	post.SetHashtags(hashtagIDs)
 
 	return nil
@@ -116,6 +124,11 @@ func (s *WordpressServiceImpl) PatchTouristSpot(touristSpot *entity.TouristSpot,
 		}
 	}
 
+	areaCategoryIDs, themeCategoryIDs, err := s.splitCategories(wpLocation.Categories)
+	if err != nil {
+		return errors.Wrap(err, "failed to split tourist spot categories")
+	}
+
 	touristSpot.ID = wpLocation.ID
 	touristSpot.Name = wpLocation.Title.Rendered
 	touristSpot.Slug = wpLocation.Slug
@@ -134,83 +147,84 @@ func (s *WordpressServiceImpl) PatchTouristSpot(touristSpot *entity.TouristSpot,
 	touristSpot.InstagramURL = wpLocation.Attributes.Instagram
 	touristSpot.SearchInnURL = wpLocation.Attributes.Inn
 	touristSpot.CreatedAt = time.Time(wpLocation.Date)
-	touristSpot.SetCategories(wpLocation.Categories)
+	touristSpot.SetAreaCategories(areaCategoryIDs)
+	touristSpot.SetThemeCategories(themeCategoryIDs)
 	touristSpot.SetLcategories(wpLocation.LocationCat)
 
 	return nil
 }
 
-/*
-## 親カテについて
-
-AreaGroupをwordpress側で作れないので、CategoryTypeがjapan,worldの場合は固定値を入れる
-
-## カテゴリタイプについて
-
-* ルートカテゴリかつCategoryTypeがjapan or worldの場合     -> Area
-* ルートカテゴリかつCategoryTypeがjapan or worldでない場合 -> Theme
-* 非ルートカテゴリかつ親カテがArea                         -> SubArea
-* 非ルートカテゴリかつ親カテがSubArea                      -> SubSubArea
-* 非ルートカテゴリかつ親カテがSubSubArea                   -> SubSubArea
-* 非ルートカテゴリかつ親カテがTheme                        -> Theme
-
-## TODO:
-
-親カテのカテゴリタイプが影響するので、カテゴリの更新があった場合は子カテの更新も行わないといけない
-*/
-func (s *WordpressServiceImpl) PatchCategory(category *entity.Category, wpCategory *wordpress.Category) error {
-	categoryType, err := s.convertCategoryType(wpCategory)
-	if err != nil {
-		return errors.Wrap(err, "failed to convert category type")
-	}
-
-	parentID := wpCategory.Parent
-	switch wpCategory.Type {
-	case wordpress.CategoryTypeJapan:
-		parentID = entity.AreaGroupIDJapan
-	case wordpress.CategoryTypeWorld:
-		parentID = entity.AreaGroupIDWorld
-	}
-
-	var pParentID *int
-	if parentID > 0 {
-		pParentID = &parentID
-	}
-
+// TODO: 親カテのカテゴリタイプが影響するので、カテゴリの更新があった場合は子カテの更新も行わないといけない
+func (s *WordpressServiceImpl) PatchAreaCategory(category *entity.AreaCategory, wpCategory *wordpress.Category) error {
 	category.ID = wpCategory.ID
 	category.Name = wpCategory.Name
 	category.Slug = wpCategory.Slug
-	category.Type = categoryType
-	category.ParentID = pParentID
+
+	if wpCategory.Parent != 0 {
+		parent, err := s.AreaCategoryQueryRepository.FindByID(wpCategory.Parent)
+		if err != nil {
+			return errors.Wrap(err, "failed to find parent area category")
+		}
+
+		category.AreaGroup = parent.AreaGroup
+		category.AreaID = parent.AreaID
+		category.SubAreaID = parent.SubAreaID
+		switch parent.Type {
+		case model.AreaCategoryTypeArea:
+			category.Type = model.AreaCategoryTypeSubArea
+			category.SubAreaID.Int64 = int64(category.ID)
+			category.SubAreaID.Valid = true
+		case model.AreaCategoryTypeSubArea:
+			category.Type = model.AreaCategoryTypeSubSubArea
+			category.SubSubAreaID.Int64 = int64(category.ID)
+			category.SubSubAreaID.Valid = true
+		case model.AreaCategoryTypeSubSubArea:
+			return serror.New(nil, serror.CodeUndefined, "sub sub area can't be parent")
+		}
+
+		return nil
+	}
+
+	category.Type = model.AreaCategoryTypeArea
+	category.AreaID = category.ID
+	switch wpCategory.Type {
+	case wordpress.CategoryTypeJapan:
+		category.AreaGroup = model.AreaGroupJapan
+	case wordpress.CategoryTypeWorld:
+		category.AreaGroup = model.AreaGroupWorld
+	default:
+		return serror.New(nil, serror.CodeUndefined, "invalid area group")
+	}
 
 	return nil
 }
 
-func (s *WordpressServiceImpl) convertCategoryType(wpCategory *wordpress.Category) (model.CategoryType, error) {
-	if wpCategory.Parent == 0 {
-		if wpCategory.Type == wordpress.CategoryTypeJapan || wpCategory.Type == wordpress.CategoryTypeWorld {
-			return model.CategoryTypeArea, nil
+func (s *WordpressServiceImpl) PatchThemeCategory(category *entity.ThemeCategory, wpCategory *wordpress.Category) error {
+	category.ID = wpCategory.ID
+	category.Name = wpCategory.Name
+	category.Slug = wpCategory.Slug
+
+	if wpCategory.Parent != 0 {
+		parent, err := s.ThemeCategoryQueryRepository.FindByID(wpCategory.Parent)
+		if err != nil {
+			return errors.Wrap(err, "failed to find parent theme category")
 		}
-		return model.CategoryTypeTheme, nil
+		if parent.Type != model.ThemeCategoryTypeTheme {
+			return serror.New(nil, serror.CodeInvalidCategoryType, "parent theme category must be theme, not sub_theme")
+		}
+
+		category.Type = model.ThemeCategoryTypeSubTheme
+		category.ThemeID = parent.ThemeID
+		category.SubThemeID.Int64 = int64(category.ID)
+		category.SubThemeID.Valid = true
+
+		return nil
 	}
 
-	parent, err := s.CategoryQueryRepository.FindByID(wpCategory.Parent)
-	if err != nil {
-		return model.CategoryType(0), errors.Wrap(err, "failed to find parent category")
-	}
+	category.Type = model.ThemeCategoryTypeTheme
+	category.ThemeID = category.ID
 
-	switch parent.Type {
-	case model.CategoryTypeArea:
-		return model.CategoryTypeSubArea, nil
-	case model.CategoryTypeSubArea:
-		return model.CategoryTypeSubSubArea, nil
-	case model.CategoryTypeSubSubArea:
-		return model.CategoryTypeSubSubArea, nil
-	case model.CategoryTypeTheme:
-		return model.CategoryTypeTheme, nil
-	}
-
-	return model.CategoryType(0), serror.New(nil, serror.CodeUndefined, "invalid parent category type")
+	return nil
 }
 
 func (s *WordpressServiceImpl) PatchLcategory(lcategory *entity.Lcategory, wpLocationCategory *wordpress.LocationCategory) error {
@@ -231,6 +245,11 @@ func (s *WordpressServiceImpl) PatchVlog(vlog *entity.Vlog, wpVlog *wordpress.Vl
 		return errors.Wrap(err, "failed to get thumbnail")
 	}
 
+	areaCategoryIDs, themeCategoryIDs, err := s.splitCategories(wpVlog.Categories)
+	if err != nil {
+		return errors.Wrap(err, "failed to split post categories")
+	}
+
 	vlog.ID = wpVlog.ID
 	vlog.UserID = user.ID
 	vlog.Slug = wpVlog.Slug
@@ -246,7 +265,8 @@ func (s *WordpressServiceImpl) PatchVlog(vlog *entity.Vlog, wpVlog *wordpress.Vl
 	vlog.Timeline = wpVlog.Attributes.MovieTimeline
 	vlog.CreatedAt = time.Time(wpVlog.Date)
 	vlog.SetTouristSpots(wpVlog.Attributes.MovieLocation)
-	vlog.SetCategories(wpVlog.Categories)
+	vlog.SetAreaCategories(areaCategoryIDs)
+	vlog.SetThemeCategories(themeCategoryIDs)
 
 	return nil
 }
@@ -322,4 +342,27 @@ func (s *WordpressServiceImpl) getThumbnail(mediaID int) (string, error) {
 		thumbnail = "https://" + thumbnail[len(thumbnailS3Prefix):]
 	}
 	return thumbnail, nil
+}
+
+func (s *WordpressServiceImpl) splitCategories(categoryIDs []int) ([]int, []int, error) {
+	existingAreaCategories, err := s.AreaCategoryQueryRepository.FindByIDs(categoryIDs)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "failed to get area categories")
+	}
+	existingAreaCategoryIDsSet := make(map[int]struct{}, len(existingAreaCategories))
+	for _, areaCategory := range existingAreaCategories {
+		existingAreaCategoryIDsSet[areaCategory.ID] = struct{}{}
+	}
+
+	areaCategoryIDs := make([]int, 0, len(categoryIDs))
+	themeCategoryIDs := make([]int, 0, len(categoryIDs))
+	for _, categoryID := range categoryIDs {
+		if _, existing := existingAreaCategoryIDsSet[categoryID]; existing {
+			areaCategoryIDs = append(areaCategoryIDs, categoryID)
+		} else {
+			themeCategoryIDs = append(themeCategoryIDs, categoryID)
+		}
+	}
+
+	return areaCategoryIDs, themeCategoryIDs, nil
 }

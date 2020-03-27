@@ -8,16 +8,4 @@ type (
 		ReviewCount int
 		Score       int
 	}
-
-	HashtagCategory struct {
-		HashtagID  int `gorm:"primary_key"`
-		CategoryID int `gorm:"primary_key"`
-	}
 )
-
-func NewHashtagCategory(hashtagID, categoryID int) *HashtagCategory {
-	return &HashtagCategory{
-		HashtagID:  hashtagID,
-		CategoryID: categoryID,
-	}
-}
