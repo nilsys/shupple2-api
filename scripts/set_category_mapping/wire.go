@@ -8,7 +8,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 )
 
-func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
+func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	wire.Build(
 		wire.Struct(new(Script), "*"),
 		config.GetConfig,

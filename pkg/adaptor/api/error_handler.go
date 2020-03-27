@@ -2,9 +2,10 @@ package api
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
-	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"

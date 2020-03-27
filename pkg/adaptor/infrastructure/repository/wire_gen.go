@@ -20,7 +20,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeTest(configFilePath config.ConfigFilePath) (*Test, error) {
+func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 	configConfig, err := config.GetConfig(configFilePath)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func InitializeTest(configFilePath config.ConfigFilePath) (*Test, error) {
 		DB: db,
 	}
 	dao := DAO{
-		DB_: db,
+		UnderlyingDB: db,
 	}
 	touristSpotCommandRepositoryImpl := &TouristSpotCommandRepositoryImpl{
 		DAO: dao,
@@ -88,6 +88,14 @@ func InitializeTest(configFilePath config.ConfigFilePath) (*Test, error) {
 	vlogQueryRepositoryImpl := &VlogQueryRepositoryImpl{
 		DB: db,
 	}
+	reviewCommandRepositoryImpl := &ReviewCommandRepositoryImpl{
+		DAO:        dao,
+		AWSSession: session,
+		AWSConfig:  aws,
+	}
+	reviewQueryRepositoryImpl := &ReviewQueryRepositoryImpl{
+		DB: db,
+	}
 	wordpress := _wireWordpressValue
 	staywayMedia := _wireStaywayMediaValue
 	wordpressQueryRepositoryImpl := NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
@@ -112,6 +120,8 @@ func InitializeTest(configFilePath config.ConfigFilePath) (*Test, error) {
 		UserCommandRepositoryImpl:        userCommandRepositoryImpl,
 		VlogCommandRepositoryImpl:        vlogCommandRepositoryImpl,
 		VlogQueryRepositoryImpl:          vlogQueryRepositoryImpl,
+		ReviewCommandRepositoryImpl:      reviewCommandRepositoryImpl,
+		ReviewQueryRepositoryImpl:        reviewQueryRepositoryImpl,
 		WordpressQueryRepositoryImpl:     wordpressQueryRepositoryImpl,
 	}
 	return test, nil
@@ -167,6 +177,8 @@ type Test struct {
 	*UserCommandRepositoryImpl
 	*VlogCommandRepositoryImpl
 	*VlogQueryRepositoryImpl
+	*ReviewCommandRepositoryImpl
+	*ReviewQueryRepositoryImpl
 	*WordpressQueryRepositoryImpl
 }
 

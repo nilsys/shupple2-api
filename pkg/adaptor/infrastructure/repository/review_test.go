@@ -21,11 +21,14 @@ var _ = Describe("ReviewRepositoryTest", func() {
 		hashtag *entity.Hashtag = newHashtag(hashtagID)
 	)
 
+	BeforeEach(func() {
+		query = tests.ReviewQueryRepositoryImpl
+		command = tests.ReviewCommandRepositoryImpl
+		truncate(db)
+	})
+
 	Describe("ShowReviewListByParamsのテスト", func() {
 		BeforeEach(func() {
-			query = &ReviewQueryRepositoryImpl{DB: db}
-
-			truncate(db)
 			Expect(db.Save(hashtag).Error).To(Succeed())
 			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
 			Expect(db.Save(newUser(userID)).Error).To(Succeed())
@@ -61,9 +64,6 @@ var _ = Describe("ReviewRepositoryTest", func() {
 
 	Describe("FindReviewCommentListByReviewID", func() {
 		BeforeEach(func() {
-			query = &ReviewQueryRepositoryImpl{DB: db}
-
-			truncate(db)
 			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
 
 			Expect(db.Save(newUser(1)).Error).To(Succeed())
@@ -123,9 +123,6 @@ var _ = Describe("ReviewRepositoryTest", func() {
 	Describe("CreateReviewCommentのテスト",
 		func() {
 			BeforeEach(func() {
-				command = &ReviewCommandRepositoryImpl{DAO: DAO{DB_: db}}
-
-				truncate(db)
 				Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
 				Expect(db.Save(newUser(1)).Error).To(Succeed())
 				Expect(db.Save(newReview(1, 1, touristSpotID, innID)).Error).To(Succeed())
@@ -149,9 +146,6 @@ var _ = Describe("ReviewRepositoryTest", func() {
 	Describe("IncrementReviewCommentCountのテスト",
 		func() {
 			BeforeEach(func() {
-				command = &ReviewCommandRepositoryImpl{DAO: DAO{DB_: db}}
-
-				truncate(db)
 				Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
 
 				Expect(db.Save(newUser(1)).Error).To(Succeed())
@@ -179,9 +173,6 @@ var _ = Describe("ReviewRepositoryTest", func() {
 	Describe("DecrementReviewCommentCountのテスト",
 		func() {
 			BeforeEach(func() {
-				command = &ReviewCommandRepositoryImpl{DAO: DAO{DB_: db}}
-
-				truncate(db)
 				Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
 
 				Expect(db.Save(newUser(1)).Error).To(Succeed())
@@ -212,9 +203,6 @@ var _ = Describe("ReviewRepositoryTest", func() {
 
 	Describe("ShowReviewCommentのテスト", func() {
 		BeforeEach(func() {
-			command = &ReviewCommandRepositoryImpl{DAO: DAO{DB_: db}}
-
-			truncate(db)
 			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
 			Expect(db.Save(newUser(userID)).Error).To(Succeed())
 			Expect(db.Save(newReview(reviewID, userID, touristSpotID, innID)).Error).To(Succeed())
@@ -245,9 +233,6 @@ var _ = Describe("ReviewRepositoryTest", func() {
 
 	Describe("DeleteReviewCommentのテスト", func() {
 		BeforeEach(func() {
-			command = &ReviewCommandRepositoryImpl{DAO: DAO{DB_: db}}
-
-			truncate(db)
 			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil)))
 			Expect(db.Save(newUser(userID)).Error).To(Succeed())
 			Expect(db.Save(newReview(reviewID, userID, touristSpotID, innID)).Error).To(Succeed())

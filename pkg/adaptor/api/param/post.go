@@ -65,11 +65,11 @@ func (param ListPostParam) GetLimit() int {
 }
 
 // offSetを返す(sqlで使う想定)
-func (showListParam ListPostParam) GetOffSet() int {
-	if showListParam.Page == 1 || showListParam.Page == 0 {
+func (param ListPostParam) GetOffSet() int {
+	if param.Page == 1 || param.Page == 0 {
 		return 0
 	}
-	return showListParam.GetLimit()*(showListParam.Page-1) + 1
+	return param.GetLimit()*(param.Page-1) + 1
 }
 
 // PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す

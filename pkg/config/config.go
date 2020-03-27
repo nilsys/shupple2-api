@@ -32,7 +32,7 @@ const (
 	PrdContainerName = "sw-prd-media-api"
 )
 
-func GetConfig(filename ConfigFilePath) (*Config, error) {
+func GetConfig(filename FilePath) (*Config, error) {
 	// 環境を判断
 	url := os.Getenv("ECS_CONTAINER_METADATA_URI")
 	if utf8.RuneCountInString(url) > 0 {

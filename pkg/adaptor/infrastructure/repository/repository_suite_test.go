@@ -43,11 +43,11 @@ func beforeSuite() error {
 	var err error
 	tests, err = InitializeTest(configFilePath)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to initialize test")
 	}
 
 	if err := migrateUp(tests.Config.Database); err != nil {
-		return err
+		return errors.Wrap(err, "failed to migrate up")
 	}
 
 	db = tests.DB

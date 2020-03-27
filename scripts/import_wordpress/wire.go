@@ -29,7 +29,7 @@ var serviceSet = wire.NewSet(
 	scenario.ReviewCommandScenarioSet,
 )
 
-func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
+func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	wire.Build(
 		wire.Struct(new(Script), "*"),
 		config.GetConfig,

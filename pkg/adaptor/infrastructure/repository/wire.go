@@ -33,6 +33,8 @@ type Test struct {
 	*UserCommandRepositoryImpl
 	*VlogCommandRepositoryImpl
 	*VlogQueryRepositoryImpl
+	*ReviewCommandRepositoryImpl
+	*ReviewQueryRepositoryImpl
 	*WordpressQueryRepositoryImpl
 }
 
@@ -63,7 +65,7 @@ var configValuesSet = wire.NewSet(
 	}),
 )
 
-func InitializeTest(configFilePath config.ConfigFilePath) (*Test, error) {
+func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 	wire.Build(
 		wire.Struct(new(Test), "*"),
 		config.GetConfig,

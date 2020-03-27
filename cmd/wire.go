@@ -80,7 +80,7 @@ var factorySet = wire.NewSet(
 	factory.S3SignatureFactorySet,
 )
 
-func InitializeApp(configFilePath config.ConfigFilePath) (*App, error) {
+func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	wire.Build(
 		echo.New,
 		wire.Struct(new(App), "*"),

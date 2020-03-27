@@ -4,7 +4,7 @@ import "strconv"
 
 type (
 	FindInn struct {
-		MetasearchAreaId       int
+		MetasearchAreaID       int
 		MetasearchSubAreaID    int
 		MetasearchSubSubAreaID int
 		Longitude              float64
@@ -13,7 +13,7 @@ type (
 )
 
 func (q *FindInn) SetMetaserachID(areaID, subAreaID, subSubAreaID int) {
-	q.MetasearchAreaId = areaID
+	q.MetasearchAreaID = areaID
 	q.MetasearchSubAreaID = subAreaID
 	q.MetasearchSubSubAreaID = subSubAreaID
 }

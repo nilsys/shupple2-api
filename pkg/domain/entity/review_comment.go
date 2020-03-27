@@ -11,9 +11,9 @@ type (
 		Body          string
 		ReplyCount    int
 		FavoriteCount int
-		CreatedAt time.Time `gorm:"default:current_timestamp"`
-		UpdatedAt time.Time `gorm:"default:current_timestamp"`
-		DeletedAt *time.Time
+		CreatedAt     time.Time `gorm:"default:current_timestamp"`
+		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
+		DeletedAt     *time.Time
 	}
 
 	ReviewCommentReply struct {

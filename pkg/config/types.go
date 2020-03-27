@@ -9,7 +9,7 @@ import (
 )
 
 type (
-	ConfigFilePath string
+	FilePath string
 
 	Config struct {
 		Version     string

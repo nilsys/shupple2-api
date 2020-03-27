@@ -24,7 +24,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
+func InitializeApp(configFilePath2 config.FilePath) (*App, error) {
 	configConfig, err := config.GetConfig(configFilePath2)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func InitializeApp(configFilePath2 config.ConfigFilePath) (*App, error) {
 		UserRepo:    userQueryRepositoryImpl,
 	}
 	dao := repository.DAO{
-		DB_: db,
+		UnderlyingDB: db,
 	}
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
 		DAO: dao,

@@ -94,13 +94,13 @@ func (r *TouristSpotQueryRepositoryImpl) buildFindListByParamsQuery(query *query
 		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?)", query.AreaID)
 	}
 	if query.SubAreaID != 0 {
-		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?)", query.AreaID)
+		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?)", query.SubAreaID)
 	}
 	if query.SubSubAreaID != 0 {
-		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?)", query.AreaID)
+		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?)", query.SubSubAreaID)
 	}
-	if query.SpotCategoryId != 0 {
-		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_lcategory WHERE lcategory_id = ?)", query.SpotCategoryId)
+	if query.SpotCategoryID != 0 {
+		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_lcategory WHERE lcategory_id = ?)", query.SpotCategoryID)
 	}
 	if len(query.ExcludeSpotIDs) > 0 {
 		q = q.Not("id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id IN (?))", query.ExcludeSpotIDs)

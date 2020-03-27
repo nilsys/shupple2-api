@@ -6,7 +6,7 @@ import (
 )
 
 type InnQueryRepository interface {
-	FindIDsByAreaID(areaId, subAreaId, subSubAreaId int) ([]int, error)
+	FindIDsByAreaID(areaID, subAreaID, subSubAreaID int) ([]int, error)
 	FindAreaIDsByID(id int) (*entity.InnAreaTypeIDs, error)
 	FindByParams(query *query.FindInn) (*entity.Inns, error)
 }

@@ -14,7 +14,7 @@ func ConvertTouristSpotListParamToQuery(param *param.ListTouristSpotParams) *que
 		AreaID:         param.AreaID,
 		SubAreaID:      param.SubAreaID,
 		SubSubAreaID:   param.SubSubAreaID,
-		SpotCategoryId: param.TouristSpotCategoryID,
+		SpotCategoryID: param.TouristSpotCategoryID,
 		ExcludeSpotIDs: param.ExcludeSpotIDs,
 		Limit:          param.GetLimit(),
 		OffSet:         param.GetOffset(),

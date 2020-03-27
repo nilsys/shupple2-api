@@ -2,6 +2,7 @@ package serror
 
 import (
 	"fmt"
+
 	"github.com/pkg/errors"
 )
 

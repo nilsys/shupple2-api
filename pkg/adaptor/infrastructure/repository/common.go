@@ -14,6 +14,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql" // register driver
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 )
 
@@ -22,23 +23,22 @@ const (
 	defaultRangeSearchKm           = 5
 	dummyCredential                = "dummy"
 	defaultSearchSuggestionsNumber = 10
-	contextKeyForTransaction       = "dbTransaction"
 )
 
 type DAO struct {
-	DB_ *gorm.DB
+	UnderlyingDB *gorm.DB
 }
 
 func (d DAO) DB(c context.Context) *gorm.DB {
 	if c == nil {
-		return d.DB_
+		return d.UnderlyingDB
 	}
 
-	if db, ok := c.Value(contextKeyForTransaction).(*gorm.DB); ok {
+	if db, ok := c.Value(model.ContextKeyTransaction).(*gorm.DB); ok {
 		return db
 	}
 
-	return d.DB_
+	return d.UnderlyingDB
 }
 
 var RepositoriesSet = wire.NewSet(

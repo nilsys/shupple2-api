@@ -36,3 +36,8 @@ type SuggestionType int
 ENUM(BUISINESS = 1, COUPLE, FAMILY, FRIEND, ONLY, WITHCHILD)
 */
 type AccompanyingType int
+
+/*
+ENUM(Transaction = 1)
+*/
+type ContextKey int

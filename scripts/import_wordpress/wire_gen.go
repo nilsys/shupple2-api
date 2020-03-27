@@ -16,7 +16,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
+func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	configConfig, err := config.GetConfig(configFilePath)
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func InitializeScript(configFilePath config.ConfigFilePath) (*Script, error) {
 		DB: db,
 	}
 	dao := repository.DAO{
-		DB_: db,
+		UnderlyingDB: db,
 	}
 	hashtagCommandRepositoryImpl := &repository.HashtagCommandRepositoryImpl{
 		DAO: dao,

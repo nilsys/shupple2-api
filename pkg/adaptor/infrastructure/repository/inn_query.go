@@ -35,20 +35,20 @@ var InnQueryRepositorySet = wire.NewSet(
 const staywayInnAPIPath = "/api/inns"
 
 // AreaID, SubAreaID, SubSubAreaIDから参照したInnのIDのスライスを返す
-func (r *InnQueryRepositoryImpl) FindIDsByAreaID(areaId, subAreaId, subSubAreaId int) ([]int, error) {
+func (r *InnQueryRepositoryImpl) FindIDsByAreaID(areaID, subAreaID, subSubAreaID int) ([]int, error) {
 
-	if areaId == 0 && subAreaId == 0 && subSubAreaId == 0 {
+	if areaID == 0 && subAreaID == 0 && subSubAreaID == 0 {
 		return nil, nil
 	}
 
-	opts := buildFindIDsByAreaIDQuery(areaId, subAreaId, subSubAreaId)
+	opts := buildFindIDsByAreaIDQuery(areaID, subAreaID, subSubAreaID)
 
 	var res dto.Inns
 
 	u := r.MetasearchConfig.BaseURL
 	u.Path = path.Join(u.Path, staywayInnAPIPath)
 	if err := r.Client.GetJSON(u.String(), opts, &res); err != nil {
-		return nil, errors.Wrapf(err, "failed to get inns from stayway api by areaID: %d subAreaID: %d subSubAreaID: %d", areaId, subAreaId, subSubAreaId)
+		return nil, errors.Wrapf(err, "failed to get inns from stayway api by areaID: %d subAreaID: %d subSubAreaID: %d", areaID, subAreaID, subSubAreaID)
 	}
 	return res.InnsToIDs(), nil
 }
@@ -79,21 +79,21 @@ func (r *InnQueryRepositoryImpl) FindByParams(query *query.FindInn) (*entity.Inn
 	return res.ConvertToEntity(), nil
 }
 
-func buildFindIDsByAreaIDQuery(areaId, subAreaId, subSubAreaId int) *client.Option {
+func buildFindIDsByAreaIDQuery(areaID, subAreaID, subSubAreaID int) *client.Option {
 	opts := &client.Option{
 		QueryParams: map[string][]string{},
 	}
 
-	if areaId != 0 {
-		opts.QueryParams.Add("area_id", strconv.Itoa(areaId))
+	if areaID != 0 {
+		opts.QueryParams.Add("area_id", strconv.Itoa(areaID))
 	}
 
-	if subAreaId != 0 {
-		opts.QueryParams.Add("sub_area_id", strconv.Itoa(subAreaId))
+	if subAreaID != 0 {
+		opts.QueryParams.Add("sub_area_id", strconv.Itoa(subAreaID))
 	}
 
-	if subSubAreaId != 0 {
-		opts.QueryParams.Add("sub_sub_are_id", strconv.Itoa(subSubAreaId))
+	if subSubAreaID != 0 {
+		opts.QueryParams.Add("sub_sub_are_id", strconv.Itoa(subSubAreaID))
 	}
 
 	opts.QueryParams.Add("per_page", strconv.Itoa(defaultAcquisitionNumber))
@@ -106,8 +106,8 @@ func buildFindByParamQuery(query *query.FindInn) *client.Option {
 		QueryParams: map[string][]string{},
 	}
 
-	if query.MetasearchAreaId != 0 {
-		opts.QueryParams.Add("area_id", strconv.Itoa(query.MetasearchAreaId))
+	if query.MetasearchAreaID != 0 {
+		opts.QueryParams.Add("area_id", strconv.Itoa(query.MetasearchAreaID))
 	}
 
 	if query.MetasearchSubAreaID != 0 {

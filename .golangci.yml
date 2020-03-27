@@ -1,0 +1,15 @@
+run:
+  concurrency: 1
+linters-settings:
+  errcheck:
+    exclude: errcheck_excludes.txt
+
+issues:
+  exclude:
+    - "comment on exported .* should be of the form"
+
+linters:
+  enable:
+    - golint
+    - unconvert
+    - goimports

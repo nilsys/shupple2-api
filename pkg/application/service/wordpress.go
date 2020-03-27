@@ -193,9 +193,8 @@ func (s *WordpressServiceImpl) convertCategoryType(wpCategory *wordpress.Categor
 	if wpCategory.Parent == 0 {
 		if wpCategory.Type == wordpress.CategoryTypeJapan || wpCategory.Type == wordpress.CategoryTypeWorld {
 			return model.CategoryTypeArea, nil
-		} else {
-			return model.CategoryTypeTheme, nil
 		}
+		return model.CategoryTypeTheme, nil
 	}
 
 	parent, err := s.CategoryQueryRepository.FindByID(wpCategory.Parent)

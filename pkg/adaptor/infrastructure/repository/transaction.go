@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
 
 type TransactionServiceImpl struct {
@@ -19,6 +20,6 @@ var TransactionServiceSet = wire.NewSet(
 
 func (s TransactionServiceImpl) Do(f func(context.Context) error) error {
 	return Transaction(s.DB, func(tx *gorm.DB) error {
-		return f(context.WithValue(context.Background(), contextKeyForTransaction, tx))
+		return f(context.WithValue(context.Background(), model.ContextKeyTransaction, tx))
 	})
 }
