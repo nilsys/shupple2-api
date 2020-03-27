@@ -256,6 +256,10 @@ func (s Script) importCategorySub(wordpressDB *gorm.DB, parentID int) error {
 			return errors.Wrapf(err, "failed to import wordpress category; id=%d", c.ID)
 		}
 
+		if debug {
+			continue
+		}
+
 		if err := s.importCategorySub(wordpressDB, c.ID); err != nil {
 			return errors.Wrapf(err, "failed to import wordpress category children; parent_id=%d", c.ID)
 		}

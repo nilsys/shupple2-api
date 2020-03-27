@@ -74,8 +74,11 @@ var _ = Describe("WordpressRepositoryImpl", func() {
 					},
 					Author:        260,
 					FeaturedMedia: 135463,
-					Categories:    []int{1},
-					Tags:          []int{},
+					Meta: wordpress.PostMeta{
+						SEOTitle: "SEOタイトル",
+					},
+					Categories: []int{1},
+					Tags:       []int{},
 				}))
 			})
 

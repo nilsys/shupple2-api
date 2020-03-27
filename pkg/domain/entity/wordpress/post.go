@@ -38,13 +38,6 @@ func (p *PostMeta) UnmarshalJSON(body []byte) error {
 		return nil
 	}
 
-	type PostMetaAlias PostMeta
-	var obj PostMetaAlias
-	if err := json.Unmarshal(body, &obj); err != nil {
-		return errors.WithStack(err)
-	}
-
-	*p = PostMeta(obj)
-
-	return nil
+	type Alias PostMeta
+	return errors.WithStack(json.Unmarshal(body, (*Alias)(p)))
 }
