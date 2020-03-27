@@ -9,7 +9,8 @@ import (
 
 type (
 	TouristSpotCommandRepository interface {
-		Store(touristSpot *entity.TouristSpot) error
+		Lock(c context.Context, id int) (*entity.TouristSpot, error)
+		Store(c context.Context, touristSpot *entity.TouristSpot) error
 		// レビューの平均値を更新
 		UpdateScoreByID(c context.Context, id int) error
 		DeleteByID(id int) error

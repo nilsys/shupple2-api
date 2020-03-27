@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -17,7 +19,8 @@ type (
 	FeatureCommandServiceImpl struct {
 		FeatureCommandRepository repository.FeatureCommandRepository
 		WordpressQueryRepository repository.WordpressQueryRepository
-		WordpressService         WordpressService
+		WordpressService
+		TransactionService
 	}
 )
 
@@ -40,14 +43,26 @@ func (r *FeatureCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Fea
 		return nil, serror.New(nil, serror.CodeImportDeleted, "try to import deleted feature")
 	}
 
-	feature, err := r.WordpressService.ConvertFeature(wpFeatures[0])
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to convert feature")
-	}
+	var feature *entity.Feature
+	err = r.TransactionService.Do(func(c context.Context) error {
+		feature, err = r.FeatureCommandRepository.Lock(c, id)
+		if err != nil {
+			if !serror.IsErrorCode(err, serror.CodeNotFound) {
+				return errors.Wrap(err, "failed to get feature")
+			}
+			feature = &entity.Feature{}
+		}
 
-	if err := r.FeatureCommandRepository.Store(feature); err != nil {
-		return nil, errors.Wrap(err, "failed to store feature")
-	}
+		if err := r.WordpressService.PatchFeature(feature, wpFeatures[0]); err != nil {
+			return errors.Wrap(err, "failed  to patch feature")
+		}
+
+		if err := r.FeatureCommandRepository.Store(c, feature); err != nil {
+			return errors.Wrap(err, "failed to store feature")
+		}
+
+		return nil
+	})
 
 	return feature, nil
 }

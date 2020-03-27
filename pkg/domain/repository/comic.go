@@ -1,13 +1,16 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
 type (
 	ComicCommandRepository interface {
-		Store(comic *entity.Comic) error
+		Lock(c context.Context, id int) (*entity.Comic, error)
+		Store(c context.Context, comic *entity.Comic) error
 		DeleteByID(id int) error
 	}
 

@@ -18,6 +18,14 @@ var PostCommandRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.PostCommandRepository), new(*PostCommandRepositoryImpl)),
 )
 
+func (r *PostCommandRepositoryImpl) Lock(c context.Context, id int) (*entity.Post, error) {
+	var row entity.Post
+	if err := r.LockDB(c).First(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "post(id=%d)", id)
+	}
+	return &row, nil
+}
+
 func (r *PostCommandRepositoryImpl) Store(c context.Context, post *entity.Post) error {
 	return errors.Wrap(r.DB(c).Save(post).Error, "failed to save post")
 }

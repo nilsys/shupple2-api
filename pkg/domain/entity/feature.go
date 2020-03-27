@@ -38,17 +38,18 @@ type (
 )
 
 func NewFeature(tiny FeatureTiny, postIDs []int) Feature {
-	featurePostIDs := make([]*FeaturePost, len(postIDs))
+	feature := Feature{FeatureTiny: tiny}
+	feature.SetPosts(postIDs)
+	return feature
+}
+
+func (feature *Feature) SetPosts(postIDs []int) {
+	feature.PostIDs = make([]*FeaturePost, len(postIDs))
 	for i, p := range postIDs {
-		featurePostIDs[i] = &FeaturePost{
-			FeatureID: tiny.ID,
+		feature.PostIDs[i] = &FeaturePost{
+			FeatureID: feature.ID,
 			PostID:    p,
 		}
-	}
-
-	return Feature{
-		tiny,
-		featurePostIDs,
 	}
 }
 

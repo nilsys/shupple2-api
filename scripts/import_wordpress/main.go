@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"reflect"
@@ -224,7 +225,7 @@ func (s Script) importCategory(wordpressDB *gorm.DB) error {
 		Name: "国内",
 		Type: model.CategoryTypeAreaGroup,
 	}
-	if err := s.CategoryCommandRepo.Store(&japan); err != nil {
+	if err := s.CategoryCommandRepo.Store(context.Background(), &japan); err != nil {
 		return errors.Wrap(err, "failed to save japan category")
 	}
 
@@ -233,7 +234,7 @@ func (s Script) importCategory(wordpressDB *gorm.DB) error {
 		Name: "海外",
 		Type: model.CategoryTypeAreaGroup,
 	}
-	if err := s.CategoryCommandRepo.Store(&world); err != nil {
+	if err := s.CategoryCommandRepo.Store(context.Background(), &world); err != nil {
 		return errors.Wrap(err, "failed to save world category")
 	}
 

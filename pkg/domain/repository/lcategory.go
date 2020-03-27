@@ -1,10 +1,15 @@
 package repository
 
-import "github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+import (
+	"context"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+)
 
 type (
 	LcategoryCommandRepository interface {
-		Store(lcategory *entity.Lcategory) error
+		Lock(c context.Context, id int) (*entity.Lcategory, error)
+		Store(c context.Context, lcategory *entity.Lcategory) error
 	}
 
 	LcategoryQueryRepository interface {

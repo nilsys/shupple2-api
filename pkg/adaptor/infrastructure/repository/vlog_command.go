@@ -1,15 +1,16 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/google/wire"
-	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
 type VlogCommandRepositoryImpl struct {
-	DB *gorm.DB
+	DAO
 }
 
 var VlogCommandRepositorySet = wire.NewSet(
@@ -17,12 +18,20 @@ var VlogCommandRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.VlogCommandRepository), new(*VlogCommandRepositoryImpl)),
 )
 
-func (r *VlogCommandRepositoryImpl) Store(vlog *entity.Vlog) error {
-	return errors.Wrap(r.DB.Save(vlog).Error, "failed to save vlog")
+func (r *VlogCommandRepositoryImpl) Lock(c context.Context, id int) (*entity.Vlog, error) {
+	var row entity.Vlog
+	if err := r.LockDB(c).First(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "vlog(id=%d)", id)
+	}
+	return &row, nil
+}
+
+func (r *VlogCommandRepositoryImpl) Store(c context.Context, vlog *entity.Vlog) error {
+	return errors.Wrap(r.DB(c).Save(vlog).Error, "failed to save vlog")
 }
 
 func (r *VlogCommandRepositoryImpl) DeleteByID(id int) error {
 	e := &entity.Vlog{}
 	e.ID = id
-	return errors.Wrapf(r.DB.Delete(e).Error, "failed to delete vlog(id=%d)", id)
+	return errors.Wrapf(r.DB(context.Background()).Delete(e).Error, "failed to delete vlog(id=%d)", id)
 }

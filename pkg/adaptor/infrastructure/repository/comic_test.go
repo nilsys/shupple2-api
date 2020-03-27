@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -34,10 +35,10 @@ var _ = Describe("ComicRepositoryImpl", func() {
 	DescribeTable("Saveは引数のcomicを作成するか、その状態になるように更新する",
 		func(before *entity.Comic, saved *entity.Comic, querySaved *entity.QueryComic) {
 			if before != nil {
-				Expect(command.Store(before)).To(Succeed())
+				Expect(command.Store(context.Background(), before)).To(Succeed())
 			}
 
-			Expect(command.Store(saved)).To(Succeed())
+			Expect(command.Store(context.Background(), saved)).To(Succeed())
 			actual, err := query.FindByID(saved.ID)
 			Expect(err).To(Succeed())
 

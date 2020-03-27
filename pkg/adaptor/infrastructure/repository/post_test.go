@@ -38,10 +38,10 @@ var _ = Describe("PostRepositoryImpl", func() {
 	DescribeTable("Storeは引数のpostを作成するか、その状態になるように更新する",
 		func(before *entity.Post, saved *entity.Post) {
 			if before != nil {
-				Expect(command.Store(context.TODO(), before)).To(Succeed())
+				Expect(command.Store(context.Background(), before)).To(Succeed())
 			}
 
-			Expect(command.Store(context.TODO(), saved)).To(Succeed())
+			Expect(command.Store(context.Background(), saved)).To(Succeed())
 			actual, err := query.FindByID(saved.ID)
 			Expect(err).To(Succeed())
 

@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -17,7 +19,8 @@ type (
 	ComicCommandServiceImpl struct {
 		ComicCommandRepository   repository.ComicCommandRepository
 		WordpressQueryRepository repository.WordpressQueryRepository
-		WordpressService         WordpressService
+		WordpressService
+		TransactionService
 	}
 )
 
@@ -40,14 +43,26 @@ func (r *ComicCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Comic
 		return nil, serror.New(nil, serror.CodeImportDeleted, "try to import deleted comic")
 	}
 
-	comic, err := r.WordpressService.ConvertComic(wpComics[0])
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to convert comic")
-	}
+	var comic *entity.Comic
+	err = r.TransactionService.Do(func(c context.Context) error {
+		comic, err = r.ComicCommandRepository.Lock(c, id)
+		if err != nil {
+			if !serror.IsErrorCode(err, serror.CodeNotFound) {
+				return errors.Wrap(err, "failed to get comic")
+			}
+			comic = &entity.Comic{}
+		}
 
-	if err := r.ComicCommandRepository.Store(comic); err != nil {
-		return nil, errors.Wrap(err, "failed to store comic")
-	}
+		if err := r.WordpressService.PatchComic(comic, wpComics[0]); err != nil {
+			return errors.Wrap(err, "failed  to patch comic")
+		}
+
+		if err := r.ComicCommandRepository.Store(c, comic); err != nil {
+			return errors.Wrap(err, "failed to store comic")
+		}
+
+		return nil
+	})
 
 	return comic, nil
 }

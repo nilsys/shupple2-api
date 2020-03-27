@@ -18,8 +18,16 @@ var TouristSpotCommandRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.TouristSpotCommandRepository), new(*TouristSpotCommandRepositoryImpl)),
 )
 
-func (r *TouristSpotCommandRepositoryImpl) Store(touristSpot *entity.TouristSpot) error {
-	return errors.Wrap(r.DB(context.TODO()).Save(touristSpot).Error, "failed to save touristSpot")
+func (r *TouristSpotCommandRepositoryImpl) Lock(c context.Context, id int) (*entity.TouristSpot, error) {
+	var row entity.TouristSpot
+	if err := r.LockDB(c).First(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "touristSpot(id=%d)", id)
+	}
+	return &row, nil
+}
+
+func (r *TouristSpotCommandRepositoryImpl) Store(c context.Context, touristSpot *entity.TouristSpot) error {
+	return errors.Wrap(r.DB(c).Save(touristSpot).Error, "failed to save touristSpot")
 }
 
 func (r *TouristSpotCommandRepositoryImpl) UpdateScoreByID(c context.Context, id int) error {

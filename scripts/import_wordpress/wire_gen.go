@@ -44,8 +44,11 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		MediaUploader: uploader,
 		AWSConfig:     aws,
 	}
+	dao := repository.DAO{
+		UnderlyingDB: db,
+	}
 	categoryCommandRepositoryImpl := &repository.CategoryCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	authService, err := service.ProvideAuthService(configConfig)
 	if err != nil {
@@ -63,9 +66,6 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
 		DB: db,
 	}
-	dao := repository.DAO{
-		UnderlyingDB: db,
-	}
 	hashtagCommandRepositoryImpl := &repository.HashtagCommandRepositoryImpl{
 		DAO: dao,
 	}
@@ -79,40 +79,44 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		CategoryQueryRepository:  categoryQueryRepositoryImpl,
 		HashtagCommandService:    hashtagCommandServiceImpl,
 	}
+	transactionServiceImpl := &repository.TransactionServiceImpl{
+		DB: db,
+	}
 	categoryCommandServiceImpl := &service.CategoryCommandServiceImpl{
 		CategoryCommandRepository: categoryCommandRepositoryImpl,
 		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
 		WordpressService:          wordpressServiceImpl,
+		TransactionService:        transactionServiceImpl,
 	}
 	comicCommandRepositoryImpl := &repository.ComicCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	comicCommandServiceImpl := &service.ComicCommandServiceImpl{
 		ComicCommandRepository:   comicCommandRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
+		TransactionService:       transactionServiceImpl,
 	}
 	featureCommandRepositoryImpl := &repository.FeatureCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	featureCommandServiceImpl := &service.FeatureCommandServiceImpl{
 		FeatureCommandRepository: featureCommandRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
+		TransactionService:       transactionServiceImpl,
 	}
 	lcategoryCommandRepositoryImpl := &repository.LcategoryCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	lcategoryCommandServiceImpl := &service.LcategoryCommandServiceImpl{
 		LcategoryCommandRepository: lcategoryCommandRepositoryImpl,
 		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
 		WordpressService:           wordpressServiceImpl,
+		TransactionService:         transactionServiceImpl,
 	}
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
 		DAO: dao,
-	}
-	transactionServiceImpl := &repository.TransactionServiceImpl{
-		DB: db,
 	}
 	postCommandServiceImpl := &service.PostCommandServiceImpl{
 		PostCommandRepository:    postCommandRepositoryImpl,
@@ -128,14 +132,16 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
 		WordpressQueryRepository:     wordpressQueryRepositoryImpl,
 		WordpressService:             wordpressServiceImpl,
+		TransactionService:           transactionServiceImpl,
 	}
 	vlogCommandRepositoryImpl := &repository.VlogCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	vlogCommandServiceImpl := &service.VlogCommandServiceImpl{
 		VlogCommandRepository:    vlogCommandRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
+		TransactionService:       transactionServiceImpl,
 	}
 	reviewQueryRepositoryImpl := &repository.ReviewQueryRepositoryImpl{
 		DB: db,

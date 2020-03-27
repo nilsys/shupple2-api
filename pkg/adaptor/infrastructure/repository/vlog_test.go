@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
@@ -35,10 +37,10 @@ var _ = Describe("VlogRepositoryImpl", func() {
 	DescribeTable("Saveは引数のvlogを作成するか、その状態になるように更新する",
 		func(before *entity.Vlog, saved *entity.Vlog) {
 			if before != nil {
-				Expect(command.Store(before)).To(Succeed())
+				Expect(command.Store(context.Background(), before)).To(Succeed())
 			}
 
-			Expect(command.Store(saved)).To(Succeed())
+			Expect(command.Store(context.Background(), saved)).To(Succeed())
 			actual, err := query.FindByID(saved.ID)
 			Expect(err).To(Succeed())
 

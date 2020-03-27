@@ -77,9 +77,9 @@ type (
 )
 
 // Postが持つCategoryID(int)を配列で返す
-func (post *Post) GetCategoryIDs() []int {
+func (p *Post) GetCategoryIDs() []int {
 	var ids []int
-	for _, postCategory := range post.CategoryIDs {
+	for _, postCategory := range p.CategoryIDs {
 		ids = append(ids, postCategory.CategoryID)
 	}
 	return ids
@@ -94,36 +94,43 @@ func (post *PostDetailWithHashtag) TableName() string {
 }
 
 func NewPost(tiny PostTiny, bodies []string, categoryIDs []int, hashtagIDs []int) Post {
-	postBodies := make([]*PostBody, len(bodies))
+	post := Post{PostTiny: tiny}
+
+	post.SetBodies(bodies)
+	post.SetCategories(categoryIDs)
+	post.SetHashtags(hashtagIDs)
+
+	return post
+}
+
+func (p *Post) SetBodies(bodies []string) {
+	p.Bodies = make([]*PostBody, len(bodies))
 	for i, body := range bodies {
-		postBodies[i] = &PostBody{
-			PostID: tiny.ID,
+		p.Bodies[i] = &PostBody{
+			PostID: p.ID,
 			Page:   i + 1,
 			Body:   body,
 		}
 	}
+}
 
-	postCategoryIDs := make([]*PostCategory, len(categoryIDs))
+func (p *Post) SetCategories(categoryIDs []int) {
+	p.CategoryIDs = make([]*PostCategory, len(categoryIDs))
 	for i, c := range categoryIDs {
-		postCategoryIDs[i] = &PostCategory{
-			PostID:     tiny.ID,
+		p.CategoryIDs[i] = &PostCategory{
+			PostID:     p.ID,
 			CategoryID: c,
 		}
 	}
+}
 
-	postHashtagIDs := make([]*PostHashtag, len(hashtagIDs))
+func (p *Post) SetHashtags(hashtagIDs []int) {
+	p.HashtagIDs = make([]*PostHashtag, len(hashtagIDs))
 	for i, h := range hashtagIDs {
-		postHashtagIDs[i] = &PostHashtag{
-			PostID:    tiny.ID,
+		p.HashtagIDs[i] = &PostHashtag{
+			PostID:    p.ID,
 			HashtagID: h,
 		}
-	}
-
-	return Post{
-		tiny,
-		postBodies,
-		postCategoryIDs,
-		postHashtagIDs,
 	}
 }
 

@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -17,7 +19,8 @@ type (
 	TouristSpotCommandServiceImpl struct {
 		TouristSpotCommandRepository repository.TouristSpotCommandRepository
 		WordpressQueryRepository     repository.WordpressQueryRepository
-		WordpressService             WordpressService
+		WordpressService
+		TransactionService
 	}
 )
 
@@ -40,14 +43,26 @@ func (r *TouristSpotCommandServiceImpl) ImportFromWordpressByID(id int) (*entity
 		return nil, serror.New(nil, serror.CodeImportDeleted, "try to import deleted touristSpot")
 	}
 
-	touristSpot, err := r.WordpressService.ConvertLocation(wpTouristSpots[0])
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to convert touristSpot")
-	}
+	var touristSpot *entity.TouristSpot
+	err = r.TransactionService.Do(func(c context.Context) error {
+		touristSpot, err = r.TouristSpotCommandRepository.Lock(c, id)
+		if err != nil {
+			if !serror.IsErrorCode(err, serror.CodeNotFound) {
+				return errors.Wrap(err, "failed to get touristSpot")
+			}
+			touristSpot = &entity.TouristSpot{}
+		}
 
-	if err := r.TouristSpotCommandRepository.Store(touristSpot); err != nil {
-		return nil, errors.Wrap(err, "failed to store touristSpot")
-	}
+		if err := r.WordpressService.PatchTouristSpot(touristSpot, wpTouristSpots[0]); err != nil {
+			return errors.Wrap(err, "failed  to patch touristSpot")
+		}
+
+		if err := r.TouristSpotCommandRepository.Store(c, touristSpot); err != nil {
+			return errors.Wrap(err, "failed to store touristSpot")
+		}
+
+		return nil
+	})
 
 	return touristSpot, nil
 }

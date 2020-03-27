@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -17,8 +18,8 @@ var _ = Describe("LcategoryRepositoryImpl", func() {
 	)
 
 	BeforeEach(func() {
-		command = &LcategoryCommandRepositoryImpl{DB: db}
-		query = &LcategoryQueryRepositoryImpl{DB: db}
+		command = tests.LcategoryCommandRepositoryImpl
+		query = tests.LcategoryQueryRepositoryImpl
 
 		truncate(db)
 		Expect(db.Save(newUser(userID)).Error).To(Succeed())
@@ -31,10 +32,10 @@ var _ = Describe("LcategoryRepositoryImpl", func() {
 	DescribeTable("Saveは引数のlcategoryを作成するか、その状態になるように更新する",
 		func(before *entity.Lcategory, saved *entity.Lcategory) {
 			if before != nil {
-				Expect(command.Store(before)).To(Succeed())
+				Expect(command.Store(context.Background(), before)).To(Succeed())
 			}
 
-			Expect(command.Store(saved)).To(Succeed())
+			Expect(command.Store(context.Background(), saved)).To(Succeed())
 			actual, err := query.FindByID(saved.ID)
 			Expect(err).To(Succeed())
 

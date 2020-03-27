@@ -62,26 +62,30 @@ type (
 )
 
 func NewVlog(tiny VlogTiny, categoryIDs, touristSpotIDs []int) Vlog {
-	vlogCategories := make([]*VlogCategory, len(categoryIDs))
+	vlog := Vlog{VlogTiny: tiny}
+	vlog.SetCategories(categoryIDs)
+	vlog.SetTouristSpots(touristSpotIDs)
+
+	return vlog
+}
+
+func (vlog *Vlog) SetCategories(categoryIDs []int) {
+	vlog.CategoryIDs = make([]*VlogCategory, len(categoryIDs))
 	for i, c := range categoryIDs {
-		vlogCategories[i] = &VlogCategory{
-			VlogID:     tiny.ID,
+		vlog.CategoryIDs[i] = &VlogCategory{
+			VlogID:     vlog.ID,
 			CategoryID: c,
 		}
 	}
+}
 
-	vlogTouristSpots := make([]*VlogTouristSpot, len(touristSpotIDs))
+func (vlog *Vlog) SetTouristSpots(touristSpotIDs []int) {
+	vlog.TouristSpotIDs = make([]*VlogTouristSpot, len(touristSpotIDs))
 	for i, l := range touristSpotIDs {
-		vlogTouristSpots[i] = &VlogTouristSpot{
-			VlogID:        tiny.ID,
+		vlog.TouristSpotIDs[i] = &VlogTouristSpot{
+			VlogID:        vlog.ID,
 			TouristSpotID: l,
 		}
-	}
-
-	return Vlog{
-		tiny,
-		vlogCategories,
-		vlogTouristSpots,
 	}
 }
 

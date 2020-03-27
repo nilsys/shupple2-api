@@ -1,13 +1,16 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
 type (
 	VlogCommandRepository interface {
-		Store(vlog *entity.Vlog) error
+		Lock(c context.Context, id int) (*entity.Vlog, error)
+		Store(c context.Context, vlog *entity.Vlog) error
 		DeleteByID(id int) error
 	}
 

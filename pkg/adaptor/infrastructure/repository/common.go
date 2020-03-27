@@ -41,6 +41,16 @@ func (d DAO) DB(c context.Context) *gorm.DB {
 	return d.UnderlyingDB
 }
 
+func (d DAO) LockDB(c context.Context) *gorm.DB {
+	if db, ok := c.Value(model.ContextKeyTransaction).(*gorm.DB); ok {
+		return db.Set("gorm:query_option", "FOR UPDATE")
+	}
+
+	db := d.UnderlyingDB.New()
+	_ = db.AddError(serror.New(nil, serror.CodeUndefined, "try to lock outside transaction"))
+	return db
+}
+
 var RepositoriesSet = wire.NewSet(
 	ProvideDB,
 	wire.Struct(new(DAO), "*"),

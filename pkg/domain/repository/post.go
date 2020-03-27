@@ -9,6 +9,7 @@ import (
 
 type (
 	PostCommandRepository interface {
+		Lock(c context.Context, id int) (*entity.Post, error)
 		Store(c context.Context, post *entity.Post) error
 		DeleteByID(c context.Context, id int) error
 		IncrementFavoriteCount(c context.Context, postID int) error

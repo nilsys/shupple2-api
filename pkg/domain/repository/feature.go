@@ -1,13 +1,16 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
 type (
 	FeatureCommandRepository interface {
-		Store(feature *entity.Feature) error
+		Lock(c context.Context, id int) (*entity.Feature, error)
+		Store(c context.Context, feature *entity.Feature) error
 		DeleteByID(id int) error
 	}
 

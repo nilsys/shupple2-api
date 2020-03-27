@@ -1,13 +1,16 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
 
 type (
 	CategoryCommandRepository interface {
-		Store(category *entity.Category) error
+		Lock(c context.Context, id int) (*entity.Category, error)
+		Store(c context.Context, category *entity.Category) error
 	}
 
 	CategoryQueryRepository interface {

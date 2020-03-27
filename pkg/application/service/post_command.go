@@ -14,7 +14,7 @@ import (
 type (
 	PostCommandService interface {
 		ImportFromWordpressByID(wordpressPostID int) (*entity.Post, error)
-		Store(post *entity.Post) error
+		Store(c context.Context, post *entity.Post) error
 	}
 
 	PostCommandServiceImpl struct {
@@ -45,32 +45,42 @@ func (r *PostCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Post, 
 		return nil, serror.New(nil, serror.CodeImportDeleted, "try to import deleted post")
 	}
 
-	post, err := r.WordpressService.ConvertPost(wpPosts[0])
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to convert post")
-	}
-
-	if err := r.Store(post); err != nil {
-		return nil, errors.Wrap(err, "failed to store post")
-	}
-
-	return post, nil
-}
-
-func (r *PostCommandServiceImpl) Store(post *entity.Post) error {
-	return r.TransactionService.Do(func(c context.Context) error {
-		if err := r.HashtagCommandRepository.DecrementPostCountByPostID(c, post.ID); err != nil {
-			return errors.Wrap(err, "failed to decrement post_count")
+	var post *entity.Post
+	err = r.TransactionService.Do(func(c context.Context) error {
+		post, err = r.PostCommandRepository.Lock(c, id)
+		if err != nil {
+			if !serror.IsErrorCode(err, serror.CodeNotFound) {
+				return errors.Wrap(err, "failed to get post")
+			}
+			post = &entity.Post{}
 		}
 
-		if err := r.PostCommandRepository.Store(c, post); err != nil {
+		if err := r.WordpressService.PatchPost(post, wpPosts[0]); err != nil {
+			return errors.Wrap(err, "failed  to patch post")
+		}
+
+		if err := r.Store(c, post); err != nil {
 			return errors.Wrap(err, "failed to store post")
-		}
-
-		if err := r.HashtagCommandRepository.IncrementPostCountByPostID(c, post.ID); err != nil {
-			return errors.Wrap(err, "failed to increment post_count")
 		}
 
 		return nil
 	})
+
+	return post, nil
+}
+
+func (r *PostCommandServiceImpl) Store(c context.Context, post *entity.Post) error {
+	if err := r.HashtagCommandRepository.DecrementPostCountByPostID(c, post.ID); err != nil {
+		return errors.Wrap(err, "failed to decrement post_count")
+	}
+
+	if err := r.PostCommandRepository.Store(c, post); err != nil {
+		return errors.Wrap(err, "failed to store post")
+	}
+
+	if err := r.HashtagCommandRepository.IncrementPostCountByPostID(c, post.ID); err != nil {
+		return errors.Wrap(err, "failed to increment post_count")
+	}
+
+	return nil
 }

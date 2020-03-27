@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -17,7 +19,8 @@ type (
 	VlogCommandServiceImpl struct {
 		VlogCommandRepository    repository.VlogCommandRepository
 		WordpressQueryRepository repository.WordpressQueryRepository
-		WordpressService         WordpressService
+		WordpressService
+		TransactionService
 	}
 )
 
@@ -40,14 +43,26 @@ func (r *VlogCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Vlog, 
 		return nil, serror.New(nil, serror.CodeImportDeleted, "try to import deleted vlog")
 	}
 
-	vlog, err := r.WordpressService.ConvertVlog(wpVlogs[0])
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to convert vlog")
-	}
+	var vlog *entity.Vlog
+	err = r.TransactionService.Do(func(c context.Context) error {
+		vlog, err = r.VlogCommandRepository.Lock(c, id)
+		if err != nil {
+			if !serror.IsErrorCode(err, serror.CodeNotFound) {
+				return errors.Wrap(err, "failed to get vlog")
+			}
+			vlog = &entity.Vlog{}
+		}
 
-	if err := r.VlogCommandRepository.Store(vlog); err != nil {
-		return nil, errors.Wrap(err, "failed to store vlog")
-	}
+		if err := r.WordpressService.PatchVlog(vlog, wpVlogs[0]); err != nil {
+			return errors.Wrap(err, "failed  to patch vlog")
+		}
+
+		if err := r.VlogCommandRepository.Store(c, vlog); err != nil {
+			return errors.Wrap(err, "failed to store vlog")
+		}
+
+		return nil
+	})
 
 	return vlog, nil
 }

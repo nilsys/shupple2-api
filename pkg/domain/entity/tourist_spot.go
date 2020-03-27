@@ -54,27 +54,32 @@ type (
 )
 
 func NewTouristSpot(tiny TouristSpotTiny, categoryIDs, lcategoryIDs []int) TouristSpot {
-	touristSpotCategoryIDs := make([]*TouristSpotCategory, len(categoryIDs))
+	touristSpot := TouristSpot{TouristSpotTiny: tiny}
+	touristSpot.SetCategories(categoryIDs)
+	touristSpot.SetLcategories(lcategoryIDs)
+
+	return touristSpot
+}
+
+func (ts *TouristSpot) SetCategories(categoryIDs []int) {
+	ts.CategoryIDs = make([]*TouristSpotCategory, len(categoryIDs))
 	for i, c := range categoryIDs {
-		touristSpotCategoryIDs[i] = &TouristSpotCategory{
-			TouristSpotID: tiny.ID,
+		ts.CategoryIDs[i] = &TouristSpotCategory{
+			TouristSpotID: ts.ID,
 			CategoryID:    c,
 		}
 	}
+}
 
-	touristSpotLcategoryIDs := make([]*TouristSpotLcategory, len(lcategoryIDs))
+func (ts *TouristSpot) SetLcategories(lcategoryIDs []int) {
+	ts.LcategoryIDs = make([]*TouristSpotLcategory, len(lcategoryIDs))
 	for i, c := range lcategoryIDs {
-		touristSpotLcategoryIDs[i] = &TouristSpotLcategory{
-			TouristSpotID: tiny.ID,
+		ts.LcategoryIDs[i] = &TouristSpotLcategory{
+			TouristSpotID: ts.ID,
 			LcategoryID:   c,
 		}
 	}
 
-	return TouristSpot{
-		tiny,
-		touristSpotCategoryIDs,
-		touristSpotLcategoryIDs,
-	}
 }
 
 // テーブル名

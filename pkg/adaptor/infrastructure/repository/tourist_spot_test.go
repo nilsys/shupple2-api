@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -40,10 +41,10 @@ var _ = Describe("TouristSpotRepositoryImpl", func() {
 	DescribeTable("Saveは引数のtouristSpotを作成するか、その状態になるように更新する",
 		func(before *entity.TouristSpot, saved *entity.TouristSpot, result *entity.QueryTouristSpot) {
 			if before != nil {
-				Expect(command.Store(before)).To(Succeed())
+				Expect(command.Store(context.Background(), before)).To(Succeed())
 			}
 
-			Expect(command.Store(saved)).To(Succeed())
+			Expect(command.Store(context.Background(), saved)).To(Succeed())
 			actual, err := query.FindByID(saved.ID)
 			Expect(err).To(Succeed())
 

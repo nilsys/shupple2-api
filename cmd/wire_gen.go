@@ -272,49 +272,55 @@ func InitializeApp(configFilePath2 config.FilePath) (*App, error) {
 		Config:                configConfig,
 	}
 	categoryCommandRepositoryImpl := &repository.CategoryCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	categoryCommandServiceImpl := &service.CategoryCommandServiceImpl{
 		CategoryCommandRepository: categoryCommandRepositoryImpl,
 		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
 		WordpressService:          wordpressServiceImpl,
+		TransactionService:        transactionServiceImpl,
 	}
 	comicCommandRepositoryImpl := &repository.ComicCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	comicCommandServiceImpl := &service.ComicCommandServiceImpl{
 		ComicCommandRepository:   comicCommandRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
+		TransactionService:       transactionServiceImpl,
 	}
 	featureCommandRepositoryImpl := &repository.FeatureCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	featureCommandServiceImpl := &service.FeatureCommandServiceImpl{
 		FeatureCommandRepository: featureCommandRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
+		TransactionService:       transactionServiceImpl,
 	}
 	lcategoryCommandRepositoryImpl := &repository.LcategoryCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	lcategoryCommandServiceImpl := &service.LcategoryCommandServiceImpl{
 		LcategoryCommandRepository: lcategoryCommandRepositoryImpl,
 		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
 		WordpressService:           wordpressServiceImpl,
+		TransactionService:         transactionServiceImpl,
 	}
 	touristSpotCommandServiceImpl := &service.TouristSpotCommandServiceImpl{
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
 		WordpressQueryRepository:     wordpressQueryRepositoryImpl,
 		WordpressService:             wordpressServiceImpl,
+		TransactionService:           transactionServiceImpl,
 	}
 	vlogCommandRepositoryImpl := &repository.VlogCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	vlogCommandServiceImpl := &service.VlogCommandServiceImpl{
 		VlogCommandRepository:    vlogCommandRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
+		TransactionService:       transactionServiceImpl,
 	}
 	wordpressCallbackServiceImpl := &service.WordpressCallbackServiceImpl{
 		UserCommandService:        userCommandServiceImpl,

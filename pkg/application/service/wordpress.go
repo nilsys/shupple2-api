@@ -22,13 +22,13 @@ const (
 
 type (
 	WordpressService interface {
-		ConvertPost(*wordpress.Post) (*entity.Post, error)
-		ConvertLocation(*wordpress.Location) (*entity.TouristSpot, error)
-		ConvertCategory(*wordpress.Category) (*entity.Category, error)
-		ConvertLcategory(*wordpress.LocationCategory) *entity.Lcategory
-		ConvertVlog(*wordpress.Vlog) (*entity.Vlog, error)
-		ConvertFeature(*wordpress.Feature) (*entity.Feature, error)
-		ConvertComic(*wordpress.Comic) (*entity.Comic, error)
+		PatchPost(*entity.Post, *wordpress.Post) error
+		PatchTouristSpot(*entity.TouristSpot, *wordpress.Location) error
+		PatchCategory(*entity.Category, *wordpress.Category) error
+		PatchLcategory(*entity.Lcategory, *wordpress.LocationCategory) error
+		PatchVlog(*entity.Vlog, *wordpress.Vlog) error
+		PatchFeature(*entity.Feature, *wordpress.Feature) error
+		PatchComic(*entity.Comic, *wordpress.Comic) error
 	}
 
 	WordpressServiceImpl struct {
@@ -44,20 +44,20 @@ var WordpressServiceSet = wire.NewSet(
 	wire.Bind(new(WordpressService), new(*WordpressServiceImpl)),
 )
 
-func (s *WordpressServiceImpl) ConvertPost(wpPost *wordpress.Post) (*entity.Post, error) {
+func (s *WordpressServiceImpl) PatchPost(post *entity.Post, wpPost *wordpress.Post) error {
 	user, err := s.UserQueryRepository.FindByWordpressID(wpPost.Author)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get user corresponding to wordpress user")
+		return errors.Wrap(err, "failed to get user corresponding to wordpress user")
 	}
 
 	thumbnail, err := s.getThumbnail(wpPost.FeaturedMedia)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get thumbnail")
+		return errors.Wrap(err, "failed to get thumbnail")
 	}
 
 	wpPostTags, err := s.WordpressQueryRepository.FindPostTagsByIDs(wpPost.Tags)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get post tags")
+		return errors.Wrap(err, "failed to get post tags")
 	}
 	hashtags := make([]string, len(wpPostTags))
 	for i, wpPostTag := range wpPostTags {
@@ -66,79 +66,78 @@ func (s *WordpressServiceImpl) ConvertPost(wpPost *wordpress.Post) (*entity.Post
 
 	toc, err := s.extractTOC(wpPost)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to extract toc")
+		return errors.Wrap(err, "failed to extract toc")
 	}
 	bodies := strings.Split(wpPost.Content.Rendered, wpPageDelimiter)
 
 	hashtagEntieis, err := s.HashtagCommandService.FindOrCreateHashtags(hashtags)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to find hashtags")
+		return errors.Wrap(err, "failed to find hashtags")
 	}
 	hashtagIDs := make([]int, len(hashtagEntieis))
 	for i, hashtagEntity := range hashtagEntieis {
 		hashtagIDs[i] = hashtagEntity.ID
 	}
 
-	post := entity.NewPost(entity.PostTiny{
-		ID:             wpPost.ID,
-		UserID:         user.ID,
-		Slug:           wpPost.Slug,
-		Thumbnail:      thumbnail,
-		Title:          wpPost.Title.Rendered,
-		TOC:            toc,
-		IsSticky:       wpPost.Sticky,
-		HideAds:        wpPost.Meta.IsAdsRemovedInPage,
-		SEOTitle:       wpPost.Meta.SEOTitle,
-		SEODescription: wpPost.Meta.MetaDescription,
-		CreatedAt:      time.Time(wpPost.Date),
-		UpdatedAt:      time.Time(wpPost.Modified),
-	}, bodies, wpPost.Categories, hashtagIDs)
+	post.ID = wpPost.ID
+	post.UserID = user.ID
+	post.Slug = wpPost.Slug
+	post.Thumbnail = thumbnail
+	post.Title = wpPost.Title.Rendered
+	post.TOC = toc
+	post.IsSticky = wpPost.Sticky
+	post.HideAds = wpPost.Meta.IsAdsRemovedInPage
+	post.SEOTitle = wpPost.Meta.SEOTitle
+	post.SEODescription = wpPost.Meta.MetaDescription
+	post.CreatedAt = time.Time(wpPost.Date)
+	post.SetBodies(bodies)
+	post.SetCategories(wpPost.Categories)
+	post.SetHashtags(hashtagIDs)
 
-	return &post, nil
+	return nil
 }
 
-func (s *WordpressServiceImpl) ConvertLocation(wpLocation *wordpress.Location) (*entity.TouristSpot, error) {
+func (s *WordpressServiceImpl) PatchTouristSpot(touristSpot *entity.TouristSpot, wpLocation *wordpress.Location) error {
 	lat, err := strconv.ParseFloat(wpLocation.Attributes.Map.Lat, 64)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse lat")
+		return errors.Wrap(err, "failed to parse lat")
 	}
 
 	lng, err := strconv.ParseFloat(wpLocation.Attributes.Map.Lng, 64)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse lng")
+		return errors.Wrap(err, "failed to parse lng")
 	}
 
 	var thumbnail string
 	if wpLocation.FeaturedMedia != 0 {
 		thumbnail, err = s.getThumbnail(wpLocation.FeaturedMedia)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get thumbnail")
+			return errors.Wrap(err, "failed to get thumbnail")
 		}
 	}
 
-	touristSpot := entity.NewTouristSpot(entity.TouristSpotTiny{
-		ID:           wpLocation.ID,
-		Name:         wpLocation.Title.Rendered,
-		Slug:         wpLocation.Slug,
-		Thumbnail:    thumbnail,
-		WebsiteURL:   wpLocation.Attributes.OfficialURL,
-		City:         wpLocation.Attributes.City,
-		Address:      wpLocation.Attributes.Address,
-		Lat:          lat,
-		Lng:          lng,
-		AccessCar:    wpLocation.Attributes.AccessCar,
-		AccessTrain:  wpLocation.Attributes.AccessTrain,
-		AccessBus:    wpLocation.Attributes.AccessBus,
-		OpeningHours: wpLocation.Attributes.OpeningHours,
-		TEL:          wpLocation.Attributes.TEL,
-		Price:        wpLocation.Attributes.Price,
-		InstagramURL: wpLocation.Attributes.Instagram,
-		SearchInnURL: wpLocation.Attributes.Inn,
-		CreatedAt:    time.Time(wpLocation.Date),
-		UpdatedAt:    time.Time(wpLocation.Modified),
-	}, wpLocation.Categories, wpLocation.LocationCat)
+	touristSpot.ID = wpLocation.ID
+	touristSpot.Name = wpLocation.Title.Rendered
+	touristSpot.Slug = wpLocation.Slug
+	touristSpot.Thumbnail = thumbnail
+	touristSpot.WebsiteURL = wpLocation.Attributes.OfficialURL
+	touristSpot.City = wpLocation.Attributes.City
+	touristSpot.Address = wpLocation.Attributes.Address
+	touristSpot.Lat = lat
+	touristSpot.Lng = lng
+	touristSpot.AccessCar = wpLocation.Attributes.AccessCar
+	touristSpot.AccessTrain = wpLocation.Attributes.AccessTrain
+	touristSpot.AccessBus = wpLocation.Attributes.AccessBus
+	touristSpot.OpeningHours = wpLocation.Attributes.OpeningHours
+	touristSpot.TEL = wpLocation.Attributes.TEL
+	touristSpot.Price = wpLocation.Attributes.Price
+	touristSpot.InstagramURL = wpLocation.Attributes.Instagram
+	touristSpot.SearchInnURL = wpLocation.Attributes.Inn
+	touristSpot.CreatedAt = time.Time(wpLocation.Date)
+	touristSpot.SetCategories(wpLocation.Categories)
+	touristSpot.SetLcategories(wpLocation.LocationCat)
 
-	return &touristSpot, nil
+	return nil
 }
 
 /*
@@ -159,10 +158,10 @@ AreaGroupをwordpress側で作れないので、CategoryTypeがjapan,worldの場
 
 親カテのカテゴリタイプが影響するので、カテゴリの更新があった場合は子カテの更新も行わないといけない
 */
-func (s *WordpressServiceImpl) ConvertCategory(wpCategory *wordpress.Category) (*entity.Category, error) {
+func (s *WordpressServiceImpl) PatchCategory(category *entity.Category, wpCategory *wordpress.Category) error {
 	categoryType, err := s.convertCategoryType(wpCategory)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to convert category type")
+		return errors.Wrap(err, "failed to convert category type")
 	}
 
 	parentID := wpCategory.Parent
@@ -178,15 +177,13 @@ func (s *WordpressServiceImpl) ConvertCategory(wpCategory *wordpress.Category) (
 		pParentID = &parentID
 	}
 
-	category := &entity.Category{
-		ID:       wpCategory.ID,
-		Name:     wpCategory.Name,
-		Slug:     wpCategory.Slug,
-		Type:     categoryType,
-		ParentID: pParentID,
-	}
+	category.ID = wpCategory.ID
+	category.Name = wpCategory.Name
+	category.Slug = wpCategory.Slug
+	category.Type = categoryType
+	category.ParentID = pParentID
 
-	return category, nil
+	return nil
 }
 
 func (s *WordpressServiceImpl) convertCategoryType(wpCategory *wordpress.Category) (model.CategoryType, error) {
@@ -216,56 +213,53 @@ func (s *WordpressServiceImpl) convertCategoryType(wpCategory *wordpress.Categor
 	return model.CategoryType(0), serror.New(nil, serror.CodeUndefined, "invalid parent category type")
 }
 
-func (s *WordpressServiceImpl) ConvertLcategory(wpLocationCategory *wordpress.LocationCategory) *entity.Lcategory {
-	touristSpotCategory := &entity.Lcategory{
-		ID:   wpLocationCategory.ID,
-		Name: wpLocationCategory.Name,
-	}
+func (s *WordpressServiceImpl) PatchLcategory(lcategory *entity.Lcategory, wpLocationCategory *wordpress.LocationCategory) error {
+	lcategory.ID = wpLocationCategory.ID
+	lcategory.Name = wpLocationCategory.Name
 
-	return touristSpotCategory
+	return nil
 }
 
-func (s *WordpressServiceImpl) ConvertVlog(wpVlog *wordpress.Vlog) (*entity.Vlog, error) {
+func (s *WordpressServiceImpl) PatchVlog(vlog *entity.Vlog, wpVlog *wordpress.Vlog) error {
 	user, err := s.UserQueryRepository.FindByWordpressID(wpVlog.Attributes.Creator.ID)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get user corresponding to wordpress user")
+		return errors.Wrap(err, "failed to get user corresponding to wordpress user")
 	}
 
 	thumbnail, err := s.getThumbnail(wpVlog.FeaturedMedia)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get thumbnail")
+		return errors.Wrap(err, "failed to get thumbnail")
 	}
 
-	vlog := entity.NewVlog(entity.VlogTiny{
-		ID:         wpVlog.ID,
-		UserID:     user.ID,
-		Slug:       wpVlog.Slug,
-		Thumbnail:  thumbnail,
-		Title:      wpVlog.Title.Rendered,
-		Body:       wpVlog.Content.Rendered,
-		YoutubeURL: wpVlog.Attributes.Youtube,
-		Series:     wpVlog.Attributes.Series,
-		UserSNS:    wpVlog.Attributes.CreatorSns,
-		EditorName: wpVlog.Attributes.FilmEdit,
-		YearMonth:  wpVlog.Attributes.YearMonth,
-		PlayTime:   wpVlog.Attributes.RunTime,
-		Timeline:   wpVlog.Attributes.MovieTimeline,
-		CreatedAt:  time.Time(wpVlog.Date),
-		UpdatedAt:  time.Time(wpVlog.Modified),
-	}, wpVlog.Categories, wpVlog.Attributes.MovieLocation)
+	vlog.ID = wpVlog.ID
+	vlog.UserID = user.ID
+	vlog.Slug = wpVlog.Slug
+	vlog.Thumbnail = thumbnail
+	vlog.Title = wpVlog.Title.Rendered
+	vlog.Body = wpVlog.Content.Rendered
+	vlog.YoutubeURL = wpVlog.Attributes.Youtube
+	vlog.Series = wpVlog.Attributes.Series
+	vlog.UserSNS = wpVlog.Attributes.CreatorSns
+	vlog.EditorName = wpVlog.Attributes.FilmEdit
+	vlog.YearMonth = wpVlog.Attributes.YearMonth
+	vlog.PlayTime = wpVlog.Attributes.RunTime
+	vlog.Timeline = wpVlog.Attributes.MovieTimeline
+	vlog.CreatedAt = time.Time(wpVlog.Date)
+	vlog.SetTouristSpots(wpVlog.Attributes.MovieLocation)
+	vlog.SetCategories(wpVlog.Categories)
 
-	return &vlog, nil
+	return nil
 }
 
-func (s *WordpressServiceImpl) ConvertFeature(wpFeature *wordpress.Feature) (*entity.Feature, error) {
+func (s *WordpressServiceImpl) PatchFeature(feature *entity.Feature, wpFeature *wordpress.Feature) error {
 	user, err := s.UserQueryRepository.FindByWordpressID(wpFeature.Author)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get user corresponding to wordpress user")
+		return errors.Wrap(err, "failed to get user corresponding to wordpress user")
 	}
 
 	thumbnail, err := s.getThumbnail(wpFeature.FeaturedMedia)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get thumbnail")
+		return errors.Wrap(err, "failed to get thumbnail")
 	}
 
 	postIDs := make([]int, len(wpFeature.Attributes.FeatureArticle))
@@ -273,43 +267,38 @@ func (s *WordpressServiceImpl) ConvertFeature(wpFeature *wordpress.Feature) (*en
 		postIDs[i] = feature.ID
 	}
 
-	feature := entity.NewFeature(entity.FeatureTiny{
-		ID:        wpFeature.ID,
-		UserID:    user.ID,
-		Slug:      wpFeature.Slug,
-		Thumbnail: thumbnail,
-		Title:     wpFeature.Title.Rendered,
-		Body:      wpFeature.Content.Rendered,
-		CreatedAt: time.Time(wpFeature.Date),
-		UpdatedAt: time.Time(wpFeature.Modified),
-	}, postIDs)
+	feature.ID = wpFeature.ID
+	feature.UserID = user.ID
+	feature.Slug = wpFeature.Slug
+	feature.Thumbnail = thumbnail
+	feature.Title = wpFeature.Title.Rendered
+	feature.Body = wpFeature.Content.Rendered
+	feature.CreatedAt = time.Time(wpFeature.Date)
+	feature.SetPosts(postIDs)
 
-	return &feature, nil
+	return nil
 }
 
-func (s *WordpressServiceImpl) ConvertComic(wpComic *wordpress.Comic) (*entity.Comic, error) {
+func (s *WordpressServiceImpl) PatchComic(comic *entity.Comic, wpComic *wordpress.Comic) error {
 	user, err := s.UserQueryRepository.FindByWordpressID(wpComic.Author)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get user corresponding to wordpress user")
+		return errors.Wrap(err, "failed to get user corresponding to wordpress user")
 	}
 
 	thumbnail, err := s.getThumbnail(wpComic.FeaturedMedia)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get thumbnail")
+		return errors.Wrap(err, "failed to get thumbnail")
 	}
 
-	comic := entity.Comic{
-		ID:        wpComic.ID,
-		UserID:    user.ID,
-		Slug:      wpComic.Slug,
-		Thumbnail: thumbnail,
-		Title:     wpComic.Title.Rendered,
-		Body:      wpComic.Content.Rendered,
-		CreatedAt: time.Time(wpComic.Date),
-		UpdatedAt: time.Time(wpComic.Modified),
-	}
+	comic.ID = wpComic.ID
+	comic.UserID = user.ID
+	comic.Slug = wpComic.Slug
+	comic.Thumbnail = thumbnail
+	comic.Title = wpComic.Title.Rendered
+	comic.Body = wpComic.Content.Rendered
+	comic.CreatedAt = time.Time(wpComic.Date)
 
-	return &comic, nil
+	return nil
 }
 
 func (s *WordpressServiceImpl) extractTOC(wpPost *wordpress.Post) (string, error) {

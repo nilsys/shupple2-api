@@ -34,32 +34,32 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 		return nil, err
 	}
 	uploader := ProvideS3Uploader(session)
+	dao := DAO{
+		UnderlyingDB: db,
+	}
 	categoryCommandRepositoryImpl := &CategoryCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	categoryQueryRepositoryImpl := &CategoryQueryRepositoryImpl{
 		DB: db,
 	}
 	comicCommandRepositoryImpl := &ComicCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	comicQueryRepositoryImpl := &ComicQueryRepositoryImpl{
 		DB: db,
 	}
 	featureCommandRepositoryImpl := &FeatureCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	featureQueryRepositoryImpl := &FeatureQueryRepositoryImpl{
 		DB: db,
 	}
 	lcategoryCommandRepositoryImpl := &LcategoryCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	lcategoryQueryRepositoryImpl := &LcategoryQueryRepositoryImpl{
 		DB: db,
-	}
-	dao := DAO{
-		UnderlyingDB: db,
 	}
 	touristSpotCommandRepositoryImpl := &TouristSpotCommandRepositoryImpl{
 		DAO: dao,
@@ -83,7 +83,7 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 		AWSConfig:     aws,
 	}
 	vlogCommandRepositoryImpl := &VlogCommandRepositoryImpl{
-		DB: db,
+		DAO: dao,
 	}
 	vlogQueryRepositoryImpl := &VlogQueryRepositoryImpl{
 		DB: db,

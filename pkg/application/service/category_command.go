@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -16,7 +18,8 @@ type (
 	CategoryCommandServiceImpl struct {
 		CategoryCommandRepository repository.CategoryCommandRepository
 		WordpressQueryRepository  repository.WordpressQueryRepository
-		WordpressService          WordpressService
+		WordpressService
+		TransactionService
 	}
 )
 
@@ -31,14 +34,26 @@ func (r *CategoryCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Ca
 		return nil, serror.NewResourcesNotFoundError(err, "wordpress category(id=%d)", id)
 	}
 
-	category, err := r.WordpressService.ConvertCategory(wpCategories[0])
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to convert category")
-	}
+	var category *entity.Category
+	err = r.TransactionService.Do(func(c context.Context) error {
+		category, err = r.CategoryCommandRepository.Lock(c, id)
+		if err != nil {
+			if !serror.IsErrorCode(err, serror.CodeNotFound) {
+				return errors.Wrap(err, "failed to get category")
+			}
+			category = &entity.Category{}
+		}
 
-	if err := r.CategoryCommandRepository.Store(category); err != nil {
-		return nil, errors.Wrap(err, "failed to store category")
-	}
+		if err := r.WordpressService.PatchCategory(category, wpCategories[0]); err != nil {
+			return errors.Wrap(err, "failed  to patch category")
+		}
+
+		if err := r.CategoryCommandRepository.Store(c, category); err != nil {
+			return errors.Wrap(err, "failed to store category")
+		}
+
+		return nil
+	})
 
 	return category, nil
 }

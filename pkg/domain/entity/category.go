@@ -22,9 +22,9 @@ type (
 		Name                   string
 		Slug                   string
 		Type                   model.CategoryType
-		MetasearchAreaID       int `gorm:"-"` // 基本的にアプリケーション内で更新することはないのでgorm:"-"にしておく。取得はできる。
-		MetasearchSubAreaID    int `gorm:"-"` // 基本的にアプリケーション内で更新することはないのでgorm:"-"にしておく。取得はできる。
-		MetasearchSubSubAreaID int `gorm:"-"` // 基本的にアプリケーション内で更新することはないのでgorm:"-"にしておく。取得はできる。
+		MetasearchAreaID       int
+		MetasearchSubAreaID    int
+		MetasearchSubSubAreaID int
 		ParentID               *int
 		CreatedAt              time.Time `gorm:"-"`
 		UpdatedAt              time.Time `gorm:"-"`
