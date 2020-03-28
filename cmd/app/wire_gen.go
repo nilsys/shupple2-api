@@ -25,8 +25,8 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeApp(configFilePath2 config.FilePath) (*App, error) {
-	configConfig, err := config.GetConfig(configFilePath2)
+func InitializeApp(configFilePath config.FilePath) (*App, error) {
+	configConfig, err := config.GetConfig(configFilePath)
 	if err != nil {
 		return nil, err
 	}

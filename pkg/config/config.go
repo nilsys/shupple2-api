@@ -25,11 +25,12 @@ import (
 var Version = "unknown"
 
 const (
-	Region           = "ap-northeast-1"
-	StgSsmKey        = "sw-stg-media-api-config"
-	PrdSsmKey        = "sw-prd-media-api-config"
-	StgContainerName = "sw-stg-media-api"
-	PrdContainerName = "sw-prd-media-api"
+	Region                = "ap-northeast-1"
+	StgSsmKey             = "sw-stg-media-api-config"
+	PrdSsmKey             = "sw-prd-media-api-config"
+	StgContainerName      = "sw-stg-media-api"
+	PrdContainerName      = "sw-prd-media-api"
+	DefaultConfigFilePath = "config.yaml"
 )
 
 func GetConfig(filename FilePath) (*Config, error) {

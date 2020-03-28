@@ -14,10 +14,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-const (
-	configFilePath = "config.yaml"
-)
-
 func main() {
 	if err := run(); err != nil {
 		log.Fatal(err)
@@ -53,7 +49,7 @@ type App struct {
 }
 
 func run() error {
-	app, err := InitializeApp(configFilePath)
+	app, err := InitializeApp(config.DefaultConfigFilePath)
 	if err != nil {
 		return errors.Wrap(err, "failed to initialize app")
 	}
