@@ -77,7 +77,7 @@ func (s Script) importReview(wordpressDB *gorm.DB) error {
 }
 
 func (s Script) findReview(wordpressDB *gorm.DB) ([]*review, error) {
-	q := wordpressDB.Where("post_type = 'wpcr3_review' AND ID NOT IN(?)", invalidReviews).Preload("Meta")
+	q := wordpressDB.Where("post_type = 'wpcr3_review' AND post_status = 'publish' AND ID NOT IN(?)", invalidReviews).Preload("Meta")
 
 	rows := make([]*review, 0, 500)
 	if err := q.Find(&rows).Error; err != nil {

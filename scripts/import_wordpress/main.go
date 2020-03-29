@@ -18,6 +18,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 	"go.uber.org/zap"
+	"gopkg.in/guregu/null.v3"
 )
 
 const (
@@ -173,7 +174,7 @@ func (s Script) importUser(wordpressDB *gorm.DB) error {
 func (s Script) convertUser(wpUser *wordpress.User) *entity.User {
 	return &entity.User{
 		ID:          wpUser.ID,
-		WordpressID: wpUser.ID,
+		WordpressID: null.IntFrom(int64(wpUser.ID)),
 		Name:        wpUser.Name,
 		Profile:     wpUser.Description,
 		Birthdate:   time.Date(2100, 10, 10, 0, 0, 0, 0, time.Local),
