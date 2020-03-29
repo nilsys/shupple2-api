@@ -18,8 +18,19 @@ var TouristSpotQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.TouristSpotQueryRepository), new(*TouristSpotQueryRepositoryImpl)),
 )
 
+func (r *TouristSpotQueryRepositoryImpl) FindAll() ([]*entity.TouristSpot, error) {
+	var rows []*entity.TouristSpot
+
+	if err := r.DB.Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find all tourist_spot")
+	}
+
+	return rows, nil
+}
+
 func (r *TouristSpotQueryRepositoryImpl) FindByID(id int) (*entity.TouristSpot, error) {
 	var row entity.TouristSpot
+
 	if err := r.DB.First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "touristSpot(id=%d)", id)
 	}

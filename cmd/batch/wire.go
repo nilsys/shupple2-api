@@ -12,6 +12,9 @@ import (
 var serviceSet = wire.NewSet(
 	service.PostQueryServiceSet,
 	service.PostCommandServiceSet,
+	service.AreaCategoryQueryServiceSet,
+	service.AreaCategoryCommandServiceSet,
+	service.ThemeCategoryCommandServiceSet,
 	service.CategoryQueryServiceSet,
 	service.ComicQueryServiceSet,
 	service.ComicCommandServiceSet,
@@ -30,10 +33,7 @@ var serviceSet = wire.NewSet(
 	service.WordpressCallbackServiceSet,
 	service.UserQueryServiceSet,
 	service.UserCommandServiceSet,
-	service.AreaCategoryQueryServiceSet,
-	service.AreaCategoryCommandServiceSet,
 	service.ProvideAuthService,
-	service.ThemeCategoryCommandServiceSet,
 )
 
 func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
