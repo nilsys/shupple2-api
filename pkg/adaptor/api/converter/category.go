@@ -6,13 +6,14 @@ import (
 )
 
 func ConvertCategoryToOutput(category entity.Category) *response.Category {
-	return response.NewCategory(category.CategoryID(), category.CategoryName(), category.CategoryType())
+	return response.NewCategory(category.CategoryID(), category.CategoryName(), category.CategoryType(), category.CategorySlug())
 }
 
 func ConvertAreaCategoryToOutput(areaCategory *entity.AreaCategory) *response.AreaCategory {
 	return &response.AreaCategory{
 		ID:   areaCategory.ID,
 		Name: areaCategory.Name,
+		Slug: areaCategory.Slug,
 		Type: areaCategory.Type,
 	}
 }
@@ -30,6 +31,7 @@ func ConvertThemeCategoryToOutput(themeCategory *entity.ThemeCategory) *response
 	return &response.ThemeCategory{
 		ID:   themeCategory.ID,
 		Name: themeCategory.Name,
+		Slug: themeCategory.Slug,
 		Type: themeCategory.Type,
 	}
 }

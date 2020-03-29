@@ -45,7 +45,7 @@ func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.QueryTouristSpot) 
 	lcategories := make([]*response.Lcategory, len(queryTouristSpot.Lcategories))
 
 	for i, lcategory := range queryTouristSpot.Lcategories {
-		lcategories[i] = response.NewLcategory(lcategory.ID, lcategory.Name)
+		lcategories[i] = response.NewLcategory(lcategory.ID, lcategory.Name, lcategory.Slug)
 	}
 
 	return &response.ShowTouristSpot{

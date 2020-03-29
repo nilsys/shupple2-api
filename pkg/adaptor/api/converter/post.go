@@ -79,6 +79,7 @@ func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
 		},
 		LikeCount: queryPost.FavoriteCount,
 		Views:     queryPost.Views,
+		HideAds:   queryPost.HideAds,
 		CreatedAt: model.TimeResponse(queryPost.CreatedAt),
 		UpdatedAt: model.TimeResponse(queryPost.UpdatedAt),
 	}
@@ -105,6 +106,7 @@ func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *r
 		FacebookCount:           post.FacebookCount,
 		TwitterCount:            post.TwitterCount,
 		Views:                   post.Views,
+		HideAds:                 post.HideAds,
 		Creator:                 response.NewCreator(post.User.ID, post.User.UID, post.User.GenerateThumbnailURL(), post.User.Name, post.User.Profile),
 		AreaCategories:          ConvertAreaCategoriesToOutput(post.AreaCategories),
 		ThemeCategoryCategories: ConvertThemeCategoriesToOutput(post.ThemeCategories),

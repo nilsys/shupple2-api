@@ -13,6 +13,7 @@ type (
 		Creator                 Creator            `json:"creator"`
 		LikeCount               int                `json:"likeCount"`
 		Views                   int                `json:"views"`
+		HideAds                 bool               `json:"hideAds"`
 		CreatedAt               model.TimeResponse `json:"createdAt"`
 		UpdatedAt               model.TimeResponse `json:"updatedAt"`
 	}
@@ -32,6 +33,7 @@ type (
 		FacebookCount           int              `json:"facebookCount"`
 		TwitterCount            int              `json:"twitterCount"`
 		Views                   int              `json:"views"`
+		HideAds                 bool             `json:"hideAds"`
 		Creator                 Creator          `json:"creator"`
 		AreaCategories          []*AreaCategory  `json:"areaCategories"`
 		ThemeCategoryCategories []*ThemeCategory `json:"themeCategoryCategories"`
