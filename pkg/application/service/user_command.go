@@ -1,7 +1,6 @@
 package service
 
 import (
-	"database/sql"
 	"strconv"
 	"time"
 
@@ -12,6 +11,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
+	"gopkg.in/guregu/null.v3"
 )
 
 type (
@@ -99,7 +99,7 @@ func (s *UserCommandServiceImpl) updateMapping(wpUser *wordpress.User) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to find target user")
 	}
-	if targetUser.WordpressID != 0 {
+	if targetUser.WordpressID.Valid {
 		return serror.New(nil, serror.CodeInvalidParam, "already mapped user; wordpress_user_id=%d, target_user_id=%d", wpUser.ID, mediaUserID)
 	}
 
@@ -113,15 +113,12 @@ func (s *UserCommandServiceImpl) registerDummyUserForWordpress(wpUser *wordpress
 	}
 
 	user := &entity.User{
-		WordpressID: wpUser.ID,
-		UID:         wpUser.Slug,
-		Name:        wpUser.Name,
-		MigrationCode: sql.NullString{
-			String: uuid.NewV4().String(),
-			Valid:  true,
-		},
-		Profile:   wpUser.Description,
-		Birthdate: time.Date(1900, 1, 1, 0, 0, 0, 0, time.Local),
+		UID:           wpUser.Slug,
+		Name:          wpUser.Name,
+		MigrationCode: null.StringFrom(uuid.NewV4().String()),
+		WordpressID:   null.IntFrom(int64(wpUser.ID)),
+		Profile:       wpUser.Description,
+		Birthdate:     time.Date(1900, 1, 1, 0, 0, 0, 0, time.Local),
 	}
 
 	return errors.Wrap(s.UserCommandRepository.StoreWithAvatar(user, avatar), "failed to register dummy user")

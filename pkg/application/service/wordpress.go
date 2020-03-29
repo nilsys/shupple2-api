@@ -13,6 +13,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
+	"gopkg.in/guregu/null.v3"
 )
 
 const (
@@ -172,12 +173,10 @@ func (s *WordpressServiceImpl) PatchAreaCategory(category *entity.AreaCategory, 
 		switch parent.Type {
 		case model.AreaCategoryTypeArea:
 			category.Type = model.AreaCategoryTypeSubArea
-			category.SubAreaID.Int64 = int64(category.ID)
-			category.SubAreaID.Valid = true
+			category.SubAreaID = null.IntFrom(int64(category.ID))
 		case model.AreaCategoryTypeSubArea:
 			category.Type = model.AreaCategoryTypeSubSubArea
-			category.SubSubAreaID.Int64 = int64(category.ID)
-			category.SubSubAreaID.Valid = true
+			category.SubSubAreaID = null.IntFrom(int64(category.ID))
 		case model.AreaCategoryTypeSubSubArea:
 			return serror.New(nil, serror.CodeUndefined, "sub sub area can't be parent")
 		}
@@ -215,8 +214,7 @@ func (s *WordpressServiceImpl) PatchThemeCategory(category *entity.ThemeCategory
 
 		category.Type = model.ThemeCategoryTypeSubTheme
 		category.ThemeID = parent.ThemeID
-		category.SubThemeID.Int64 = int64(category.ID)
-		category.SubThemeID.Valid = true
+		category.SubThemeID = null.IntFrom(int64(category.ID))
 
 		return nil
 	}

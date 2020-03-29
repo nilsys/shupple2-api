@@ -19,8 +19,6 @@ require (
 	github.com/jinzhu/gorm v1.9.2
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/jinzhu/now v1.0.1 // indirect
-	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
-	github.com/k0kubun/pp v3.0.1+incompatible // indirect
 	github.com/labstack/echo/v4 v4.1.13
 	github.com/labstack/gommon v0.3.0
 	github.com/leodido/go-urn v1.1.0 // indirect
@@ -38,5 +36,6 @@ require (
 	golang.org/x/tools v0.0.0-20200117170720-ade7f2547e48 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.0
+	gopkg.in/guregu/null.v3 v3.4.0
 	gopkg.in/yaml.v3 v3.0.0-20200121175148-a6ecf24a6d71
 )

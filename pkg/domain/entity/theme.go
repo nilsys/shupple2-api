@@ -1,10 +1,10 @@
 package entity
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+	"gopkg.in/guregu/null.v3"
 )
 
 type (
@@ -12,7 +12,7 @@ type (
 		CategoryBase
 		Type       model.ThemeCategoryType
 		ThemeID    int
-		SubThemeID sql.NullInt64
+		SubThemeID null.Int
 		CreatedAt  time.Time `gorm:"-;default:current_timestamp"`
 		UpdatedAt  time.Time `gorm:"-;default:current_timestamp"`
 	}

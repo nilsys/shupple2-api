@@ -1,10 +1,10 @@
 package entity
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+	"gopkg.in/guregu/null.v3"
 )
 
 /**
@@ -19,8 +19,8 @@ type (
 		Type                   model.AreaCategoryType
 		AreaGroup              model.AreaGroup
 		AreaID                 int
-		SubAreaID              sql.NullInt64
-		SubSubAreaID           sql.NullInt64
+		SubAreaID              null.Int
+		SubSubAreaID           null.Int
 		MetasearchAreaID       int
 		MetasearchSubAreaID    int
 		MetasearchSubSubAreaID int

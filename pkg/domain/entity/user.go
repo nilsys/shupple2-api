@@ -1,10 +1,10 @@
 package entity
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+	"gopkg.in/guregu/null.v3"
 )
 
 type (
@@ -12,8 +12,8 @@ type (
 		ID            int `gorm:"primary_key"`
 		UID           string
 		CognitoID     string
-		WordpressID   int
-		MigrationCode sql.NullString
+		WordpressID   null.Int
+		MigrationCode null.String
 		Name          string
 		Email         string
 		Birthdate     time.Time
