@@ -75,20 +75,23 @@ func (x *AccompanyingType) UnmarshalText(text []byte) error {
 }
 
 const (
+	// AreaCategoryTypeUndefined is a AreaCategoryType of type Undefined
+	AreaCategoryTypeUndefined AreaCategoryType = iota
 	// AreaCategoryTypeArea is a AreaCategoryType of type Area
-	AreaCategoryTypeArea AreaCategoryType = iota + 1
+	AreaCategoryTypeArea
 	// AreaCategoryTypeSubArea is a AreaCategoryType of type SubArea
 	AreaCategoryTypeSubArea
 	// AreaCategoryTypeSubSubArea is a AreaCategoryType of type SubSubArea
 	AreaCategoryTypeSubSubArea
 )
 
-const _AreaCategoryTypeName = "AreaSubAreaSubSubArea"
+const _AreaCategoryTypeName = "UndefinedAreaSubAreaSubSubArea"
 
 var _AreaCategoryTypeMap = map[AreaCategoryType]string{
-	1: _AreaCategoryTypeName[0:4],
-	2: _AreaCategoryTypeName[4:11],
-	3: _AreaCategoryTypeName[11:21],
+	0: _AreaCategoryTypeName[0:9],
+	1: _AreaCategoryTypeName[9:13],
+	2: _AreaCategoryTypeName[13:20],
+	3: _AreaCategoryTypeName[20:30],
 }
 
 // String implements the Stringer interface.
@@ -100,9 +103,10 @@ func (x AreaCategoryType) String() string {
 }
 
 var _AreaCategoryTypeValue = map[string]AreaCategoryType{
-	_AreaCategoryTypeName[0:4]:   1,
-	_AreaCategoryTypeName[4:11]:  2,
-	_AreaCategoryTypeName[11:21]: 3,
+	_AreaCategoryTypeName[0:9]:   0,
+	_AreaCategoryTypeName[9:13]:  1,
+	_AreaCategoryTypeName[13:20]: 2,
+	_AreaCategoryTypeName[20:30]: 3,
 }
 
 // ParseAreaCategoryType attempts to convert a string to a AreaCategoryType
@@ -578,17 +582,20 @@ func (x *SuggestionType) UnmarshalText(text []byte) error {
 }
 
 const (
+	// ThemeCategoryTypeUndefined is a ThemeCategoryType of type Undefined
+	ThemeCategoryTypeUndefined ThemeCategoryType = iota
 	// ThemeCategoryTypeTheme is a ThemeCategoryType of type Theme
-	ThemeCategoryTypeTheme ThemeCategoryType = iota + 1
+	ThemeCategoryTypeTheme
 	// ThemeCategoryTypeSubTheme is a ThemeCategoryType of type SubTheme
 	ThemeCategoryTypeSubTheme
 )
 
-const _ThemeCategoryTypeName = "ThemeSubTheme"
+const _ThemeCategoryTypeName = "UndefinedThemeSubTheme"
 
 var _ThemeCategoryTypeMap = map[ThemeCategoryType]string{
-	1: _ThemeCategoryTypeName[0:5],
-	2: _ThemeCategoryTypeName[5:13],
+	0: _ThemeCategoryTypeName[0:9],
+	1: _ThemeCategoryTypeName[9:14],
+	2: _ThemeCategoryTypeName[14:22],
 }
 
 // String implements the Stringer interface.
@@ -600,8 +607,9 @@ func (x ThemeCategoryType) String() string {
 }
 
 var _ThemeCategoryTypeValue = map[string]ThemeCategoryType{
-	_ThemeCategoryTypeName[0:5]:  1,
-	_ThemeCategoryTypeName[5:13]: 2,
+	_ThemeCategoryTypeName[0:9]:   0,
+	_ThemeCategoryTypeName[9:14]:  1,
+	_ThemeCategoryTypeName[14:22]: 2,
 }
 
 // ParseThemeCategoryType attempts to convert a string to a ThemeCategoryType

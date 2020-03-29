@@ -1,18 +1,19 @@
 package service
 
 import (
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/google/wire"
 	"github.com/pkg/errors"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
+	"go.uber.org/zap"
 	"gopkg.in/guregu/null.v3"
 )
 
@@ -107,14 +108,17 @@ func (s *WordpressServiceImpl) PatchPost(post *entity.Post, wpPost *wordpress.Po
 }
 
 func (s *WordpressServiceImpl) PatchTouristSpot(touristSpot *entity.TouristSpot, wpLocation *wordpress.Location) error {
-	lat, err := strconv.ParseFloat(wpLocation.Attributes.Map.Lat, 64)
+	var (
+		lat null.Float
+		lng null.Float
+	)
+	latFloat, lngFloat, err := wpLocation.Attributes.LatLang()
 	if err != nil {
-		return errors.Wrap(err, "failed to parse lat")
-	}
-
-	lng, err := strconv.ParseFloat(wpLocation.Attributes.Map.Lng, 64)
-	if err != nil {
-		return errors.Wrap(err, "failed to parse lng")
+		err = errors.Wrap(err, "invalid map location")
+		logger.Warn(err.Error(), zap.Error(err))
+	} else {
+		lat = null.FloatFrom(latFloat)
+		lng = null.FloatFrom(lngFloat)
 	}
 
 	var thumbnail string
@@ -169,16 +173,19 @@ func (s *WordpressServiceImpl) PatchAreaCategory(category *entity.AreaCategory, 
 
 		category.AreaGroup = parent.AreaGroup
 		category.AreaID = parent.AreaID
-		category.SubAreaID = parent.SubAreaID
 		switch parent.Type {
 		case model.AreaCategoryTypeArea:
 			category.Type = model.AreaCategoryTypeSubArea
 			category.SubAreaID = null.IntFrom(int64(category.ID))
 		case model.AreaCategoryTypeSubArea:
 			category.Type = model.AreaCategoryTypeSubSubArea
+			category.SubAreaID = parent.SubAreaID
 			category.SubSubAreaID = null.IntFrom(int64(category.ID))
-		case model.AreaCategoryTypeSubSubArea:
-			return serror.New(nil, serror.CodeUndefined, "sub sub area can't be parent")
+		case model.AreaCategoryTypeSubSubArea, model.AreaCategoryTypeUndefined:
+			logger.Warn("parent area category is sub_sub_area or undefined", zap.Int("id", category.ID), zap.Int("parent", wpCategory.Parent))
+			category.Type = model.AreaCategoryTypeUndefined
+			category.SubAreaID = parent.SubAreaID
+			category.SubSubAreaID = parent.SubSubAreaID
 		}
 
 		return nil
@@ -208,13 +215,18 @@ func (s *WordpressServiceImpl) PatchThemeCategory(category *entity.ThemeCategory
 		if err != nil {
 			return errors.Wrap(err, "failed to find parent theme category")
 		}
-		if parent.Type != model.ThemeCategoryTypeTheme {
-			return serror.New(nil, serror.CodeInvalidCategoryType, "parent theme category must be theme, not sub_theme")
-		}
 
-		category.Type = model.ThemeCategoryTypeSubTheme
-		category.ThemeID = parent.ThemeID
-		category.SubThemeID = null.IntFrom(int64(category.ID))
+		switch parent.Type {
+		case model.ThemeCategoryTypeTheme:
+			category.Type = model.ThemeCategoryTypeSubTheme
+			category.ThemeID = parent.ThemeID
+			category.SubThemeID = null.IntFrom(int64(category.ID))
+		case model.ThemeCategoryTypeSubTheme, model.ThemeCategoryTypeUndefined:
+			logger.Warn("parent theme category is sub_theme or undefined", zap.Int("id", category.ID), zap.Int("parent", wpCategory.Parent))
+			category.Type = model.ThemeCategoryTypeUndefined
+			category.ThemeID = parent.ThemeID
+			category.SubThemeID = parent.SubThemeID
+		}
 
 		return nil
 	}

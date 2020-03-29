@@ -6,6 +6,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
@@ -56,8 +57,11 @@ func (s *InnQueryServiceImpl) ListInnByParams(areaID, subAreaID, subSubAreaID, t
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get tourist spot")
 		}
-		q.Longitude = touristSpot.Lng
-		q.Latitude = touristSpot.Lat
+		if !touristSpot.Lat.Valid || !touristSpot.Lng.Valid {
+			return nil, serror.New(nil, serror.CodeInvalidParam, "tourist_spot(id=%d) lacks lat or lng", touristSpotID)
+		}
+		q.Longitude = touristSpot.Lng.Float64
+		q.Latitude = touristSpot.Lat.Float64
 	}
 
 	return s.InnQueryRepository.FindByParams(q)

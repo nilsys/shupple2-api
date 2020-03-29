@@ -15,6 +15,8 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 )
 
+var invalidReviews = []int{98029, 113097, 113648, 113684, 113691, 113739, 113759, 113821}
+
 type (
 	review struct {
 		ID          int `gorm:"column:ID;primary_key"`
@@ -48,47 +50,36 @@ func (meta) TableName() string {
 	return "wp_postmeta"
 }
 
+// ４００件ぐらいしかないので一発で取る
 func (s Script) importReview(wordpressDB *gorm.DB) error {
-	const limit = 100
-	lastID := 0
-	for {
-		reviews, err := s.findReview(wordpressDB, limit, lastID)
+	reviews, err := s.findReview(wordpressDB)
+	if err != nil {
+		return errors.Wrap(err, "failed to find reviews")
+	}
+
+	for _, r := range reviews {
+		user, err := s.UserQueryRepository.FindByWordpressID(r.PostAuthor)
 		if err != nil {
-			return errors.Wrap(err, "failed to find reviews")
-		}
-		if len(reviews) == 0 {
-			break
+			return errors.WithStack(err)
 		}
 
-		for _, r := range reviews {
-			if r.ID == 98029 || r.ID == 113821 || r.ID == 113097 || r.ID == 113648 {
-				continue
-			}
-			user, err := s.UserQueryRepository.FindByWordpressID(r.PostAuthor)
-			if err != nil {
-				return errors.WithStack(err)
-			}
-
-			reviewCommand, err := s.convertToCreateReviewCommand(r)
-			if err != nil {
-				return errors.Wrapf(err, "failed to import review(id=%d)", r.ID)
-			}
-
-			if err := s.ReviewCommandScenario.Create(user, reviewCommand); err != nil {
-				return errors.WithStack(err)
-			}
+		reviewCommand, err := s.convertToCreateReviewCommand(r)
+		if err != nil {
+			return errors.Wrapf(err, "failed to import review(id=%d)", r.ID)
 		}
 
-		lastID = reviews[len(reviews)-1].ID
+		if err := s.ReviewCommandScenario.Create(user, reviewCommand); err != nil {
+			return errors.WithStack(err)
+		}
 	}
 
 	return nil
 }
 
-func (s Script) findReview(wordpressDB *gorm.DB, limit, sinceID int) ([]*review, error) {
-	q := wordpressDB.Where("post_type = 'wpcr3_review' AND ID > ?", sinceID).Limit(limit).Preload("Meta")
+func (s Script) findReview(wordpressDB *gorm.DB) ([]*review, error) {
+	q := wordpressDB.Where("post_type = 'wpcr3_review' AND ID NOT IN(?)", invalidReviews).Preload("Meta")
 
-	rows := make([]*review, 0, limit)
+	rows := make([]*review, 0, 500)
 	if err := q.Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find review")
 	}
@@ -97,8 +88,8 @@ func (s Script) findReview(wordpressDB *gorm.DB, limit, sinceID int) ([]*review,
 }
 
 func (s Script) convertToCreateReviewCommand(review *review) (*command.CreateReview, error) {
-	if review.GetMeta("wpcr3_f2") != "" || review.GetMeta("wpcr3_f1") != "" {
-		return nil, errors.New("f1 or f2 found")
+	if review.GetMeta("wpcr3_f1") != "" {
+		return nil, errors.New("wpcr3_f1 found")
 	}
 
 	media, err := s.uploadMedia(review.ID, review.GetMeta("wpcr3_f3"))
@@ -108,9 +99,6 @@ func (s Script) convertToCreateReviewCommand(review *review) (*command.CreateRev
 
 	spotID, err := strconv.Atoi(review.GetMeta("wpcr3_review_post"))
 	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	if _, err := s.TouristSpotService.ImportFromWordpressByID(spotID); err != nil {
 		return nil, errors.WithStack(err)
 	}
 

@@ -1,6 +1,10 @@
 package response
 
-import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+import (
+	"gopkg.in/guregu/null.v3"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+)
 
 type (
 	TouristSpot struct {
@@ -18,8 +22,8 @@ type (
 		WebsiteURL              string             `json:"websiteUrl"`
 		City                    string             `json:"city"`
 		Address                 string             `json:"address"`
-		Latitude                float64            `json:"latitude"`
-		Longitude               float64            `json:"longitude"`
+		Latitude                null.Float         `json:"latitude"`
+		Longitude               null.Float         `json:"longitude"`
 		AccessCar               string             `json:"accessCar"`
 		AccessTrain             string             `json:"accessTrain"`
 		AccessBus               string             `json:"accessBus"`

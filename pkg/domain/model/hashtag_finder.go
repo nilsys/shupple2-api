@@ -1,6 +1,10 @@
 package model
 
-import "regexp"
+import (
+	"regexp"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
+)
 
 var re = regexp.MustCompile(`#(\S+)`)
 
@@ -11,5 +15,5 @@ func FindHashtags(str string) []string {
 	for _, s := range matches {
 		hashtags = append(hashtags, s[1])
 	}
-	return hashtags
+	return util.RemoveDuplicatesFromStringSlice(hashtags)
 }

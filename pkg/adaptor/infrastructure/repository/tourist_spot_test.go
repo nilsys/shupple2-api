@@ -8,6 +8,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
+	"gopkg.in/guregu/null.v3"
 )
 
 var _ = Describe("TouristSpotRepositoryImpl", func() {
@@ -97,8 +98,8 @@ var _ = Describe("TouristSpotRepositoryImpl", func() {
 func newTouristSpot(id int, areaCategoryIDs, themeCategoryIDs, lcategoryIDs []int) *entity.TouristSpot {
 	touristSpot := entity.TouristSpotTiny{
 		ID:        id,
-		Lat:       float64(id),
-		Lng:       float64(id * 10),
+		Lat:       null.FloatFrom(float64(id)),
+		Lng:       null.FloatFrom(float64(id * 10)),
 		CreatedAt: sampleTime,
 		UpdatedAt: sampleTime,
 	}

@@ -38,12 +38,14 @@ ENUM(japan = 1, world=2)
 type AreaGroup int
 
 /*
-ENUM(Area = 1, SubArea, SubSubArea)
+ENUM(Undefined, Area, SubArea, SubSubArea)
+sub_sub_areaの子カテとその子孫がundefinedに分類される
 */
 type AreaCategoryType int
 
 /*
-ENUM(Theme = 1, SubTheme)
+ENUM(Undefined, Theme = 1, SubTheme)
+sub_themeの子カテとその子孫がundefinedに分類される
 */
 type ThemeCategoryType int
 

@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"gopkg.in/guregu/null.v3"
 )
 
 type (
@@ -13,8 +15,8 @@ type (
 		WebsiteURL   string
 		City         string
 		Address      string
-		Lat          float64
-		Lng          float64
+		Lat          null.Float
+		Lng          null.Float
 		AccessCar    string
 		AccessTrain  string
 		AccessBus    string
