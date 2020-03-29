@@ -27,7 +27,7 @@ const listVlogDefaultPerPage = 10
 
 // いずれのクエリも飛んでこない場合 or sortの値が期待値以外の場合エラーを返す
 func (param ListVlogParam) Validate() error {
-	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.TouristSpotID == 0 && param.Keyward == "" {
+	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.TouristSpotID == 0 && param.Keyward == "" && param.SortBy == 0 {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid show vlog list param")
 	}
 
