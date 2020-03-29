@@ -4,6 +4,11 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
@@ -17,6 +22,7 @@ type UserCommandRepositoryImpl struct {
 	DB            *gorm.DB
 	MediaUploader *s3manager.Uploader
 	AWSConfig     config.AWS
+	AWSSession    *session.Session
 }
 
 const (
@@ -30,6 +36,14 @@ var UserCommandRepositorySet = wire.NewSet(
 
 func (r *UserCommandRepositoryImpl) Store(user *entity.User) error {
 	return errors.Wrap(r.DB.Save(user).Error, "failed to save user")
+}
+
+func (r *UserCommandRepositoryImpl) Update(user *entity.User) error {
+	if err := r.DB.Save(user).Error; err != nil {
+		return errors.Wrapf(err, "failed to update user id=%d", user.ID)
+	}
+
+	return nil
 }
 
 func (r *UserCommandRepositoryImpl) StoreWithAvatar(user *entity.User, avatar []byte) error {
@@ -84,4 +98,63 @@ func (r *UserCommandRepositoryImpl) DeleteFollow(userID, targetID int) error {
 
 		return nil
 	})
+}
+
+// TODO: 消す事考える
+func (r *UserCommandRepositoryImpl) PersistUserImage(user *entity.User) error {
+	if user.AvatarUUID != "" {
+		avatarFrom := fmt.Sprint(r.AWSConfig.FilesBucket, "/", model.UploadedS3Path(user.AvatarUUID))
+		svc := s3.New(r.AWSSession)
+
+		avatarGetReq := &s3.GetObjectInput{
+			Bucket: aws.String(r.AWSConfig.FilesBucket),
+			Key:    aws.String(avatarFrom),
+		}
+
+		o, err := svc.GetObject(avatarGetReq)
+		if err != nil {
+			return errors.Wrap(err, "failed to get s3 tmp object")
+		}
+
+		avatarCopyReq := &s3.CopyObjectInput{
+			CopySource:  aws.String(avatarFrom),
+			Bucket:      aws.String(r.AWSConfig.FilesBucket),
+			Key:         aws.String(user.S3AvatarPath()),
+			ContentType: o.ContentType,
+		}
+
+		_, err = svc.CopyObject(avatarCopyReq)
+		if err != nil {
+			return errors.Wrap(err, "failed to copy s3 object")
+		}
+	}
+
+	if user.HeaderUUID != "" {
+		headerFrom := fmt.Sprint(r.AWSConfig.FilesBucket, "/", model.UploadedS3Path(user.HeaderUUID))
+		svc := s3.New(r.AWSSession)
+
+		headerGetReq := &s3.GetObjectInput{
+			Bucket: aws.String(r.AWSConfig.FilesBucket),
+			Key:    aws.String(headerFrom),
+		}
+
+		o, err := svc.GetObject(headerGetReq)
+		if err != nil {
+			return errors.Wrap(err, "failed to get s3 tmp object")
+		}
+
+		headerCopyReq := &s3.CopyObjectInput{
+			CopySource:  aws.String(headerFrom),
+			Bucket:      aws.String(r.AWSConfig.FilesBucket),
+			Key:         aws.String(user.S3HeaderPath()),
+			ContentType: o.ContentType,
+		}
+
+		_, err = svc.CopyObject(headerCopyReq)
+		if err != nil {
+			return errors.Wrap(err, "failed to copy s3 object")
+		}
+	}
+
+	return nil
 }

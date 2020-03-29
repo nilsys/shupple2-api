@@ -32,9 +32,28 @@ type (
 		BirthDate     model.Date   `json:"birthDate"`
 		Gender        model.Gender `json:"gender"`
 		Profile       string       `json:"profile"`
-		PinnedPostID  int          `json:"pinnedPostId"`
+		URL           string       `json:"url"`
+		FacebookURL   string       `json:"facebookUrl"`
+		InstagramURL  string       `json:"instagramUrl"`
+		TwitterURL    string       `json:"twitterUrl"`
+		LivingArea    string       `json:"livingArea"`
 		Interests     []int        `json:"interests"`
-		IconUUID      string       `json:"iconUuid"`
+	}
+
+	UpdateUser struct {
+		Name         string       `json:"name"`
+		Email        string       `json:"email"`
+		BirthDate    model.Date   `json:"birthDate"`
+		Gender       model.Gender `json:"gender"`
+		Profile      string       `json:"profile"`
+		IconUUID     string       `json:"iconUuid"`
+		HeaderUUID   string       `json:"headerUuid"`
+		URL          string       `json:"url"`
+		FacebookURL  string       `json:"facebookUrl"`
+		InstagramURL string       `json:"instagramUrl"`
+		TwitterURL   string       `json:"twitterUrl"`
+		LivingArea   string       `json:"livingArea"`
+		Interests    []int        `json:"interests"`
 	}
 
 	FollowParam struct {

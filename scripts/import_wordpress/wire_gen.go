@@ -43,6 +43,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		DB:            db,
 		MediaUploader: uploader,
 		AWSConfig:     aws,
+		AWSSession:    session,
 	}
 	authService, err := service.ProvideAuthService(configConfig)
 	if err != nil {

@@ -198,7 +198,7 @@ func (s *ReviewCommandServiceImpl) CreateReviewComment(user *entity.User, review
 func (s *ReviewCommandServiceImpl) persistReviewMedia(medias []*entity.ReviewMedia) error {
 	for _, media := range medias {
 		if err := s.ReviewCommandRepository.PersistReviewMedia(media); err != nil {
-			return errors.Wrapf(err, "failed to presist media(id=%s)", media.ID)
+			return errors.Wrapf(err, "failed to persist media(id=%s)", media.ID)
 		}
 	}
 

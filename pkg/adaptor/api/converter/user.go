@@ -3,6 +3,8 @@ package converter
 import (
 	"time"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/response"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -51,14 +53,40 @@ func ConvertStoreUserParamToEntity(param *param.StoreUser) *entity.User {
 		interests[i] = &entity.UserInterest{InterestID: interest}
 	}
 	return &entity.User{
-		UID:        param.UID,
-		Name:       param.Name,
-		Email:      param.Email,
-		Birthdate:  time.Time(param.BirthDate),
-		Gender:     param.Gender,
-		Profile:    param.Profile,
-		AvatarUUID: param.IconUUID,
-		Interests:  interests,
+		UID:          param.UID,
+		Name:         param.Name,
+		Email:        param.Email,
+		Birthdate:    time.Time(param.BirthDate),
+		Gender:       param.Gender,
+		Profile:      param.Profile,
+		URL:          param.URL,
+		FacebookURL:  param.FacebookURL,
+		InstagramURL: param.InstagramURL,
+		TwitterURL:   param.TwitterURL,
+		LivingArea:   param.LivingArea,
+		Interests:    interests,
+	}
+}
+
+func ConvertUpdateUserParamToCmd(param *param.UpdateUser) *command.UpdateUser {
+	interests := make([]*entity.UserInterest, len(param.Interests))
+	for i, interest := range param.Interests {
+		interests[i] = &entity.UserInterest{InterestID: interest}
+	}
+	return &command.UpdateUser{
+		Name:         param.Name,
+		Email:        param.Email,
+		BirthDate:    param.BirthDate,
+		Gender:       param.Gender,
+		Profile:      param.Profile,
+		IconUUID:     param.IconUUID,
+		HeaderUUID:   param.HeaderUUID,
+		URL:          param.URL,
+		FacebookURL:  param.FacebookURL,
+		InstagramURL: param.InstagramURL,
+		TwitterURL:   param.TwitterURL,
+		LivingArea:   param.LivingArea,
+		Interests:    interests,
 	}
 }
 

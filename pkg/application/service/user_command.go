@@ -4,6 +4,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
+
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
@@ -17,6 +19,7 @@ import (
 type (
 	UserCommandService interface {
 		SignUp(user *entity.User, cognitoToken string, migrationCode *string) error
+		Update(user *entity.User, cmd *command.UpdateUser) error
 		RegisterWordpressUser(wordpressUserID int) error
 		Follow(user *entity.User, targetID int) error
 		Unfollow(user *entity.User, targetID int) error
@@ -139,4 +142,41 @@ func (s *UserCommandServiceImpl) Unfollow(user *entity.User, targetID int) error
 		return serror.New(nil, serror.CodeInvalidParam, "can not un follow self")
 	}
 	return s.UserCommandRepository.DeleteFollow(user.ID, targetID)
+}
+
+func (s *UserCommandServiceImpl) Update(user *entity.User, cmd *command.UpdateUser) error {
+	s.updateUserCmd(user, cmd)
+
+	if err := s.UserCommandRepository.Update(user); err != nil {
+		return errors.Wrap(err, "failed to update user")
+	}
+
+	if err := s.persistUserImage(user); err != nil {
+		return errors.Wrap(err, "failed to persist user image")
+	}
+
+	return nil
+}
+
+func (s *UserCommandServiceImpl) persistUserImage(user *entity.User) error {
+	if err := s.UserCommandRepository.PersistUserImage(user); err != nil {
+		return errors.Wrapf(err, "failed to persist user(id=%s) image", user.ID)
+	}
+	return nil
+}
+
+func (s *UserCommandServiceImpl) updateUserCmd(user *entity.User, cmd *command.UpdateUser) {
+	user.Name = cmd.Name
+	user.Email = cmd.Email
+	user.Birthdate = time.Time(cmd.BirthDate)
+	user.Gender = cmd.Gender
+	user.Profile = cmd.Profile
+	user.AvatarUUID = cmd.IconUUID
+	user.HeaderUUID = cmd.HeaderUUID
+	user.URL = cmd.URL
+	user.FacebookURL = cmd.FacebookURL
+	user.InstagramURL = cmd.InstagramURL
+	user.TwitterURL = cmd.TwitterURL
+	user.LivingArea = cmd.LivingArea
+	user.Interests = cmd.Interests
 }

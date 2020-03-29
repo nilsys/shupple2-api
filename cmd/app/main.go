@@ -81,6 +81,7 @@ func setRoutes(app *App) {
 	{
 		users := api.Group("/users")
 		users.POST("", app.UserCommandController.SignUp)
+		users.PUT("", auth.Require(app.UserCommandController.Update))
 		users.GET("/:id/posts/feed", app.PostQueryController.ListFeedPost)
 		users.GET("/:id/reviews/feed", app.ReviewQueryController.ListFeedReview)
 		users.GET("/ranking", app.UserQueryController.ShowUserRanking)

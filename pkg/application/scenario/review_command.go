@@ -125,6 +125,7 @@ func (s *ReviewCommandScenarioImpl) convertStoreReviewPramToEntity(param *comman
 	}
 }
 
+// TODO: https://github.com/stayway-corp/stayway-media-api/pull/133#discussion_r394333171
 func (s *ReviewCommandScenarioImpl) updateReview(param *command.UpdateReview, review *entity.Review) {
 	review.Body = param.Body
 	review.TravelDate = param.TravelDate.Time

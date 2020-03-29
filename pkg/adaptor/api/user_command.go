@@ -37,6 +37,21 @@ func (c *UserCommandController) SignUp(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, "ok")
 }
 
+// uid以外の要素を更新可能
+func (c *UserCommandController) Update(ctx echo.Context, user entity.User) error {
+	p := param.UpdateUser{}
+	if err := BindAndValidate(ctx, &p); err != nil {
+		return errors.Wrap(err, "validation store user image param")
+	}
+
+	err := c.UserCommandService.Update(&user, converter.ConvertUpdateUserParamToCmd(&p))
+	if err != nil {
+		return errors.Wrap(err, "failed to store user image")
+	}
+
+	return ctx.JSON(http.StatusOK, "ok")
+}
+
 func (c *UserCommandController) Follow(ctx echo.Context, user entity.User) error {
 	p := param.FollowParam{}
 	if err := BindAndValidate(ctx, &p); err != nil {

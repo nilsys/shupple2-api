@@ -87,6 +87,7 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 		DB:            db,
 		MediaUploader: uploader,
 		AWSConfig:     aws,
+		AWSSession:    session,
 	}
 	vlogCommandRepositoryImpl := &VlogCommandRepositoryImpl{
 		DAO: dao,

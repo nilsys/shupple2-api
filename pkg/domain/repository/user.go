@@ -8,10 +8,12 @@ import (
 type (
 	UserCommandRepository interface {
 		Store(user *entity.User) error
+		Update(user *entity.User) error
 		StoreWithAvatar(user *entity.User, avatar []byte) error
 		UpdateWordpressID(userID, wordpressUserID int) error
 		StoreFollow(following *entity.UserFollowing, followed *entity.UserFollowed) error
 		DeleteFollow(userID, targetID int) error
+		PersistUserImage(user *entity.User) error
 	}
 
 	UserQueryRepository interface {

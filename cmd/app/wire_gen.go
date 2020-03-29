@@ -263,6 +263,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		DB:            db,
 		MediaUploader: uploader,
 		AWSConfig:     aws,
+		AWSSession:    session,
 	}
 	userCommandServiceImpl := &service.UserCommandServiceImpl{
 		UserCommandRepository:    userCommandRepositoryImpl,

@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
@@ -20,6 +21,12 @@ type (
 		Gender        model.Gender
 		Profile       string
 		AvatarUUID    string
+		HeaderUUID    string
+		URL           string
+		FacebookURL   string
+		InstagramURL  string
+		TwitterURL    string
+		LivingArea    string
 		Interests     []*UserInterest `gorm:"foreignkey:UserID"`
 		CreatedAt     time.Time       `gorm:"-;default:current_timestamp"`
 		UpdatedAt     time.Time       `gorm:"-;default:current_timestamp"`
@@ -68,12 +75,12 @@ type (
 )
 
 // MEMO: サムネイルロジック仮置き
-func (user *User) GenerateThumbnailURL() string {
-	return "https://files.stayway.jp/avatar/" + user.AvatarUUID
+func (u *User) GenerateThumbnailURL() string {
+	return "https://files.stayway.jp/avatar/" + u.AvatarUUID
 }
 
-func (user *User) IsSelfID(id int) bool {
-	return user.ID == id
+func (u *User) IsSelfID(id int) bool {
+	return u.ID == id
 }
 
 func NewUserFollowing(userID, targetID int) *UserFollowing {
@@ -95,6 +102,14 @@ func NewUserFollowHashtag(userID, hashtagID int) *UserFollowHashtag {
 		UserID:    userID,
 		HashtagID: hashtagID,
 	}
+}
+
+func (u *User) S3AvatarPath() string {
+	return fmt.Sprintf("user/%s", u.AvatarUUID)
+}
+
+func (u *User) S3HeaderPath() string {
+	return fmt.Sprintf("user/%s", u.HeaderUUID)
 }
 
 func (u *OptionalUser) IsAuthorized() bool {
