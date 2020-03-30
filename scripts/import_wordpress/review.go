@@ -11,6 +11,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/satori/uuid"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 )
@@ -52,6 +53,15 @@ func (meta) TableName() string {
 
 // ４００件ぐらいしかないので一発で取る
 func (s Script) importReview(wordpressDB *gorm.DB) error {
+	reviewCount := 0
+	if err := s.DB.Raw("select count(1) from review").Row().Scan(&reviewCount); err != nil {
+		return errors.WithStack(err)
+	}
+	if reviewCount > 0 {
+		logger.Warn("skip review import")
+		return nil
+	}
+
 	reviews, err := s.findReview(wordpressDB)
 	if err != nil {
 		return errors.Wrap(err, "failed to find reviews")

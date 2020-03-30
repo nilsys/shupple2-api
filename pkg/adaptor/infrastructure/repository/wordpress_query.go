@@ -1,16 +1,17 @@
 package repository
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"path"
+	"reflect"
 	"regexp"
 	"strings"
 
 	"github.com/google/wire"
+	"github.com/mitchellh/reflectwalk"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/dto"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
@@ -35,17 +36,17 @@ const (
 	maxPerPage = 100
 )
 
-var (
-	wpContentPrefix = []byte("/wp-content")
+const (
+	wpContentPrefix = "/wp-content"
 )
 
 type (
 	WordpressQueryRepositoryImpl struct {
 		config.Wordpress
 		Client           http.Client
-		wordpressBaseURL []byte
-		mediaBaseURL     []byte
-		filesBaseURL     []byte
+		wordpressBaseURL string
+		mediaBaseURL     string
+		filesBaseURL     string
 	}
 )
 
@@ -58,9 +59,9 @@ func NewWordpressQueryRepositoryImpl(config config.Wordpress, mediaConfig config
 	return &WordpressQueryRepositoryImpl{
 		config,
 		http.Client{},
-		[]byte(config.BaseURL.String()),
-		[]byte(mediaConfig.BaseURL.String()),
-		[]byte(mediaConfig.FilesURL.String()),
+		config.BaseURL.String(),
+		mediaConfig.BaseURL.String(),
+		mediaConfig.FilesURL.String(),
 	}
 }
 
@@ -204,23 +205,24 @@ func (r *WordpressQueryRepositoryImpl) getJSON(url string, result interface{}) e
 		return errors.Wrapf(err, "wordpress returns %d", resp.StatusCode)
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return errors.Wrap(err, "failed to read response body")
+	if err := json.NewDecoder(resp.Body).Decode(result); err != nil {
+		return errors.Wrap(err, "failed to decode json")
 	}
 
-	body = r.replaceDomain(body)
-	body = r.replaceMediaURL(body)
-
-	if err := json.Unmarshal(body, result); err != nil {
-		return errors.Wrap(err, "failed to decode json")
+	if err := r.replaceURLs(result); err != nil {
+		return errors.Wrap(err, "failed to replace urls in wordpress resource")
 	}
 
 	return nil
 }
 
-func (r *WordpressQueryRepositoryImpl) replaceDomain(str []byte) []byte {
-	return bytes.ReplaceAll(str, r.wordpressBaseURL, r.mediaBaseURL)
+// Wordpressが/を\/にエスケープして返すせいでjsonパース後にしかURLを置換できない
+func (r *WordpressQueryRepositoryImpl) replaceURLs(v interface{}) error {
+	return reflectwalk.Walk(v, wordpressReplaceURLsWalker{r})
+}
+
+func (r *WordpressQueryRepositoryImpl) replaceDomain(str string) string {
+	return strings.ReplaceAll(str, r.wordpressBaseURL, r.mediaBaseURL)
 }
 
 // 移行前後は、負荷の問題でpluginのURL置換機能をonにできないので、こちら側で置換する。
@@ -229,16 +231,31 @@ var (
 	mediaURLRegexp = regexp.MustCompile(`https://([-a-z]+\.)?stayway.jp/tourism/wp-content/uploads/\S+\.[A-Za-z]+`)
 )
 
-func (r *WordpressQueryRepositoryImpl) replaceMediaURL(str []byte) []byte {
-	return mediaURLRegexp.ReplaceAllFunc(str, func(url []byte) []byte {
-		start := bytes.Index(url, wpContentPrefix)
-		if start < 0 {
+func (r *WordpressQueryRepositoryImpl) replaceMediaURL(str string) string {
+	return mediaURLRegexp.ReplaceAllStringFunc(str, func(url string) string {
+		start := strings.Index(url, wpContentPrefix)
+		if start < 0 { // ありえないが念の為
 			return url
 		}
 		url = url[start:]
 
-		result := make([]byte, len(r.filesBaseURL), len(r.filesBaseURL)+len(url))
-		copy(result, r.filesBaseURL)
-		return append(result, url...)
+		return r.filesBaseURL + url
 	})
+}
+
+type wordpressReplaceURLsWalker struct {
+	*WordpressQueryRepositoryImpl
+}
+
+func (w wordpressReplaceURLsWalker) Struct(reflect.Value) error {
+	return nil
+}
+
+func (w wordpressReplaceURLsWalker) StructField(field reflect.StructField, fv reflect.Value) error {
+	if field.Type.Kind() != reflect.String || !fv.CanSet() {
+		return nil
+	}
+
+	fv.SetString(w.replaceMediaURL(w.replaceDomain(fv.String())))
+	return nil
 }
