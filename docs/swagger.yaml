@@ -2438,18 +2438,24 @@ components:
           type: string
           description: シリーズ名
           example: ~シリーズ~
-        creatorSns:
-          type: string
-          description: 投稿者のSNS
-          example: https://twitter.jp/1
         editorName:
           type: string
           description: 編集者の名前
-          example: 編集者です
-        yearMonth:
+          example: 編集者
+        creator:
+          $ref: "#/components/schemas/Creator"
+        shootingDate:
           type: string
-          description: 撮影年月
-          example: 2020-01
+          description: 撮影日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        createdAt:
+          type: string
+          description: 公開日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        updatedAt:
+          type: string
+          description: 更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
         playTime:
           type: string
           description: 再生時間
@@ -2758,6 +2764,18 @@ components:
           example: |
             横浜生まれ東京育ちの旅好きライター。年に２，３回は国内外の旅行に行きます。
             旅先での楽しみはグルメとお酒と地元の人と仲良くなること！
+        facebookUrl:
+          type: string
+          description: facebookのurl
+          example: https://facebook.com
+        instagramUrl:
+          type: string
+          description: instagramのurl
+          example: https://instagram.com
+        twitterUrl:
+          type: string
+          description: twitterのurl
+          example: https://twitter.com
     CategoryList:
       type: array
       items:
