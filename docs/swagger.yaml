@@ -304,14 +304,6 @@ paths:
           schema:
             type: integer
         - in: query
-          name: childId
-          description: |
-            子のカテゴリID
-            親カテゴリに紐づく
-            いずれか1つ以上必須
-          schema:
-            type: integer
-        - in: query
           name: hashtag
           description: hashtagに紐づくレビューを取得する
           schema:
@@ -765,6 +757,30 @@ paths:
           name: subSubAreaId
           description: |
             サブサブエリアID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: childAreaId
+          description: |
+            AreaID
+            親カテゴリに紐づく記事を返す
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: childSubAreaId
+          description: |
+            SubAreaID
+            親カテゴリに紐づく記事を返す
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
+          name: childSubSubAreaId
+          description: |
+            SubSubAreaID
+            親カテゴリに紐づく記事を返す
             いずれか1つ以上必須
           schema:
             type: integer
@@ -1310,14 +1326,12 @@ paths:
           name: touristSpotId
           description: |
             観光スポットID
-            いずれか必須
           schema:
             type: integer
         - in: query
           name: touristSpotCategoryId
           description: |
             観光スポットカテゴリID
-            いずれか必須
           schema:
             type: integer
       responses:
