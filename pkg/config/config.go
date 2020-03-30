@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -38,25 +39,28 @@ func GetConfig(filename FilePath) (*Config, error) {
 	url := os.Getenv("ECS_CONTAINER_METADATA_URI")
 	if utf8.RuneCountInString(url) > 0 {
 		resp, err := http.Get(url)
-		if err != nil || resp.StatusCode == http.StatusOK {
-			var metaData MetaData
-			bodyBytes, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				log.Debug("failed aws meta data read response body")
-			}
-			err = json.Unmarshal(bodyBytes, &metaData)
-			if err != nil {
-				log.Debug("failed aws meta data unmarshal")
-			}
-			log.Debugf("ECS CONTAINER METADATA: %s", string(bodyBytes))
-			return getConfigFromSSM(metaData.GetSSMKEY())
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to fetch ecs container metadata")
 		}
-		defer func() {
-			err := resp.Body.Close()
-			if err != nil {
-				log.Debug("failed to close response body")
-			}
-		}()
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			return nil, errors.Wrapf(err, "ecs container metadata api returns not OK status; %d", resp.StatusCode)
+		}
+
+		var metaData MetaData
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Debug("failed aws meta data read response body")
+		}
+		log.Debugf("ECS CONTAINER METADATA: %s", string(bodyBytes))
+
+		err = json.Unmarshal(bodyBytes, &metaData)
+		if err != nil {
+			log.Debug("failed aws meta data unmarshal")
+		}
+
+		return getConfigFromSSM(metaData.GetSSMKEY())
 	}
 
 	// ローカルの場合
@@ -64,34 +68,34 @@ func GetConfig(filename FilePath) (*Config, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read config file")
 	}
+	defer f.Close()
 
-	var config Config
-	if err = yaml.NewDecoder(f).Decode(&config); err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if err := validator.New().Struct(&config); err != nil {
-		return nil, err
-	}
-
-	config.Version = Version
-
-	return &config, nil
+	return loadConfig(f)
 }
 
 func getConfigFromSSM(ssmKey string) (*Config, error) {
-	var config Config
 	res, err := fetchParameterStore(ssmKey)
 	if err != nil {
 		return nil, err
 	}
-	r := strings.NewReader(res)
-	if err := yaml.NewDecoder(r).Decode(&config); err != nil {
+
+	return loadConfig(strings.NewReader(res))
+}
+
+func loadConfig(reader io.Reader) (*Config, error) {
+	var config Config
+	if err := yaml.NewDecoder(reader).Decode(&config); err != nil {
 		return nil, errors.WithStack(err)
 	}
-	if err := validator.New().Struct(&config); err != nil {
-		return nil, err
+
+	v := validator.New()
+	v.RegisterStructValidation(URLRequiredValidation, URL{}) // URLが必ずrequiredになってしまうので微妙
+	if err := v.Struct(&config); err != nil {
+		return nil, errors.WithStack(err)
 	}
+
+	config.Version = Version
+
 	return &config, nil
 }
 

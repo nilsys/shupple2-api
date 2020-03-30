@@ -33,6 +33,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		DB:            db,
 		MediaUploader: uploader,
 		AWSConfig:     aws,
+		AWSSession:    session,
 	}
 	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
 		DB: db,

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"go.uber.org/zap"
+	"gopkg.in/go-playground/validator.v9"
 	yaml "gopkg.in/yaml.v3"
 )
 
@@ -77,6 +78,9 @@ func (u *URL) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if err := unmarshal(&str); err != nil {
 		return err
 	}
+	if str == "" {
+		return nil
+	}
 
 	parsed, err := url.Parse(str)
 	if err != nil {
@@ -84,4 +88,13 @@ func (u *URL) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	}
 	u.URL = *parsed
 	return nil
+}
+
+func URLRequiredValidation(sl validator.StructLevel) {
+	u := sl.Current().Interface().(URL)
+
+	zero := url.URL{}
+	if u.URL == zero {
+		sl.ReportError(u, "URL", "URL", "required", "")
+	}
 }

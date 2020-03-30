@@ -35,8 +35,8 @@ func NewResourcesNotFoundError(err error, resource string, v ...interface{}) err
 	}
 
 	if err != nil {
-		return errors.Wrapf(err, "%s not found", resource)
+		return errors.Wrapf(err, "failed to get %s", resource)
 	}
 
-	return errors.Errorf("%s not found", resource)
+	return New(nil, CodeNotFound, "%s not found", resource)
 }
