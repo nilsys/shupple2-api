@@ -17,7 +17,6 @@ type (
 		MetasearchAreaID       int
 		MetasearchSubAreaID    int
 		MetasearchSubSubAreaID int
-		ChildID                int
 		SortBy                 model.ReviewSortBy
 		Keyward                string
 		Limit                  int

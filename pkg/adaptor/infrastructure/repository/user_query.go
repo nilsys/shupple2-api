@@ -7,6 +7,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
@@ -60,14 +61,16 @@ func (r *UserQueryRepositoryImpl) FindByMigrationCode(code string) (*entity.User
 	return &row, nil
 }
 
-// TODO: テスト
 func (r *UserQueryRepositoryImpl) FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.QueryRankingUser, error) {
 	var rows []*entity.QueryRankingUser
 
 	q := r.buildFindUserRankingListQuery(query)
+	// MEMO: validationを掛けているのであり得ないが
+	if q == nil {
+		return nil, serror.New(nil, serror.CodeInvalidParam, "Invalid list user ranking search param")
+	}
 
 	if err := q.
-		Table("user").
 		Limit(query.Limit).
 		Offset(query.Offset).
 		Find(&rows).Error; err != nil {
@@ -189,11 +192,33 @@ func (r *UserQueryRepositoryImpl) buildFindUserRankingListQuery(query *query.Fin
 	q := r.DB
 
 	if query.SortBy == model.UserSortByRANKING {
-		return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(favorite_count) AS favorite_count FROM (SELECT user_id, favorite_count FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?) AND updated_at BETWEEN ? AND ? UNION ALL SELECT user_id, favorite_count FROM post WHERE id IN (SELECT post_id FROM post_category WHERE category_id = ?) AND updated_at BETWEEN ? AND ?) AS user_favorite_count GROUP BY user_id) user_favorite_count ON user.id = user_favorite_count.user_id", query.CategoryID, query.FromDate, query.ToDate, query.CategoryID, query.FromDate, query.ToDate).
-			Order("user_favorite_count.favorite_count DESC")
+		if query.AreaID != 0 {
+			return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(favorite_count) AS favorite_count FROM (SELECT user_id, favorite_count FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?)) AND updated_at BETWEEN ? AND ? UNION ALL SELECT user_id, favorite_count FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?)) AND updated_at BETWEEN ? AND ?) AS user_favorite_count GROUP BY user_id) user_favorite_count ON user.id = user_favorite_count.user_id", query.AreaID, query.FromDate, query.ToDate, query.AreaID, query.FromDate, query.ToDate).
+				Order("user_favorite_count.favorite_count DESC")
+		}
+		if query.SubAreaID != 0 {
+			return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(favorite_count) AS favorite_count FROM (SELECT user_id, favorite_count FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?)) AND updated_at BETWEEN ? AND ? UNION ALL SELECT user_id, favorite_count FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?)) AND updated_at BETWEEN ? AND ?) AS user_favorite_count GROUP BY user_id) user_favorite_count ON user.id = user_favorite_count.user_id", query.SubAreaID, query.FromDate, query.ToDate, query.SubAreaID, query.FromDate, query.ToDate).
+				Order("user_favorite_count.favorite_count DESC")
+		}
+		if query.SubSubAreaID != 0 {
+			return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(favorite_count) AS favorite_count FROM (SELECT user_id, favorite_count FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?)) AND updated_at BETWEEN ? AND ? UNION ALL SELECT user_id, favorite_count FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?)) AND updated_at BETWEEN ? AND ?) AS user_favorite_count GROUP BY user_id) user_favorite_count ON user.id = user_favorite_count.user_id", query.SubSubAreaID, query.FromDate, query.ToDate, query.SubSubAreaID, query.FromDate, query.ToDate).
+				Order("user_favorite_count.favorite_count DESC")
+		}
 	}
 
-	// デフォルトはおすすめ順
-	return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(views) AS views_count FROM (SELECT user_id, views FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?) AND updated_at BETWEEN ? AND ? UNION ALL SELECT user_id, views FROM post WHERE id IN (SELECT post_id FROM post_category WHERE category_id = ?) AND updated_at BETWEEN ? AND ?) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id", query.CategoryID, query.FromDate, query.ToDate, query.CategoryID, query.FromDate, query.ToDate).
-		Order("user_views_count.views_count DESC")
+	if query.AreaID != 0 {
+		return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(views) AS views_count FROM (SELECT user_id, views FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?)) AND updated_at BETWEEN ? AND ? UNION ALL SELECT user_id, views FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?)) AND updated_at BETWEEN ? AND ?) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id", query.AreaID, query.FromDate, query.ToDate, query.AreaID, query.FromDate, query.ToDate).
+			Order("user_views_count.views_count DESC")
+	}
+	if query.SubAreaID != 0 {
+		return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(views) AS views_count FROM (SELECT user_id, views FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?)) AND updated_at BETWEEN ? AND ? UNION ALL SELECT user_id, views FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?)) AND updated_at BETWEEN ? AND ?) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id", query.SubAreaID, query.FromDate, query.ToDate, query.SubAreaID, query.FromDate, query.ToDate).
+			Order("user_views_count.views_count DESC")
+	}
+	if query.SubSubAreaID != 0 {
+		return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(views) AS views_count FROM (SELECT user_id, views FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?)) AND updated_at BETWEEN ? AND ? UNION ALL SELECT user_id, views FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?)) AND updated_at BETWEEN ? AND ?) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id", query.SubSubAreaID, query.FromDate, query.ToDate, query.SubSubAreaID, query.FromDate, query.ToDate).
+			Order("user_views_count.views_count DESC")
+	}
+
+	// MEMO: validationを掛けているのであり得ないが
+	return nil
 }

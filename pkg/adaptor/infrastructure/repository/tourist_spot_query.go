@@ -91,7 +91,6 @@ func (r *TouristSpotQueryRepositoryImpl) SearchByName(name string) ([]*entity.To
 	return rows, nil
 }
 
-// TODO: 人気順のorderの方法考える
 // TODO: 速度ヤバそうなんでstg環境で確認後チューニング
 func (r *TouristSpotQueryRepositoryImpl) buildFindRecommendListQuery(query *query.FindRecommendTouristSpotListQuery) *gorm.DB {
 	q := r.DB
@@ -110,19 +109,19 @@ func (r *TouristSpotQueryRepositoryImpl) buildFindListByParamsQuery(query *query
 	q := r.DB
 
 	if query.AreaID != 0 {
-		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?)", query.AreaID)
+		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?))", query.AreaID)
 	}
 	if query.SubAreaID != 0 {
-		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?)", query.SubAreaID)
+		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?))", query.SubAreaID)
 	}
 	if query.SubSubAreaID != 0 {
-		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?)", query.SubSubAreaID)
+		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))", query.SubSubAreaID)
 	}
 	if query.SpotCategoryID != 0 {
 		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_lcategory WHERE lcategory_id = ?)", query.SpotCategoryID)
 	}
 	if len(query.ExcludeSpotIDs) > 0 {
-		q = q.Not("id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id IN (?))", query.ExcludeSpotIDs)
+		q = q.Not("id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (?))", query.ExcludeSpotIDs)
 	}
 
 	return q

@@ -61,14 +61,6 @@ func (param *ListRecommendTouristSpotParam) GetLimit() int {
 	return param.PerPage
 }
 
-func (param *ListRecommendTouristSpotParam) Validate() error {
-	if param.ID == 0 && param.TouristSpotCategoryID == 0 {
-		return serror.New(nil, serror.CodeInvalidParam, "Invalid  review param")
-	}
-
-	return nil
-}
-
 func (param *ListRecommendTouristSpotParam) GetOffset() int {
 	if param.Page == 1 || param.Page == 0 {
 		return 0

@@ -26,20 +26,15 @@ var ReviewQueryRepositorySet = wire.NewSet(
 )
 
 // パスパラメータで飛んで来た検索条件を用いreviewを検索
-// TODO: comment_countは新しくreviewテーブルにカラム 増やすのでそこから取れる
 func (r *ReviewQueryRepositoryImpl) ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.QueryReview, error) {
 	var reviews []*entity.QueryReview
 
 	q := r.buildShowReviewListQuery(query)
 
 	if err := q.
-		Select("review.*, count(review_comment.id) AS comment_count").
-		Joins("LEFT JOIN review_comment ON review.id = review_comment.review_id").
-		Preload("Medias").
 		Limit(query.Limit).
 		Offset(query.OffSet).
 		Order(query.SortBy.GetReviewOrderQuery()).
-		Group("review.id").
 		Find(&reviews).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get reviews by params")
 	}
@@ -48,19 +43,15 @@ func (r *ReviewQueryRepositoryImpl) ShowReviewListByParams(query *query.ShowRevi
 }
 
 // ユーザーIDからフォローしているハッシュタグ or ユーザーのreview一覧を参照
-// TODO: comment_countは新しくreviewテーブルにカラム 増やすのでそこから取れる
 func (r *ReviewQueryRepositoryImpl) FindFeedReviewListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error) {
 	var reviews []*entity.QueryReview
 
 	q := r.buildFindFeedListQuery(userID)
 
 	if err := q.
-		Select("review.*, count(review_comment.id) AS comment_count").
-		Joins("LEFT JOIN review_comment ON review.id = review_comment.review_id").
 		Limit(query.Limit).
 		Offset(query.Offset).
-		Order("updated_at DESC").
-		Group("review.id").
+		Order("created_at DESC").
 		Find(&reviews).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find feed reviews")
 	}
@@ -68,17 +59,12 @@ func (r *ReviewQueryRepositoryImpl) FindFeedReviewListByUserID(userID int, query
 	return reviews, nil
 }
 
-// TODO: comment_countは新しくreviewテーブルにカラム 増やすのでそこから取れる
 func (r *ReviewQueryRepositoryImpl) FindQueryReviewByID(id int) (*entity.QueryReview, error) {
 	var row entity.QueryReview
 
 	q := r.DB
 
-	// review AS review
-	// review_comment AS rc
 	if err := q.
-		Select("review.*, count(rc.id) AS comment_count").
-		Joins("INNER JOIN review_comment AS rc ON review.id = rc.review_id").
 		First(&row, id).
 		Error; err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("failed find review by id=%d", id))
@@ -92,7 +78,7 @@ func (r *ReviewQueryRepositoryImpl) FindFavoriteListByUserID(userID int, query *
 
 	if err := r.DB.
 		Joins("INNER JOIN (SELECT review_id, updated_at FROM user_favorite_review WHERE user_id = ?) uf ON review.id = uf.review_id", userID).
-		Order("uf.updated_at DESC").
+		Order("uf.created_at DESC").
 		Limit(query.Limit).
 		Offset(query.Offset).
 		Find(&rows).Error; err != nil {
@@ -107,55 +93,51 @@ func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowRe
 	q := r.DB
 
 	if query.UserID != 0 {
-		q = q.Where("review.user_id = ?", query.UserID)
+		q = q.Where("user_id = ?", query.UserID)
 	}
 
 	if query.InnID != 0 {
-		q = q.Where("review.inn_id = ?", query.InnID)
+		q = q.Where("inn_id = ?", query.InnID)
 	}
 
 	if query.TouristSpotID != 0 {
-		q = q.Where("review.tourist_spot_id = ?", query.TouristSpotID)
+		q = q.Where("tourist_spot_id = ?", query.TouristSpotID)
 	}
 
 	if query.HashTag != "" {
-		q = q.Where("review.id IN (SELECT review_id FROM review_hashtag WHERE hashtag_id = (SELECT id FROM hashtag WHERE name = ?))", query.HashTag)
+		q = q.Where("id IN (SELECT review_id FROM review_hashtag WHERE hashtag_id = (SELECT id FROM hashtag WHERE name = ?))", query.HashTag)
 	}
 
 	if query.AreaID != 0 {
-		q = q.Where("review.tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?)", query.AreaID)
+		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?))", query.AreaID)
 	}
 
 	if query.SubAreaID != 0 {
-		q = q.Where("review.tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?)", query.SubAreaID)
+		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?))", query.SubAreaID)
 	}
 
 	if query.SubSubAreaID != 0 {
-		q = q.Where("review.tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id = ?)", query.SubSubAreaID)
+		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))", query.SubSubAreaID)
 	}
 
 	if query.MetasearchAreaID != 0 {
-		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id IN (SELECT id FROM category WHERE metasearch_area_id = ?))", query.MetasearchAreaID)
+		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE metasearch_area_id = ?))", query.MetasearchAreaID)
 	}
 
 	if query.MetasearchSubAreaID != 0 {
-		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id IN (SELECT id FROM category WHERE metasearch_sub_area_id = ?))", query.MetasearchSubAreaID)
+		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE metasearch_sub_area_id = ?))", query.MetasearchSubAreaID)
 	}
 
 	if query.MetasearchSubSubAreaID != 0 {
-		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id IN (SELECT id FROM category WHERE metasearch_sub_sub_area_id = ?))", query.MetasearchSubSubAreaID)
-	}
-
-	if query.ChildID != 0 {
-		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_category WHERE category_id IN (SELECT parent_id FROM category WHERE id = ?))", query.ChildID)
+		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE metasearch_sub_sub_area_id = ?))", query.MetasearchSubSubAreaID)
 	}
 
 	if len(query.InnIDs) > 0 {
-		q = q.Where("review.inn_id IN (?)", query.InnIDs)
+		q = q.Where("inn_id IN (?)", query.InnIDs)
 	}
 
 	if query.SortBy == model.ReviewSortByRECOMMEND {
-		q = q.Where("review.updated_at BETWEEN ? AND ?", time.Date(time.Now().Year(), time.Now().Month()-recommendMonthPeriod, time.Now().Day(), 0, 0, 0, 0, time.Local), time.Now())
+		q = q.Where("updated_at BETWEEN ? AND ?", time.Date(time.Now().Year(), time.Now().Month()-recommendMonthPeriod, time.Now().Day(), 0, 0, 0, 0, time.Local), time.Now())
 	}
 
 	if query.Keyward != "" {
@@ -169,7 +151,7 @@ func (r *ReviewQueryRepositoryImpl) buildFindFeedListQuery(userID int) *gorm.DB 
 	q := r.DB
 
 	if userID != 0 {
-		q = q.Where("review.user_id IN (SELECT target_id FROM user_follow WHERE user_id = ?)", userID).Or("review.id IN (SELECT review_id FROM review_hashtag WHERE hashtag_id IN (SELECT hashtag_id FROM user_follow_hashtag WHERE user_id = ?))", userID)
+		q = q.Where("user_id IN (SELECT target_id FROM user_follow WHERE user_id = ?)", userID).Or("review.id IN (SELECT review_id FROM review_hashtag WHERE hashtag_id IN (SELECT hashtag_id FROM user_follow_hashtag WHERE user_id = ?))", userID)
 	}
 
 	return q

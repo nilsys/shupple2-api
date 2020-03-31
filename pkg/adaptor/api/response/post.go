@@ -33,6 +33,8 @@ type (
 		FacebookCount           int              `json:"facebookCount"`
 		TwitterCount            int              `json:"twitterCount"`
 		Views                   int              `json:"views"`
+		SEOTitle                string           `json:"seoTitle"`
+		SEODescription          string           `json:"seoDescription"`
 		HideAds                 bool             `json:"hideAds"`
 		Creator                 Creator          `json:"creator"`
 		AreaCategories          []*AreaCategory  `json:"areaCategories"`
