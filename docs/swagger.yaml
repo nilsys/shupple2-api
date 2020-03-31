@@ -2438,11 +2438,9 @@ components:
           type: string
           description: シリーズ名
           example: ~シリーズ~
-        editorName:
-          type: string
-          description: 編集者の名前
-          example: 編集者
         creator:
+          $ref: "#/components/schemas/Creator"
+        editor:
           $ref: "#/components/schemas/Creator"
         shootingDate:
           type: string
