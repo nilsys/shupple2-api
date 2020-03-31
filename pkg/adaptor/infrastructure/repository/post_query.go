@@ -72,7 +72,7 @@ func (r *PostQueryRepositoryImpl) FindFeedListByUserID(userID int, query *query.
 	q := r.buildFindFeedListQuery(userID)
 
 	if err := q.
-		Order("created_at DESC").
+		Order("updated_at DESC").
 		Limit(query.Limit).
 		Offset(query.Offset).
 		Find(&posts).Error; err != nil {
@@ -88,7 +88,7 @@ func (r *PostQueryRepositoryImpl) FindFavoriteListByUserID(userID int, query *qu
 
 	if err := r.DB.
 		Joins("INNER JOIN (SELECT post_id, updated_at FROM user_favorite_post WHERE user_id = ?) uf ON post.id = uf.post_id", userID).
-		Order("uf.created_at DESC").
+		Order("uf.updated_at DESC").
 		Limit(query.Limit).
 		Offset(query.Offset).
 		Find(&rows).Error; err != nil {
@@ -106,51 +106,39 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 	}
 
 	if query.AreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?))", query.AreaID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ?)", query.AreaID)
 	}
 
 	if query.SubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?))", query.SubAreaID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ?)", query.SubAreaID)
 	}
 
 	if query.SubSubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))", query.SubSubAreaID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ?)", query.SubSubAreaID)
 	}
-
-	// 一つ上のエリアに紐づいた記事を返す
-	if query.ChildAreaID != 0 {
-		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT area_group FROM area_category WHERE area_id = ?))", query.ChildAreaID)
-	}
-	if query.ChildSubAreaID != 0 {
-		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT area_id FROM area_category WHERE sub_area_id = ?))", query.ChildSubAreaID)
-	}
-	if query.ChildSubSubAreaID != 0 {
-		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT sub_area_id FROM area_category WHERE sub_sub_area_id = ?))", query.ChildSubSubAreaID)
-	}
-	//
 
 	if query.MetasearchAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_area_id` = ?))", query.MetasearchAreaID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE `category_id` IN (SELECT id FROM category WHERE `metasearch_area_id` = ?))", query.MetasearchAreaID)
 	}
 
 	if query.MetasearchSubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_sub_area_id` = ?))", query.MetasearchSubAreaID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE `category_id` IN (SELECT id FROM category WHERE `metasearch_sub_area_id` = ?))", query.MetasearchSubAreaID)
 	}
 
 	if query.MetasearchSubSubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_sub_sub_area_id` = ?))", query.MetasearchSubSubAreaID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE `category_id` IN (SELECT id FROM category WHERE `metasearch_sub_sub_area_id` = ?))", query.MetasearchSubSubAreaID)
 	}
 
 	if query.InnTypeID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_inn_type_id` = ?))", query.InnTypeID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE `category_id` IN (SELECT id FROM category WHERE `metasearch_inn_type_id` = ?))", query.InnTypeID)
 	}
 
 	if query.InnDiscerningType != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_discerning_condition_id` = ?))", query.InnDiscerningType)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE `category_id` IN (SELECT id FROM category WHERE `metasearch_discerning_condition_id` = ?))", query.InnDiscerningType)
 	}
 
 	if query.ThemeID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_theme_category WHERE theme_category_id IN (SELECT id FROM theme_category WHERE theme_id = ?))", query.ThemeID)
+		q = q.Where("id IN (SELECT post_id FROM post_category WHERE category_id = ?)", query.ThemeID)
 	}
 
 	if query.HashTag != "" {

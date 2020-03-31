@@ -9,9 +9,6 @@ type (
 		AreaID                 int
 		SubAreaID              int
 		SubSubAreaID           int
-		ChildAreaID            int
-		ChildSubAreaID         int
-		ChildSubSubAreaID      int
 		MetasearchAreaID       int
 		MetasearchSubAreaID    int
 		MetasearchSubSubAreaID int

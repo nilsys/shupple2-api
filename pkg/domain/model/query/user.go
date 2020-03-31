@@ -8,14 +8,12 @@ import (
 
 type (
 	FindUserRankingListQuery struct {
-		AreaID       int
-		SubAreaID    int
-		SubSubAreaID int
-		SortBy       model.UserSortBy
-		FromDate     time.Time
-		ToDate       time.Time
-		Limit        int
-		Offset       int
+		CategoryID int
+		SortBy     model.UserSortBy
+		FromDate   time.Time
+		ToDate     time.Time
+		Limit      int
+		Offset     int
 	}
 
 	FindFollowUser struct {

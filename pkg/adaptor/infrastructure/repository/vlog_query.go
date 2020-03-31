@@ -56,22 +56,21 @@ func (r *VlogQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindVlogLi
 	q := r.DB
 
 	if query.AreaID != 0 {
-		q = q.Where("id IN (SELECT vlog_id FROM vlog_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?))", query.AreaID)
+		q = q.Where("id IN (SELECT vlog_id FROM vlog_category WHERE category_id = ?)", query.AreaID)
 	}
 
 	if query.SubAreaID != 0 {
-		q = q.Where("id IN (SELECT vlog_id FROM vlog_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?))", query.SubAreaID)
+		q = q.Where("id IN (SELECT vlog_id FROM vlog_category WHERE category_id = ?)", query.SubAreaID)
 	}
 
 	if query.SubSubAreaID != 0 {
-		q = q.Where("id IN (SELECT vlog_id FROM vlog_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))", query.SubSubAreaID)
+		q = q.Where("id IN (SELECT vlog_id FROM vlog_category WHERE category_id = ?)", query.SubSubAreaID)
 	}
 
 	if query.TouristSpotID != 0 {
-		q = q.Where("id IN (SELECT vlog_id FROM vlog_tourist_spot WHERE tourist_spot_id = ?)", query.TouristSpotID)
+		q = q.Where("id IN (SELECT vlog_id FROM vlog_tourist_spot WHERE tourist_spot_id = ?)", query.SubSubAreaID)
 	}
 
-	// TODO: titleに引っかかる物が優先順位が高い、その後body
 	if query.Keyward != "" {
 		q = q.Where("MATCH(title) AGAINST(?)", query.Keyward).Or("MATCH(body) AGAINST(?)", query.Keyward)
 	}

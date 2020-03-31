@@ -104,10 +104,6 @@ func NewUserFollowHashtag(userID, hashtagID int) *UserFollowHashtag {
 	}
 }
 
-func (q *QueryRankingUser) TableName() string {
-	return "user"
-}
-
 func (u *User) S3AvatarPath() string {
 	return fmt.Sprintf("user/%s", u.AvatarUUID)
 }

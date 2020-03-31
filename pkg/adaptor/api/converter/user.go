@@ -16,18 +16,26 @@ import (
  * o -> i
  */
 func ConvertListRankinUserParamToQuery(param *param.ListUserRanking) *query.FindUserRankingListQuery {
+	var categoryID int
 	fromDate, _ := model.ParseTimeFromFrontStr(param.FromDate)
 	toDate, _ := model.ParseTimeFromFrontStr(param.ToDate)
+	if param.AreaID != 0 {
+		categoryID = param.AreaID
+	}
+	if param.SubAreaID != 0 {
+		categoryID = param.SubAreaID
+	}
+	if param.SubSubAreaID != 0 {
+		categoryID = param.SubSubAreaID
+	}
 
 	return &query.FindUserRankingListQuery{
-		AreaID:       param.AreaID,
-		SubAreaID:    param.SubAreaID,
-		SubSubAreaID: param.SubSubAreaID,
-		SortBy:       param.SortBy,
-		FromDate:     fromDate,
-		ToDate:       toDate,
-		Limit:        param.GetLimit(),
-		Offset:       param.GetOffset(),
+		CategoryID: categoryID,
+		SortBy:     param.SortBy,
+		FromDate:   fromDate,
+		ToDate:     toDate,
+		Limit:      param.GetLimit(),
+		Offset:     param.GetOffset(),
 	}
 }
 

@@ -45,8 +45,9 @@ type (
 	// 参照用Review
 	QueryReview struct {
 		Review
-		User    *User      `gorm:"foreignkey:UserID"`
-		Hashtag []*Hashtag `gorm:"many2many:review_hashtag;jointable_foreignkey:review_id;"`
+		CommentCount int
+		User         *User      `gorm:"foreignkey:UserID"`
+		Hashtag      []*Hashtag `gorm:"many2many:review_hashtag;jointable_foreignkey:review_id;"`
 	}
 
 	UserFavoriteReview struct {
