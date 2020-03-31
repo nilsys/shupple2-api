@@ -2326,6 +2326,16 @@ components:
           type: string
           description: 特集記事サムネイルURL
           example: https://files.stayway.jp/feature_post/1
+        creator:
+          $ref: "#/components/schemas/Creator"
+        createdAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        updatedAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
     ShowFeaturePost:
       type: object
       properties:
