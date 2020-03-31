@@ -20,6 +20,9 @@ type (
 		AreaID                 int               `query:"areaId"`
 		SubAreaID              int               `query:"subAreaId"`
 		SubSubAreaID           int               `query:"subSubAreaId"`
+		ChildAreaID            int               `query:"childAreaID"`
+		ChildSubAreaID         int               `query:"childSubAreaID"`
+		ChildSubSubAreaID      int               `query:"childSubSubAreaID"`
 		MetasearchAreaID       int               `query:"metasearchAreaId"`
 		MetasearchSubAreaID    int               `query:"metasearchSubAreaId"`
 		MetasearchSubSubAreaID int               `query:"metasearchSubSubAreaId"`

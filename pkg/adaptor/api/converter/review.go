@@ -22,7 +22,6 @@ func ConvertFindReviewListParamToQuery(param *param.ListReviewParams) *query.Sho
 		MetasearchAreaID:       param.MetasearchAreaID,
 		MetasearchSubAreaID:    param.MetasearchSubAreaID,
 		MetasearchSubSubAreaID: param.MetasearchSubSubAreaID,
-		ChildID:                param.ChildID,
 		SortBy:                 param.SortBy,
 		Limit:                  param.GetLimit(),
 		OffSet:                 param.GetOffset(),
