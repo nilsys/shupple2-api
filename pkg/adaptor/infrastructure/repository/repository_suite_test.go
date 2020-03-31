@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jinzhu/gorm"
@@ -18,6 +17,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// TODO: 2重管理になっている点、fileの相対位置を指定しないといけない点がイケてない
 const (
 	testDB         = "stayway_test"
 	migrationsDir  = "./../../../../migrations"
@@ -45,12 +45,11 @@ func beforeSuite() error {
 	if err != nil {
 		return errors.Wrap(err, "failed to initialize test")
 	}
+	db = tests.DB
 
-	if err := migrateUp(tests.Config.Database); err != nil {
+	if err := MigrateUp(tests.Config.Database, migrationsDir); err != nil {
 		return errors.Wrap(err, "failed to migrate up")
 	}
-
-	db = tests.DB
 
 	return nil
 }
@@ -76,21 +75,6 @@ func truncate(db *gorm.DB) {
 	}
 
 	Expect(db.Exec("SET FOREIGN_KEY_CHECKS=1").Error).To(Succeed())
-}
-
-func migrateUp(database string) error {
-	source := "file://" + migrationsDir
-	db := "mysql://" + database
-	m, err := migrate.New(source, db)
-	if err != nil {
-		return err
-	}
-
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		return err
-	}
-
-	return nil
 }
 
 func prepareBucket(sess *session.Session, bucket string) error {

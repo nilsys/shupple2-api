@@ -16,6 +16,7 @@ type (
 		Version     string
 		Development *Development `validate:"omitempty" yaml:"development"`
 		Database    string       `validate:"required" yaml:"database"`
+		Migrate     Migrate      `validate:"" yaml:"migrate"`
 		Logger      *Logger      `validate:"" yaml:"logger"`
 		Stayway     Stayway      `validate:"required" yaml:"stayway"`
 		Wordpress   Wordpress    `validate:"required" yaml:"wordpress"`
@@ -23,6 +24,11 @@ type (
 
 		// scripts配下のスクリプト固有の設定
 		Scripts yaml.Node `validate:"" yaml:"scripts"`
+	}
+
+	Migrate struct {
+		Auto     bool   `yaml:"auto"`
+		FilesDir string `yaml:"files_dir"`
 	}
 
 	Development struct {

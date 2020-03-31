@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"reflect"
 
@@ -9,10 +10,14 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/mysql"
+	_ "github.com/golang-migrate/migrate/v4/source/file" // register driver
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql" // register driver
 	"github.com/pkg/errors"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
@@ -206,4 +211,34 @@ func clearHasMany(scope *gorm.Scope) {
 			return
 		}
 	}
+}
+
+func MigrateUp(database, migrationsDir string) error {
+	source := "file://" + migrationsDir
+
+	// passwordのエスケープ周りで不整合があるので、migrate.Newは使えない
+	db, err := sql.Open("mysql", database+"&multiStatements=true")
+	if err != nil {
+		return errors.Wrap(err, "failed to connect db for migration")
+	}
+	driver, err := mysql.WithInstance(db, &mysql.Config{})
+	if err != nil {
+		return errors.Wrap(err, "failed to create migrate driver")
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(source, "mysql", driver)
+	if err != nil {
+		return errors.Wrap(err, "failed to create migration instance")
+	}
+	defer m.Close()
+
+	if err := m.Up(); err != nil {
+		if err == migrate.ErrNoChange {
+			logger.Info("database is up-to-date")
+			return nil
+		}
+		return errors.Wrap(err, "failed to migrate up")
+	}
+
+	return nil
 }

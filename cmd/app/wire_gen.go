@@ -30,12 +30,12 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	echoEcho := echo.New()
-	authService, err := service.ProvideAuthService(configConfig)
+	db, err := repository.ProvideDB(configConfig)
 	if err != nil {
 		return nil, err
 	}
-	db, err := repository.ProvideDB(configConfig)
+	echoEcho := echo.New()
+	authService, err := service.ProvideAuthService(configConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -403,6 +403,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	}
 	app := &App{
 		Config:                          configConfig,
+		DB:                              db,
 		Echo:                            echoEcho,
 		AuthorizeWrapper:                authorize,
 		PostCommandController:           postCommandController,

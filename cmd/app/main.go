@@ -5,11 +5,13 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api"
 	staywayMiddleware "github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/middleware"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 
 	"log"
 
+	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/pkg/errors"
 )
@@ -22,6 +24,7 @@ func main() {
 
 type App struct {
 	Config                          *config.Config
+	DB                              *gorm.DB
 	Echo                            *echo.Echo
 	AuthorizeWrapper                staywayMiddleware.Authorize
 	PostCommandController           api.PostCommandController
@@ -54,6 +57,12 @@ func run() error {
 		return errors.Wrap(err, "failed to initialize app")
 	}
 	logger.Configure(app.Config.Logger)
+
+	if app.Config.Migrate.Auto {
+		if err := repository.MigrateUp(app.Config.Database, app.Config.Migrate.FilesDir); err != nil {
+			return errors.Wrap(err, "failed to migrate up")
+		}
+	}
 
 	app.Echo.Debug = app.Config.IsDev()
 	app.Echo.HTTPErrorHandler = api.ErrorHandler
