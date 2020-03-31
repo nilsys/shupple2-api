@@ -1050,7 +1050,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FeaturePostList"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  featurePosts:
+                    $ref: "#/components/schemas/FeaturePostList"
   "/feature_posts/{id}":
     get:
       tags:
