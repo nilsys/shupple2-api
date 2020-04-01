@@ -74,7 +74,7 @@ func run() error {
 }
 
 func setRoutes(app *App) {
-	api := app.Echo.Group("/api")
+	api := app.Echo.Group("/api/v1/tourism")
 	auth := app.AuthorizeWrapper
 
 	{
@@ -193,11 +193,12 @@ func setRoutes(app *App) {
 	}
 
 	api.POST("/s3", auth.Require(app.S3CommandController.Post))
-	api.GET("/healthcheck", app.HealthCheckController.HealthCheck)
 	api.GET("/search/suggestions", app.SearchQueryController.ListSearchSuggestion)
 	api.POST(
 		"/wordpress/import",
 		app.WordpressCallbackController.Import,
 		staywayMiddleware.KeyAuth(app.Config.Wordpress.CallbackKey),
 	)
+
+	app.Echo.GET("/healthcheck", app.HealthCheckController.HealthCheck)
 }
