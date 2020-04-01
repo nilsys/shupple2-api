@@ -250,6 +250,11 @@ func (s *WordpressServiceImpl) PatchVlog(vlog *entity.Vlog, wpVlog *wordpress.Vl
 		return errors.Wrap(err, "failed to get user corresponding to wordpress user")
 	}
 
+	editor, err := s.UserQueryRepository.FindByWordpressID(wpVlog.Attributes.Editor.ID)
+	if err != nil {
+		return errors.Wrap(err, "failed to get user as editor corresponding to wordpress user")
+	}
+
 	thumbnail, err := s.getThumbnail(wpVlog.FeaturedMedia)
 	if err != nil {
 		return errors.Wrap(err, "failed to get thumbnail")
@@ -262,6 +267,7 @@ func (s *WordpressServiceImpl) PatchVlog(vlog *entity.Vlog, wpVlog *wordpress.Vl
 
 	vlog.ID = wpVlog.ID
 	vlog.UserID = user.ID
+	vlog.EditorID = editor.ID
 	vlog.Slug = wpVlog.Slug
 	vlog.Thumbnail = thumbnail
 	vlog.Title = wpVlog.Title.Rendered
@@ -269,7 +275,6 @@ func (s *WordpressServiceImpl) PatchVlog(vlog *entity.Vlog, wpVlog *wordpress.Vl
 	vlog.YoutubeURL = wpVlog.Attributes.Youtube
 	vlog.Series = wpVlog.Attributes.Series
 	vlog.UserSNS = wpVlog.Attributes.CreatorSns
-	vlog.EditorName = wpVlog.Attributes.FilmEdit
 	vlog.YearMonth = wpVlog.Attributes.YearMonth
 	vlog.PlayTime = wpVlog.Attributes.RunTime
 	vlog.Timeline = wpVlog.Attributes.MovieTimeline

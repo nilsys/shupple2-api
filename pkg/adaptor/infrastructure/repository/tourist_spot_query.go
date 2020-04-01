@@ -117,8 +117,8 @@ func (r *TouristSpotQueryRepositoryImpl) buildFindListByParamsQuery(query *query
 	if query.SubSubAreaID != 0 {
 		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))", query.SubSubAreaID)
 	}
-	if query.SpotCategoryID != 0 {
-		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_lcategory WHERE lcategory_id = ?)", query.SpotCategoryID)
+	if query.LcategoryID != 0 {
+		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_lcategory WHERE lcategory_id = ?)", query.LcategoryID)
 	}
 	if len(query.ExcludeSpotIDs) > 0 {
 		q = q.Not("id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (?))", query.ExcludeSpotIDs)

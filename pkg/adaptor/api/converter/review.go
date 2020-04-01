@@ -94,7 +94,7 @@ func convertQueryReviewToOutput(queryReview *entity.QueryReview) *response.Revie
 		TravelDate:    model.NewYearMonth(queryReview.TravelDate),
 		Hashtag:       hashtags,
 		CommentCount:  queryReview.CommentCount,
-		Creator:       response.NewCreator(queryReview.User.ID, queryReview.User.UID, queryReview.User.GenerateThumbnailURL(), queryReview.User.Name, queryReview.Body),
+		Creator:       response.NewCreatorFromUser(queryReview.User),
 	}
 }
 
@@ -129,7 +129,7 @@ func ConvertQueryReviewShowToOutput(r *entity.QueryReview) *response.Review {
 		TravelDate:    model.NewYearMonth(r.TravelDate),
 		CommentCount:  r.CommentCount,
 		Hashtag:       hashtags,
-		Creator:       response.NewCreator(r.User.ID, r.User.UID, r.User.GenerateThumbnailURL(), r.User.Name, r.Body),
+		Creator:       response.NewCreatorFromUser(r.User),
 	}
 }
 

@@ -8,6 +8,7 @@ type (
 	VlogTiny struct {
 		ID            int `gorm:"primary_key"`
 		UserID        int
+		EditorID      int
 		Slug          string
 		Thumbnail     string
 		Title         string
@@ -15,7 +16,6 @@ type (
 		YoutubeURL    string
 		Series        string
 		UserSNS       string
-		EditorName    string
 		YearMonth     string `gorm:"column:yearmonth"`
 		PlayTime      string
 		Timeline      string
@@ -63,6 +63,7 @@ type (
 	VlogDetailWithTouristSpots struct {
 		VlogTiny
 		User            *User            `gorm:"foreignkey:UserID"`
+		Editor          *User            `gorm:"foreignkey:EditorID"`
 		AreaCategories  []*AreaCategory  `gorm:"many2many:vlog_area_category;jointable_foreignkey:vlog_id;"`
 		ThemeCategories []*ThemeCategory `gorm:"many2many:vlog_theme_category;jointable_foreignkey:vlog_id;"`
 		TouristSpots    []*TouristSpot   `gorm:"many2many:vlog_tourist_spot;jointable_foreignkey:vlog_id;"`

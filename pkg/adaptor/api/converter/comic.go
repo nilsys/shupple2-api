@@ -38,7 +38,7 @@ func ConvertQueryComicOutput(queryComic *entity.QueryComic) *response.ShowComic 
 		Thumbnail: queryComic.Comic.Thumbnail,
 		Body:      queryComic.Comic.Body,
 		CreatedAt: model.TimeResponse(queryComic.Comic.CreatedAt),
-		Creator:   response.NewCreator(queryComic.User.ID, queryComic.User.Name, queryComic.User.GenerateThumbnailURL(), queryComic.User.Name, queryComic.User.Profile),
+		Creator:   response.NewCreatorFromUser(queryComic.User),
 	}
 }
 

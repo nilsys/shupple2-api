@@ -6,7 +6,7 @@ type (
 		AreaID         int
 		SubAreaID      int
 		SubSubAreaID   int
-		SpotCategoryID int
+		LcategoryID    int
 		ExcludeSpotIDs []int
 		Limit          int
 		OffSet         int

@@ -112,7 +112,7 @@ func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *r
 		SEOTitle:                post.SEOTitle,
 		SEODescription:          post.SEODescription,
 		HideAds:                 post.HideAds,
-		Creator:                 response.NewCreator(post.User.ID, post.User.UID, post.User.GenerateThumbnailURL(), post.User.Name, post.User.Profile),
+		Creator:                 response.NewCreatorFromUser(post.User),
 		AreaCategories:          ConvertAreaCategoriesToOutput(post.AreaCategories),
 		ThemeCategoryCategories: ConvertThemeCategoriesToOutput(post.ThemeCategories),
 		Hashtags:                hashtags,

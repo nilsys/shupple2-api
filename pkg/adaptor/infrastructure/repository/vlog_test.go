@@ -64,6 +64,7 @@ func newVlog(id int, areaCategoryIDs, themeCategoryIDs, touristSpotIDs []int) *e
 	vlog := entity.VlogTiny{
 		ID:        id,
 		UserID:    userID,
+		EditorID:  userID,
 		CreatedAt: sampleTime,
 		UpdatedAt: sampleTime,
 	}

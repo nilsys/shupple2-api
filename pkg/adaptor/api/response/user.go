@@ -1,12 +1,17 @@
 package response
 
+import "github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+
 type (
 	Creator struct {
-		ID        int    `json:"id"`
-		UID       string `json:"uid"`
-		Thumbnail string `json:"iconUrl"`
-		Name      string `json:"name"`
-		Profile   string `json:"profile,omitempty"`
+		ID           int    `json:"id"`
+		UID          string `json:"uid"`
+		Thumbnail    string `json:"iconUrl"`
+		Name         string `json:"name"`
+		Profile      string `json:"profile"`
+		FacebookURL  string `json:"facebookUrl"`
+		InstagramURL string `json:"instagramUrl"`
+		TwitterURL   string `json:"twitterUrl"`
 	}
 
 	// ユーザーランキングで返すレスポンス型
@@ -35,13 +40,20 @@ type (
 	}
 )
 
-func NewCreator(id int, uid, thumbnail, name, profile string) Creator {
+func NewCreatorFromUser(user *entity.User) Creator {
+	return NewCreator(user.ID, user.UID, user.GenerateThumbnailURL(), user.Name, user.Profile, user.FacebookURL, user.InstagramURL, user.TwitterURL)
+}
+
+func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL, twitterURL string) Creator {
 	return Creator{
-		ID:        id,
-		UID:       uid,
-		Thumbnail: thumbnail,
-		Name:      name,
-		Profile:   profile,
+		ID:           id,
+		UID:          uid,
+		Thumbnail:    thumbnail,
+		Name:         name,
+		Profile:      profile,
+		FacebookURL:  facebookURL,
+		InstagramURL: instagramURL,
+		TwitterURL:   twitterURL,
 	}
 }
 

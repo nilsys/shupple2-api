@@ -33,6 +33,7 @@ type VlogAttributes struct {
 	Youtube       string  `json:"youtube"`
 	Series        string  `json:"series"`
 	Creator       Creator `json:"creator"`
+	Editor        Creator `json:"editor"`
 	CreatorSns    string  `json:"creator_sns"`
 	FilmEdit      string  `json:"film_edit"`
 	MovieLocation []int   `json:"movie_location"`

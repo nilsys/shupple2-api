@@ -23,11 +23,10 @@ type (
 		Body                    string             `json:"body"`
 		Series                  string             `json:"series"`
 		Creator                 Creator            `json:"creator"`
-		CreatorSNS              string             `json:"creatorSns"`
-		EditorName              string             `json:"editorName"`
+		Editor                  Creator            `json:"editor"`
 		YoutubeURL              string             `json:"youtubeUrl"`
 		Views                   int                `json:"views"`
-		PhotoYearMonth          string             `json:"photoYearMonth"`
+		ShootingDate            string             `json:"shootingDate"`
 		PlayTime                string             `json:"playTime"`
 		Timeline                string             `json:"timeline"`
 		FacebookCount           int                `json:"facebookCount"`

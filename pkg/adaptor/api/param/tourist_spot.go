@@ -6,13 +6,13 @@ import (
 
 type (
 	ListTouristSpotParams struct {
-		AreaID                int   `query:"areaId"`
-		SubAreaID             int   `query:"subAreaId"`
-		SubSubAreaID          int   `query:"subSubAreaId"`
-		TouristSpotCategoryID int   `query:"TouristSpotCategoryId"`
-		ExcludeSpotIDs        []int `query:"excludeSpotId"`
-		PerPage               int   `query:"perPage"`
-		Page                  int   `query:"page"`
+		AreaID         int   `query:"areaId"`
+		SubAreaID      int   `query:"subAreaId"`
+		SubSubAreaID   int   `query:"subSubAreaId"`
+		LcategoryID    int   `query:"lcategoryId"`
+		ExcludeSpotIDs []int `query:"excludeSpotId"`
+		PerPage        int   `query:"perPage"`
+		Page           int   `query:"page"`
 	}
 
 	ShowTouristSpotParam struct {
@@ -39,7 +39,7 @@ func (param *ListTouristSpotParams) GetLimit() int {
 
 // いずれのクエリも飛んで来なかった場合エラーを返す
 func (param *ListTouristSpotParams) Validate() error {
-	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.TouristSpotCategoryID == 0 {
+	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.LcategoryID == 0 {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid show review param")
 	}
 
