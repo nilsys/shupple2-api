@@ -3,6 +3,10 @@ on:
     branches:
       - master
 
+env:
+  ECR_REPOSITORY: sw-media-api
+  ECS_TASK_DEFINITION: sw-stg-media-api 
+
 name: Deploy to ECS
 jobs:
   build-and-deploy-stg:
@@ -26,7 +30,6 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: sw-media-api
         run: |
           IMAGE_TAG=$(echo ${{ github.sha }} | cut -c 1-7)
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
@@ -36,6 +39,11 @@ jobs:
       - name: Logout of Amazon ECR
         if: always()
         run: docker logout ${{ steps.login-ecr.outputs.registry }}
+
+      - name: Fetch current task definition
+        run: |
+          aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION --query taskDefinition | \
+          jq '(del(.revision, .requiresAttributes, .compatibilities, .taskDefinitionArn, .status))' > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
@@ -51,4 +59,4 @@ jobs:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: sw-stg-media-api
           cluster: sw-stg-media
-          wait-for-service-stability: true
+          wait-for-service-stability: false
