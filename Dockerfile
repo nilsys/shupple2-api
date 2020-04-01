@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=build /app/bin/stayway-media-api /app
 COPY --from=build /app/bin/stayway-media-batch /app
-COPY migrations /app
+COPY migrations /app/migrations
 
 EXPOSE 3000
 
