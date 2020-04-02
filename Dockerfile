@@ -1,4 +1,5 @@
 FROM golang:1.13-alpine3.10 as build
+ARG version=unknown
 
 RUN apk add --update --no-cache git tzdata make && \
     mkdir /app
@@ -13,7 +14,7 @@ COPY . .
 
 WORKDIR /app
 
-RUN make
+RUN make VERSION=$version
 
 FROM alpine:3.10
 

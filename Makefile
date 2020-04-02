@@ -1,6 +1,8 @@
 BIN=$(abspath ./bin)
 PKG=github.com/stayway-corp/stayway
-LDFLAGS="-X $(PKG)/config.Version=$(shell git rev-parse --short HEAD)"
+
+VERSION ?= "$(shell git rev-parse --short HEAD)"
+LDFLAGS="-X $(PKG)/config.Version=$(VERSION)"
 BUILD_OPTS = -ldflags $(LDFLAGS)
 
 MYSQL_HOST ?= mysql
