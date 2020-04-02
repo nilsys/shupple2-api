@@ -16,6 +16,7 @@ const (
 	areaCSVName    = "area.csv"
 	subAreaCSVName = "subarea.csv"
 	innTypeCSVName = "inntype.csv"
+	tagCSVName     = "tag.csv"
 )
 
 type Script struct {
@@ -54,6 +55,10 @@ func (s Script) Run(args []string) error {
 
 	if err := s.updateInnType(dir); err != nil {
 		return errors.Wrap(err, "failed to update inn types")
+	}
+
+	if err := s.updateTag(dir); err != nil {
+		return errors.Wrap(err, "failed to update tags")
 	}
 
 	return nil
@@ -98,7 +103,7 @@ func (s Script) updateArea(dir string) error {
 			continue
 		}
 
-		res := s.DB.Exec("update category set metasearch_area_id = ? where id = ?", areaID, categoryID)
+		res := s.DB.Exec("update area_category set metasearch_area_id = ? where id = ?", areaID, categoryID)
 		if err := res.Error; err != nil {
 			log.Println(errors.Wrapf(err, "failed to set area; id = %d", areaID))
 		}
@@ -139,7 +144,7 @@ func (s Script) updateSubArea(dir string) error {
 			continue
 		}
 
-		res := s.DB.Exec("update category set metasearch_sub_area_id = ? where id = ?", subAreaID, categoryID)
+		res := s.DB.Exec("update area_category set metasearch_sub_area_id = ? where id = ?", subAreaID, categoryID)
 		if err := res.Error; err != nil {
 			log.Println(errors.Wrapf(err, "failed to set sub_area; id = %d", subAreaID))
 		}
@@ -180,12 +185,53 @@ func (s Script) updateInnType(dir string) error {
 			continue
 		}
 
-		res := s.DB.Exec("update category set metasearch_inn_type_id = ? where id = ?", innTypeID, categoryID)
+		res := s.DB.Exec("update theme_category set metasearch_inn_type_id = ? where id = ?", innTypeID, categoryID)
 		if err := res.Error; err != nil {
 			log.Println(errors.Wrapf(err, "failed to set inn_type; id = %d", innTypeID))
 		}
 		if res.RowsAffected == 0 {
 			log.Printf("inn_type not updated; id = %d\n", innTypeID)
+		}
+	}
+	return nil
+}
+
+func (s Script) updateTag(dir string) error {
+	const skipRecordsNum = 2
+
+	file, err := os.Open(filepath.Join(dir, tagCSVName))
+	if err != nil {
+		return errors.Wrap(err, "failed to open csv")
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	if err := skipRecords(reader, skipRecordsNum); err != nil {
+		return errors.Wrap(err, "failed to skip csv record")
+	}
+
+	for {
+		record, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Println(errors.Wrap(err, "failed to decode csv row"))
+			continue
+		}
+
+		tagID := mustToInt(record[1])
+		categoryID := mustToInt(record[5])
+		if !(tagID > 0 && categoryID > 0) {
+			continue
+		}
+
+		res := s.DB.Exec("update theme_category set metasearch_tag_id = ? where id = ?", tagID, categoryID)
+		if err := res.Error; err != nil {
+			log.Println(errors.Wrapf(err, "failed to set tag; id = %d", tagID))
+		}
+		if res.RowsAffected == 0 {
+			log.Printf("tag not updated; id = %d\n", tagID)
 		}
 	}
 	return nil
