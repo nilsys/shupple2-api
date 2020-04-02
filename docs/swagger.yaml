@@ -2967,7 +2967,7 @@ components:
         reviewCount:
           type: integer
           description: レビュー数
-          example: 883
+          example: 884
         minPrice:
           type: number
           format: double
