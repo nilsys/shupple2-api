@@ -2835,7 +2835,7 @@ components:
           description: プロフィール
           example: |
             横浜生まれ東京育ちの旅好きライター。年に２，３回は国内外の旅行に行きます。
-            旅先での楽しみはグルメとお酒と地元の人と仲良くなること！
+            旅先での楽しみはグルメとお酒と地元の人と仲良くなること
         iconURL:
           type: string
           description: アイコン画像URL
