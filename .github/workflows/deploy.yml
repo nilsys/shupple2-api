@@ -2,18 +2,35 @@ on:
   push:
     branches:
       - master
+      - deploy/production
+      - deploy/staging
 
 env:
+  INTERMEDIATE_TASK_DEFINITION: task-definition.json
   ECR_REPOSITORY: sw-media-api
-  ECS_TASK_DEFINITION: sw-stg-media-api 
 
 name: Deploy to ECS
 jobs:
-  build-and-deploy-stg:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v2
+
+      - name: Set variables
+        id: variables
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/deploy/production" ]; then
+            env="prd"
+          else
+            env="stg"
+          fi
+          echo "::set-output name=env::$env"
+          echo "::set-output name=ecs-task-definition::sw-$env-media-api"
+          echo "::set-output name=container-name::sw-$env-media-api"
+          echo "::set-output name=service::sw-$env-media-api"
+          echo "::set-output name=cluster::sw-$env-media"
+
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -26,37 +43,38 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build and push image to Amazon ECR
-        id: build-image
+      - name: Set ECR repository name
+        id: repository-name
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           IMAGE_TAG=$(echo ${{ github.sha }} | cut -c 1-7)
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg version=$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-      - name: Logout of Amazon ECR
-        if: always()
-        run: docker logout ${{ steps.login-ecr.outputs.registry }}
+      - name: Build and push image to Amazon ECR
+        id: build-image
+        if: "steps.variables.outputs.env != 'prd'"
+        run: |
+          docker build -t ${{ steps.repository-name.outputs.image }} --build-arg version=$IMAGE_TAG .
+          docker push ${{ steps.repository-name.outputs.image }}
 
       - name: Fetch current task definition
         run: |
-          aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION --query taskDefinition | \
-          jq '(del(.revision, .requiresAttributes, .compatibilities, .taskDefinitionArn, .status))' > task-definition.json
+          aws ecs describe-task-definition --task-definition ${{ steps.variables.outputs.ecs-task-definition }} --query taskDefinition | \
+          jq '(del(.revision, .requiresAttributes, .compatibilities, .taskDefinitionArn, .status))' > ${INTERMEDIATE_TASK_DEFINITION}
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition.json
-          container-name: sw-stg-media-api
-          image: ${{ steps.build-image.outputs.image }}
+          task-definition: ${{ env.INTERMEDIATE_TASK_DEFINITION }}
+          container-name: ${{ steps.variables.outputs.container-name }}
+          image: ${{ steps.repository-name.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: sw-stg-media-api
-          cluster: sw-stg-media
+          service: ${{ steps.variables.outputs.service }}
+          cluster: ${{ steps.variables.outputs.cluster }}
           wait-for-service-stability: false
