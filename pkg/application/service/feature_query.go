@@ -10,7 +10,7 @@ import (
 type (
 	FeatureQueryService interface {
 		ShowQuery(id int) (*entity.QueryFeature, error)
-		ShowList(query *query.FindListPaginationQuery) ([]*entity.Feature, error)
+		ShowList(query *query.FindListPaginationQuery) (*entity.FeatureList, error)
 	}
 
 	FeatureQueryServiceImpl struct {
@@ -29,6 +29,6 @@ func (s *FeatureQueryServiceImpl) ShowQuery(id int) (*entity.QueryFeature, error
 }
 
 // Feature一覧取得
-func (s *FeatureQueryServiceImpl) ShowList(query *query.FindListPaginationQuery) ([]*entity.Feature, error) {
+func (s *FeatureQueryServiceImpl) ShowList(query *query.FindListPaginationQuery) (*entity.FeatureList, error) {
 	return s.FeatureQueryRepository.FindList(query)
 }

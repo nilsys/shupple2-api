@@ -15,14 +15,17 @@ func ConvertShowFeatureListParamToQuery(param *param.ShowFeatureListParam) *quer
 	}
 }
 
-func ConvertFeatureListToOutput(features []*entity.Feature) []*response.Feature {
-	responseFeatures := make([]*response.Feature, len(features))
+func ConvertFeatureListToOutput(features *entity.FeatureList) *response.FeatureList {
+	responseFeatures := make([]*response.Feature, len(features.Features))
 
-	for i, feature := range features {
+	for i, feature := range features.Features {
 		responseFeatures[i] = convertFeatureToOutput(feature)
 	}
 
-	return responseFeatures
+	return &response.FeatureList{
+		TotalNumber: features.TotalNumber,
+		Features:    responseFeatures,
+	}
 }
 
 func ConvertQueryFeatureToOutput(feature *entity.QueryFeature) *response.ShowFeature {

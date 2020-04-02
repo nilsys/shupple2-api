@@ -10,6 +10,11 @@ type (
 		Thumbnail string `json:"thumbnail"`
 	}
 
+	FeatureList struct {
+		TotalNumber int
+		Features    []*Feature
+	}
+
 	// フロント返却用Feature詳細
 	ShowFeature struct {
 		ID            int    `json:"id"`

@@ -25,6 +25,11 @@ type (
 		PostIDs []*FeaturePost
 	}
 
+	FeatureList struct {
+		TotalNumber int
+		Features    []*Feature
+	}
+
 	FeaturePost struct {
 		FeatureID int `gorm:"primary_key"`
 		PostID    int `gorm:"primary_key"`

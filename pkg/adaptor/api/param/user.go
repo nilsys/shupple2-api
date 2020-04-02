@@ -73,7 +73,7 @@ const getUsersDefaultPerPage = 30
 // いずれのクエリも飛んで来なかった場合エラーを返す
 func (param *ListUserRanking) Validate() error {
 	// いずれのクエリも飛んで来ない場合
-	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 {
+	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.SortBy == 0 {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid show user ranking list param")
 	}
 

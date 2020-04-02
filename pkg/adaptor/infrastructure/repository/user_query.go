@@ -204,6 +204,9 @@ func (r *UserQueryRepositoryImpl) buildFindUserRankingListQuery(query *query.Fin
 			return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(favorite_count) AS favorite_count FROM (SELECT user_id, favorite_count FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?)) AND updated_at BETWEEN ? AND ? UNION ALL SELECT user_id, favorite_count FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?)) AND updated_at BETWEEN ? AND ?) AS user_favorite_count GROUP BY user_id) user_favorite_count ON user.id = user_favorite_count.user_id", query.SubSubAreaID, query.FromDate, query.ToDate, query.SubSubAreaID, query.FromDate, query.ToDate).
 				Order("user_favorite_count.favorite_count DESC")
 		}
+		// どれも指定されていないとき
+		return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(favorite_count) AS favorite_count FROM (SELECT user_id, favorite_count FROM review WHERE updated_at BETWEEN ? AND ? UNION ALL SELECT user_id, favorite_count FROM post WHERE updated_at BETWEEN ? AND ?) AS user_favorite_count GROUP BY user_id) user_favorite_count ON user.id = user_favorite_count.user_id", query.FromDate, query.ToDate, query.FromDate, query.ToDate).
+			Order("user_favorite_count.favorite_count DESC")
 	}
 
 	if query.AreaID != 0 {
@@ -219,6 +222,6 @@ func (r *UserQueryRepositoryImpl) buildFindUserRankingListQuery(query *query.Fin
 			Order("user_views_count.views_count DESC")
 	}
 
-	// MEMO: validationを掛けているのであり得ないが
-	return nil
+	return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(views) AS views_count FROM (SELECT user_id, views FROM review WHERE updated_at BETWEEN ? AND ? UNION ALL SELECT user_id, views FROM post WHERE updated_at BETWEEN ? AND ?) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id", query.FromDate, query.ToDate, query.FromDate, query.ToDate).
+		Order("user_views_count.views_count DESC")
 }
