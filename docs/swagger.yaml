@@ -1880,7 +1880,7 @@ components:
         name:
           type: string
           description: ユーザー名
-          example: サトシ
+          example: かな
         uid:
           type: string
           description: |
