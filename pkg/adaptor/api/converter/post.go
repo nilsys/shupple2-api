@@ -71,11 +71,11 @@ func ConvertPostListToOutput(posts []*entity.PostDetail) []*response.Post {
 // outputの構造体へconvert
 func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
 	return &response.Post{
-		ID:                      queryPost.ID,
-		Thumbnail:               queryPost.Thumbnail,
-		Title:                   queryPost.Title,
-		AreaCategories:          ConvertAreaCategoriesToOutput(queryPost.AreaCategories),
-		ThemeCategoryCategories: ConvertThemeCategoriesToOutput(queryPost.ThemeCategories),
+		ID:              queryPost.ID,
+		Thumbnail:       queryPost.Thumbnail,
+		Title:           queryPost.Title,
+		AreaCategories:  ConvertAreaCategoriesToOutput(queryPost.AreaCategories),
+		ThemeCategories: ConvertThemeCategoriesToOutput(queryPost.ThemeCategories),
 		Creator: response.Creator{
 			Thumbnail: queryPost.User.GenerateThumbnailURL(),
 			Name:      queryPost.User.Name,
@@ -100,23 +100,23 @@ func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *r
 	}
 
 	return &response.PostShow{
-		ID:                      post.ID,
-		Thumbnail:               post.PostTiny.Thumbnail,
-		Title:                   post.Title,
-		Body:                    bodies,
-		TOC:                     post.TOC,
-		FavoriteCount:           post.FavoriteCount,
-		FacebookCount:           post.FacebookCount,
-		TwitterCount:            post.TwitterCount,
-		Views:                   post.Views,
-		SEOTitle:                post.SEOTitle,
-		SEODescription:          post.SEODescription,
-		HideAds:                 post.HideAds,
-		Creator:                 response.NewCreatorFromUser(post.User),
-		AreaCategories:          ConvertAreaCategoriesToOutput(post.AreaCategories),
-		ThemeCategoryCategories: ConvertThemeCategoriesToOutput(post.ThemeCategories),
-		Hashtags:                hashtags,
-		CreatedAt:               model.TimeFmtToFrontStr(post.CreatedAt),
-		UpdatedAt:               model.TimeFmtToFrontStr(post.UpdatedAt),
+		ID:              post.ID,
+		Thumbnail:       post.PostTiny.Thumbnail,
+		Title:           post.Title,
+		Body:            bodies,
+		TOC:             post.TOC,
+		FavoriteCount:   post.FavoriteCount,
+		FacebookCount:   post.FacebookCount,
+		TwitterCount:    post.TwitterCount,
+		Views:           post.Views,
+		SEOTitle:        post.SEOTitle,
+		SEODescription:  post.SEODescription,
+		HideAds:         post.HideAds,
+		Creator:         response.NewCreatorFromUser(post.User),
+		AreaCategories:  ConvertAreaCategoriesToOutput(post.AreaCategories),
+		ThemeCategories: ConvertThemeCategoriesToOutput(post.ThemeCategories),
+		Hashtags:        hashtags,
+		CreatedAt:       model.TimeFmtToFrontStr(post.CreatedAt),
+		UpdatedAt:       model.TimeFmtToFrontStr(post.UpdatedAt),
 	}
 }

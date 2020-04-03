@@ -43,34 +43,34 @@ func ConvertVlogDetailWithTouristSpots(vlog *entity.VlogDetailWithTouristSpots) 
 	}
 
 	return &response.VlogDetail{
-		ID:                      vlog.ID,
-		Thumbnail:               vlog.Thumbnail,
-		Title:                   vlog.Title,
-		Body:                    vlog.Body,
-		Series:                  vlog.Series,
-		Creator:                 response.NewCreatorFromUser(vlog.User),
-		Editor:                  response.NewCreatorFromUser(vlog.User),
-		YoutubeURL:              vlog.YoutubeURL,
-		Views:                   vlog.Views,
-		ShootingDate:            vlog.YearMonth,
-		PlayTime:                vlog.PlayTime,
-		Timeline:                vlog.Timeline,
-		FacebookCount:           vlog.FacebookCount,
-		TwitterCount:            vlog.TwitterCount,
-		AreaCategories:          ConvertAreaCategoriesToOutput(vlog.AreaCategories),
-		ThemeCategoryCategories: ConvertThemeCategoriesToOutput(vlog.ThemeCategories),
-		CreatedAt:               model.TimeResponse(vlog.CreatedAt),
-		UpdatedAt:               model.TimeResponse(vlog.UpdatedAt),
-		TouristSpot:             touristSpots,
+		ID:              vlog.ID,
+		Thumbnail:       vlog.Thumbnail,
+		Title:           vlog.Title,
+		Body:            vlog.Body,
+		Series:          vlog.Series,
+		Creator:         response.NewCreatorFromUser(vlog.User),
+		Editor:          response.NewCreatorFromUser(vlog.User),
+		YoutubeURL:      vlog.YoutubeURL,
+		Views:           vlog.Views,
+		ShootingDate:    vlog.YearMonth,
+		PlayTime:        vlog.PlayTime,
+		Timeline:        vlog.Timeline,
+		FacebookCount:   vlog.FacebookCount,
+		TwitterCount:    vlog.TwitterCount,
+		AreaCategories:  ConvertAreaCategoriesToOutput(vlog.AreaCategories),
+		ThemeCategories: ConvertThemeCategoriesToOutput(vlog.ThemeCategories),
+		CreatedAt:       model.TimeResponse(vlog.CreatedAt),
+		UpdatedAt:       model.TimeResponse(vlog.UpdatedAt),
+		TouristSpot:     touristSpots,
 	}
 }
 
 func convertVlogToOutput(queryVlog *entity.VlogDetail) *response.Vlog {
 	return &response.Vlog{
-		ID:                      queryVlog.ID,
-		Thumbnail:               queryVlog.Thumbnail,
-		AreaCategories:          ConvertAreaCategoriesToOutput(queryVlog.AreaCategories),
-		ThemeCategoryCategories: ConvertThemeCategoriesToOutput(queryVlog.ThemeCategories),
-		Title:                   queryVlog.VlogTiny.Title,
+		ID:              queryVlog.ID,
+		Thumbnail:       queryVlog.Thumbnail,
+		AreaCategories:  ConvertAreaCategoriesToOutput(queryVlog.AreaCategories),
+		ThemeCategories: ConvertThemeCategoriesToOutput(queryVlog.ThemeCategories),
+		Title:           queryVlog.VlogTiny.Title,
 	}
 }
