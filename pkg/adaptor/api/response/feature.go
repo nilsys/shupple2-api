@@ -11,8 +11,8 @@ type (
 	}
 
 	FeatureList struct {
-		TotalNumber int
-		Features    []*Feature
+		TotalNumber int        `json:"totalNumber"`
+		Features    []*Feature `json:"featurePosts"`
 	}
 
 	// フロント返却用Feature詳細
