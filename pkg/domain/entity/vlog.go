@@ -8,14 +8,12 @@ type (
 	VlogTiny struct {
 		ID            int `gorm:"primary_key"`
 		UserID        int
-		EditorID      int
 		Slug          string
 		Thumbnail     string
 		Title         string
 		Body          string
 		YoutubeURL    string
 		Series        string
-		UserSNS       string
 		YearMonth     string `gorm:"column:yearmonth"`
 		PlayTime      string
 		Timeline      string
@@ -32,6 +30,7 @@ type (
 		AreaCategoryIDs  []*VlogAreaCategory
 		ThemeCategoryIDs []*VlogThemeCategory
 		TouristSpotIDs   []*VlogTouristSpot
+		Editors          []*VlogEditor
 	}
 
 	VlogAreaCategory struct {
@@ -47,6 +46,11 @@ type (
 	VlogTouristSpot struct {
 		VlogID        int `gorm:"primary_key"`
 		TouristSpotID int `gorm:"primary_key"`
+	}
+
+	VlogEditor struct {
+		VlogID int `gorm:"primary_key"`
+		UserID int `gorm:"primary_key"`
 	}
 
 	VlogDetail struct {
@@ -70,11 +74,12 @@ type (
 	}
 )
 
-func NewVlog(tiny VlogTiny, areaCategoryIDs, themeCategoryIDs, touristSpotIDs []int) Vlog {
+func NewVlog(tiny VlogTiny, areaCategoryIDs, themeCategoryIDs, touristSpotIDs, editors []int) Vlog {
 	vlog := Vlog{VlogTiny: tiny}
 	vlog.SetAreaCategories(areaCategoryIDs)
 	vlog.SetThemeCategories(themeCategoryIDs)
 	vlog.SetTouristSpots(touristSpotIDs)
+	vlog.SetEditors(editors)
 
 	return vlog
 }
@@ -105,6 +110,16 @@ func (vlog *Vlog) SetTouristSpots(touristSpotIDs []int) {
 		vlog.TouristSpotIDs[i] = &VlogTouristSpot{
 			VlogID:        vlog.ID,
 			TouristSpotID: l,
+		}
+	}
+}
+
+func (vlog *Vlog) SetEditors(editors []int) {
+	vlog.Editors = make([]*VlogEditor, len(editors))
+	for i, e := range editors {
+		vlog.Editors[i] = &VlogEditor{
+			VlogID: vlog.ID,
+			UserID: e,
 		}
 	}
 }
