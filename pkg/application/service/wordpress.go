@@ -28,7 +28,7 @@ type (
 		PatchTouristSpot(*entity.TouristSpot, *wordpress.Location) error
 		PatchAreaCategory(*entity.AreaCategory, *wordpress.Category) error
 		PatchThemeCategory(*entity.ThemeCategory, *wordpress.Category) error
-		PatchLcategory(*entity.Lcategory, *wordpress.LocationCategory) error
+		PatchSpotCategory(*entity.SpotCategory, *wordpress.LocationCategory) error
 		PatchVlog(*entity.Vlog, *wordpress.Vlog) error
 		PatchFeature(*entity.Feature, *wordpress.Feature) error
 		PatchComic(*entity.Comic, *wordpress.Comic) error
@@ -39,6 +39,7 @@ type (
 		repository.UserQueryRepository
 		repository.AreaCategoryQueryRepository
 		repository.ThemeCategoryQueryRepository
+		repository.SpotCategoryQueryRepository
 		HashtagCommandService
 	}
 )
@@ -154,7 +155,7 @@ func (s *WordpressServiceImpl) PatchTouristSpot(touristSpot *entity.TouristSpot,
 	touristSpot.CreatedAt = time.Time(wpLocation.Date)
 	touristSpot.SetAreaCategories(areaCategoryIDs)
 	touristSpot.SetThemeCategories(themeCategoryIDs)
-	touristSpot.SetLcategories(wpLocation.LocationCat)
+	touristSpot.SetSpotCategories(wpLocation.LocationCat)
 
 	return nil
 }
@@ -237,9 +238,34 @@ func (s *WordpressServiceImpl) PatchThemeCategory(category *entity.ThemeCategory
 	return nil
 }
 
-func (s *WordpressServiceImpl) PatchLcategory(lcategory *entity.Lcategory, wpLocationCategory *wordpress.LocationCategory) error {
-	lcategory.ID = wpLocationCategory.ID
-	lcategory.Name = wpLocationCategory.Name
+func (s *WordpressServiceImpl) PatchSpotCategory(spotCategory *entity.SpotCategory, wpLocationCategory *wordpress.LocationCategory) error {
+	spotCategory.ID = wpLocationCategory.ID
+	spotCategory.Name = wpLocationCategory.Name
+	spotCategory.Slug = wpLocationCategory.Slug
+
+	if wpLocationCategory.Parent != 0 {
+		parent, err := s.SpotCategoryQueryRepository.FindByID(wpLocationCategory.Parent)
+		if err != nil {
+			return errors.Wrap(err, "failed to find parent spotCategory spotCategory")
+		}
+
+		switch parent.Type {
+		case model.SpotCategoryTypeSpotCategory:
+			spotCategory.Type = model.SpotCategoryTypeSubSpotCategory
+			spotCategory.SpotCategoryID = parent.SpotCategoryID
+			spotCategory.SubSpotCategoryID = null.IntFrom(int64(spotCategory.ID))
+		case model.SpotCategoryTypeSubSpotCategory, model.SpotCategoryTypeUndefined:
+			logger.Warn("parent spotCategory spotCategory is sub_spotCategory or undefined", zap.Int("id", spotCategory.ID), zap.Int("parent", wpLocationCategory.Parent))
+			spotCategory.Type = model.SpotCategoryTypeUndefined
+			spotCategory.SpotCategoryID = parent.SpotCategoryID
+			spotCategory.SubSpotCategoryID = parent.SubSpotCategoryID
+		}
+
+		return nil
+	}
+
+	spotCategory.Type = model.SpotCategoryTypeSpotCategory
+	spotCategory.SpotCategoryID = spotCategory.ID
 
 	return nil
 }

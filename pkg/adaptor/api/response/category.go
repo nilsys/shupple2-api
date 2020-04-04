@@ -24,7 +24,7 @@ type (
 		Type model.ThemeCategoryType `json:"type"`
 	}
 
-	Lcategory struct {
+	SpotCategory struct {
 		ID   int    `json:"id"`
 		Name string `json:"name"`
 		Slug string `json:"slug"`
@@ -40,8 +40,8 @@ func NewCategory(id int, name, categoryType, slug string) *Category {
 	}
 }
 
-func NewLcategory(id int, name, slug string) *Lcategory {
-	return &Lcategory{
+func NewSpotCategory(id int, name, slug string) *SpotCategory {
+	return &SpotCategory{
 		ID:   id,
 		Name: name,
 		Slug: slug,

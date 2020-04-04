@@ -9,23 +9,23 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
-type LcategoryCommandRepositoryImpl struct {
+type SpotCategoryCommandRepositoryImpl struct {
 	DAO
 }
 
-var LcategoryCommandRepositorySet = wire.NewSet(
-	wire.Struct(new(LcategoryCommandRepositoryImpl), "*"),
-	wire.Bind(new(repository.LcategoryCommandRepository), new(*LcategoryCommandRepositoryImpl)),
+var SpotCategoryCommandRepositorySet = wire.NewSet(
+	wire.Struct(new(SpotCategoryCommandRepositoryImpl), "*"),
+	wire.Bind(new(repository.SpotCategoryCommandRepository), new(*SpotCategoryCommandRepositoryImpl)),
 )
 
-func (r *LcategoryCommandRepositoryImpl) Lock(c context.Context, id int) (*entity.Lcategory, error) {
-	var row entity.Lcategory
+func (r *SpotCategoryCommandRepositoryImpl) Lock(c context.Context, id int) (*entity.SpotCategory, error) {
+	var row entity.SpotCategory
 	if err := r.LockDB(c).First(&row, id).Error; err != nil {
-		return nil, ErrorToFindSingleRecord(err, "lcategory(id=%d)", id)
+		return nil, ErrorToFindSingleRecord(err, "spotCategory(id=%d)", id)
 	}
 	return &row, nil
 }
 
-func (r *LcategoryCommandRepositoryImpl) Store(c context.Context, lcategory *entity.Lcategory) error {
-	return errors.Wrap(r.DB(c).Save(lcategory).Error, "failed to save lcategory")
+func (r *SpotCategoryCommandRepositoryImpl) Store(c context.Context, spotCategory *entity.SpotCategory) error {
+	return errors.Wrap(r.DB(c).Save(spotCategory).Error, "failed to save spotCategory")
 }

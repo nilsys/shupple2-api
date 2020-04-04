@@ -25,8 +25,8 @@ type Test struct {
 	*ComicQueryRepositoryImpl
 	*FeatureCommandRepositoryImpl
 	*FeatureQueryRepositoryImpl
-	*LcategoryCommandRepositoryImpl
-	*LcategoryQueryRepositoryImpl
+	*SpotCategoryCommandRepositoryImpl
+	*SpotCategoryQueryRepositoryImpl
 	*TouristSpotCommandRepositoryImpl
 	*TouristSpotQueryRepositoryImpl
 	*PostCommandRepositoryImpl

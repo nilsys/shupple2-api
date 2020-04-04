@@ -12,8 +12,8 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
-	domain_service "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
+	domain_service "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 )
 
 var controllerSet = wire.NewSet(
@@ -74,7 +74,7 @@ var serviceSet = wire.NewSet(
 	service.HashtagQueryServiceSet,
 	service.HashtagCommandServiceSet,
 	service.TouristSpotCommandServiceSet,
-	service.LcategoryCommandServiceSet,
+	service.SpotCategoryCommandServiceSet,
 	service.WordpressCallbackServiceSet,
 	service.UserQueryServiceSet,
 	service.UserCommandServiceSet,

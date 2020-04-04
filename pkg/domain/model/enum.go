@@ -50,6 +50,11 @@ sub_themeの子カテとその子孫がundefinedに分類される
 type ThemeCategoryType int
 
 /*
+ENUM(Undefined, SpotCategory = 1, SubSpotCategory)
+*/
+type SpotCategoryType int
+
+/*
 ENUM(FAVORITE = 1, COMMENT, REPLY, FOLLOW, TAGGED)
 */
 type NoticeActionType int

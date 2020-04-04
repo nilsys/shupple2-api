@@ -64,6 +64,9 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	themeCategoryQueryRepositoryImpl := &repository.ThemeCategoryQueryRepositoryImpl{
 		DB: db,
 	}
+	spotCategoryQueryRepositoryImpl := &repository.SpotCategoryQueryRepositoryImpl{
+		DB: db,
+	}
 	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
 		DB: db,
 	}
@@ -79,6 +82,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		UserQueryRepository:          userQueryRepositoryImpl,
 		AreaCategoryQueryRepository:  areaCategoryQueryRepositoryImpl,
 		ThemeCategoryQueryRepository: themeCategoryQueryRepositoryImpl,
+		SpotCategoryQueryRepository:  spotCategoryQueryRepositoryImpl,
 		HashtagCommandService:        hashtagCommandServiceImpl,
 	}
 	transactionServiceImpl := &repository.TransactionServiceImpl{
@@ -125,14 +129,14 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		WordpressService:         wordpressServiceImpl,
 		TransactionService:       transactionServiceImpl,
 	}
-	lcategoryCommandRepositoryImpl := &repository.LcategoryCommandRepositoryImpl{
+	spotCategoryCommandRepositoryImpl := &repository.SpotCategoryCommandRepositoryImpl{
 		DAO: dao,
 	}
-	lcategoryCommandServiceImpl := &service.LcategoryCommandServiceImpl{
-		LcategoryCommandRepository: lcategoryCommandRepositoryImpl,
-		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
-		WordpressService:           wordpressServiceImpl,
-		TransactionService:         transactionServiceImpl,
+	spotCategoryCommandServiceImpl := &service.SpotCategoryCommandServiceImpl{
+		SpotCategoryCommandRepository: spotCategoryCommandRepositoryImpl,
+		WordpressQueryRepository:      wordpressQueryRepositoryImpl,
+		WordpressService:              wordpressServiceImpl,
+		TransactionService:            transactionServiceImpl,
 	}
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
 		DAO: dao,
@@ -163,14 +167,14 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		TransactionService:       transactionServiceImpl,
 	}
 	wordpressCallbackServiceImpl := &service.WordpressCallbackServiceImpl{
-		UserCommandService:        userCommandServiceImpl,
-		CategoryCommandService:    categoryCommandServiceImpl,
-		ComicCommandService:       comicCommandServiceImpl,
-		FeatureCommandService:     featureCommandServiceImpl,
-		LcategoryCommandService:   lcategoryCommandServiceImpl,
-		PostCommandService:        postCommandServiceImpl,
-		TouristSpotCommandService: touristSpotCommandServiceImpl,
-		VlogCommandService:        vlogCommandServiceImpl,
+		UserCommandService:         userCommandServiceImpl,
+		CategoryCommandService:     categoryCommandServiceImpl,
+		ComicCommandService:        comicCommandServiceImpl,
+		FeatureCommandService:      featureCommandServiceImpl,
+		SpotCategoryCommandService: spotCategoryCommandServiceImpl,
+		PostCommandService:         postCommandServiceImpl,
+		TouristSpotCommandService:  touristSpotCommandServiceImpl,
+		VlogCommandService:         vlogCommandServiceImpl,
 	}
 	batch := &Batch{
 		Config:                   configConfig,
@@ -181,4 +185,4 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.ProvideAuthService)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.SpotCategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.ProvideAuthService)

@@ -67,6 +67,9 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	themeCategoryQueryRepositoryImpl := &repository.ThemeCategoryQueryRepositoryImpl{
 		DB: db,
 	}
+	spotCategoryQueryRepositoryImpl := &repository.SpotCategoryQueryRepositoryImpl{
+		DB: db,
+	}
 	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
 		DB: db,
 	}
@@ -82,6 +85,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		UserQueryRepository:          userQueryRepositoryImpl,
 		AreaCategoryQueryRepository:  areaCategoryQueryRepositoryImpl,
 		ThemeCategoryQueryRepository: themeCategoryQueryRepositoryImpl,
+		SpotCategoryQueryRepository:  spotCategoryQueryRepositoryImpl,
 		HashtagCommandService:        hashtagCommandServiceImpl,
 	}
 	transactionServiceImpl := &repository.TransactionServiceImpl{
@@ -128,14 +132,14 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		WordpressService:         wordpressServiceImpl,
 		TransactionService:       transactionServiceImpl,
 	}
-	lcategoryCommandRepositoryImpl := &repository.LcategoryCommandRepositoryImpl{
+	spotCategoryCommandRepositoryImpl := &repository.SpotCategoryCommandRepositoryImpl{
 		DAO: dao,
 	}
-	lcategoryCommandServiceImpl := &service.LcategoryCommandServiceImpl{
-		LcategoryCommandRepository: lcategoryCommandRepositoryImpl,
-		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
-		WordpressService:           wordpressServiceImpl,
-		TransactionService:         transactionServiceImpl,
+	spotCategoryCommandServiceImpl := &service.SpotCategoryCommandServiceImpl{
+		SpotCategoryCommandRepository: spotCategoryCommandRepositoryImpl,
+		WordpressQueryRepository:      wordpressQueryRepositoryImpl,
+		WordpressService:              wordpressServiceImpl,
+		TransactionService:            transactionServiceImpl,
 	}
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
 		DAO: dao,
@@ -220,7 +224,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		CategoryService:       categoryCommandServiceImpl,
 		ComicService:          comicCommandServiceImpl,
 		FeatureService:        featureCommandServiceImpl,
-		LcategoryService:      lcategoryCommandServiceImpl,
+		SpotCategoryService:   spotCategoryCommandServiceImpl,
 		PostService:           postCommandServiceImpl,
 		TouristSpotService:    touristSpotCommandServiceImpl,
 		VlogService:           vlogCommandServiceImpl,
@@ -235,4 +239,4 @@ var (
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.LcategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, service.ReviewQueryServiceSet, scenario.ReviewCommandScenarioSet, service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
+var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.SpotCategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, service.ReviewQueryServiceSet, scenario.ReviewCommandScenarioSet, service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)

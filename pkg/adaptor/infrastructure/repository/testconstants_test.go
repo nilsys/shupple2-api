@@ -11,7 +11,7 @@ const (
 	featureID       = 151
 	areaCategoryID  = 161
 	themeCategoryID = 171
-	lcategoryID     = 181
+	spotCategoryID  = 181
 	reviewID        = 191
 	hashtagID       = 201
 	innID           = 211
@@ -30,8 +30,8 @@ var (
 	bodies    = []string{"b1601", "b1602"}
 	addedBody = "1603"
 
-	lcategoryIDs     = []int{1701, 1702}
-	addedLcategoryID = 1703
+	spotCategoryIDs     = []int{1701, 1702}
+	addedSpotCategoryID = 1703
 
 	touristSpotIDs     = []int{1801, 1802}
 	addedTouristSpotID = 1803

@@ -1,15 +1,23 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+	"gopkg.in/guregu/null.v3"
+)
 
 type (
-	Lcategory struct {
+	SpotCategory struct {
 		CategoryBase
-		CreatedAt time.Time `gorm:"-"`
-		UpdatedAt time.Time `gorm:"-"`
+		Type              model.SpotCategoryType
+		SpotCategoryID    int
+		SubSpotCategoryID null.Int
+		CreatedAt         time.Time `gorm:"-"`
+		UpdatedAt         time.Time `gorm:"-"`
 	}
 )
 
-func (lc Lcategory) CategoryType() string {
-	return "lcategory"
+func (lc SpotCategory) CategoryType() string {
+	return lc.Type.String()
 }

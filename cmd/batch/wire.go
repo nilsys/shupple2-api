@@ -29,7 +29,7 @@ var serviceSet = wire.NewSet(
 	service.HashtagCommandServiceSet,
 	service.TouristSpotCommandServiceSet,
 	service.CategoryCommandServiceSet,
-	service.LcategoryCommandServiceSet,
+	service.SpotCategoryCommandServiceSet,
 	service.WordpressCallbackServiceSet,
 	service.UserQueryServiceSet,
 	service.UserCommandServiceSet,

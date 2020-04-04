@@ -36,7 +36,7 @@ type (
 		TouristSpotTiny
 		AreaCategoryIDs  []*TouristSpotAreaCategory  `gorm:"foreignkey:TouristSpotID"`
 		ThemeCategoryIDs []*TouristSpotThemeCategory `gorm:"foreignkey:TouristSpotID"`
-		LcategoryIDs     []*TouristSpotLcategory     `gorm:"foreignkey:TouristSpotID"`
+		SpotCategoryIDs  []*TouristSpotSpotCategory  `gorm:"foreignkey:TouristSpotID"`
 	}
 
 	TouristSpotAreaCategory struct {
@@ -49,24 +49,24 @@ type (
 		ThemeCategoryID int `gorm:"primary_key"`
 	}
 
-	TouristSpotLcategory struct {
-		TouristSpotID int `gorm:"primary_key"`
-		LcategoryID   int `gorm:"primary_key"`
+	TouristSpotSpotCategory struct {
+		TouristSpotID  int `gorm:"primary_key"`
+		SpotCategoryID int `gorm:"primary_key"`
 	}
 
 	QueryTouristSpot struct {
 		TouristSpotTiny
 		AreaCategories  []*AreaCategory  `gorm:"many2many:tourist_spot_area_category;jointable_foreignkey:tourist_spot_id;"`
 		ThemeCategories []*ThemeCategory `gorm:"many2many:tourist_spot_theme_category;jointable_foreignkey:tourist_spot_id;"`
-		Lcategories     []*Lcategory     `gorm:"many2many:tourist_spot_lcategory;jointable_foreignkey:tourist_spot_id;"`
+		SpotCategories  []*SpotCategory  `gorm:"many2many:tourist_spot_spotCategory;jointable_foreignkey:tourist_spot_id;"`
 	}
 )
 
-func NewTouristSpot(tiny TouristSpotTiny, areaCategoryIDs, themeCategoryIDs, lcategoryIDs []int) TouristSpot {
+func NewTouristSpot(tiny TouristSpotTiny, areaCategoryIDs, themeCategoryIDs, spotCategoryIDs []int) TouristSpot {
 	touristSpot := TouristSpot{TouristSpotTiny: tiny}
 	touristSpot.SetAreaCategories(areaCategoryIDs)
 	touristSpot.SetThemeCategories(themeCategoryIDs)
-	touristSpot.SetLcategories(lcategoryIDs)
+	touristSpot.SetSpotCategories(spotCategoryIDs)
 
 	return touristSpot
 }
@@ -91,12 +91,12 @@ func (ts *TouristSpot) SetThemeCategories(themeCategoryIDs []int) {
 	}
 }
 
-func (ts *TouristSpot) SetLcategories(lcategoryIDs []int) {
-	ts.LcategoryIDs = make([]*TouristSpotLcategory, len(lcategoryIDs))
-	for i, c := range lcategoryIDs {
-		ts.LcategoryIDs[i] = &TouristSpotLcategory{
-			TouristSpotID: ts.ID,
-			LcategoryID:   c,
+func (ts *TouristSpot) SetSpotCategories(spotCategoryIDs []int) {
+	ts.SpotCategoryIDs = make([]*TouristSpotSpotCategory, len(spotCategoryIDs))
+	for i, c := range spotCategoryIDs {
+		ts.SpotCategoryIDs[i] = &TouristSpotSpotCategory{
+			TouristSpotID:  ts.ID,
+			SpotCategoryID: c,
 		}
 	}
 

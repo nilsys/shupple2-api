@@ -7,19 +7,19 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
-type LcategoryQueryRepositoryImpl struct {
+type SpotCategoryQueryRepositoryImpl struct {
 	DB *gorm.DB
 }
 
-var LcategoryQueryRepositorySet = wire.NewSet(
-	wire.Struct(new(LcategoryQueryRepositoryImpl), "*"),
-	wire.Bind(new(repository.LcategoryQueryRepository), new(*LcategoryQueryRepositoryImpl)),
+var SpotCategoryQueryRepositorySet = wire.NewSet(
+	wire.Struct(new(SpotCategoryQueryRepositoryImpl), "*"),
+	wire.Bind(new(repository.SpotCategoryQueryRepository), new(*SpotCategoryQueryRepositoryImpl)),
 )
 
-func (r *LcategoryQueryRepositoryImpl) FindByID(id int) (*entity.Lcategory, error) {
-	var row entity.Lcategory
+func (r *SpotCategoryQueryRepositoryImpl) FindByID(id int) (*entity.SpotCategory, error) {
+	var row entity.SpotCategory
 	if err := r.DB.First(&row, id).Error; err != nil {
-		return nil, ErrorToFindSingleRecord(err, "lcategory(id=%d)", id)
+		return nil, ErrorToFindSingleRecord(err, "spotCategory(id=%d)", id)
 	}
 	return &row, nil
 }

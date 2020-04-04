@@ -23,7 +23,7 @@ var serviceSet = wire.NewSet(
 	service.ThemeCategoryCommandServiceSet,
 	service.ComicCommandServiceSet,
 	service.FeatureCommandServiceSet,
-	service.LcategoryCommandServiceSet,
+	service.SpotCategoryCommandServiceSet,
 	service.TouristSpotCommandServiceSet,
 	service.VlogCommandServiceSet,
 	service.HashtagCommandServiceSet,

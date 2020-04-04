@@ -6,15 +6,16 @@
 package repository
 
 import (
+	"net/url"
+
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
-	"net/url"
-)
 
-import (
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
@@ -61,10 +62,10 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 	featureQueryRepositoryImpl := &FeatureQueryRepositoryImpl{
 		DB: db,
 	}
-	lcategoryCommandRepositoryImpl := &LcategoryCommandRepositoryImpl{
+	spotCategoryCommandRepositoryImpl := &SpotCategoryCommandRepositoryImpl{
 		DAO: dao,
 	}
-	lcategoryQueryRepositoryImpl := &LcategoryQueryRepositoryImpl{
+	spotCategoryQueryRepositoryImpl := &SpotCategoryQueryRepositoryImpl{
 		DB: db,
 	}
 	touristSpotCommandRepositoryImpl := &TouristSpotCommandRepositoryImpl{
@@ -119,8 +120,8 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 		ComicQueryRepositoryImpl:           comicQueryRepositoryImpl,
 		FeatureCommandRepositoryImpl:       featureCommandRepositoryImpl,
 		FeatureQueryRepositoryImpl:         featureQueryRepositoryImpl,
-		LcategoryCommandRepositoryImpl:     lcategoryCommandRepositoryImpl,
-		LcategoryQueryRepositoryImpl:       lcategoryQueryRepositoryImpl,
+		SpotCategoryCommandRepositoryImpl:  spotCategoryCommandRepositoryImpl,
+		SpotCategoryQueryRepositoryImpl:    spotCategoryQueryRepositoryImpl,
 		TouristSpotCommandRepositoryImpl:   touristSpotCommandRepositoryImpl,
 		TouristSpotQueryRepositoryImpl:     touristSpotQueryRepositoryImpl,
 		PostCommandRepositoryImpl:          postCommandRepositoryImpl,
@@ -178,8 +179,8 @@ type Test struct {
 	*ComicQueryRepositoryImpl
 	*FeatureCommandRepositoryImpl
 	*FeatureQueryRepositoryImpl
-	*LcategoryCommandRepositoryImpl
-	*LcategoryQueryRepositoryImpl
+	*SpotCategoryCommandRepositoryImpl
+	*SpotCategoryQueryRepositoryImpl
 	*TouristSpotCommandRepositoryImpl
 	*TouristSpotQueryRepositoryImpl
 	*PostCommandRepositoryImpl

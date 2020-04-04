@@ -7,12 +7,12 @@ import (
 )
 
 type (
-	LcategoryCommandRepository interface {
-		Lock(c context.Context, id int) (*entity.Lcategory, error)
-		Store(c context.Context, lcategory *entity.Lcategory) error
+	SpotCategoryCommandRepository interface {
+		Lock(c context.Context, id int) (*entity.SpotCategory, error)
+		Store(c context.Context, spotCategory *entity.SpotCategory) error
 	}
 
-	LcategoryQueryRepository interface {
-		FindByID(id int) (*entity.Lcategory, error)
+	SpotCategoryQueryRepository interface {
+		FindByID(id int) (*entity.SpotCategory, error)
 	}
 )

@@ -99,7 +99,7 @@ func (r *TouristSpotQueryRepositoryImpl) buildFindRecommendListQuery(query *quer
 		q = q.Select("*, (6371 * acos(cos(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* cos(radians(lat))* cos(radians(lng) - radians((SELECT lng FROM tourist_spot WHERE id = ?)))+ sin(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* sin(radians(lat)))) AS distance", query.ID, query.ID, query.ID).Having("distance <= ?", defaultRangeSearchKm).Order("distance")
 	}
 	if query.TouristSpotCategoryID != 0 {
-		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_lcategory WHERE lcategory_id = ?)", query.TouristSpotCategoryID)
+		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_spot_category WHERE spot_category_id = ?)", query.TouristSpotCategoryID)
 	}
 
 	return q
@@ -117,8 +117,8 @@ func (r *TouristSpotQueryRepositoryImpl) buildFindListByParamsQuery(query *query
 	if query.SubSubAreaID != 0 {
 		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))", query.SubSubAreaID)
 	}
-	if query.LcategoryID != 0 {
-		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_lcategory WHERE lcategory_id = ?)", query.LcategoryID)
+	if query.SpotCategoryID != 0 {
+		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_spot_category WHERE spot_category_id = ?)", query.SpotCategoryID)
 	}
 	if len(query.ExcludeSpotIDs) > 0 {
 		q = q.Not("id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (?))", query.ExcludeSpotIDs)

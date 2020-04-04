@@ -16,7 +16,7 @@ type (
 	CategoryQueryServiceImpl struct {
 		AreaCategoryRepository  repository.AreaCategoryQueryRepository
 		ThemeCategoryRepository repository.ThemeCategoryQueryRepository
-		LcategoryRepository     repository.LcategoryQueryRepository
+		SpotCategoryRepository  repository.SpotCategoryQueryRepository
 	}
 )
 
@@ -42,10 +42,10 @@ func (r *CategoryQueryServiceImpl) ShowBySlug(slug string) (entity.Category, err
 		return themeCategory, nil
 	}
 
-	lcategory, err := r.AreaCategoryRepository.FindBySlug(slug)
+	spotCategory, err := r.AreaCategoryRepository.FindBySlug(slug)
 	if err != nil && serror.IsErrorCode(err, serror.CodeNotFound) {
-		return nil, errors.Wrap(err, "failed to find lcategory by slug")
+		return nil, errors.Wrap(err, "failed to find spotCategory by slug")
 	}
 
-	return lcategory, nil
+	return spotCategory, nil
 }

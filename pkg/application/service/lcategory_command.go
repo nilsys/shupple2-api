@@ -11,49 +11,47 @@ import (
 )
 
 type (
-	LcategoryCommandService interface {
-		ImportFromWordpressByID(wordpressLcategoryID int) (*entity.Lcategory, error)
+	SpotCategoryCommandService interface {
+		ImportFromWordpressByID(wordpressSpotCategoryID int) error
 	}
 
-	LcategoryCommandServiceImpl struct {
-		LcategoryCommandRepository repository.LcategoryCommandRepository
-		WordpressQueryRepository   repository.WordpressQueryRepository
+	SpotCategoryCommandServiceImpl struct {
+		SpotCategoryCommandRepository repository.SpotCategoryCommandRepository
+		WordpressQueryRepository      repository.WordpressQueryRepository
 		WordpressService
 		TransactionService
 	}
 )
 
-var LcategoryCommandServiceSet = wire.NewSet(
-	wire.Struct(new(LcategoryCommandServiceImpl), "*"),
-	wire.Bind(new(LcategoryCommandService), new(*LcategoryCommandServiceImpl)),
+var SpotCategoryCommandServiceSet = wire.NewSet(
+	wire.Struct(new(SpotCategoryCommandServiceImpl), "*"),
+	wire.Bind(new(SpotCategoryCommandService), new(*SpotCategoryCommandServiceImpl)),
 )
 
-func (r *LcategoryCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Lcategory, error) {
-	wpLcategories, err := r.WordpressQueryRepository.FindLocationCategoriesByIDs([]int{id})
-	if err != nil || len(wpLcategories) == 0 {
-		return nil, serror.NewResourcesNotFoundError(err, "wordpress lcategory(id=%d)", id)
+func (r *SpotCategoryCommandServiceImpl) ImportFromWordpressByID(id int) error {
+	wpSpotCategories, err := r.WordpressQueryRepository.FindLocationCategoriesByIDs([]int{id})
+	if err != nil || len(wpSpotCategories) == 0 {
+		return serror.NewResourcesNotFoundError(err, "wordpress spotCategory(id=%d)", id)
 	}
 
-	var lcategory *entity.Lcategory
-	err = r.TransactionService.Do(func(c context.Context) error {
-		lcategory, err = r.LcategoryCommandRepository.Lock(c, id)
+	var spotCategory *entity.SpotCategory
+	return r.TransactionService.Do(func(c context.Context) error {
+		spotCategory, err = r.SpotCategoryCommandRepository.Lock(c, id)
 		if err != nil {
 			if !serror.IsErrorCode(err, serror.CodeNotFound) {
-				return errors.Wrap(err, "failed to get lcategory")
+				return errors.Wrap(err, "failed to get spotCategory")
 			}
-			lcategory = &entity.Lcategory{}
+			spotCategory = &entity.SpotCategory{}
 		}
 
-		if err := r.WordpressService.PatchLcategory(lcategory, wpLcategories[0]); err != nil {
-			return errors.Wrap(err, "failed  to patch lcategory")
+		if err := r.WordpressService.PatchSpotCategory(spotCategory, wpSpotCategories[0]); err != nil {
+			return errors.Wrap(err, "failed  to patch spotCategory")
 		}
 
-		if err := r.LcategoryCommandRepository.Store(c, lcategory); err != nil {
-			return errors.Wrap(err, "failed to store lcategory")
+		if err := r.SpotCategoryCommandRepository.Store(c, spotCategory); err != nil {
+			return errors.Wrap(err, "failed to store spotCategory")
 		}
 
 		return nil
 	})
-
-	return lcategory, nil
 }

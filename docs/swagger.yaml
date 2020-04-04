@@ -1270,7 +1270,7 @@ paths:
           schema:
             type: integer
         - in: query
-          name: lcategoryId
+          name: spotCategoryId
           description: |
             観光スポットカテゴリID
             いずれか1つ以上必須
@@ -1336,7 +1336,7 @@ paths:
           schema:
             type: integer
         - in: query
-          name: lcategoryId
+          name: spotCategoryId
           description: |
             観光スポットカテゴリID
           schema:
@@ -2612,7 +2612,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Category"
-        lcategories:
+        spotCategories:
           type: array
           description: 観光スポットカテゴリー
           items:

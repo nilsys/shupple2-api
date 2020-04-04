@@ -11,26 +11,26 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
-var _ = Describe("LcategoryRepositoryImpl", func() {
+var _ = Describe("SpotCategoryRepositoryImpl", func() {
 	var (
-		command *LcategoryCommandRepositoryImpl
-		query   *LcategoryQueryRepositoryImpl
+		command *SpotCategoryCommandRepositoryImpl
+		query   *SpotCategoryQueryRepositoryImpl
 	)
 
 	BeforeEach(func() {
-		command = tests.LcategoryCommandRepositoryImpl
-		query = tests.LcategoryQueryRepositoryImpl
+		command = tests.SpotCategoryCommandRepositoryImpl
+		query = tests.SpotCategoryQueryRepositoryImpl
 
 		truncate(db)
 		Expect(db.Save(newUser(userID)).Error).To(Succeed())
 	})
 
-	base := newLcategory(lcategoryID)
-	baseChanged := newLcategory(lcategoryID)
+	base := newSpotCategory(spotCategoryID)
+	baseChanged := newSpotCategory(spotCategoryID)
 	baseChanged.Name = "changed"
 
-	DescribeTable("Saveは引数のlcategoryを作成するか、その状態になるように更新する",
-		func(before *entity.Lcategory, saved *entity.Lcategory) {
+	DescribeTable("Saveは引数のspotCategoryを作成するか、その状態になるように更新する",
+		func(before *entity.SpotCategory, saved *entity.SpotCategory) {
 			if before != nil {
 				Expect(command.Store(context.Background(), before)).To(Succeed())
 			}
@@ -50,10 +50,11 @@ var _ = Describe("LcategoryRepositoryImpl", func() {
 	)
 })
 
-func newLcategory(id int) *entity.Lcategory {
-	lcategory := entity.Lcategory{}
-	lcategory.ID = id
-	util.FillDummyString(&lcategory, id)
+func newSpotCategory(id int) *entity.SpotCategory {
+	spotCategory := entity.SpotCategory{}
+	spotCategory.ID = id
+	spotCategory.SpotCategoryID = id
+	util.FillDummyString(&spotCategory, id)
 
-	return &lcategory
+	return &spotCategory
 }

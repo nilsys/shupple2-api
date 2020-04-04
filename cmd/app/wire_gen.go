@@ -17,9 +17,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 	service2 "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
-)
 
-import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
@@ -65,6 +63,9 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	themeCategoryQueryRepositoryImpl := &repository.ThemeCategoryQueryRepositoryImpl{
 		DB: db,
 	}
+	spotCategoryQueryRepositoryImpl := &repository.SpotCategoryQueryRepositoryImpl{
+		DB: db,
+	}
 	hashtagQueryRepositoryImpl := &repository.HashtagQueryRepositoryImpl{
 		DB: db,
 	}
@@ -77,6 +78,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		UserQueryRepository:          userQueryRepositoryImpl,
 		AreaCategoryQueryRepository:  areaCategoryQueryRepositoryImpl,
 		ThemeCategoryQueryRepository: themeCategoryQueryRepositoryImpl,
+		SpotCategoryQueryRepository:  spotCategoryQueryRepositoryImpl,
 		HashtagCommandService:        hashtagCommandServiceImpl,
 	}
 	transactionServiceImpl := &repository.TransactionServiceImpl{
@@ -117,13 +119,10 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	postFavoriteCommandController := api.PostFavoriteCommandController{
 		PostFavoriteCommandService: postFavoriteCommandServiceImpl,
 	}
-	lcategoryQueryRepositoryImpl := &repository.LcategoryQueryRepositoryImpl{
-		DB: db,
-	}
 	categoryQueryServiceImpl := &service.CategoryQueryServiceImpl{
 		AreaCategoryRepository:  areaCategoryQueryRepositoryImpl,
 		ThemeCategoryRepository: themeCategoryQueryRepositoryImpl,
-		LcategoryRepository:     lcategoryQueryRepositoryImpl,
+		SpotCategoryRepository:  spotCategoryQueryRepositoryImpl,
 	}
 	categoryQueryController := api.CategoryQueryController{
 		CategoryQueryService: categoryQueryServiceImpl,
@@ -325,14 +324,14 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		WordpressService:         wordpressServiceImpl,
 		TransactionService:       transactionServiceImpl,
 	}
-	lcategoryCommandRepositoryImpl := &repository.LcategoryCommandRepositoryImpl{
+	spotCategoryCommandRepositoryImpl := &repository.SpotCategoryCommandRepositoryImpl{
 		DAO: dao,
 	}
-	lcategoryCommandServiceImpl := &service.LcategoryCommandServiceImpl{
-		LcategoryCommandRepository: lcategoryCommandRepositoryImpl,
-		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
-		WordpressService:           wordpressServiceImpl,
-		TransactionService:         transactionServiceImpl,
+	spotCategoryCommandServiceImpl := &service.SpotCategoryCommandServiceImpl{
+		SpotCategoryCommandRepository: spotCategoryCommandRepositoryImpl,
+		WordpressQueryRepository:      wordpressQueryRepositoryImpl,
+		WordpressService:              wordpressServiceImpl,
+		TransactionService:            transactionServiceImpl,
 	}
 	touristSpotCommandServiceImpl := &service.TouristSpotCommandServiceImpl{
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
@@ -350,14 +349,14 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		TransactionService:       transactionServiceImpl,
 	}
 	wordpressCallbackServiceImpl := &service.WordpressCallbackServiceImpl{
-		UserCommandService:        userCommandServiceImpl,
-		CategoryCommandService:    categoryCommandServiceImpl,
-		ComicCommandService:       comicCommandServiceImpl,
-		FeatureCommandService:     featureCommandServiceImpl,
-		LcategoryCommandService:   lcategoryCommandServiceImpl,
-		PostCommandService:        postCommandServiceImpl,
-		TouristSpotCommandService: touristSpotCommandServiceImpl,
-		VlogCommandService:        vlogCommandServiceImpl,
+		UserCommandService:         userCommandServiceImpl,
+		CategoryCommandService:     categoryCommandServiceImpl,
+		ComicCommandService:        comicCommandServiceImpl,
+		FeatureCommandService:      featureCommandServiceImpl,
+		SpotCategoryCommandService: spotCategoryCommandServiceImpl,
+		PostCommandService:         postCommandServiceImpl,
+		TouristSpotCommandService:  touristSpotCommandServiceImpl,
+		VlogCommandService:         vlogCommandServiceImpl,
 	}
 	wordpressCallbackController := api.WordpressCallbackController{
 		WordpressCallbackService: wordpressCallbackServiceImpl,
@@ -444,6 +443,6 @@ var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet)
 
 var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.LcategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.SpotCategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet)
 
 var factorySet = wire.NewSet(factory.S3SignatureFactorySet)

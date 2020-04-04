@@ -8,7 +8,6 @@ type (
 		FindPostsByIDs(ids []int) ([]*wordpress.Post, error)
 		FindLocationsByIDs(ids []int) ([]*wordpress.Location, error)
 		FindCategoriesByIDs(ids []int) ([]*wordpress.Category, error)
-		FindCategoriesByParentID(parentID, limit int) ([]*wordpress.Category, error)
 		FindLocationCategoriesByIDs(ids []int) ([]*wordpress.LocationCategory, error)
 		FindComicsByIDs(ids []int) ([]*wordpress.Comic, error)
 		FindFeaturesByIDs(ids []int) ([]*wordpress.Feature, error)

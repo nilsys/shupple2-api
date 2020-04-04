@@ -29,13 +29,13 @@ var _ = Describe("TouristSpotRepositoryImpl", func() {
 		for _, cat := range append(themeCategoryIDs, addedThemeCategoryID) {
 			Expect(db.Save(newThemeCategory(cat)).Error).To(Succeed())
 		}
-		for _, lcat := range append(lcategoryIDs, addedLcategoryID) {
-			Expect(db.Save(newLcategory(lcat)).Error).To(Succeed())
+		for _, lcat := range append(spotCategoryIDs, addedSpotCategoryID) {
+			Expect(db.Save(newSpotCategory(lcat)).Error).To(Succeed())
 		}
 	})
 
-	base := newTouristSpot(touristSpotID, areaCategoryIDs, themeCategoryIDs, lcategoryIDs)
-	baseChanged := newTouristSpot(touristSpotID, areaCategoryIDs, themeCategoryIDs, lcategoryIDs)
+	base := newTouristSpot(touristSpotID, areaCategoryIDs, themeCategoryIDs, spotCategoryIDs)
+	baseChanged := newTouristSpot(touristSpotID, areaCategoryIDs, themeCategoryIDs, spotCategoryIDs)
 	baseChanged.Name = "changed"
 
 	DescribeTable("Saveは引数のtouristSpotを作成するか、その状態になるように更新する",
@@ -54,12 +54,12 @@ var _ = Describe("TouristSpotRepositoryImpl", func() {
 		},
 		Entry("新規作成", nil, base),
 		Entry("フィールドに変更がある場合", base, baseChanged),
-		Entry("area_categoryが追加される場合", base, newTouristSpot(touristSpotID, append(areaCategoryIDs, addedAreaCategoryID), themeCategoryIDs, lcategoryIDs)),
-		Entry("theme_categoryが追加される場合", base, newTouristSpot(touristSpotID, areaCategoryIDs, append(themeCategoryIDs, addedThemeCategoryID), lcategoryIDs)),
-		Entry("lcategoryが追加される場合", base, newTouristSpot(touristSpotID, areaCategoryIDs, themeCategoryIDs, append(lcategoryIDs, addedLcategoryID))),
-		Entry("area_categoryが削除される場合", base, newTouristSpot(touristSpotID, areaCategoryIDs[:1], themeCategoryIDs, lcategoryIDs)),
-		Entry("theme_categoryが削除される場合", base, newTouristSpot(touristSpotID, areaCategoryIDs, themeCategoryIDs[:1], lcategoryIDs)),
-		Entry("lcategoryが削除される場合", base, newTouristSpot(touristSpotID, areaCategoryIDs, themeCategoryIDs, lcategoryIDs[:1])),
+		Entry("area_categoryが追加される場合", base, newTouristSpot(touristSpotID, append(areaCategoryIDs, addedAreaCategoryID), themeCategoryIDs, spotCategoryIDs)),
+		Entry("theme_categoryが追加される場合", base, newTouristSpot(touristSpotID, areaCategoryIDs, append(themeCategoryIDs, addedThemeCategoryID), spotCategoryIDs)),
+		Entry("spotCategoryが追加される場合", base, newTouristSpot(touristSpotID, areaCategoryIDs, themeCategoryIDs, append(spotCategoryIDs, addedSpotCategoryID))),
+		Entry("area_categoryが削除される場合", base, newTouristSpot(touristSpotID, areaCategoryIDs[:1], themeCategoryIDs, spotCategoryIDs)),
+		Entry("theme_categoryが削除される場合", base, newTouristSpot(touristSpotID, areaCategoryIDs, themeCategoryIDs[:1], spotCategoryIDs)),
+		Entry("spotCategoryが削除される場合", base, newTouristSpot(touristSpotID, areaCategoryIDs, themeCategoryIDs, spotCategoryIDs[:1])),
 	)
 
 	Describe("FindDetailByID", func() {
@@ -86,16 +86,16 @@ var _ = Describe("TouristSpotRepositoryImpl", func() {
 				Expect(c.Name).NotTo(BeEmpty())
 			}
 
-			Expect(actual.Lcategories).To(HaveLen(len(base.LcategoryIDs)))
-			for i, c := range actual.Lcategories {
-				Expect(c.ID).To(Equal(base.LcategoryIDs[i].LcategoryID))
+			Expect(actual.SpotCategories).To(HaveLen(len(base.SpotCategoryIDs)))
+			for i, c := range actual.SpotCategories {
+				Expect(c.ID).To(Equal(base.SpotCategoryIDs[i].SpotCategoryID))
 				Expect(c.Name).NotTo(BeEmpty())
 			}
 		})
 	})
 })
 
-func newTouristSpot(id int, areaCategoryIDs, themeCategoryIDs, lcategoryIDs []int) *entity.TouristSpot {
+func newTouristSpot(id int, areaCategoryIDs, themeCategoryIDs, spotCategoryIDs []int) *entity.TouristSpot {
 	touristSpot := entity.TouristSpotTiny{
 		ID:        id,
 		Lat:       null.FloatFrom(float64(id)),
@@ -105,6 +105,6 @@ func newTouristSpot(id int, areaCategoryIDs, themeCategoryIDs, lcategoryIDs []in
 	}
 	util.FillDummyString(&touristSpot, id)
 
-	l := entity.NewTouristSpot(touristSpot, areaCategoryIDs, themeCategoryIDs, lcategoryIDs)
+	l := entity.NewTouristSpot(touristSpot, areaCategoryIDs, themeCategoryIDs, spotCategoryIDs)
 	return &l
 }

@@ -515,6 +515,61 @@ func (x *ReviewSortBy) UnmarshalText(text []byte) error {
 }
 
 const (
+	// SpotCategoryTypeUndefined is a SpotCategoryType of type Undefined
+	SpotCategoryTypeUndefined SpotCategoryType = iota
+	// SpotCategoryTypeSpotCategory is a SpotCategoryType of type SpotCategory
+	SpotCategoryTypeSpotCategory
+	// SpotCategoryTypeSubSpotCategory is a SpotCategoryType of type SubSpotCategory
+	SpotCategoryTypeSubSpotCategory
+)
+
+const _SpotCategoryTypeName = "UndefinedSpotCategorySubSpotCategory"
+
+var _SpotCategoryTypeMap = map[SpotCategoryType]string{
+	0: _SpotCategoryTypeName[0:9],
+	1: _SpotCategoryTypeName[9:21],
+	2: _SpotCategoryTypeName[21:36],
+}
+
+// String implements the Stringer interface.
+func (x SpotCategoryType) String() string {
+	if str, ok := _SpotCategoryTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("SpotCategoryType(%d)", x)
+}
+
+var _SpotCategoryTypeValue = map[string]SpotCategoryType{
+	_SpotCategoryTypeName[0:9]:   0,
+	_SpotCategoryTypeName[9:21]:  1,
+	_SpotCategoryTypeName[21:36]: 2,
+}
+
+// ParseSpotCategoryType attempts to convert a string to a SpotCategoryType
+func ParseSpotCategoryType(name string) (SpotCategoryType, error) {
+	if x, ok := _SpotCategoryTypeValue[name]; ok {
+		return x, nil
+	}
+	return SpotCategoryType(0), fmt.Errorf("%s is not a valid SpotCategoryType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x SpotCategoryType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *SpotCategoryType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseSpotCategoryType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// SuggestionTypeArea is a SuggestionType of type Area
 	SuggestionTypeArea SuggestionType = iota + 1
 	// SuggestionTypeSubArea is a SuggestionType of type SubArea

@@ -14,7 +14,7 @@ func ConvertTouristSpotListParamToQuery(param *param.ListTouristSpotParams) *que
 		AreaID:         param.AreaID,
 		SubAreaID:      param.SubAreaID,
 		SubSubAreaID:   param.SubSubAreaID,
-		LcategoryID:    param.LcategoryID,
+		SpotCategoryID: param.SpotCategoryID,
 		ExcludeSpotIDs: param.ExcludeSpotIDs,
 		Limit:          param.GetLimit(),
 		OffSet:         param.GetOffset(),
@@ -42,10 +42,10 @@ func convertTouristSpotToOutput(touristSpot *entity.TouristSpot) *response.Touri
 }
 
 func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.QueryTouristSpot) *response.ShowTouristSpot {
-	lcategories := make([]*response.Lcategory, len(queryTouristSpot.Lcategories))
+	spotCategories := make([]*response.SpotCategory, len(queryTouristSpot.SpotCategories))
 
-	for i, lcategory := range queryTouristSpot.Lcategories {
-		lcategories[i] = response.NewLcategory(lcategory.ID, lcategory.Name, lcategory.Slug)
+	for i, spotCategory := range queryTouristSpot.SpotCategories {
+		spotCategories[i] = response.NewSpotCategory(spotCategory.ID, spotCategory.Name, spotCategory.Slug)
 	}
 
 	return &response.ShowTouristSpot{
@@ -70,7 +70,7 @@ func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.QueryTouristSpot) 
 		VendorRate:      queryTouristSpot.VendorRate,
 		AreaCategories:  ConvertAreaCategoriesToOutput(queryTouristSpot.AreaCategories),
 		ThemeCategories: ConvertThemeCategoriesToOutput(queryTouristSpot.ThemeCategories),
-		Lcategories:     lcategories,
+		SpotCategories:  spotCategories,
 		CreatedAt:       model.TimeResponse(queryTouristSpot.CreatedAt),
 		UpdatedAt:       model.TimeResponse(queryTouristSpot.UpdatedAt),
 	}

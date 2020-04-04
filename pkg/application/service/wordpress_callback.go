@@ -18,7 +18,7 @@ type (
 		CategoryCommandService
 		ComicCommandService
 		FeatureCommandService
-		LcategoryCommandService
+		SpotCategoryCommandService
 		PostCommandService
 		TouristSpotCommandService
 		VlogCommandService
@@ -48,7 +48,7 @@ func (s *WordpressCallbackServiceImpl) Import(entityType wordpress.EntityType, i
 	case wordpress.EntityTypeCategory:
 		err = s.CategoryCommandService.ImportFromWordpressByID(id)
 	case wordpress.EntityTypeLocationCat:
-		_, err = s.LcategoryCommandService.ImportFromWordpressByID(id)
+		err = s.SpotCategoryCommandService.ImportFromWordpressByID(id)
 	default:
 		err = serror.New(nil, serror.CodeInvalidParam, "unknown wordpress entity type; %s", entityType)
 	}

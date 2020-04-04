@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"path"
 	"reflect"
 	"time"
 
@@ -26,12 +27,21 @@ const (
 	perPage = 100
 )
 
-type Entry struct {
-	IsTaxonomy    bool
+type IDContainer struct {
+	ID int
+}
+
+type PostEntry struct {
 	TargetTable   string
 	WordpressName string
 	Getter        interface{}
 	Importer      interface{}
+}
+
+type TaxonomyEntry struct {
+	Taxonomy string
+	Getter   func(parentID int) ([]*IDContainer, error)
+	Importer func(id int) error
 }
 
 type Config struct {
@@ -52,11 +62,15 @@ type Script struct {
 	CategoryService       service.CategoryCommandService
 	ComicService          service.ComicCommandService
 	FeatureService        service.FeatureCommandService
-	LcategoryService      service.LcategoryCommandService
+	SpotCategoryService   service.SpotCategoryCommandService
 	PostService           service.PostCommandService
 	TouristSpotService    service.TouristSpotCommandService
 	VlogService           service.VlogCommandService
 	ReviewCommandScenario scenario.ReviewCommandScenario
+}
+
+type CustomizedWordpressRepo struct {
+	*repositoryImpl.WordpressQueryRepositoryImpl
 }
 
 func main() {
@@ -74,19 +88,22 @@ func run() error {
 	return script.Run()
 }
 
-func (s Script) Entries() []Entry {
-	return []Entry{
-		Entry{true, "lcategory", "location__cat", s.WordpressRepo.FindLocationCategoriesByIDs, s.LcategoryService.ImportFromWordpressByID},
-		Entry{false, "post", "post", s.WordpressRepo.FindPostsByIDs, s.PostService.ImportFromWordpressByID},
-		Entry{false, "feature", "feature", s.WordpressRepo.FindFeaturesByIDs, s.FeatureService.ImportFromWordpressByID},
-		Entry{false, "tourist_spot", "location", s.WordpressRepo.FindLocationsByIDs, s.TouristSpotService.ImportFromWordpressByID},
-		Entry{false, "vlog", "movie", s.WordpressRepo.FindVlogsByIDs, s.VlogService.ImportFromWordpressByID},
-		Entry{false, "comic", "comic", s.WordpressRepo.FindComicsByIDs, s.ComicService.ImportFromWordpressByID},
+func (s Script) PostEntries() []PostEntry {
+	return []PostEntry{
+		PostEntry{"post", "post", s.WordpressRepo.FindPostsByIDs, s.PostService.ImportFromWordpressByID},
+		PostEntry{"feature", "feature", s.WordpressRepo.FindFeaturesByIDs, s.FeatureService.ImportFromWordpressByID},
+		PostEntry{"tourist_spot", "location", s.WordpressRepo.FindLocationsByIDs, s.TouristSpotService.ImportFromWordpressByID},
+		PostEntry{"vlog", "movie", s.WordpressRepo.FindVlogsByIDs, s.VlogService.ImportFromWordpressByID},
+		PostEntry{"comic", "comic", s.WordpressRepo.FindComicsByIDs, s.ComicService.ImportFromWordpressByID},
 	}
 }
 
-func (s Script) getWordpressDBURL() string {
-	return ""
+func (s Script) TaxonomyEntries() []TaxonomyEntry {
+	repo := &CustomizedWordpressRepo{s.WordpressRepo.(*repositoryImpl.WordpressQueryRepositoryImpl)}
+	return []TaxonomyEntry{
+		TaxonomyEntry{"category", repo.FindCategoryIDsByParentID, s.CategoryService.ImportFromWordpressByID},
+		TaxonomyEntry{"spotCategory", repo.FindSpotCategoryIDsByParentID, s.SpotCategoryService.ImportFromWordpressByID},
+	}
 }
 
 func (s Script) Run() error {
@@ -100,17 +117,20 @@ func (s Script) Run() error {
 		return errors.WithStack(err)
 	}
 
-	if err := s.importUser(db); err != nil {
-		return errors.WithStack(err)
+	// if err := s.importUser(db); err != nil {
+	// 	return errors.WithStack(err)
+	// }
+
+	for _, e := range s.TaxonomyEntries() {
+		log.Printf("start to import %s\n", e.Taxonomy)
+		if err := s.importTaxonomy(db, e); err != nil {
+			return errors.Wrapf(err, "failed to import %s", e.Taxonomy)
+		}
 	}
 
-	if err := s.importCategory(db); err != nil {
-		return errors.WithStack(err)
-	}
-
-	for _, e := range s.Entries() {
+	for _, e := range s.PostEntries() {
 		log.Printf("start to import %s\n", e.TargetTable)
-		if err := s.importData(db, e); err != nil {
+		if err := s.importPostData(db, e); err != nil {
 			return errors.Wrapf(err, "failed to import %s", e.TargetTable)
 		}
 	}
@@ -125,15 +145,11 @@ func connectWordpressDatabase(db string) (*gorm.DB, error) {
 	})
 }
 
-func queryForGetMaxID(entry Entry) string {
+func queryForGetMaxID(entry PostEntry) string {
 	return fmt.Sprintf("select COALESCE(max(id), 0) from %s", entry.TargetTable)
 }
 
-func queryForWordpressIDs(entry Entry) string {
-	if entry.IsTaxonomy {
-		return "select term_id as id from wp_term_taxonomy where taxonomy = ? and term_id > ? order by term_id limit ?"
-	}
-
+func queryForWordpressIDs(entry PostEntry) string {
 	return "select id from wp_posts where post_status = 'publish' AND post_type = ? and id > ? order by id limit ?"
 }
 
@@ -181,7 +197,7 @@ func (s Script) convertUser(wpUser *wordpress.User) *entity.User {
 	}
 }
 
-func (s Script) importData(wordpressDB *gorm.DB, entry Entry) error {
+func (s Script) importPostData(wordpressDB *gorm.DB, entry PostEntry) error {
 	lastID := 0
 	if err := s.DB.Raw(queryForGetMaxID(entry)).Row().Scan(&lastID); err != nil {
 		return errors.WithStack(err)
@@ -217,33 +233,54 @@ func (s Script) importData(wordpressDB *gorm.DB, entry Entry) error {
 	return nil
 }
 
-func (s Script) importCategory(wordpressDB *gorm.DB) error {
-	return errors.Wrap(s.importCategorySub(wordpressDB, 0), "failed to import categories")
+func (s Script) importTaxonomy(wordpressDB *gorm.DB, entry TaxonomyEntry) error {
+	return errors.Wrapf(s.importCategorySub(wordpressDB, entry, 0), "failed to import taxonomies; %s", entry.Taxonomy)
 }
 
-func (s Script) importCategorySub(wordpressDB *gorm.DB, parentID int) error {
+func (s Script) importCategorySub(wordpressDB *gorm.DB, entry TaxonomyEntry, parentID int) error {
 	// 一つのカテゴリに紐づく子カテの数はそれぞれ100件未満であることを事前に確認しているためページングは不要
-	categories, err := s.WordpressRepo.FindCategoriesByParentID(parentID, 0)
+	ids, err := entry.Getter(parentID)
 	if err != nil {
-		return errors.Wrap(err, "failed to find categories")
+		return errors.Wrapf(err, "failed to find %s", entry.Taxonomy)
 	}
-	if len(categories) == 100 {
-		return errors.New("script seems to be bugged")
+	if len(ids) == 100 {
+		return errors.Errorf("script seems to be bugged for %s", entry.Taxonomy)
 	}
 
-	for _, c := range categories {
-		if err := s.CategoryService.ImportFromWordpressByID(c.ID); err != nil {
-			return errors.Wrapf(err, "failed to import wordpress category; id=%d", c.ID)
+	for _, id := range ids {
+		if err := entry.Importer(id.ID); err != nil {
+			return errors.Wrapf(err, "failed to import wordpress %s; id=%d", entry.Taxonomy, id.ID)
 		}
 
 		if debug {
 			continue
 		}
 
-		if err := s.importCategorySub(wordpressDB, c.ID); err != nil {
-			return errors.Wrapf(err, "failed to import wordpress category children; parent_id=%d", c.ID)
+		if err := s.importCategorySub(wordpressDB, entry, id.ID); err != nil {
+			return errors.Wrapf(err, "failed to import wordpress %s children; parent_id=%d", entry.Taxonomy, id.ID)
 		}
 	}
 
 	return nil
+}
+
+func (r *CustomizedWordpressRepo) FindCategoryIDsByParentID(parentID int) ([]*IDContainer, error) {
+	return r.FindIDsByParentID("/wp-json/wp/v2/categories/", parentID)
+}
+
+func (r *CustomizedWordpressRepo) FindSpotCategoryIDsByParentID(parentID int) ([]*IDContainer, error) {
+	return r.FindIDsByParentID("/wp-json/wp/v2/location__cat/", parentID)
+}
+
+func (r *CustomizedWordpressRepo) FindIDsByParentID(listPath string, parentID int) ([]*IDContainer, error) {
+	wURL := r.BaseURL
+	wURL.Path = path.Join(wURL.Path, listPath)
+
+	q := wURL.Query()
+	q.Set("parent", fmt.Sprint(parentID))
+	q.Set("per_page", fmt.Sprint(perPage))
+	wURL.RawQuery = q.Encode()
+
+	var resp []*IDContainer
+	return resp, errors.Wrap(r.GetJSON(wURL.String(), &resp), "failed to get wordpress category")
 }

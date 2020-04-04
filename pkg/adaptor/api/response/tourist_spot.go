@@ -36,7 +36,7 @@ type (
 		VendorRate      float64            `json:"vendorRate"`
 		AreaCategories  []*AreaCategory    `json:"areaCategories"`
 		ThemeCategories []*ThemeCategory   `json:"themeCategories"`
-		Lcategories     []*Lcategory       `json:"lcategories"`
+		SpotCategories  []*SpotCategory    `json:"spotCategories"`
 		CreatedAt       model.TimeResponse `json:"createdAt"`
 		UpdatedAt       model.TimeResponse `json:"updatedAt"`
 	}

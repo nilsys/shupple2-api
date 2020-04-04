@@ -99,31 +99,6 @@ func (r *WordpressQueryRepositoryImpl) FindCategoriesByIDs(ids []int) ([]*wordpr
 	return result, nil
 }
 
-func (r *WordpressQueryRepositoryImpl) FindCategoriesByParentID(parentID, limit int) ([]*wordpress.Category, error) {
-	if limit == 0 {
-		limit = maxPerPage
-	}
-
-	wURL := r.BaseURL
-	wURL.Path = path.Join(wURL.Path, listCategoriesPath)
-
-	q := wURL.Query()
-	q.Set("parent", fmt.Sprint(parentID))
-	q.Set("per_page", fmt.Sprint(limit))
-	wURL.RawQuery = q.Encode()
-
-	var resp dto.WordpressCategories
-	if err := r.getJSON(wURL.String(), &resp); err != nil {
-		return nil, errors.Wrap(err, "failed to get wordpress category")
-	}
-
-	result, err := resp.ToEntities()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to convert wordpress category dto")
-	}
-	return result, nil
-}
-
 func (r *WordpressQueryRepositoryImpl) FindLocationCategoriesByIDs(ids []int) ([]*wordpress.LocationCategory, error) {
 	var res []*wordpress.LocationCategory
 	return res, r.gets(listLocationCategoriesPath, ids, &res)
@@ -178,10 +153,10 @@ func (r *WordpressQueryRepositoryImpl) gets(wPath string, ids []int, result inte
 	q.Set("per_page", fmt.Sprint(len(ids)))
 	wURL.RawQuery = q.Encode()
 
-	return r.getJSON(wURL.String(), result)
+	return r.GetJSON(wURL.String(), result)
 }
 
-func (r *WordpressQueryRepositoryImpl) getJSON(url string, result interface{}) error {
+func (r *WordpressQueryRepositoryImpl) GetJSON(url string, result interface{}) error {
 	// query stringがあるとキャッシュが無効になるように設定されているのでここで付与
 	if strings.Contains(url, "?") {
 		url += "&cache_busting"
