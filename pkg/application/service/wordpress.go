@@ -271,18 +271,14 @@ func (s *WordpressServiceImpl) PatchSpotCategory(spotCategory *entity.SpotCatego
 }
 
 func (s *WordpressServiceImpl) PatchVlog(vlog *entity.Vlog, wpVlog *wordpress.Vlog) error {
-	user, err := s.UserQueryRepository.FindByWordpressID(wpVlog.Author)
+	user, err := s.UserQueryRepository.FindByWordpressID(wpVlog.Attributes.Creator.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get user corresponding to wordpress user")
 	}
 
-	editors := make([]int, len(wpVlog.Attributes.FilmEdit))
-	for i, fe := range wpVlog.Attributes.FilmEdit {
-		user, err := s.UserQueryRepository.FindByWordpressID(fe.ID)
-		if err != nil {
-			return errors.Wrap(err, "failed to get user corresponding to film_edit")
-		}
-		editors[i] = user.ID
+	editor, err := s.UserQueryRepository.FindByWordpressID(wpVlog.Attributes.Editor.ID)
+	if err != nil {
+		return errors.Wrap(err, "failed to get user as editor corresponding to wordpress user")
 	}
 
 	thumbnail, err := s.getThumbnail(wpVlog.FeaturedMedia)
@@ -297,12 +293,14 @@ func (s *WordpressServiceImpl) PatchVlog(vlog *entity.Vlog, wpVlog *wordpress.Vl
 
 	vlog.ID = wpVlog.ID
 	vlog.UserID = user.ID
+	vlog.EditorID = editor.ID
 	vlog.Slug = wpVlog.Slug
 	vlog.Thumbnail = thumbnail
 	vlog.Title = wpVlog.Title.Rendered
 	vlog.Body = wpVlog.Content.Rendered
 	vlog.YoutubeURL = wpVlog.Attributes.Youtube
 	vlog.Series = wpVlog.Attributes.Series
+	vlog.UserSNS = wpVlog.Attributes.CreatorSns
 	vlog.YearMonth = wpVlog.Attributes.YearMonth
 	vlog.PlayTime = wpVlog.Attributes.RunTime
 	vlog.Timeline = wpVlog.Attributes.MovieTimeline
@@ -310,7 +308,6 @@ func (s *WordpressServiceImpl) PatchVlog(vlog *entity.Vlog, wpVlog *wordpress.Vl
 	vlog.SetTouristSpots(wpVlog.Attributes.MovieLocation)
 	vlog.SetAreaCategories(areaCategoryIDs)
 	vlog.SetThemeCategories(themeCategoryIDs)
-	vlog.SetEditors(editors)
 
 	return nil
 }
