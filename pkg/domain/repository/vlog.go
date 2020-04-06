@@ -16,7 +16,7 @@ type (
 
 	VlogQueryRepository interface {
 		FindByID(id int) (*entity.Vlog, error)
-		FindListByParams(query *query.FindVlogListQuery) (*entity.VlogDetailList, error)
-		FindWithTouristSpotsByID(id int) (*entity.VlogDetailWithTouristSpots, error)
+		FindListByParams(query *query.FindVlogListQuery) (*entity.VlogList, error)
+		FindDetailByID(id int) (*entity.VlogDetail, error)
 	}
 )

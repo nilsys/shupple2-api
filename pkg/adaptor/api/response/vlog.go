@@ -22,8 +22,6 @@ type (
 		Title           string             `json:"title"`
 		Body            string             `json:"body"`
 		Series          string             `json:"series"`
-		Creator         Creator            `json:"creator"`
-		Editor          Creator            `json:"editor"`
 		YoutubeURL      string             `json:"youtubeUrl"`
 		Views           int                `json:"views"`
 		ShootingDate    string             `json:"shootingDate"`
@@ -31,10 +29,11 @@ type (
 		Timeline        string             `json:"timeline"`
 		FacebookCount   int                `json:"facebookCount"`
 		TwitterCount    int                `json:"twitterCount"`
+		Editors         []*Creator         `json:"editors"`
 		AreaCategories  []*AreaCategory    `json:"areaCategories"`
 		ThemeCategories []*ThemeCategory   `json:"themeCategories"`
+		TouristSpot     []*TouristSpot     `json:"touristSpots"`
 		CreatedAt       model.TimeResponse `json:"createdAt"`
 		UpdatedAt       model.TimeResponse `json:"updatedAt"`
-		TouristSpot     []*TouristSpot     `json:"touristSpots"`
 	}
 )

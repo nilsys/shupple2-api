@@ -2479,16 +2479,6 @@ components:
           type: string
           description: サムネイルURL
           example: http://example.com/img/1
-        areaCategories:
-          type: array
-          description: エリアカテゴリ
-          items:
-            $ref: "#/components/schemas/Category"
-        themeCategories:
-          type: array
-          description: テーマカテゴリ
-          items:
-            $ref: "#/components/schemas/Category"
         title:
           type: string
           description: 動画タイトル
@@ -2501,10 +2491,6 @@ components:
           type: string
           description: シリーズ名
           example: ~シリーズ~
-        creator:
-          $ref: "#/components/schemas/Creator"
-        editor:
-          $ref: "#/components/schemas/Creator"
         shootingDate:
           type: string
           description: 撮影日時, ISO 8601形式
@@ -2540,6 +2526,21 @@ components:
           type: integer
           description: Twitterシェア数
           example: 5
+        editors:
+          type: array
+          description: 共同編集者
+          items:
+            $ref: "#/components/schemas/Creator"
+        areaCategories:
+          type: array
+          description: エリアカテゴリ
+          items:
+            $ref: "#/components/schemas/Category"
+        themeCategories:
+          type: array
+          description: テーマカテゴリ
+          items:
+            $ref: "#/components/schemas/Category"
         touristSpots:
           type: array
           items:

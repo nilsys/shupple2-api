@@ -26,8 +26,8 @@ func (r *VlogQueryRepositoryImpl) FindByID(id int) (*entity.Vlog, error) {
 	return &row, nil
 }
 
-func (r *VlogQueryRepositoryImpl) FindWithTouristSpotsByID(id int) (*entity.VlogDetailWithTouristSpots, error) {
-	var row entity.VlogDetailWithTouristSpots
+func (r *VlogQueryRepositoryImpl) FindDetailByID(id int) (*entity.VlogDetail, error) {
+	var row entity.VlogDetail
 
 	if err := r.DB.First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "vlog(id=%d)", id)
@@ -35,8 +35,8 @@ func (r *VlogQueryRepositoryImpl) FindWithTouristSpotsByID(id int) (*entity.Vlog
 	return &row, nil
 }
 
-func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuery) (*entity.VlogDetailList, error) {
-	var rows entity.VlogDetailList
+func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuery) (*entity.VlogList, error) {
+	var rows entity.VlogList
 
 	q := r.buildFindByParamsQuery(query)
 

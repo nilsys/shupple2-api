@@ -22,7 +22,7 @@ func ConvertListVlogParamToQuery(param *param.ListVlogParam) *query.FindVlogList
 	}
 }
 
-func ConvertVlogDetailListToOutput(queryVlogs *entity.VlogDetailList) response.VlogList {
+func ConvertVlogListToOutput(queryVlogs *entity.VlogList) response.VlogList {
 	responseVlogs := make([]*response.Vlog, len(queryVlogs.Vlogs))
 
 	for i, queryVlog := range queryVlogs.Vlogs {
@@ -35,11 +35,16 @@ func ConvertVlogDetailListToOutput(queryVlogs *entity.VlogDetailList) response.V
 	}
 }
 
-func ConvertVlogDetailWithTouristSpots(vlog *entity.VlogDetailWithTouristSpots) *response.VlogDetail {
+func ConvertVlogDetail(vlog *entity.VlogDetail) *response.VlogDetail {
 	touristSpots := make([]*response.TouristSpot, len(vlog.TouristSpots))
-
 	for i, touristSpot := range vlog.TouristSpots {
 		touristSpots[i] = response.NewTouristSpots(touristSpot.ID, touristSpot.Name, touristSpot.Thumbnail)
+	}
+
+	editors := make([]*response.Creator, len(vlog.Editors))
+	for i, editor := range vlog.Editors {
+		e := response.NewCreatorFromUser(editor)
+		editors[i] = &e
 	}
 
 	return &response.VlogDetail{
@@ -48,8 +53,6 @@ func ConvertVlogDetailWithTouristSpots(vlog *entity.VlogDetailWithTouristSpots) 
 		Title:           vlog.Title,
 		Body:            vlog.Body,
 		Series:          vlog.Series,
-		Creator:         response.NewCreatorFromUser(vlog.User),
-		Editor:          response.NewCreatorFromUser(vlog.User),
 		YoutubeURL:      vlog.YoutubeURL,
 		Views:           vlog.Views,
 		ShootingDate:    vlog.YearMonth,
@@ -57,15 +60,16 @@ func ConvertVlogDetailWithTouristSpots(vlog *entity.VlogDetailWithTouristSpots) 
 		Timeline:        vlog.Timeline,
 		FacebookCount:   vlog.FacebookCount,
 		TwitterCount:    vlog.TwitterCount,
+		Editors:         editors,
 		AreaCategories:  ConvertAreaCategoriesToOutput(vlog.AreaCategories),
 		ThemeCategories: ConvertThemeCategoriesToOutput(vlog.ThemeCategories),
+		TouristSpot:     touristSpots,
 		CreatedAt:       model.TimeResponse(vlog.CreatedAt),
 		UpdatedAt:       model.TimeResponse(vlog.UpdatedAt),
-		TouristSpot:     touristSpots,
 	}
 }
 
-func convertVlogToOutput(queryVlog *entity.VlogDetail) *response.Vlog {
+func convertVlogToOutput(queryVlog *entity.VlogForList) *response.Vlog {
 	return &response.Vlog{
 		ID:              queryVlog.ID,
 		Thumbnail:       queryVlog.Thumbnail,

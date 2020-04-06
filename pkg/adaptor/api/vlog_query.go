@@ -30,7 +30,7 @@ func (c *VlogQueryController) Show(ctx echo.Context) error {
 		return errors.Wrapf(err, "failed show vlog id=%d", p.ID)
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertVlogDetailWithTouristSpots(vlog))
+	return ctx.JSON(http.StatusOK, converter.ConvertVlogDetail(vlog))
 }
 func (c *VlogQueryController) ListVlog(ctx echo.Context) error {
 	param := &param.ListVlogParam{}
@@ -43,5 +43,5 @@ func (c *VlogQueryController) ListVlog(ctx echo.Context) error {
 		return errors.Wrap(err, "failed show vlog list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertVlogDetailListToOutput(vlogs))
+	return ctx.JSON(http.StatusOK, converter.ConvertVlogListToOutput(vlogs))
 }
