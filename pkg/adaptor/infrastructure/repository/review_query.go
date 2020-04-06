@@ -18,8 +18,6 @@ type ReviewQueryRepositoryImpl struct {
 	DB *gorm.DB
 }
 
-const recommendMonthPeriod = 1
-
 var ReviewQueryRepositorySet = wire.NewSet(
 	wire.Struct(new(ReviewQueryRepositoryImpl), "*"),
 	wire.Bind(new(repository.ReviewQueryRepository), new(*ReviewQueryRepositoryImpl)),

@@ -28,6 +28,7 @@ const (
 	defaultRangeSearchKm           = 5
 	dummyCredential                = "dummy"
 	defaultSearchSuggestionsNumber = 10
+	recommendMonthPeriod           = 1
 )
 
 type DAO struct {

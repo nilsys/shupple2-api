@@ -1,10 +1,13 @@
 package repository
 
 import (
+	"time"
+
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -160,6 +163,10 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 	// TODO: titleに引っかかる物が優先順位が高い、その後body
 	if query.Keyward != "" {
 		q = q.Where("MATCH(title) AGAINST(?)", query.Keyward).Or("id IN (SELECT post_id FROM post_body WHERE MATCH(body) AGAINST(?))", query.Keyward)
+	}
+
+	if query.SortBy == model.MediaSortByRANKING {
+		q = q.Where("updated_at BETWEEN ? AND ?", time.Date(time.Now().Year(), time.Now().Month()-recommendMonthPeriod, time.Now().Day(), 0, 0, 0, 0, time.Local), time.Now())
 	}
 
 	return q
