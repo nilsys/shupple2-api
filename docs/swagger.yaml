@@ -44,6 +44,28 @@ paths:
                 $ref: "#/components/schemas/Error"
       security:
         - iDPCognito: []
+    get:
+      tags:
+        - user
+      summary: プロフィール取得
+      description: |
+        ユーザープロフィール取得
+      parameters:
+        - in: query
+          name: id
+          description: |
+            UserId
+            
+            ＊指定されない場合、tokenからユーザーを取得する
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
   /users/ranking:
     get:
       tags:
@@ -1936,8 +1958,13 @@ components:
       properties:
         id:
           type: integer
+          example: 1
+        uid:
+          type: string
+          example: Yta
         name:
           type: string
+          example: ひとみ
         email:
           type: string
           format: email
@@ -1947,21 +1974,46 @@ components:
         gender:
           type: string
           enum:
-            - male
-            - female
+            - Male
+            - Female
         profile:
           type: string
-        header:
+          example: 初めまして、旅大好きです
+        headerUrl:
           type: string
           format: url
-          description: ヘッダ画像。userIDから一意に定まる
-        icon:
+          description: ヘッダ画像
+        iconUrl:
           type: string
           format: url
-          description: アイコン。userIDから一意に定まる
+          description: アイコン
         pinnedPostId:
           type: integer
           description: 一番上に表示される記事
+          example: 50
+        facebook:
+          type: string
+          description: facebook url
+        instagram:
+          type: string
+          description: instagram url
+        twitter:
+          type: string
+          description: twitter url
+        livingArea:
+          type: string
+          description: 居住地
+          example: 東北
+        postCount:
+          type: string
+          description: 投稿数
+          example: 1
+        followingCount:
+          type: integer
+          description: フォロー数
+        followedCount:
+          type: integer
+          description: フォロワー数
         interests:
           type: array
           items:
@@ -2836,7 +2888,7 @@ components:
           example: |
             横浜生まれ東京育ちの旅好きライター。年に２，３回は国内外の旅行に行きます。
             旅先での楽しみはグルメとお酒と地元の人と仲良くなること
-        iconURL:
+        iconUrl:
           type: string
           description: アイコン画像URL
           example: https://files.stayway.jp/avatar/1
@@ -2867,7 +2919,7 @@ components:
           type: string
           description: 名前
           example: hanako
-        iconURL:
+        iconUrl:
           type: string
           description: アイコン画像URL
           example: https://files.stayway.jp/avatar/1
