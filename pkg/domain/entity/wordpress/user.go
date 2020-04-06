@@ -15,7 +15,15 @@ type User struct {
 	Link        string         `json:"link"`
 	Slug        string         `json:"slug"`
 	AvatarURLs  AvatarURLs     `json:"avatar_urls"`
+	Meta        UserMeta       `json:"meta"`
 	Attributes  UserAttributes `json:"acf"`
+}
+
+type UserMeta struct {
+	Facebook  string `json:"facebook"`
+	Twitter   string `json:"twitter"`
+	Instagram string `json:"instagram"`
+	Youtube   string `json:"youtube"`
 }
 
 type UserAttributes struct {
@@ -26,6 +34,15 @@ type AvatarURLs struct {
 	Num24 string `json:"24"`
 	Num48 string `json:"48"`
 	Num96 string `json:"96"`
+}
+
+func (u *UserMeta) UnmarshalJSON(body []byte) error {
+	if bytes.Equal(body, arrayJSONBytes) {
+		return nil
+	}
+
+	type Alias UserMeta
+	return errors.WithStack(json.Unmarshal(body, (*Alias)(u)))
 }
 
 func (u *UserAttributes) UnmarshalJSON(body []byte) error {

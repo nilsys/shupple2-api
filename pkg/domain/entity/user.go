@@ -26,6 +26,7 @@ type (
 		FacebookURL   string
 		InstagramURL  string
 		TwitterURL    string
+		YoutubeURL    string
 		LivingArea    string
 		Interests     []*UserInterest `gorm:"foreignkey:UserID"`
 		CreatedAt     time.Time       `gorm:"-;default:current_timestamp"`

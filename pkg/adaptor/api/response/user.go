@@ -12,6 +12,7 @@ type (
 		FacebookURL  string `json:"facebookUrl"`
 		InstagramURL string `json:"instagramUrl"`
 		TwitterURL   string `json:"twitterUrl"`
+		YoutubeURL   string `json:"youtubeUrl"`
 	}
 
 	// ユーザーランキングで返すレスポンス型
@@ -41,10 +42,13 @@ type (
 )
 
 func NewCreatorFromUser(user *entity.User) Creator {
-	return NewCreator(user.ID, user.UID, user.GenerateThumbnailURL(), user.Name, user.Profile, user.FacebookURL, user.InstagramURL, user.TwitterURL)
+	return NewCreator(
+		user.ID, user.UID, user.GenerateThumbnailURL(), user.Name, user.Profile,
+		user.FacebookURL, user.InstagramURL, user.TwitterURL, user.YoutubeURL,
+	)
 }
 
-func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL, twitterURL string) Creator {
+func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL, twitterURL, youtubeURL string) Creator {
 	return Creator{
 		ID:           id,
 		UID:          uid,

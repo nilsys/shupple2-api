@@ -2838,6 +2838,10 @@ components:
           type: string
           description: twitterのurl
           example: https://twitter.com
+        youtubeUrl:
+          type: string
+          description: youtubeのurl
+          example: https://www.youtube.com/channel/L2pzA7wzUluismTWYbmvlEeD
     CategoryList:
       type: array
       items:

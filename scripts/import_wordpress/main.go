@@ -117,9 +117,9 @@ func (s Script) Run() error {
 		return errors.WithStack(err)
 	}
 
-	// if err := s.importUser(db); err != nil {
-	// 	return errors.WithStack(err)
-	// }
+	if err := s.importUser(db); err != nil {
+		return errors.WithStack(err)
+	}
 
 	for _, e := range s.TaxonomyEntries() {
 		log.Printf("start to import %s\n", e.Taxonomy)

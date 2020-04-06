@@ -122,6 +122,10 @@ func (s *UserCommandServiceImpl) registerDummyUserForWordpress(wpUser *wordpress
 		WordpressID:   null.IntFrom(int64(wpUser.ID)),
 		Profile:       wpUser.Description,
 		Birthdate:     time.Date(1900, 1, 1, 0, 0, 0, 0, time.Local),
+		FacebookURL:   wpUser.Meta.Facebook,
+		TwitterURL:    wpUser.Meta.Twitter,
+		InstagramURL:  wpUser.Meta.Instagram,
+		YoutubeURL:    wpUser.Meta.Youtube,
 	}
 
 	return errors.Wrap(s.UserCommandRepository.StoreWithAvatar(user, avatar), "failed to register dummy user")
