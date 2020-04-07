@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/service"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 
 	"github.com/google/wire"
@@ -22,6 +24,7 @@ type (
 		ReviewFavoriteQueryRepository   repository.ReviewFavoriteQueryRepository
 		ReviewQueryRepository           repository.ReviewQueryRepository
 		ReviewCommandRepository         repository.ReviewCommandRepository
+		service.NoticeDomainService
 		TransactionService
 	}
 )
@@ -31,8 +34,8 @@ var ReviewFavoriteCommandServiceSet = wire.NewSet(
 	wire.Bind(new(ReviewFavoriteCommandService), new(*ReviewFavoriteCommandServiceImpl)),
 )
 
-func (r *ReviewFavoriteCommandServiceImpl) Store(user *entity.User, reviewID int) error {
-	existReview, err := r.ReviewQueryRepository.IsExist(reviewID)
+func (s *ReviewFavoriteCommandServiceImpl) Store(user *entity.User, reviewID int) error {
+	existReview, err := s.ReviewQueryRepository.IsExist(reviewID)
 	if err != nil {
 		return errors.Wrap(err, "failed to IsExist")
 	}
@@ -40,7 +43,7 @@ func (r *ReviewFavoriteCommandServiceImpl) Store(user *entity.User, reviewID int
 		return serror.New(nil, serror.CodeNotFound, "Not found")
 	}
 
-	existFavorite, err := r.ReviewFavoriteQueryRepository.IsExist(user.ID, reviewID)
+	existFavorite, err := s.ReviewFavoriteQueryRepository.IsExist(user.ID, reviewID)
 	if err != nil {
 		return errors.Wrap(err, "failed to IsExist")
 	}
@@ -50,21 +53,26 @@ func (r *ReviewFavoriteCommandServiceImpl) Store(user *entity.User, reviewID int
 
 	favorite := entity.NewUserFavoriteReview(user.ID, reviewID)
 
-	return r.TransactionService.Do(func(c context.Context) error {
-		if err := r.ReviewFavoriteCommandRepository.Store(c, favorite); err != nil {
+	return s.TransactionService.Do(func(c context.Context) error {
+		if err := s.ReviewFavoriteCommandRepository.Store(c, favorite); err != nil {
 			return errors.Wrap(err, "failed to store")
 		}
 
-		if err := r.ReviewCommandRepository.IncrementFavoriteCount(c, reviewID); err != nil {
+		if err := s.ReviewCommandRepository.IncrementFavoriteCount(c, reviewID); err != nil {
 			return errors.Wrap(err, "failed to update post")
 		}
 
-		return nil
+		review, err := s.ReviewQueryRepository.FindByID(reviewID)
+		if err != nil {
+			return errors.Wrap(err, "failed to find review by id")
+		}
+
+		return s.NoticeDomainService.FavoriteReview(c, favorite, review)
 	})
 }
 
-func (r *ReviewFavoriteCommandServiceImpl) Delete(user *entity.User, reviewID int) error {
-	existReview, err := r.ReviewQueryRepository.IsExist(reviewID)
+func (s *ReviewFavoriteCommandServiceImpl) Delete(user *entity.User, reviewID int) error {
+	existReview, err := s.ReviewQueryRepository.IsExist(reviewID)
 	if err != nil {
 		return errors.Wrap(err, "failed to IsExist")
 	}
@@ -72,7 +80,7 @@ func (r *ReviewFavoriteCommandServiceImpl) Delete(user *entity.User, reviewID in
 		return serror.New(nil, serror.CodeNotFound, "Not found")
 	}
 
-	existFavorite, err := r.ReviewFavoriteQueryRepository.IsExist(user.ID, reviewID)
+	existFavorite, err := s.ReviewFavoriteQueryRepository.IsExist(user.ID, reviewID)
 	if err != nil {
 		return errors.Wrap(err, "failed to IsExist")
 	}
@@ -83,12 +91,12 @@ func (r *ReviewFavoriteCommandServiceImpl) Delete(user *entity.User, reviewID in
 	unfavorite := entity.NewUserFavoriteReview(user.ID, reviewID)
 
 	//TODO:lockを取る
-	return r.TransactionService.Do(func(c context.Context) error {
-		if err := r.ReviewFavoriteCommandRepository.Delete(c, unfavorite); err != nil {
+	return s.TransactionService.Do(func(c context.Context) error {
+		if err := s.ReviewFavoriteCommandRepository.Delete(c, unfavorite); err != nil {
 			return errors.Wrap(err, "failed to delete")
 		}
 
-		if err := r.ReviewCommandRepository.DecrementFavoriteCount(c, reviewID); err != nil {
+		if err := s.ReviewCommandRepository.DecrementFavoriteCount(c, reviewID); err != nil {
 			return errors.Wrap(err, "failed to update post")
 		}
 

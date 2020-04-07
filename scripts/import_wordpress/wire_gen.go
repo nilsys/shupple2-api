@@ -39,8 +39,11 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
 		DB: db,
 	}
+	dao := repository.DAO{
+		UnderlyingDB: db,
+	}
 	userCommandRepositoryImpl := &repository.UserCommandRepositoryImpl{
-		DB:            db,
+		DAO:           dao,
 		MediaUploader: uploader,
 		AWSConfig:     aws,
 		AWSSession:    session,
@@ -49,14 +52,26 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	if err != nil {
 		return nil, err
 	}
+	noticeCommandRepositoryImpl := &repository.NoticeCommandRepositoryImpl{
+		DAO: dao,
+	}
+	taggedUserDomainServiceImpl := service2.TaggedUserDomainServiceImpl{
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
+	noticeDomainServiceImpl := &service2.NoticeDomainServiceImpl{
+		NoticeCommandRepository: noticeCommandRepositoryImpl,
+		TaggedUserDomainService: taggedUserDomainServiceImpl,
+	}
+	transactionServiceImpl := &repository.TransactionServiceImpl{
+		DB: db,
+	}
 	userCommandServiceImpl := &service.UserCommandServiceImpl{
 		UserCommandRepository:    userCommandRepositoryImpl,
 		UserQueryRepository:      userQueryRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		AuthService:              authService,
-	}
-	dao := repository.DAO{
-		UnderlyingDB: db,
+		NoticeDomainService:      noticeDomainServiceImpl,
+		TransactionService:       transactionServiceImpl,
 	}
 	areaCategoryCommandRepositoryImpl := &repository.AreaCategoryCommandRepositoryImpl{
 		DAO: dao,
@@ -87,9 +102,6 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		ThemeCategoryQueryRepository: themeCategoryQueryRepositoryImpl,
 		SpotCategoryQueryRepository:  spotCategoryQueryRepositoryImpl,
 		HashtagCommandService:        hashtagCommandServiceImpl,
-	}
-	transactionServiceImpl := &repository.TransactionServiceImpl{
-		DB: db,
 	}
 	areaCategoryCommandServiceImpl := &service.AreaCategoryCommandServiceImpl{
 		AreaCategoryCommandRepository: areaCategoryCommandRepositoryImpl,
@@ -187,16 +199,6 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		DAO:        dao,
 		AWSSession: session,
 		AWSConfig:  aws,
-	}
-	noticeCommandRepositoryImpl := &repository.NoticeCommandRepositoryImpl{
-		DAO: dao,
-	}
-	taggedUserDomainServiceImpl := service2.TaggedUserDomainServiceImpl{
-		UserQueryRepository: userQueryRepositoryImpl,
-	}
-	noticeDomainServiceImpl := service2.NoticeDomainServiceImpl{
-		NoticeCommandRepository: noticeCommandRepositoryImpl,
-		TaggedUserDomainService: taggedUserDomainServiceImpl,
 	}
 	reviewCommandServiceImpl := &service.ReviewCommandServiceImpl{
 		ReviewQueryRepository:        reviewQueryRepositoryImpl,

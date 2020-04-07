@@ -7,6 +7,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	domain_service "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 )
 
 var serviceSet = wire.NewSet(
@@ -36,6 +37,11 @@ var serviceSet = wire.NewSet(
 	service.ProvideAuthService,
 )
 
+var domainServiceSet = wire.NewSet(
+	domain_service.NoticeDomainServiceSet,
+	domain_service.TaggedUserDomainServiceSet,
+)
+
 func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	wire.Build(
 		wire.Struct(new(Batch), "*"),
@@ -43,6 +49,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		wire.FieldsOf(new(*config.Config), "Wordpress", "Stayway", "AWS"),
 		wire.FieldsOf(new(config.Stayway), "Media"),
 		serviceSet,
+		domainServiceSet,
 		repository.RepositoriesSet,
 		repository.ProvideS3Uploader,
 	)

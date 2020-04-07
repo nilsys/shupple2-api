@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
@@ -11,7 +13,7 @@ type (
 		Update(user *entity.User) error
 		StoreWithAvatar(user *entity.User, avatar []byte) error
 		UpdateWordpressID(userID, wordpressUserID int) error
-		StoreFollow(following *entity.UserFollowing, followed *entity.UserFollowed) error
+		StoreFollow(c context.Context, following *entity.UserFollowing, followed *entity.UserFollowed) error
 		DeleteFollow(userID, targetID int) error
 		PersistUserImage(user *entity.User) error
 	}

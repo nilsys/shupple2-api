@@ -64,7 +64,7 @@ func (s *ReviewCommandServiceImpl) StoreTouristSpotReview(review *entity.Review)
 			return errors.Wrap(err, "failed increment hashtag.score")
 		}
 
-		return nil
+		return s.NoticeDomainService.Review(c, review)
 	})
 }
 
@@ -79,7 +79,7 @@ func (s *ReviewCommandServiceImpl) StoreInnReview(review *entity.Review) error {
 			return errors.Wrap(err, "failed to persist media")
 		}
 
-		return nil
+		return s.NoticeDomainService.Review(c, review)
 	})
 }
 
@@ -110,7 +110,12 @@ func (s *ReviewCommandServiceImpl) CreateReviewCommentReply(user *entity.User, c
 			return errors.Wrap(err, "failed to increment review_comment.favorite_count")
 		}
 
-		return nil
+		comment, err := s.ReviewQueryRepository.FindReviewCommentByID(reply.ReviewCommentID)
+		if err != nil {
+			return errors.Wrap(err, "failed to find review_comment by id")
+		}
+
+		return s.NoticeDomainService.ReviewCommentReply(c, reply, comment)
 	})
 }
 
@@ -136,7 +141,12 @@ func (s *ReviewCommandServiceImpl) FavoriteReviewComment(user *entity.User, revi
 			return errors.Wrap(err, "failed to increment review_comment.favorite_count")
 		}
 
-		return nil
+		comment, err := s.ReviewQueryRepository.FindReviewCommentByID(reviewCommentID)
+		if err != nil {
+			return errors.Wrap(err, "failed to find review_comment by id")
+		}
+
+		return s.NoticeDomainService.FavoriteReviewComment(c, favorite, comment)
 	})
 }
 

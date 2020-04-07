@@ -1,8 +1,11 @@
 package service
 
 import (
+	"context"
 	"strconv"
 	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 
@@ -30,6 +33,8 @@ type (
 		repository.UserQueryRepository
 		repository.WordpressQueryRepository
 		AuthService
+		service.NoticeDomainService
+		TransactionService
 	}
 )
 
@@ -138,7 +143,13 @@ func (s *UserCommandServiceImpl) Follow(user *entity.User, targetID int) error {
 	following := entity.NewUserFollowing(user.ID, targetID)
 	followed := entity.NewUserFollowed(targetID, user.ID)
 
-	return s.UserCommandRepository.StoreFollow(following, followed)
+	return s.TransactionService.Do(func(c context.Context) error {
+		if err := s.UserCommandRepository.StoreFollow(c, following, followed); err != nil {
+			return errors.Wrap(err, "failed to store follow")
+		}
+
+		return s.NoticeDomainService.FollowUser(c, following)
+	})
 }
 
 func (s *UserCommandServiceImpl) Unfollow(user *entity.User, targetID int) error {

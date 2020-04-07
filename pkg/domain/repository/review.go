@@ -19,6 +19,7 @@ type (
 		IsExist(id int) (bool, error)
 		IsExistReviewComment(id int) (bool, error)
 		IsExistReviewCommentFavorite(userID, reviewCommentID int) (bool, error)
+		FindReviewCommentByID(id int) (*entity.ReviewComment, error)
 		FindReviewCommentReplyListByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error)
 	}
 

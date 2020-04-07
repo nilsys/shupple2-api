@@ -10,6 +10,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	service2 "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 )
 
 // Injectors from wire.go:
@@ -23,6 +24,9 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	if err != nil {
 		return nil, err
 	}
+	dao := repository.DAO{
+		UnderlyingDB: db,
+	}
 	session, err := repository.ProvideAWSSession(configConfig)
 	if err != nil {
 		return nil, err
@@ -30,7 +34,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	uploader := repository.ProvideS3Uploader(session)
 	aws := configConfig.AWS
 	userCommandRepositoryImpl := &repository.UserCommandRepositoryImpl{
-		DB:            db,
+		DAO:           dao,
 		MediaUploader: uploader,
 		AWSConfig:     aws,
 		AWSSession:    session,
@@ -46,14 +50,26 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	if err != nil {
 		return nil, err
 	}
+	noticeCommandRepositoryImpl := &repository.NoticeCommandRepositoryImpl{
+		DAO: dao,
+	}
+	taggedUserDomainServiceImpl := service2.TaggedUserDomainServiceImpl{
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
+	noticeDomainServiceImpl := &service2.NoticeDomainServiceImpl{
+		NoticeCommandRepository: noticeCommandRepositoryImpl,
+		TaggedUserDomainService: taggedUserDomainServiceImpl,
+	}
+	transactionServiceImpl := &repository.TransactionServiceImpl{
+		DB: db,
+	}
 	userCommandServiceImpl := &service.UserCommandServiceImpl{
 		UserCommandRepository:    userCommandRepositoryImpl,
 		UserQueryRepository:      userQueryRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		AuthService:              authService,
-	}
-	dao := repository.DAO{
-		UnderlyingDB: db,
+		NoticeDomainService:      noticeDomainServiceImpl,
+		TransactionService:       transactionServiceImpl,
 	}
 	areaCategoryCommandRepositoryImpl := &repository.AreaCategoryCommandRepositoryImpl{
 		DAO: dao,
@@ -84,9 +100,6 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		ThemeCategoryQueryRepository: themeCategoryQueryRepositoryImpl,
 		SpotCategoryQueryRepository:  spotCategoryQueryRepositoryImpl,
 		HashtagCommandService:        hashtagCommandServiceImpl,
-	}
-	transactionServiceImpl := &repository.TransactionServiceImpl{
-		DB: db,
 	}
 	areaCategoryCommandServiceImpl := &service.AreaCategoryCommandServiceImpl{
 		AreaCategoryCommandRepository: areaCategoryCommandRepositoryImpl,
@@ -186,3 +199,5 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 // wire.go:
 
 var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.SpotCategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.ProvideAuthService)
+
+var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)

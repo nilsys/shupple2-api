@@ -17,7 +17,9 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 	service2 "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
+)
 
+import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
@@ -109,11 +111,22 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	postFavoriteQueryRepositoryImpl := &repository.PostFavoriteQueryRepositoryImpl{
 		DB: db,
 	}
+	noticeCommandRepositoryImpl := &repository.NoticeCommandRepositoryImpl{
+		DAO: dao,
+	}
+	taggedUserDomainServiceImpl := service2.TaggedUserDomainServiceImpl{
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
+	noticeDomainServiceImpl := &service2.NoticeDomainServiceImpl{
+		NoticeCommandRepository: noticeCommandRepositoryImpl,
+		TaggedUserDomainService: taggedUserDomainServiceImpl,
+	}
 	postFavoriteCommandServiceImpl := &service.PostFavoriteCommandServiceImpl{
 		PostFavoriteCommandRepository: postFavoriteCommandRepositoryImpl,
 		PostFavoriteQueryRepository:   postFavoriteQueryRepositoryImpl,
 		PostQueryRepository:           postQueryRepositoryImpl,
 		PostCommandRepository:         postCommandRepositoryImpl,
+		NoticeDomainService:           noticeDomainServiceImpl,
 		TransactionService:            transactionServiceImpl,
 	}
 	postFavoriteCommandController := api.PostFavoriteCommandController{
@@ -167,16 +180,6 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	touristSpotCommandRepositoryImpl := &repository.TouristSpotCommandRepositoryImpl{
 		DAO: dao,
 	}
-	noticeCommandRepositoryImpl := &repository.NoticeCommandRepositoryImpl{
-		DAO: dao,
-	}
-	taggedUserDomainServiceImpl := service2.TaggedUserDomainServiceImpl{
-		UserQueryRepository: userQueryRepositoryImpl,
-	}
-	noticeDomainServiceImpl := service2.NoticeDomainServiceImpl{
-		NoticeCommandRepository: noticeCommandRepositoryImpl,
-		TaggedUserDomainService: taggedUserDomainServiceImpl,
-	}
 	reviewCommandServiceImpl := &service.ReviewCommandServiceImpl{
 		ReviewQueryRepository:        reviewQueryRepositoryImpl,
 		ReviewCommandRepository:      reviewCommandRepositoryImpl,
@@ -206,6 +209,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		ReviewFavoriteQueryRepository:   reviewFavoriteQueryRepositoryImpl,
 		ReviewQueryRepository:           reviewQueryRepositoryImpl,
 		ReviewCommandRepository:         reviewCommandRepositoryImpl,
+		NoticeDomainService:             noticeDomainServiceImpl,
 		TransactionService:              transactionServiceImpl,
 	}
 	reviewFavoriteCommandController := api.ReviewFavoriteCommandController{
@@ -259,7 +263,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	}
 	uploader := repository.ProvideS3Uploader(session)
 	userCommandRepositoryImpl := &repository.UserCommandRepositoryImpl{
-		DB:            db,
+		DAO:           dao,
 		MediaUploader: uploader,
 		AWSConfig:     aws,
 		AWSSession:    session,
@@ -269,6 +273,8 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		UserQueryRepository:      userQueryRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		AuthService:              authService,
+		NoticeDomainService:      noticeDomainServiceImpl,
+		TransactionService:       transactionServiceImpl,
 	}
 	userCommandController := api.UserCommandController{
 		UserCommandService: userCommandServiceImpl,

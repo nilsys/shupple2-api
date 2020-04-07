@@ -6,16 +6,16 @@
 package repository
 
 import (
-	"net/url"
-
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	"net/url"
+)
 
+import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
@@ -85,7 +85,7 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 	}
 	aws := configConfig.AWS
 	userCommandRepositoryImpl := &UserCommandRepositoryImpl{
-		DB:            db,
+		DAO:           dao,
 		MediaUploader: uploader,
 		AWSConfig:     aws,
 		AWSSession:    session,

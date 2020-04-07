@@ -2,6 +2,7 @@ package repository
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -19,7 +20,7 @@ import (
 )
 
 type UserCommandRepositoryImpl struct {
-	DB            *gorm.DB
+	DAO
 	MediaUploader *s3manager.Uploader
 	AWSConfig     config.AWS
 	AWSSession    *session.Session
@@ -35,11 +36,11 @@ var UserCommandRepositorySet = wire.NewSet(
 )
 
 func (r *UserCommandRepositoryImpl) Store(user *entity.User) error {
-	return errors.Wrap(r.DB.Save(user).Error, "failed to save user")
+	return errors.Wrap(r.DB(context.TODO()).Save(user).Error, "failed to save user")
 }
 
 func (r *UserCommandRepositoryImpl) Update(user *entity.User) error {
-	if err := r.DB.Save(user).Error; err != nil {
+	if err := r.DB(context.TODO()).Save(user).Error; err != nil {
 		return errors.Wrapf(err, "failed to update user id=%d", user.ID)
 	}
 
@@ -47,7 +48,7 @@ func (r *UserCommandRepositoryImpl) Update(user *entity.User) error {
 }
 
 func (r *UserCommandRepositoryImpl) StoreWithAvatar(user *entity.User, avatar []byte) error {
-	return Transaction(r.DB, func(tx *gorm.DB) error {
+	return Transaction(r.DB(context.TODO()), func(tx *gorm.DB) error {
 		if err := tx.Save(user).Error; err != nil {
 			return errors.Wrap(err, "failed to save user")
 		}
@@ -68,13 +69,13 @@ func (r *UserCommandRepositoryImpl) StoreWithAvatar(user *entity.User, avatar []
 
 func (r *UserCommandRepositoryImpl) UpdateWordpressID(userID, wordpressUserID int) error {
 	return errors.Wrap(
-		r.DB.Exec("UPDATE user SET wordpress_id = ? WHERE wordpress_id = 0 AND id = ?", wordpressUserID, userID).Error,
+		r.DB(context.TODO()).Exec("UPDATE user SET wordpress_id = ? WHERE wordpress_id = 0 AND id = ?", wordpressUserID, userID).Error,
 		"failed to update user wordpress id",
 	)
 }
 
-func (r *UserCommandRepositoryImpl) StoreFollow(following *entity.UserFollowing, followed *entity.UserFollowed) error {
-	return Transaction(r.DB, func(tx *gorm.DB) error {
+func (r *UserCommandRepositoryImpl) StoreFollow(c context.Context, following *entity.UserFollowing, followed *entity.UserFollowed) error {
+	return Transaction(r.DB(c), func(tx *gorm.DB) error {
 		if err := tx.Save(followed).Error; err != nil {
 			return errors.Wrap(err, "failed to save user_followed")
 		}
@@ -87,7 +88,7 @@ func (r *UserCommandRepositoryImpl) StoreFollow(following *entity.UserFollowing,
 }
 
 func (r *UserCommandRepositoryImpl) DeleteFollow(userID, targetID int) error {
-	return Transaction(r.DB, func(tx *gorm.DB) error {
+	return Transaction(r.DB(context.TODO()), func(tx *gorm.DB) error {
 		if err := tx.Where("user_id = ? AND target_id = ?", userID, targetID).Delete(entity.UserFollowing{}).Error; err != nil {
 			return errors.Wrap(err, "failed to delete user_following")
 		}

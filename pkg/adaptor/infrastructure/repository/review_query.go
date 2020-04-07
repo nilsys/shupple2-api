@@ -190,6 +190,16 @@ func (r *ReviewQueryRepositoryImpl) FindReviewCommentListByReviewID(reviewID int
 	return results, nil
 }
 
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentByID(id int) (*entity.ReviewComment, error) {
+	var row entity.ReviewComment
+
+	if err := r.DB.Find(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "review_comment(id=%d)", id)
+	}
+
+	return &row, nil
+}
+
 func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyListByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error) {
 	var rows []*entity.ReviewCommentReply
 
