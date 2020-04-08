@@ -21,7 +21,7 @@ type (
 
 	ListRecommendTouristSpotParam struct {
 		ID                    int `query:"touristSpotId"`
-		TouristSpotCategoryID int `query:"touristSpotCategoryId"`
+		TouristSpotCategoryID int `query:"spotCategoryId"`
 		PerPage               int `query:"perPage"`
 		Page                  int `query:"page"`
 	}
