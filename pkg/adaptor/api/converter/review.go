@@ -64,7 +64,7 @@ func ConvertQueryReviewListToOutput(queryReviews []*entity.QueryReview) []*respo
 }
 
 func convertQueryReviewToOutput(queryReview *entity.QueryReview) *response.Review {
-	medias := make([]response.ReviewMedia, queryReview.MediaCount)
+	medias := make([]response.ReviewMedia, len(queryReview.Medias))
 	hashtags := make([]response.Hashtag, len(queryReview.Hashtag))
 	for i, media := range queryReview.Medias {
 		medias[i] = response.ReviewMedia{
