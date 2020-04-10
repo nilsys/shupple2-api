@@ -2644,7 +2644,7 @@ components:
           type: string
           description: 関連宿を探すためのURL
           example: http://stayway.jp/zekkei/recommend
-        score:
+        rate:
           type: number
           format: double
           description: 評価
