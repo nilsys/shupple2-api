@@ -19,5 +19,5 @@ func (q *FindInn) SetMetaserachID(areaID, subAreaID, subSubAreaID int) {
 }
 
 func (q *FindInn) GetGeoCode() string {
-	return strconv.FormatFloat(q.Longitude, 'f', -1, 64) + strconv.FormatFloat(q.Latitude, 'f', -1, 64)
+	return strconv.FormatFloat(q.Longitude, 'f', -1, 64) + "," + strconv.FormatFloat(q.Latitude, 'f', -1, 64)
 }
