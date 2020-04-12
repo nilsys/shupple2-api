@@ -11,7 +11,7 @@ type (
 		ThemeCategories []*ThemeCategory   `json:"themeCategories"`
 		Title           string             `json:"title"`
 		Creator         Creator            `json:"creator"`
-		LikeCount       int                `json:"likeCount"`
+		FavoriteCount   int                `json:"favoriteCount"`
 		Views           int                `json:"views"`
 		HideAds         bool               `json:"hideAds"`
 		CreatedAt       model.TimeResponse `json:"createdAt"`

@@ -2274,7 +2274,7 @@ components:
           example: 埼玉の春を満喫♪
         creator:
           $ref: "#/components/schemas/Creator"
-        likeCount:
+        favoriteCount:
           type: integer
           description: いいね数
           example: 3
@@ -2324,7 +2324,7 @@ components:
           description: 目次
         creator:
           $ref: "#/components/schemas/Creator"
-        likeCount:
+        favoriteCount:
           type: integer
           description: いいね数
           example: 3

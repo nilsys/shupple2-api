@@ -80,11 +80,11 @@ func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
 			Thumbnail: queryPost.User.GenerateThumbnailURL(),
 			Name:      queryPost.User.Name,
 		},
-		LikeCount: queryPost.FavoriteCount,
-		Views:     queryPost.Views,
-		HideAds:   queryPost.HideAds,
-		CreatedAt: model.TimeResponse(queryPost.CreatedAt),
-		UpdatedAt: model.TimeResponse(queryPost.UpdatedAt),
+		FavoriteCount: queryPost.FavoriteCount,
+		Views:         queryPost.Views,
+		HideAds:       queryPost.HideAds,
+		CreatedAt:     model.TimeResponse(queryPost.CreatedAt),
+		UpdatedAt:     model.TimeResponse(queryPost.UpdatedAt),
 	}
 }
 
