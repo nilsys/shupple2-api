@@ -55,7 +55,7 @@ paths:
           name: id
           description: |
             UserId
-            
+
             ＊指定されない場合、tokenからユーザーを取得する
           schema:
             type: integer
@@ -2211,6 +2211,8 @@ components:
     ReviewComment:
       type: object
       properties:
+        id:
+          type: integer
         user:
           $ref: "#/components/schemas/UserSummary"
         body:
@@ -2238,6 +2240,8 @@ components:
     ReviewCommentReply:
       type: object
       properties:
+        id:
+          type: integer
         user:
           $ref: "#/components/schemas/UserSummary"
         body:
