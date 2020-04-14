@@ -2653,7 +2653,7 @@ components:
           format: double
           description: 評価
           example: 3.5
-        vendorScore:
+        vendorRate:
           type: number
           format: double
           description: 外部評価

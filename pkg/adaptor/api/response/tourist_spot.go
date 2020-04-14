@@ -34,6 +34,7 @@ type (
 		SearchInnURL    string             `json:"searchInnUrl,omitempty"`
 		Rate            float64            `json:"rate"`
 		VendorRate      float64            `json:"vendorRate"`
+		ReviewCount     int                `json:"reviewCount"`
 		AreaCategories  []*AreaCategory    `json:"areaCategories"`
 		ThemeCategories []*ThemeCategory   `json:"themeCategories"`
 		SpotCategories  []*SpotCategory    `json:"spotCategories"`

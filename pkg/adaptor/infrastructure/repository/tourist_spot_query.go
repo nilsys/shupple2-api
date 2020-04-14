@@ -37,9 +37,9 @@ func (r *TouristSpotQueryRepositoryImpl) FindByID(id int) (*entity.TouristSpot, 
 	return &row, nil
 }
 
-func (r *TouristSpotQueryRepositoryImpl) FindDetailByID(id int) (*entity.QueryTouristSpot, error) {
-	var row entity.QueryTouristSpot
-	if err := r.DB.First(&row, id).Error; err != nil {
+func (r *TouristSpotQueryRepositoryImpl) FindDetailByID(id int) (*entity.TouristSpotDetail, error) {
+	var row entity.TouristSpotDetail
+	if err := r.DB.Select("*").Joins("INNER JOIN (SELECT count(id) AS review_count FROM review WHERE tourist_spot_id = ?) AS r", id).First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "touristSpot detail(id=%d)", id)
 	}
 	return &row, nil

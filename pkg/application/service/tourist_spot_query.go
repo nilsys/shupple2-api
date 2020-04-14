@@ -10,7 +10,7 @@ import (
 type (
 	// TouristSpot参照系サービス
 	TouristSpotQueryService interface {
-		Show(id int) (*entity.QueryTouristSpot, error)
+		Show(id int) (*entity.TouristSpotDetail, error)
 		List(query *query.FindTouristSpotListQuery) ([]*entity.TouristSpot, error)
 		ListRecommend(query *query.FindRecommendTouristSpotListQuery) ([]*entity.TouristSpot, error)
 	}
@@ -27,7 +27,7 @@ var TouristSpotQueryServiceSet = wire.NewSet(
 )
 
 // TouristSpot参照
-func (s *TouristSpotQueryServiceImpl) Show(id int) (*entity.QueryTouristSpot, error) {
+func (s *TouristSpotQueryServiceImpl) Show(id int) (*entity.TouristSpotDetail, error) {
 	return s.TouristSpotQueryRepository.FindDetailByID(id)
 }
 

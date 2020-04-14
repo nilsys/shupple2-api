@@ -54,8 +54,9 @@ type (
 		SpotCategoryID int `gorm:"primary_key"`
 	}
 
-	QueryTouristSpot struct {
+	TouristSpotDetail struct {
 		TouristSpotTiny
+		ReviewCount     int
 		AreaCategories  []*AreaCategory  `gorm:"many2many:tourist_spot_area_category;jointable_foreignkey:tourist_spot_id;"`
 		ThemeCategories []*ThemeCategory `gorm:"many2many:tourist_spot_theme_category;jointable_foreignkey:tourist_spot_id;"`
 		SpotCategories  []*SpotCategory  `gorm:"many2many:tourist_spot_spotCategory;jointable_foreignkey:tourist_spot_id;"`
@@ -103,6 +104,6 @@ func (ts *TouristSpot) SetSpotCategories(spotCategoryIDs []int) {
 }
 
 // テーブル名
-func (queryTouristSpot *QueryTouristSpot) TableName() string {
+func (queryTouristSpot *TouristSpotDetail) TableName() string {
 	return "tourist_spot"
 }

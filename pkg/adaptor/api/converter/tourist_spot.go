@@ -41,7 +41,7 @@ func convertTouristSpotToOutput(touristSpot *entity.TouristSpot) *response.Touri
 	}
 }
 
-func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.QueryTouristSpot) *response.ShowTouristSpot {
+func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.TouristSpotDetail) *response.ShowTouristSpot {
 	spotCategories := make([]*response.SpotCategory, len(queryTouristSpot.SpotCategories))
 
 	for i, spotCategory := range queryTouristSpot.SpotCategories {
@@ -68,6 +68,7 @@ func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.QueryTouristSpot) 
 		SearchInnURL:    queryTouristSpot.SearchInnURL,
 		Rate:            queryTouristSpot.Rate,
 		VendorRate:      queryTouristSpot.VendorRate,
+		ReviewCount:     queryTouristSpot.ReviewCount,
 		AreaCategories:  ConvertAreaCategoriesToOutput(queryTouristSpot.AreaCategories),
 		ThemeCategories: ConvertThemeCategoriesToOutput(queryTouristSpot.ThemeCategories),
 		SpotCategories:  spotCategories,
