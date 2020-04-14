@@ -29,6 +29,16 @@ type (
 		Name string `json:"name"`
 		Slug string `json:"slug"`
 	}
+
+	AreaCategoryDetail struct {
+		ID         int                    `json:"id"`
+		Name       string                 `json:"name"`
+		Slug       string                 `json:"slug"`
+		Type       model.AreaCategoryType `json:"type"`
+		Area       *AreaCategory          `json:"area"`
+		SubArea    *AreaCategory          `json:"subArea,omitempty"`
+		SubSubArea *AreaCategory          `json:"subSubArea,omitempty"`
+	}
 )
 
 func NewCategory(id int, name, categoryType, slug string) *Category {

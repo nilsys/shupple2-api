@@ -27,8 +27,27 @@ type (
 		CreatedAt              time.Time `gorm:"-;default:current_timestamp"`
 		UpdatedAt              time.Time `gorm:"-;default:current_timestamp"`
 	}
+
+	AreaCategoryDetail struct {
+		AreaCategory
+		Area       *AreaCategory
+		SubArea    *AreaCategory
+		SubSubArea *AreaCategory
+	}
 )
 
 func (ac AreaCategory) CategoryType() string {
 	return ac.Type.String()
+}
+
+func (acd *AreaCategoryDetail) SetArea(area *AreaCategory) {
+	acd.Area = area
+}
+
+func (acd *AreaCategoryDetail) SetSubArea(subArea *AreaCategory) {
+	acd.SubArea = subArea
+}
+
+func (acd *AreaCategoryDetail) SetSubSubArea(subSubArea *AreaCategory) {
+	acd.SubSubArea = subSubArea
 }

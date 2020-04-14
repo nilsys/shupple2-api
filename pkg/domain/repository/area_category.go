@@ -16,6 +16,7 @@ type (
 	AreaCategoryQueryRepository interface {
 		FindByID(id int) (*entity.AreaCategory, error)
 		FindByIDAndType(id int, areaCategoryType model.AreaCategoryType) (*entity.AreaCategory, error)
+		FindDetailByIDAndType(id int, areaCategoryType model.AreaCategoryType) (*entity.AreaCategoryDetail, error)
 		FindBySlug(slug string) (*entity.AreaCategory, error)
 		FindByIDs(ids []int) ([]*entity.AreaCategory, error)
 

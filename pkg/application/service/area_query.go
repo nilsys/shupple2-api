@@ -14,9 +14,9 @@ type (
 		ListSubAreaByParams(areaID int, limit int, excludeID []int) ([]*entity.AreaCategory, error)
 		ListSubSubAreaByParams(subAreaID int, limit int, excludeID []int) ([]*entity.AreaCategory, error)
 
-		ShowAreaByID(id int) (*entity.AreaCategory, error)
-		ShowSubAreaByID(id int) (*entity.AreaCategory, error)
-		ShowSubSubAreaByID(id int) (*entity.AreaCategory, error)
+		ShowAreaByID(id int) (*entity.AreaCategoryDetail, error)
+		ShowSubAreaByID(id int) (*entity.AreaCategoryDetail, error)
+		ShowSubSubAreaByID(id int) (*entity.AreaCategoryDetail, error)
 	}
 
 	AreaQueryServiceImpl struct {
@@ -53,24 +53,24 @@ func (r *AreaQueryServiceImpl) ListSubSubAreaByParams(subAreaID int, limit int, 
 	return areaCategories, nil
 }
 
-func (r *AreaQueryServiceImpl) ShowAreaByID(id int) (*entity.AreaCategory, error) {
-	areaCategory, err := r.Repository.FindByIDAndType(id, model.AreaCategoryTypeArea)
+func (r *AreaQueryServiceImpl) ShowAreaByID(id int) (*entity.AreaCategoryDetail, error) {
+	areaCategory, err := r.Repository.FindDetailByIDAndType(id, model.AreaCategoryTypeArea)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to show area")
 	}
 	return areaCategory, nil
 }
 
-func (r *AreaQueryServiceImpl) ShowSubAreaByID(id int) (*entity.AreaCategory, error) {
-	areaCategory, err := r.Repository.FindByIDAndType(id, model.AreaCategoryTypeSubArea)
+func (r *AreaQueryServiceImpl) ShowSubAreaByID(id int) (*entity.AreaCategoryDetail, error) {
+	areaCategory, err := r.Repository.FindDetailByIDAndType(id, model.AreaCategoryTypeSubArea)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to show sub area")
 	}
 	return areaCategory, nil
 }
 
-func (r *AreaQueryServiceImpl) ShowSubSubAreaByID(id int) (*entity.AreaCategory, error) {
-	areaCategory, err := r.Repository.FindByIDAndType(id, model.AreaCategoryTypeSubSubArea)
+func (r *AreaQueryServiceImpl) ShowSubSubAreaByID(id int) (*entity.AreaCategoryDetail, error) {
+	areaCategory, err := r.Repository.FindDetailByIDAndType(id, model.AreaCategoryTypeSubSubArea)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to show sub sub area")
 	}

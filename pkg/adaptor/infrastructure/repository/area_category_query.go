@@ -34,6 +34,38 @@ func (r *AreaCategoryQueryRepositoryImpl) FindByIDAndType(id int, areaCategoryTy
 	return &row, nil
 }
 
+func (r *AreaCategoryQueryRepositoryImpl) FindDetailByIDAndType(id int, areaCategoryType model.AreaCategoryType) (*entity.AreaCategoryDetail, error) {
+	var row entity.AreaCategoryDetail
+	var areaRow entity.AreaCategory
+	var subAreaRow entity.AreaCategory
+	var subSubAreaRow entity.AreaCategory
+	if err := r.DB.Where("id = ? AND type = ?", id, areaCategoryType).First(&row.AreaCategory).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "areaCategory(id=%d, type=%s)", id, areaCategoryType)
+	}
+	if err := r.DB.Where("id = ? AND type = ?", row.AreaID, model.AreaCategoryTypeArea).First(&areaRow).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "areaCategory(id=%d, type=%s)", id, model.AreaCategoryTypeArea)
+	}
+	row.SetArea(&areaRow)
+
+	// sub_area_idがnullじゃない時
+	if row.SubAreaID.Valid {
+		if err := r.DB.Where("id = ? AND type = ?", row.SubAreaID, model.AreaCategoryTypeSubArea).First(&subAreaRow).Error; err != nil {
+			return nil, ErrorToFindSingleRecord(err, "areaCategory(id=%d, type=%s)", id, model.AreaCategoryTypeSubArea)
+		}
+		row.SetSubArea(&subAreaRow)
+	}
+
+	// sub_sub_area_idがnullじゃない時
+	if row.SubSubAreaID.Valid {
+		if err := r.DB.Where("id = ? AND type = ?", row.SubSubAreaID, model.AreaCategoryTypeSubSubArea).First(&subSubAreaRow).Error; err != nil {
+			return nil, ErrorToFindSingleRecord(err, "areaCategory(id=%d, type=%s)", id, model.AreaCategoryTypeSubSubArea)
+		}
+		row.SetSubSubArea(&subSubAreaRow)
+	}
+
+	return &row, nil
+}
+
 func (r *AreaCategoryQueryRepositoryImpl) FindBySlug(slug string) (*entity.AreaCategory, error) {
 	var row entity.AreaCategory
 	if err := r.DB.Where("slug = ?", slug).First(&row).Error; err != nil {

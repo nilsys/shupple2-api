@@ -57,12 +57,12 @@ func (c *AreaQueryController) ShowAreaByID(ctx echo.Context) error {
 		return errors.Wrapf(err, "ID is invalid")
 	}
 
-	areaCategory, err := c.AreaQueryService.ShowAreaByID(p.ID)
+	areaCategoryDetail, err := c.AreaQueryService.ShowAreaByID(p.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed to areaCategory")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertAreaCategoryToOutput(areaCategory))
+	return ctx.JSON(http.StatusOK, converter.ConvertAreaCategoryDetailToOutput(areaCategoryDetail))
 }
 
 // SubAreaのListを取得して返す
@@ -92,7 +92,7 @@ func (c *AreaQueryController) ShowSubAreaByID(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to areaCategory")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertAreaCategoryToOutput(areaCategory))
+	return ctx.JSON(http.StatusOK, converter.ConvertAreaCategoryDetailToOutput(areaCategory))
 }
 
 // SubSubAreaのListを取得して返す
@@ -121,5 +121,5 @@ func (c *AreaQueryController) ShowSubSubAreaByID(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to areaCategory")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertAreaCategoryToOutput(areaCategory))
+	return ctx.JSON(http.StatusOK, converter.ConvertAreaCategoryDetailToOutput(areaCategory))
 }

@@ -44,3 +44,23 @@ func ConvertThemeCategoriesToOutput(themeCategories []*entity.ThemeCategory) []*
 
 	return resp
 }
+
+func ConvertAreaCategoryDetailToOutput(areaCategoryDetail *entity.AreaCategoryDetail) *response.AreaCategoryDetail {
+	var subArea *response.AreaCategory
+	var subSubArea *response.AreaCategory
+	if areaCategoryDetail.SubAreaID.Valid {
+		subArea = ConvertAreaCategoryToOutput(areaCategoryDetail.SubArea)
+	}
+	if areaCategoryDetail.SubSubAreaID.Valid {
+		subSubArea = ConvertAreaCategoryToOutput(areaCategoryDetail.SubSubArea)
+	}
+	return &response.AreaCategoryDetail{
+		ID:         areaCategoryDetail.ID,
+		Name:       areaCategoryDetail.Name,
+		Slug:       areaCategoryDetail.Slug,
+		Type:       areaCategoryDetail.Type,
+		Area:       ConvertAreaCategoryToOutput(areaCategoryDetail.Area),
+		SubArea:    subArea,
+		SubSubArea: subSubArea,
+	}
+}
