@@ -21,6 +21,8 @@ type (
 		Stayway     Stayway      `validate:"required" yaml:"stayway"`
 		Wordpress   Wordpress    `validate:"required" yaml:"wordpress"`
 		AWS         AWS          `validate:"required" yaml:"aws"`
+		Slack       Slack        `validate:"required" yaml:"slack"`
+		Env         Env
 
 		// scripts配下のスクリプト固有の設定
 		Scripts yaml.Node `validate:"" yaml:"scripts"`
@@ -29,6 +31,12 @@ type (
 	Migrate struct {
 		Auto     bool   `yaml:"auto"`
 		FilesDir string `yaml:"files_dir"`
+	}
+
+	Env struct {
+		IsDev bool
+		IsStg bool
+		IsPrd bool
 	}
 
 	Development struct {
@@ -70,6 +78,13 @@ type (
 		UploadExpire time.Duration `validate:"required" yaml:"upload_expire"`
 	}
 
+	// TODO: 他のアプリが追加されると思うからSlackの下にアプリ毎にconfig作る
+	Slack struct {
+		Token         string `validate:"required" yaml:"token"`
+		CallbackKey   string `validate:"required" yaml:"callback_key"`
+		ReportChannel string `validate:"required" yaml:"report_channel"`
+	}
+
 	URL struct {
 		url.URL
 	}
@@ -102,5 +117,29 @@ func URLRequiredValidation(sl validator.StructLevel) {
 	zero := url.URL{}
 	if u.URL == zero {
 		sl.ReportError(u, "URL", "URL", "required", "")
+	}
+}
+
+func NewDevEnv() Env {
+	return Env{
+		IsDev: true,
+		IsStg: false,
+		IsPrd: false,
+	}
+}
+
+func NewStgEnv() Env {
+	return Env{
+		IsDev: false,
+		IsStg: true,
+		IsPrd: false,
+	}
+}
+
+func NewPrdEnv() Env {
+	return Env{
+		IsDev: false,
+		IsStg: false,
+		IsPrd: true,
 	}
 }

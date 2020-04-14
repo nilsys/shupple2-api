@@ -49,6 +49,7 @@ type App struct {
 	InteresetQueryController        api.InterestQueryController
 	AreaQueryController             api.AreaQueryController
 	InnQueryController              api.InnQueryController
+	ReportCommandController         api.ReportCommandController
 }
 
 func run() error {
@@ -190,6 +191,12 @@ func setRoutes(app *App) {
 	{
 		inns := api.Group("/inns")
 		inns.GET("", app.InnQueryController.ListByParams)
+	}
+
+	{
+		reports := api.Group("/reports")
+		reports.POST("", auth.Require(app.ReportCommandController.Report))
+		reports.POST("/submit", app.ReportCommandController.MarkAsDone, staywayMiddleware.KeyAuth(app.Config.Slack.CallbackKey))
 	}
 
 	api.POST("/s3", auth.Require(app.S3CommandController.Post))

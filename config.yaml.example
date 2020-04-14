@@ -22,5 +22,9 @@ wordpress:
   user: changeme
   password: changeme
   callback_key: changeme
+slack:
+  token: changeme
+  callback_key: changeme
+  report_channel: changeme
 
 # vim: set ft=yaml:

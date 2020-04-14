@@ -55,6 +55,7 @@ func NewClient(c *Config) Client {
 	}
 }
 
+// TODO: エラー時
 func (c *clientImpl) GetJSON(url string, opt *Option, v interface{}) error {
 	if opt == nil {
 		opt = &Option{}

@@ -243,7 +243,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 			func() {
 				comment, err := command.ShowReviewComment(context.TODO(), 1)
 				Expect(err).To(Succeed())
-				err = command.DeleteReviewCommentByID(context.TODO(), comment)
+				err = command.DeleteReviewCommentByID(context.TODO(), comment.ID)
 				Expect(err).To(Succeed())
 
 				// 削除されているか

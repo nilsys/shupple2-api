@@ -190,16 +190,6 @@ func (r *ReviewQueryRepositoryImpl) FindReviewCommentListByReviewID(reviewID int
 	return results, nil
 }
 
-func (r *ReviewQueryRepositoryImpl) FindReviewCommentByID(id int) (*entity.ReviewComment, error) {
-	var row entity.ReviewComment
-
-	if err := r.DB.Find(&row, id).Error; err != nil {
-		return nil, ErrorToFindSingleRecord(err, "review_comment(id=%d)", id)
-	}
-
-	return &row, nil
-}
-
 func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyListByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error) {
 	var rows []*entity.ReviewCommentReply
 
@@ -227,4 +217,24 @@ func (r *ReviewQueryRepositoryImpl) IsExistReviewCommentFavorite(userID, reviewC
 	err := r.DB.Where("user_id = ? AND review_comment_id = ?", userID, reviewCommentID).First(&row).Error
 
 	return ErrorToIsExist(err, "review_comment_favorite(user_id=%d,review_comment_id=%d)", userID, reviewCommentID)
+}
+
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentByID(id int) (*entity.ReviewComment, error) {
+	var row entity.ReviewComment
+
+	if err := r.DB.Find(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "review_comment(id=%d)", id)
+	}
+
+	return &row, nil
+}
+
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyByID(id int) (*entity.ReviewCommentReply, error) {
+	var row entity.ReviewCommentReply
+
+	if err := r.DB.Find(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "review_comment(id=%d)", id)
+	}
+
+	return &row, nil
 }

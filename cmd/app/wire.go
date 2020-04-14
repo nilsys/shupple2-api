@@ -39,6 +39,7 @@ var controllerSet = wire.NewSet(
 	api.InterestQueryControllerSet,
 	api.AreaQueryControllerSet,
 	api.InnQueryControllerSet,
+	api.ReportCommandControllerSet,
 )
 
 var scenarioSet = wire.NewSet(
@@ -82,6 +83,7 @@ var serviceSet = wire.NewSet(
 	service.ProvideAuthService,
 	service.InterestQueryServiceSet,
 	service.InnQueryServiceSet,
+	service.ReportCommandServiceSet,
 )
 
 var factorySet = wire.NewSet(
@@ -96,7 +98,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		wire.FieldsOf(new(config.Stayway), "Metasearch", "Media"),
 		client.NewClient,
 		wire.Value(&client.Config{}),
-		wire.FieldsOf(new(*config.Config), "Wordpress", "Stayway", "AWS"),
+		wire.FieldsOf(new(*config.Config), "Wordpress", "Stayway", "AWS", "Slack", "Env"),
 		middleware.AuthorizeSet,
 		controllerSet,
 		scenarioSet,

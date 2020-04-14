@@ -68,3 +68,13 @@ type NoticeActionTargetType int
 ENUM(Transaction = 1)
 */
 type ContextKey int
+
+/*
+ENUM(REVIEW = 1, COMMENT, REPLY)
+*/
+type ReportTargetType int
+
+/*
+ENUM(UNKNOWN =1, SEXUAL, INAPPROPRIATE)
+*/
+type ReportReasonType int

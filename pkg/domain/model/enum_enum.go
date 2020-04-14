@@ -464,6 +464,116 @@ func (x *NoticeActionType) UnmarshalText(text []byte) error {
 }
 
 const (
+	// ReportReasonTypeUNKNOWN is a ReportReasonType of type UNKNOWN
+	ReportReasonTypeUNKNOWN ReportReasonType = iota + 1
+	// ReportReasonTypeSEXUAL is a ReportReasonType of type SEXUAL
+	ReportReasonTypeSEXUAL
+	// ReportReasonTypeINAPPROPRIATE is a ReportReasonType of type INAPPROPRIATE
+	ReportReasonTypeINAPPROPRIATE
+)
+
+const _ReportReasonTypeName = "UNKNOWNSEXUALINAPPROPRIATE"
+
+var _ReportReasonTypeMap = map[ReportReasonType]string{
+	1: _ReportReasonTypeName[0:7],
+	2: _ReportReasonTypeName[7:13],
+	3: _ReportReasonTypeName[13:26],
+}
+
+// String implements the Stringer interface.
+func (x ReportReasonType) String() string {
+	if str, ok := _ReportReasonTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("ReportReasonType(%d)", x)
+}
+
+var _ReportReasonTypeValue = map[string]ReportReasonType{
+	_ReportReasonTypeName[0:7]:   1,
+	_ReportReasonTypeName[7:13]:  2,
+	_ReportReasonTypeName[13:26]: 3,
+}
+
+// ParseReportReasonType attempts to convert a string to a ReportReasonType
+func ParseReportReasonType(name string) (ReportReasonType, error) {
+	if x, ok := _ReportReasonTypeValue[name]; ok {
+		return x, nil
+	}
+	return ReportReasonType(0), fmt.Errorf("%s is not a valid ReportReasonType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x ReportReasonType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *ReportReasonType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseReportReasonType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
+	// ReportTargetTypeREVIEW is a ReportTargetType of type REVIEW
+	ReportTargetTypeREVIEW ReportTargetType = iota + 1
+	// ReportTargetTypeCOMMENT is a ReportTargetType of type COMMENT
+	ReportTargetTypeCOMMENT
+	// ReportTargetTypeREPLY is a ReportTargetType of type REPLY
+	ReportTargetTypeREPLY
+)
+
+const _ReportTargetTypeName = "REVIEWCOMMENTREPLY"
+
+var _ReportTargetTypeMap = map[ReportTargetType]string{
+	1: _ReportTargetTypeName[0:6],
+	2: _ReportTargetTypeName[6:13],
+	3: _ReportTargetTypeName[13:18],
+}
+
+// String implements the Stringer interface.
+func (x ReportTargetType) String() string {
+	if str, ok := _ReportTargetTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("ReportTargetType(%d)", x)
+}
+
+var _ReportTargetTypeValue = map[string]ReportTargetType{
+	_ReportTargetTypeName[0:6]:   1,
+	_ReportTargetTypeName[6:13]:  2,
+	_ReportTargetTypeName[13:18]: 3,
+}
+
+// ParseReportTargetType attempts to convert a string to a ReportTargetType
+func ParseReportTargetType(name string) (ReportTargetType, error) {
+	if x, ok := _ReportTargetTypeValue[name]; ok {
+		return x, nil
+	}
+	return ReportTargetType(0), fmt.Errorf("%s is not a valid ReportTargetType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x ReportTargetType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *ReportTargetType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseReportTargetType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// ReviewSortByNEW is a ReviewSortBy of type NEW
 	ReviewSortByNEW ReviewSortBy = iota + 1
 	// ReviewSortByRECOMMEND is a ReviewSortBy of type RECOMMEND

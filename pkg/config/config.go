@@ -70,7 +70,7 @@ func GetConfig(filename FilePath) (*Config, error) {
 	}
 	defer f.Close()
 
-	return loadConfig(f)
+	return loadConfig(f, NewDevEnv())
 }
 
 func getConfigFromSSM(ssmKey string) (*Config, error) {
@@ -78,11 +78,14 @@ func getConfigFromSSM(ssmKey string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	if ssmKey == PrdSsmKey {
+		return loadConfig(strings.NewReader(res), NewPrdEnv())
+	}
 
-	return loadConfig(strings.NewReader(res))
+	return loadConfig(strings.NewReader(res), NewStgEnv())
 }
 
-func loadConfig(reader io.Reader) (*Config, error) {
+func loadConfig(reader io.Reader, env Env) (*Config, error) {
 	var config Config
 	if err := yaml.NewDecoder(reader).Decode(&config); err != nil {
 		return nil, errors.WithStack(err)
@@ -95,6 +98,7 @@ func loadConfig(reader io.Reader) (*Config, error) {
 	}
 
 	config.Version = Version
+	config.Env = env
 
 	return &config, nil
 }

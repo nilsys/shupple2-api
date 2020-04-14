@@ -231,7 +231,7 @@ func (s *ReviewCommandServiceImpl) DeleteReviewComment(user *entity.User, commen
 			return err
 		}
 
-		return s.ReviewCommandRepository.DeleteReviewCommentByID(c, comment)
+		return s.ReviewCommandRepository.DeleteReviewCommentByID(c, comment.ID)
 	})
 }
 

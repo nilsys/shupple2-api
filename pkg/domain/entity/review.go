@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
@@ -88,4 +89,9 @@ func (r *Review) IsOwner(userID int) bool {
 
 func (r *Review) HashHashtagIDs() bool {
 	return len(r.HashtagIDs) > 0
+}
+
+// TODO: 仮置き
+func (r *Review) WebURL() string {
+	return "https://stayway.jp/tourism/" + strconv.Itoa(r.ID)
 }

@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 type (
 	ReviewComment struct {
@@ -50,4 +53,12 @@ func NewUserFavoriteReviewComment(userID, reviewCommentID int) *UserFavoriteRevi
 
 func (r *ReviewComment) IsOwner(userID int) bool {
 	return r.UserID == userID
+}
+
+func (r *ReviewComment) WebURL() string {
+	return "https://stayway.jp/tourism" + strconv.Itoa(r.ID)
+}
+
+func (r *ReviewCommentReply) WebURL() string {
+	return "https://stayway.jp/tourism" + strconv.Itoa(r.ID)
 }

@@ -59,16 +59,6 @@ func (r *ReviewCommandRepositoryImpl) ShowReviewComment(c context.Context, comme
 	return reviewComment, nil
 }
 
-func (r *ReviewCommandRepositoryImpl) DeleteReviewCommentByID(c context.Context, reviewComment *entity.ReviewComment) error {
-	err := r.DB(c).Delete(reviewComment).Error
-
-	if err != nil {
-		return errors.Wrapf(err, "failed delete review comment")
-	}
-
-	return nil
-}
-
 func (r *ReviewCommandRepositoryImpl) IncrementReviewCommentCount(c context.Context, reviewID int) error {
 	if err := r.DB(c).
 		Exec("UPDATE review SET comment_count=comment_count+1 WHERE id = ?", reviewID).
@@ -151,6 +141,27 @@ func (r *ReviewCommandRepositoryImpl) StoreReviewCommentFavorite(c context.Conte
 func (r *ReviewCommandRepositoryImpl) DeleteReviewCommentFavoriteByID(c context.Context, userID, reviewCommentID int) error {
 	if err := r.DB(c).Where("user_id = ? AND review_comment_id = ?", userID, reviewCommentID).Delete(entity.UserFavoriteReviewComment{}).Error; err != nil {
 		return errors.Wrap(err, "failed to delete review_comment_favorite")
+	}
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) DeleteReviewByID(c context.Context, id int) error {
+	if err := r.DB(c).Where("id = ?", id).Delete(entity.Review{}).Error; err != nil {
+		return errors.Wrap(err, "failed to update review.deleted_at")
+	}
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) DeleteReviewCommentByID(c context.Context, id int) error {
+	if err := r.DB(c).Where("id = ?", id).Delete(entity.ReviewComment{}).Error; err != nil {
+		return errors.Wrap(err, "failed to update review_comment.deleted_at")
+	}
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) DeleteReviewCommentReplyByID(c context.Context, id int) error {
+	if err := r.DB(c).Where("id = ?", id).Delete(entity.ReviewCommentReply{}).Error; err != nil {
+		return errors.Wrap(err, "failed to update review_comment_reply.deleted_at")
 	}
 	return nil
 }
