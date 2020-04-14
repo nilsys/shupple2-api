@@ -6,6 +6,10 @@ import (
 )
 
 type (
+	ShowParam struct {
+		ID int `param:"id" validate:"required"`
+	}
+
 	ListUserRanking struct {
 		AreaID       int              `query:"areaId"`
 		SubAreaID    int              `query:"subAreaId"`

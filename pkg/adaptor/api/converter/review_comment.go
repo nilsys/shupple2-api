@@ -27,7 +27,7 @@ func convertReviewCommentReplyToOutput(r *entity.ReviewCommentReply) *response.R
 	user := response.UserSummary{
 		ID:   r.User.ID,
 		Name: r.User.Name,
-		Icon: r.User.GenerateThumbnailURL(),
+		Icon: r.User.IconURL(),
 	}
 	return &response.ReviewCommentReply{
 		ID:          r.ID,

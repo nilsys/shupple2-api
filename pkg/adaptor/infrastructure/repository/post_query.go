@@ -176,7 +176,7 @@ func (r *PostQueryRepositoryImpl) buildFindFeedListQuery(userID int) *gorm.DB {
 	q := r.DB
 
 	if userID != 0 {
-		q = q.Where("user_id IN (SELECT target_id FROM user_follow WHERE user_id = ?)", userID).Or("id IN (SELECT post_id FROM post_hashtag WHERE hashtag_id IN (SELECT hashtag_id FROM user_follow_hashtag WHERE user_id = ?))", userID)
+		q = q.Where("user_id IN (SELECT target_id FROM user_following WHERE user_id = ?)", userID).Or("id IN (SELECT post_id FROM post_hashtag WHERE hashtag_id IN (SELECT hashtag_id FROM user_follow_hashtag WHERE user_id = ?))", userID)
 	}
 
 	return q

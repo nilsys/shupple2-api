@@ -9,7 +9,8 @@ import (
 
 type (
 	UserQueryService interface {
-		ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.QueryRankingUser, error)
+		Show(id int) (*entity.UserDetailWithCount, error)
+		ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error)
 		ListFollowing(query *query.FindFollowUser) ([]*entity.User, error)
 		ListFollowed(query *query.FindFollowUser) ([]*entity.User, error)
 		ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.User, error)
@@ -26,7 +27,11 @@ var UserQueryServiceSet = wire.NewSet(
 	wire.Bind(new(UserQueryService), new(*UserQueryServiceImpl)),
 )
 
-func (s *UserQueryServiceImpl) ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.QueryRankingUser, error) {
+func (s *UserQueryServiceImpl) Show(id int) (*entity.UserDetailWithCount, error) {
+	return s.UserQueryRepository.FindUserDetailWithCountByID(id)
+}
+
+func (s *UserQueryServiceImpl) ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error) {
 	return s.UserQueryRepository.FindUserRankingListByParams(query)
 }
 

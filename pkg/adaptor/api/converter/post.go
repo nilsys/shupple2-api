@@ -77,7 +77,7 @@ func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
 		AreaCategories:  ConvertAreaCategoriesToOutput(queryPost.AreaCategories),
 		ThemeCategories: ConvertThemeCategoriesToOutput(queryPost.ThemeCategories),
 		Creator: response.Creator{
-			Thumbnail: queryPost.User.GenerateThumbnailURL(),
+			Thumbnail: queryPost.User.IconURL(),
 			Name:      queryPost.User.Name,
 		},
 		FavoriteCount: queryPost.FavoriteCount,

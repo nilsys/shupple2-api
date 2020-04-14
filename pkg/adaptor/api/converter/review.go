@@ -44,7 +44,7 @@ func ConvertReviewCommentListToOutput(reviewComments []*entity.ReviewComment) []
 }
 
 func convertReviewCommentToOutput(reviewComment *entity.ReviewComment) *response.ReviewComment {
-	userSummary := response.NewUserSummary(reviewComment.User.ID, reviewComment.User.UID, reviewComment.User.Name, reviewComment.User.GenerateThumbnailURL())
+	userSummary := response.NewUserSummary(reviewComment.User.ID, reviewComment.User.UID, reviewComment.User.Name, reviewComment.User.IconURL())
 	return response.NewReviewComment(
 		userSummary,
 		reviewComment.Body,

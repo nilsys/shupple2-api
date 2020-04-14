@@ -1,6 +1,9 @@
 package response
 
-import "github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+import (
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+)
 
 type (
 	Creator struct {
@@ -39,11 +42,31 @@ type (
 		Name string `json:"name"`
 		Icon string `json:"iconUrl"`
 	}
+
+	MyPageUser struct {
+		ID             int          `json:"id"`
+		UID            string       `json:"uid"`
+		Name           string       `json:"name"`
+		Profile        string       `json:"profile"`
+		Birthdate      model.Date   `json:"birthdate"`
+		Email          string       `json:"email"`
+		Gender         model.Gender `json:"gender"`
+		Icon           string       `json:"iconUrl"`
+		Header         string       `json:"headerUrl"`
+		Facebook       string       `json:"facebook"`
+		Instagram      string       `json:"instagram"`
+		Twitter        string       `json:"twitter"`
+		LivingArea     string       `json:"livingArea"`
+		PostCount      int          `json:"postCount"`
+		FollowingCount int          `json:"followingCount"`
+		FollowedCount  int          `json:"followedCount"`
+		Interest       []string     `json:"interest"`
+	}
 )
 
 func NewCreatorFromUser(user *entity.User) Creator {
 	return NewCreator(
-		user.ID, user.UID, user.GenerateThumbnailURL(), user.Name, user.Profile,
+		user.ID, user.UID, user.IconURL(), user.Name, user.Profile,
 		user.FacebookURL, user.InstagramURL, user.TwitterURL, user.YoutubeURL,
 	)
 }

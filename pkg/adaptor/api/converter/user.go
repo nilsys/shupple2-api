@@ -92,11 +92,11 @@ func ConvertListFavoriteMediaUserToQuery(param *param.ListFavoriteMediaUser) *qu
 /*
  * i -> o
  */
-func ConvertUserRankingToOutput(users []*entity.QueryRankingUser) []*response.RankinUser {
+func ConvertUserRankingToOutput(users []*entity.UserDetail) []*response.RankinUser {
 	userRanking := make([]*response.RankinUser, len(users))
 
 	for i, user := range users {
-		userRanking[i] = convertRankingUserToOutput(user)
+		userRanking[i] = ConvertUserDetailToOutput(user)
 	}
 
 	return userRanking
@@ -114,12 +114,12 @@ func convertUserToFollowUser(user *entity.User) *response.FollowUser {
 	return &response.FollowUser{
 		ID:        user.ID,
 		Name:      user.Name,
-		Thumbnail: user.GenerateThumbnailURL(),
+		Thumbnail: user.IconURL(),
 	}
 }
 
-// QueryRankingUserをランキング一覧で返す型にコンバート
-func convertRankingUserToOutput(user *entity.QueryRankingUser) *response.RankinUser {
+// UserDetailをランキング一覧で返す型にコンバート
+func ConvertUserDetailToOutput(user *entity.UserDetail) *response.RankinUser {
 	interests := make([]string, len(user.Interests))
 	for i, interest := range user.Interests {
 		interests[i] = interest.Name
@@ -129,7 +129,34 @@ func convertRankingUserToOutput(user *entity.QueryRankingUser) *response.RankinU
 		ID:        user.ID,
 		Name:      user.Name,
 		Profile:   user.Profile,
-		Thumbnail: user.GenerateThumbnailURL(),
+		Thumbnail: user.IconURL(),
 		Interest:  interests,
+	}
+}
+
+func ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWithCount) *response.MyPageUser {
+	interests := make([]string, len(user.Interests))
+	for i, interest := range user.Interests {
+		interests[i] = interest.Name
+	}
+
+	return &response.MyPageUser{
+		ID:             user.ID,
+		UID:            user.UID,
+		Name:           user.Name,
+		Profile:        user.Profile,
+		Birthdate:      model.Date(user.Birthdate),
+		Email:          user.Email,
+		Gender:         user.Gender,
+		Icon:           user.IconURL(),
+		Header:         user.HeaderURL(),
+		Facebook:       user.FacebookURL,
+		Instagram:      user.InstagramURL,
+		Twitter:        user.TwitterURL,
+		LivingArea:     user.LivingArea,
+		PostCount:      user.PostCount + user.ReviewCount,
+		FollowingCount: user.FollowingCount,
+		FollowedCount:  user.FollowerCount,
+		Interest:       interests,
 	}
 }

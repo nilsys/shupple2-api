@@ -24,7 +24,8 @@ type (
 		FindByCognitoID(cognitoID string) (*entity.User, error)
 		FindByWordpressID(id int) (*entity.User, error)
 		FindByMigrationCode(code string) (*entity.User, error)
-		FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.QueryRankingUser, error)
+		FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error)
+		FindUserDetailWithCountByID(id int) (*entity.UserDetailWithCount, error)
 		IsExistByUID(uid string) (bool, error)
 		// name部分一致検索
 		SearchByName(name string) ([]*entity.User, error)

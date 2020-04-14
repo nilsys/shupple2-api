@@ -39,8 +39,15 @@ type (
 		Authenticated bool
 	}
 
-	// MEMO: 他でも使う様になったら名前変更
-	QueryRankingUser struct {
+	UserDetailWithCount struct {
+		UserDetail
+		FollowingCount int
+		FollowerCount  int
+		PostCount      int
+		ReviewCount    int
+	}
+
+	UserDetail struct {
 		User
 		Interests []*Interest `gorm:"many2many:user_interest;jointable_foreignkey:user_id;"`
 	}
@@ -76,8 +83,12 @@ type (
 )
 
 // MEMO: サムネイルロジック仮置き
-func (u *User) GenerateThumbnailURL() string {
+func (u *User) IconURL() string {
 	return "https://files.stayway.jp/avatar/" + u.AvatarUUID
+}
+
+func (u *User) HeaderURL() string {
+	return "https://files.stayway.jp/avatar/" + u.HeaderUUID
 }
 
 func (u *User) IsSelfID(id int) bool {
@@ -105,7 +116,7 @@ func NewUserFollowHashtag(userID, hashtagID int) *UserFollowHashtag {
 	}
 }
 
-func (q *QueryRankingUser) TableName() string {
+func (q *UserDetail) TableName() string {
 	return "user"
 }
 

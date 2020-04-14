@@ -61,8 +61,8 @@ func (r *UserQueryRepositoryImpl) FindByMigrationCode(code string) (*entity.User
 	return &row, nil
 }
 
-func (r *UserQueryRepositoryImpl) FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.QueryRankingUser, error) {
-	var rows []*entity.QueryRankingUser
+func (r *UserQueryRepositoryImpl) FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error) {
+	var rows []*entity.UserDetail
 
 	q := r.buildFindUserRankingListQuery(query)
 	// MEMO: validationを掛けているのであり得ないが
@@ -78,6 +78,21 @@ func (r *UserQueryRepositoryImpl) FindUserRankingListByParams(query *query.FindU
 	}
 
 	return rows, nil
+}
+
+func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByID(id int) (*entity.UserDetailWithCount, error) {
+	var row entity.UserDetailWithCount
+
+	if err := r.DB.Select("*").Where("user.id = ?", id).
+		Joins("LEFT JOIN (SELECT COUNT(id) as review_count, MAX(user_id) as user_id FROM review WHERE user_id = ?) AS r ON user.id = r.user_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(id) as post_count, MAX(user_id) as user_id FROM post WHERE user_id = ?) AS p ON user.id = p.user_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(target_id) as following_count, MAX(user_id) as user_id FROM user_following WHERE user_id = ?) AS ufi ON user.id = ufi.user_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(user_id) as followed_count, MAX(target_id) as target_id FROM user_followed WHERE target_id = ?) AS ufe ON user.id = ufe.target_id", id).
+		First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "user(id=%d)", id)
+	}
+
+	return &row, nil
 }
 
 func (r *UserQueryRepositoryImpl) IsExistByUID(uid string) (bool, error) {
