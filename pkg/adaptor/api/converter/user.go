@@ -130,7 +130,7 @@ func ConvertUserDetailToOutput(user *entity.UserDetail) *response.RankinUser {
 		Name:      user.Name,
 		Profile:   user.Profile,
 		Thumbnail: user.IconURL(),
-		Interest:  interests,
+		Interests: interests,
 	}
 }
 
@@ -157,6 +157,6 @@ func ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWithCount) *respo
 		PostCount:      user.PostCount + user.ReviewCount,
 		FollowingCount: user.FollowingCount,
 		FollowedCount:  user.FollowerCount,
-		Interest:       interests,
+		Interests:      interests,
 	}
 }

@@ -25,7 +25,7 @@ type (
 		Name      string   `json:"name"`
 		Profile   string   `json:"profile"`
 		Thumbnail string   `json:"iconUrl"`
-		Interest  []string `json:"interest"`
+		Interests []string `json:"interests"`
 	}
 
 	// MEMO: ユースケースが増えれば命名返る
@@ -60,7 +60,7 @@ type (
 		PostCount      int          `json:"postCount"`
 		FollowingCount int          `json:"followingCount"`
 		FollowedCount  int          `json:"followedCount"`
-		Interest       []string     `json:"interest"`
+		Interests      []string     `json:"interests"`
 	}
 )
 

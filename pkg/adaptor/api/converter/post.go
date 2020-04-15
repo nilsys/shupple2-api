@@ -76,15 +76,12 @@ func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
 		Title:           queryPost.Title,
 		AreaCategories:  ConvertAreaCategoriesToOutput(queryPost.AreaCategories),
 		ThemeCategories: ConvertThemeCategoriesToOutput(queryPost.ThemeCategories),
-		Creator: response.Creator{
-			Thumbnail: queryPost.User.IconURL(),
-			Name:      queryPost.User.Name,
-		},
-		FavoriteCount: queryPost.FavoriteCount,
-		Views:         queryPost.Views,
-		HideAds:       queryPost.HideAds,
-		CreatedAt:     model.TimeResponse(queryPost.CreatedAt),
-		UpdatedAt:     model.TimeResponse(queryPost.UpdatedAt),
+		Creator:         response.NewCreatorFromUser(queryPost.User),
+		FavoriteCount:   queryPost.FavoriteCount,
+		Views:           queryPost.Views,
+		HideAds:         queryPost.HideAds,
+		CreatedAt:       model.TimeResponse(queryPost.CreatedAt),
+		UpdatedAt:       model.TimeResponse(queryPost.UpdatedAt),
 	}
 }
 
