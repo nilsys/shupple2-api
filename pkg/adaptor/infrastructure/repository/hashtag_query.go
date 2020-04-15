@@ -63,13 +63,13 @@ func (r *HashtagQueryRepositoryImpl) buildFindRecommendListQuery(areaID, subArea
 
 	// TODO: area_category_typeをチェックしていない
 	if areaID != 0 {
-		q = q.Where("id IN (SELECT post_hashtag WHERE post_id IN (SELECT post_id FROM post_area_category WHERE area_category_id = ?))", areaID)
+		q = q.Where("id IN (SELECT hashtag_id FROM post_hashtag WHERE post_id IN (SELECT post_id FROM post_area_category WHERE area_category_id = ?))", areaID)
 	}
 	if subAreaID != 0 {
-		q = q.Where("id IN (SELECT post_hashtag WHERE post_id IN (SELECT post_id FROM post_area_category WHERE area_category_id = ?))", areaID)
+		q = q.Where("id IN (SELECT hashtag_id FROM post_hashtag WHERE post_id IN (SELECT post_id FROM post_area_category WHERE area_category_id = ?))", areaID)
 	}
 	if subSubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_hashtag WHERE post_id IN (SELECT post_id FROM post_area_category WHERE area_category_id = ?))", areaID)
+		q = q.Where("id IN (SELECT hashtag_id FROM post_hashtag WHERE post_id IN (SELECT post_id FROM post_area_category WHERE area_category_id = ?))", areaID)
 	}
 
 	return q
