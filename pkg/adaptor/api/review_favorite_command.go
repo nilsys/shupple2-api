@@ -8,7 +8,7 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
@@ -23,7 +23,7 @@ var ReviewFavoriteCommandControllerSet = wire.NewSet(
 )
 
 func (c *ReviewFavoriteCommandController) Store(ctx echo.Context, user entity.User) error {
-	p := param.StoreFavoriteReviewParam{}
+	p := input.StoreFavoriteReviewParam{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrapf(err, "ID is invalid")
 	}
@@ -36,7 +36,7 @@ func (c *ReviewFavoriteCommandController) Store(ctx echo.Context, user entity.Us
 }
 
 func (c *ReviewFavoriteCommandController) Delete(ctx echo.Context, user entity.User) error {
-	p := param.StoreFavoriteReviewParam{}
+	p := input.StoreFavoriteReviewParam{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrapf(err, "ID is invalid")
 	}

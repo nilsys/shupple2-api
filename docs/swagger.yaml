@@ -27,9 +27,7 @@ paths:
       summary: プロフィール更新
       description: |
         ユーザープロフィール更新
-
         アイコン、ヘッダ画像はフロント側でS3にアップロードし、UUIDを送信する。
-
         そのUUIDからアップロードされた画像を特定し、S3上の/users/icon/${userID}に移動する。
       requestBody:
         $ref: "#/components/requestBodies/UserUpdateRequest"
@@ -55,7 +53,6 @@ paths:
           name: id
           description: |
             UserId
-
             ＊指定されない場合、tokenからユーザーを取得する
           schema:
             type: integer
@@ -149,7 +146,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MinorUserList"
+                $ref: "#/components/schemas/UserSummaryList"
   /users/{id}/followed:
     get:
       tags:
@@ -170,7 +167,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MinorUserList"
+                $ref: "#/components/schemas/UserSummaryList"
   /users/favorite/reviews/:id:
     get:
       tags:
@@ -189,7 +186,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MinorUserList"
+                $ref: "#/components/schemas/UserSummaryList"
   /users/favorite/posts/:id:
     get:
       tags:
@@ -208,7 +205,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MinorUserList"
+                $ref: "#/components/schemas/UserSummaryList"
   /notice:
     get:
       security:
@@ -530,6 +527,10 @@ paths:
       responses:
         "200":
           description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewComment"
         "400":
           description: バリデーションエラー
           content:
@@ -582,6 +583,10 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewCommentReply"
 
   /reviews/:id/favorite:
     put:
@@ -1485,7 +1490,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CategoryList"
+                $ref: "#/components/schemas/AreaCategoryList"
   /areas/{id}:
     get:
       tags:
@@ -1505,7 +1510,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Category"
+                $ref: "#/components/schemas/AreaCategorySummary"
   /sub_areas:
     get:
       tags:
@@ -1538,7 +1543,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CategoryList"
+                $ref: "#/components/schemas/AreaCategoryList"
   /sub_areas/{id}:
     get:
       tags:
@@ -1558,7 +1563,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Category"
+                $ref: "#/components/schemas/AreaCategorySummary"
   /sub_sub_areas:
     get:
       tags:
@@ -1591,7 +1596,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CategoryList"
+                $ref: "#/components/schemas/AreaCategoryList"
   /sub_sub_areas/{id}:
     get:
       tags:
@@ -1611,7 +1616,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Category"
+                $ref: "#/components/schemas/AreaCategorySummary"
   /interests:
     get:
       tags:
@@ -1708,7 +1713,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CategoryList"
+                $ref: "#/components/schemas/ThemeCategoryList"
   /sub_themes:
     get:
       tags:
@@ -1746,7 +1751,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CategoryList"
+                $ref: "#/components/schemas/ThemeCategoryList"
 servers:
   - url: http://localhost:3000/api/v1/tourism
 components:
@@ -2018,14 +2023,20 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Interest"
+    UserSummaryList:
+      type: array
+      items:
+        $ref: "#/components/schemas/UserSummary"
     UserSummary:
       type: object
       properties:
         id:
           type: integer
+        uid:
+          type: string
         name:
           type: string
-        icon:
+        iconUrl:
           type: string
           format: url
           description: アイコン。userIDから一意に定まる
@@ -2853,8 +2864,36 @@ components:
     Category:
       type: object
       required:
-        - Id
-        - Name
+        - id
+        - name
+        - slug
+        - type
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        name:
+          type: string
+          description: カテゴリ名
+          example: 北海道
+        slug:
+          type: string
+          description: スラッグ
+          example: hokkaido
+        type:
+          type: string
+    AreaCategoryList:
+      type: array
+      items:
+        $ref: "#/components/schemas/AreaCategory"
+    AreaCategorySummary:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - area
       properties:
         id:
           type: integer
@@ -2867,11 +2906,63 @@ components:
         type:
           type: string
           enum:
-            - AreaGroup
+            - Undefined
             - Area
             - SubArea
             - SubSubArea
+        area:
+          $ref: "#/components/schemas/AreaCategory"
+        subArea:
+          $ref: "#/components/schemas/AreaCategory"
+        subSubArea:
+          $ref: "#/components/schemas/AreaCategory"
+    AreaCategory:
+      type: object
+      required:
+        - id
+        - name
+        - type
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        name:
+          type: string
+          description: カテゴリ名
+          example: 北海道
+        type:
+          type: string
+          enum:
+            - Undefined
+            - Area
+            - SubArea
+            - SubSubArea
+    ThemeCategoryList:
+      type: array
+      items:
+        $ref: "#/components/schemas/ThemeCategory"
+    ThemeCategory:
+      type: object
+      required:
+        - id
+        - name
+        - type
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        name:
+          type: string
+          description: カテゴリ名
+          example: 初めての民泊
+        type:
+          type: string
+          enum:
+            - Undefined
             - Theme
+            - SubTheme
     RankingUserList:
       type: array
       items:
@@ -2909,29 +3000,6 @@ components:
           example:
             - 沖縄
             - 夜景
-    MinorUserList:
-      type: array
-      items:
-        $ref: "#/components/schemas/MinorUser"
-    MinorUser:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: ユーザーID
-          example: 1
-        uid:
-          type: string
-          description: ユーザーが一意に決めるID
-          example: "yuta0817"
-        name:
-          type: string
-          description: 名前
-          example: hanako
-        iconUrl:
-          type: string
-          description: アイコン画像URL
-          example: https://files.stayway.jp/avatar/1
     InnList:
       type: array
       items:

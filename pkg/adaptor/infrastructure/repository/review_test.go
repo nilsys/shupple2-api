@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
@@ -37,7 +37,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 		})
 
 		DescribeTable("ShowReviewListByParams",
-			func(param *param.ListReviewParams) {
+			func(param *input.ListReviewParams) {
 				queryStruct := converter.ConvertFindReviewListParamToQuery(param)
 				actual, err := query.ShowReviewListByParams(queryStruct)
 				Expect(err).To(Succeed())
@@ -131,7 +131,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 			DescribeTable("コメントを新規追加",
 				func() {
 					reviewComment := entity.NewReviewComment(1, 1, "dummy body")
-					err := command.CreateReviewComment(context.TODO(), reviewComment)
+					err := command.StoreReviewComment(context.TODO(), reviewComment)
 					Expect(err).To(Succeed())
 
 					// コメントが一件増えているか
@@ -309,8 +309,8 @@ func newReviewComment(userID, reviewID int) *entity.ReviewComment {
 	)
 }
 
-func newShowReviewListParam(userID, innID, touristSpotID int, hashtag string) *param.ListReviewParams {
-	return &param.ListReviewParams{
+func newShowReviewListParam(userID, innID, touristSpotID int, hashtag string) *input.ListReviewParams {
+	return &input.ListReviewParams{
 		UserID:        userID,
 		InnID:         innID,
 		TouristSpotID: touristSpotID,

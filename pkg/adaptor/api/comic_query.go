@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
@@ -20,9 +20,9 @@ var ComicQueryControllerSet = wire.NewSet(
 )
 
 func (c *ComicQueryController) Show(ctx echo.Context) error {
-	param := &param.ShowComicParam{}
+	param := &input.ShowComicParam{}
 	if err := BindAndValidate(ctx, param); err != nil {
-		return errors.Wrapf(err, "validation show comic param")
+		return errors.Wrapf(err, "validation show comic input")
 	}
 
 	comicDetail, err := c.ComicQueryService.Show(param.ID)
@@ -34,9 +34,9 @@ func (c *ComicQueryController) Show(ctx echo.Context) error {
 }
 
 func (c *ComicQueryController) ListComic(ctx echo.Context) error {
-	params := &param.ShowComicListParam{}
+	params := &input.ShowComicListParam{}
 	if err := BindAndValidate(ctx, params); err != nil {
-		return errors.Wrapf(err, "validation show comic list param")
+		return errors.Wrapf(err, "validation show comic list input")
 	}
 
 	comics, err := c.ComicQueryService.ShowList(converter.ConvertShowComicListParamToQuery(params))

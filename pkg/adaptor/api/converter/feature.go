@@ -1,41 +1,41 @@
 package converter
 
 import (
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/response"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/output"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
-func ConvertShowFeatureListParamToQuery(param *param.ShowFeatureListParam) *query.FindListPaginationQuery {
+func ConvertShowFeatureListParamToQuery(param *input.ShowFeatureListParam) *query.FindListPaginationQuery {
 	return &query.FindListPaginationQuery{
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffSet(),
 	}
 }
 
-func ConvertFeatureListToOutput(features *entity.FeatureList) *response.FeatureList {
-	responseFeatures := make([]*response.Feature, len(features.Features))
+func ConvertFeatureListToOutput(features *entity.FeatureList) *output.FeatureList {
+	responseFeatures := make([]*output.Feature, len(features.Features))
 
 	for i, feature := range features.Features {
 		responseFeatures[i] = convertFeatureToOutput(feature)
 	}
 
-	return &response.FeatureList{
+	return &output.FeatureList{
 		TotalNumber: features.TotalNumber,
 		Features:    responseFeatures,
 	}
 }
 
-func ConvertQueryFeatureToOutput(feature *entity.QueryFeature) *response.ShowFeature {
-	relationPosts := make([]*response.RelationPost, len(feature.Posts))
+func ConvertQueryFeatureToOutput(feature *entity.QueryFeature) *output.ShowFeature {
+	relationPosts := make([]*output.RelationPost, len(feature.Posts))
 
 	for i, post := range feature.Posts {
 		relationPosts[i] = convertPostToRelationPost(post)
 	}
 
-	return &response.ShowFeature{
+	return &output.ShowFeature{
 		ID:            feature.ID,
 		Slug:          feature.Slug,
 		Thumbnail:     feature.Thumbnail,
@@ -43,15 +43,15 @@ func ConvertQueryFeatureToOutput(feature *entity.QueryFeature) *response.ShowFea
 		FacebookCount: feature.FacebookCount,
 		TwitterCount:  feature.TwitterCount,
 		Views:         feature.Views,
-		Creator:       response.NewCreatorFromUser(feature.User),
+		Creator:       output.NewCreatorFromUser(feature.User),
 		CreatedAt:     model.TimeResponse(feature.CreatedAt),
 		UpdatedAt:     model.TimeResponse(feature.UpdatedAt),
 		RelationPosts: relationPosts,
 	}
 }
 
-func convertPostToRelationPost(post *entity.Post) *response.RelationPost {
-	return &response.RelationPost{
+func convertPostToRelationPost(post *entity.Post) *output.RelationPost {
+	return &output.RelationPost{
 		ID:        post.ID,
 		Title:     post.Title,
 		Thumbnail: post.Thumbnail,
@@ -59,8 +59,8 @@ func convertPostToRelationPost(post *entity.Post) *response.RelationPost {
 	}
 }
 
-func convertFeatureToOutput(feature *entity.Feature) *response.Feature {
-	return &response.Feature{
+func convertFeatureToOutput(feature *entity.Feature) *output.Feature {
+	return &output.Feature{
 		ID:        feature.ID,
 		Title:     feature.Title,
 		Slug:      feature.Slug,

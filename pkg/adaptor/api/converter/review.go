@@ -1,8 +1,8 @@
 package converter
 
 import (
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/response"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/output"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
@@ -10,7 +10,7 @@ import (
 )
 
 // i/oの構造体からレポジトリで使用するクエリ発行用構造体へコンバート
-func ConvertFindReviewListParamToQuery(param *param.ListReviewParams) *query.ShowReviewListQuery {
+func ConvertFindReviewListParamToQuery(param *input.ListReviewParams) *query.ShowReviewListQuery {
 	return &query.ShowReviewListQuery{
 		UserID:                 param.UserID,
 		InnID:                  param.InnID,
@@ -28,24 +28,24 @@ func ConvertFindReviewListParamToQuery(param *param.ListReviewParams) *query.Sho
 	}
 }
 
-func ConvertListFeedReviewParamToQuery(param *param.ListFeedReviewParam) *query.FindListPaginationQuery {
+func ConvertListFeedReviewParamToQuery(param *input.ListFeedReviewParam) *query.FindListPaginationQuery {
 	return &query.FindListPaginationQuery{
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffset(),
 	}
 }
 
-func ConvertReviewCommentListToOutput(reviewComments []*entity.ReviewComment) []*response.ReviewComment {
-	reviewCommentOutputs := make([]*response.ReviewComment, len(reviewComments))
+func ConvertReviewCommentListToOutput(reviewComments []*entity.ReviewComment) []*output.ReviewComment {
+	reviewCommentOutputs := make([]*output.ReviewComment, len(reviewComments))
 	for i, reviewComment := range reviewComments {
-		reviewCommentOutputs[i] = convertReviewCommentToOutput(reviewComment)
+		reviewCommentOutputs[i] = ConvertReviewCommentToOutput(reviewComment)
 	}
 	return reviewCommentOutputs
 }
 
-func convertReviewCommentToOutput(reviewComment *entity.ReviewComment) *response.ReviewComment {
-	userSummary := response.NewUserSummary(reviewComment.User.ID, reviewComment.User.UID, reviewComment.User.Name, reviewComment.User.IconURL())
-	return response.NewReviewComment(
+func ConvertReviewCommentToOutput(reviewComment *entity.ReviewComment) *output.ReviewComment {
+	userSummary := output.NewUserSummary(reviewComment.User.ID, reviewComment.User.UID, reviewComment.User.Name, reviewComment.User.IconURL())
+	return output.NewReviewComment(
 		userSummary,
 		reviewComment.Body,
 		model.TimeResponse(reviewComment.CreatedAt),
@@ -55,32 +55,32 @@ func convertReviewCommentToOutput(reviewComment *entity.ReviewComment) *response
 	)
 }
 
-func ConvertQueryReviewListToOutput(queryReviews []*entity.QueryReview) []*response.Review {
-	responses := make([]*response.Review, len(queryReviews))
+func ConvertQueryReviewListToOutput(queryReviews []*entity.QueryReview) []*output.Review {
+	responses := make([]*output.Review, len(queryReviews))
 	for i, queryReview := range queryReviews {
 		responses[i] = convertQueryReviewToOutput(queryReview)
 	}
 	return responses
 }
 
-func convertQueryReviewToOutput(queryReview *entity.QueryReview) *response.Review {
-	medias := make([]response.ReviewMedia, len(queryReview.Medias))
-	hashtags := make([]response.Hashtag, len(queryReview.Hashtag))
+func convertQueryReviewToOutput(queryReview *entity.QueryReview) *output.Review {
+	medias := make([]output.ReviewMedia, len(queryReview.Medias))
+	hashtags := make([]output.Hashtag, len(queryReview.Hashtag))
 	for i, media := range queryReview.Medias {
-		medias[i] = response.ReviewMedia{
+		medias[i] = output.ReviewMedia{
 			UUID: media.ID,
 			Mime: media.MimeType,
 			URL:  media.GenerateURL(),
 		}
 	}
 	for i, hashtag := range queryReview.Hashtag {
-		hashtags[i] = response.Hashtag{
+		hashtags[i] = output.Hashtag{
 			ID:   hashtag.ID,
 			Name: hashtag.Name,
 		}
 	}
 
-	return &response.Review{
+	return &output.Review{
 		ID:            queryReview.ID,
 		InnID:         queryReview.InnID,
 		TouristSpotID: queryReview.TouristSpotID,
@@ -94,28 +94,28 @@ func convertQueryReviewToOutput(queryReview *entity.QueryReview) *response.Revie
 		TravelDate:    model.NewYearMonth(queryReview.TravelDate),
 		Hashtag:       hashtags,
 		CommentCount:  queryReview.CommentCount,
-		Creator:       response.NewCreatorFromUser(queryReview.User),
+		Creator:       output.NewCreatorFromUser(queryReview.User),
 	}
 }
 
-func ConvertQueryReviewShowToOutput(r *entity.QueryReview) *response.Review {
-	medias := make([]response.ReviewMedia, r.MediaCount)
-	hashtags := make([]response.Hashtag, len(r.Hashtag))
+func ConvertQueryReviewShowToOutput(r *entity.QueryReview) *output.Review {
+	medias := make([]output.ReviewMedia, r.MediaCount)
+	hashtags := make([]output.Hashtag, len(r.Hashtag))
 	for i, media := range r.Medias {
-		medias[i] = response.ReviewMedia{
+		medias[i] = output.ReviewMedia{
 			UUID: media.ID,
 			Mime: media.MimeType,
 			URL:  media.GenerateURL(),
 		}
 	}
 	for i, hashtag := range r.Hashtag {
-		hashtags[i] = response.Hashtag{
+		hashtags[i] = output.Hashtag{
 			ID:   hashtag.ID,
 			Name: hashtag.Name,
 		}
 	}
 
-	return &response.Review{
+	return &output.Review{
 		ID:            r.ID,
 		InnID:         r.InnID,
 		TouristSpotID: r.TouristSpotID,
@@ -129,11 +129,11 @@ func ConvertQueryReviewShowToOutput(r *entity.QueryReview) *response.Review {
 		TravelDate:    model.NewYearMonth(r.TravelDate),
 		CommentCount:  r.CommentCount,
 		Hashtag:       hashtags,
-		Creator:       response.NewCreatorFromUser(r.User),
+		Creator:       output.NewCreatorFromUser(r.User),
 	}
 }
 
-func ConvertCreateReviewParamToCommand(param *param.StoreReviewParam) *command.CreateReview {
+func ConvertCreateReviewParamToCommand(param *input.StoreReviewParam) *command.CreateReview {
 	uuids := make([]*command.CreateReviewMedia, len(param.MediaUUIDs))
 	for i, media := range param.MediaUUIDs {
 		uuids[i] = &command.CreateReviewMedia{
@@ -153,7 +153,7 @@ func ConvertCreateReviewParamToCommand(param *param.StoreReviewParam) *command.C
 	}
 }
 
-func ConvertUpdateReviewParamToCommand(param *param.UpdateReviewParam) *command.UpdateReview {
+func ConvertUpdateReviewParamToCommand(param *input.UpdateReviewParam) *command.UpdateReview {
 	uuids := make([]*command.CreateReviewMedia, len(param.MediaUUIDs))
 	for i, media := range param.MediaUUIDs {
 		uuids[i] = &command.CreateReviewMedia{

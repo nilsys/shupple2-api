@@ -1,4 +1,4 @@
-package param
+package input
 
 type (
 	ShowFeatureListParam struct {

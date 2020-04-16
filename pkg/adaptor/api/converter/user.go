@@ -5,8 +5,8 @@ import (
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/response"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/output"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
@@ -15,7 +15,7 @@ import (
 /*
  * o -> i
  */
-func ConvertListRankinUserParamToQuery(param *param.ListUserRanking) *query.FindUserRankingListQuery {
+func ConvertListRankinUserParamToQuery(param *input.ListUserRanking) *query.FindUserRankingListQuery {
 	fromDate, _ := model.ParseTimeFromFrontStr(param.FromDate)
 	toDate, _ := model.ParseTimeFromFrontStr(param.ToDate)
 
@@ -31,7 +31,7 @@ func ConvertListRankinUserParamToQuery(param *param.ListUserRanking) *query.Find
 	}
 }
 
-func ConvertListFollowUserParamToQuery(param *param.ListFollowUser) *query.FindFollowUser {
+func ConvertListFollowUserParamToQuery(param *input.ListFollowUser) *query.FindFollowUser {
 	return &query.FindFollowUser{
 		ID:     param.ID,
 		Limit:  param.GetLimit(),
@@ -39,7 +39,7 @@ func ConvertListFollowUserParamToQuery(param *param.ListFollowUser) *query.FindF
 	}
 }
 
-func ConvertStoreUserParamToEntity(param *param.StoreUser) *entity.User {
+func ConvertStoreUserParamToEntity(param *input.StoreUser) *entity.User {
 	interests := make([]*entity.UserInterest, len(param.Interests))
 	for i, interest := range param.Interests {
 		interests[i] = &entity.UserInterest{InterestID: interest}
@@ -60,7 +60,7 @@ func ConvertStoreUserParamToEntity(param *param.StoreUser) *entity.User {
 	}
 }
 
-func ConvertUpdateUserParamToCmd(param *param.UpdateUser) *command.UpdateUser {
+func ConvertUpdateUserParamToCmd(param *input.UpdateUser) *command.UpdateUser {
 	interests := make([]*entity.UserInterest, len(param.Interests))
 	for i, interest := range param.Interests {
 		interests[i] = &entity.UserInterest{InterestID: interest}
@@ -82,7 +82,7 @@ func ConvertUpdateUserParamToCmd(param *param.UpdateUser) *command.UpdateUser {
 	}
 }
 
-func ConvertListFavoriteMediaUserToQuery(param *param.ListFavoriteMediaUser) *query.FindListPaginationQuery {
+func ConvertListFavoriteMediaUserToQuery(param *input.ListFavoriteMediaUser) *query.FindListPaginationQuery {
 	return &query.FindListPaginationQuery{
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffset(),
@@ -92,8 +92,8 @@ func ConvertListFavoriteMediaUserToQuery(param *param.ListFavoriteMediaUser) *qu
 /*
  * i -> o
  */
-func ConvertUserRankingToOutput(users []*entity.UserDetail) []*response.RankinUser {
-	userRanking := make([]*response.RankinUser, len(users))
+func ConvertUserRankingToOutput(users []*entity.UserDetail) []*output.RankinUser {
+	userRanking := make([]*output.RankinUser, len(users))
 
 	for i, user := range users {
 		userRanking[i] = ConvertUserDetailToOutput(user)
@@ -102,30 +102,31 @@ func ConvertUserRankingToOutput(users []*entity.UserDetail) []*response.RankinUs
 	return userRanking
 }
 
-func ConvertUsersToFollowUsers(users []*entity.User) []*response.FollowUser {
-	followUsers := make([]*response.FollowUser, len(users))
+func ConvertUsersToUserSummaryList(users []*entity.User) []*output.UserSummary {
+	followUsers := make([]*output.UserSummary, len(users))
 	for i, user := range users {
-		followUsers[i] = convertUserToFollowUser(user)
+		followUsers[i] = convertUserToUserSummary(user)
 	}
 	return followUsers
 }
 
-func convertUserToFollowUser(user *entity.User) *response.FollowUser {
-	return &response.FollowUser{
-		ID:        user.ID,
-		Name:      user.Name,
-		Thumbnail: user.IconURL(),
+func convertUserToUserSummary(user *entity.User) *output.UserSummary {
+	return &output.UserSummary{
+		ID:      user.ID,
+		UID:     user.UID,
+		Name:    user.Name,
+		IconURL: user.IconURL(),
 	}
 }
 
 // UserDetailをランキング一覧で返す型にコンバート
-func ConvertUserDetailToOutput(user *entity.UserDetail) *response.RankinUser {
+func ConvertUserDetailToOutput(user *entity.UserDetail) *output.RankinUser {
 	interests := make([]string, len(user.Interests))
 	for i, interest := range user.Interests {
 		interests[i] = interest.Name
 	}
 
-	return &response.RankinUser{
+	return &output.RankinUser{
 		ID:        user.ID,
 		Name:      user.Name,
 		Profile:   user.Profile,
@@ -134,13 +135,13 @@ func ConvertUserDetailToOutput(user *entity.UserDetail) *response.RankinUser {
 	}
 }
 
-func ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWithCount) *response.MyPageUser {
+func ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWithCount) *output.MyPageUser {
 	interests := make([]string, len(user.Interests))
 	for i, interest := range user.Interests {
 		interests[i] = interest.Name
 	}
 
-	return &response.MyPageUser{
+	return &output.MyPageUser{
 		ID:             user.ID,
 		UID:            user.UID,
 		Name:           user.Name,

@@ -22,8 +22,8 @@ type (
 		//*************************************************
 		UpdateReview(review *entity.Review) error
 		DeleteReview(review *entity.Review) error
-		CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) error
-		CreateReviewComment(user *entity.User, reviewID int, body string) error
+		CreateReviewComment(user *entity.User, reviewID int, body string) (*entity.ReviewComment, error)
+		CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) (*entity.ReviewCommentReply, error)
 		DeleteReviewComment(user *entity.User, commentID int) error
 		FavoriteReviewComment(user *entity.User, reviewCommentID int) error
 		UnfavoriteReviewComment(user *entity.User, reviewCommentID int) error
@@ -34,7 +34,6 @@ type (
 		repository.ReviewQueryRepository
 		repository.ReviewCommandRepository
 		repository.HashtagCommandRepository
-		// repository.CategoryQueryRepository
 		repository.InnQueryRepository
 		repository.TouristSpotCommandRepository
 		service.NoticeDomainService
@@ -98,25 +97,35 @@ func (s *ReviewCommandServiceImpl) UpdateReview(review *entity.Review) error {
 	})
 }
 
-func (s *ReviewCommandServiceImpl) CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) error {
-	reply := s.convertCreateReviewCommentReplyToEntity(user, cmd)
+func (s *ReviewCommandServiceImpl) CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) (*entity.ReviewCommentReply, error) {
+	reviewCommentReply := s.convertCreateReviewCommentReplyToEntity(user, cmd)
 
-	return s.TransactionService.Do(func(c context.Context) error {
-		if err := s.ReviewCommandRepository.StoreReviewCommentReply(c, reply); err != nil {
+	err := s.TransactionService.Do(func(c context.Context) error {
+		if err := s.ReviewCommandRepository.StoreReviewCommentReply(c, reviewCommentReply); err != nil {
 			return errors.Wrap(err, "failed to store review_comment_reply")
 		}
 
-		if err := s.ReviewCommandRepository.IncrementReviewCommentReplyCount(c, reply.ReviewCommentID); err != nil {
+		if err := s.ReviewCommandRepository.IncrementReviewCommentReplyCount(c, reviewCommentReply.ReviewCommentID); err != nil {
 			return errors.Wrap(err, "failed to increment review_comment.favorite_count")
 		}
 
-		comment, err := s.ReviewQueryRepository.FindReviewCommentByID(reply.ReviewCommentID)
+		comment, err := s.ReviewQueryRepository.FindReviewCommentByID(reviewCommentReply.ReviewCommentID)
 		if err != nil {
 			return errors.Wrap(err, "failed to find review_comment by id")
 		}
 
-		return s.NoticeDomainService.ReviewCommentReply(c, reply, comment)
+		return s.NoticeDomainService.ReviewCommentReply(c, reviewCommentReply, comment)
 	})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create review_comment_reply transaction")
+	}
+
+	reply, err := s.ReviewQueryRepository.FindReviewCommentReplyByID(reviewCommentReply.ID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to find review_comment_reply.idj")
+	}
+
+	return reply, nil
 }
 
 func (s *ReviewCommandServiceImpl) FavoriteReviewComment(user *entity.User, reviewCommentID int) error {
@@ -182,12 +191,12 @@ func (s *ReviewCommandServiceImpl) UnfavoriteReviewComment(user *entity.User, re
 	})
 }
 
-func (s *ReviewCommandServiceImpl) CreateReviewComment(user *entity.User, reviewID int, body string) error {
+func (s *ReviewCommandServiceImpl) CreateReviewComment(user *entity.User, reviewID int, body string) (*entity.ReviewComment, error) {
 	reviewComment := entity.NewReviewComment(user.ID, reviewID, body)
 
-	return s.TransactionService.Do(func(c context.Context) error {
+	err := s.TransactionService.Do(func(c context.Context) error {
 		// レビューコメントを追加
-		if err := s.ReviewCommandRepository.CreateReviewComment(c, reviewComment); err != nil {
+		if err := s.ReviewCommandRepository.StoreReviewComment(c, reviewComment); err != nil {
 			return err
 		}
 
@@ -203,6 +212,17 @@ func (s *ReviewCommandServiceImpl) CreateReviewComment(user *entity.User, review
 
 		return s.NoticeDomainService.ReviewComment(c, reviewComment, review)
 	})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create review_comment")
+
+	}
+
+	comment, err := s.ReviewQueryRepository.FindReviewCommentByID(reviewComment.ID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to find review_comment.id")
+	}
+
+	return comment, nil
 }
 
 func (s *ReviewCommandServiceImpl) persistReviewMedia(medias []*entity.ReviewMedia) error {

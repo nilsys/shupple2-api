@@ -11,7 +11,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
@@ -24,9 +24,9 @@ var UserCommandControllerSet = wire.NewSet(
 )
 
 func (c *UserCommandController) SignUp(ctx echo.Context) error {
-	p := param.StoreUser{}
+	p := input.StoreUser{}
 	if err := BindAndValidate(ctx, &p); err != nil {
-		return errors.Wrap(err, "validation store user param")
+		return errors.Wrap(err, "validation store user input")
 	}
 
 	err := c.UserCommandService.SignUp(converter.ConvertStoreUserParamToEntity(&p), p.CognitoToken, p.MigrationCode)
@@ -39,9 +39,9 @@ func (c *UserCommandController) SignUp(ctx echo.Context) error {
 
 // uid以外の要素を更新可能
 func (c *UserCommandController) Update(ctx echo.Context, user entity.User) error {
-	p := param.UpdateUser{}
+	p := input.UpdateUser{}
 	if err := BindAndValidate(ctx, &p); err != nil {
-		return errors.Wrap(err, "validation store user image param")
+		return errors.Wrap(err, "validation store user image input")
 	}
 
 	err := c.UserCommandService.Update(&user, converter.ConvertUpdateUserParamToCmd(&p))
@@ -53,9 +53,9 @@ func (c *UserCommandController) Update(ctx echo.Context, user entity.User) error
 }
 
 func (c *UserCommandController) Follow(ctx echo.Context, user entity.User) error {
-	p := param.FollowParam{}
+	p := input.FollowParam{}
 	if err := BindAndValidate(ctx, &p); err != nil {
-		return errors.Wrap(err, "validation follow user param")
+		return errors.Wrap(err, "validation follow user input")
 	}
 
 	if err := c.UserCommandService.Follow(&user, p.ID); err != nil {
@@ -66,9 +66,9 @@ func (c *UserCommandController) Follow(ctx echo.Context, user entity.User) error
 }
 
 func (c *UserCommandController) Unfollow(ctx echo.Context, user entity.User) error {
-	p := param.FollowParam{}
+	p := input.FollowParam{}
 	if err := BindAndValidate(ctx, &p); err != nil {
-		return errors.Wrap(err, "validation unFollow user param")
+		return errors.Wrap(err, "validation unFollow user input")
 	}
 
 	if err := c.UserCommandService.Unfollow(&user, p.ID); err != nil {

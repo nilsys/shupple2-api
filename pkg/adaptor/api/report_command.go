@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 )
@@ -22,7 +22,7 @@ var ReportCommandControllerSet = wire.NewSet(
 )
 
 func (c *ReportCommandController) Report(ctx echo.Context, user entity.User) error {
-	p := param.Report{}
+	p := input.Report{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrap(err, "validation report param")
 	}
@@ -37,12 +37,12 @@ func (c *ReportCommandController) Report(ctx echo.Context, user entity.User) err
 }
 
 func (c *ReportCommandController) MarkAsDone(ctx echo.Context) error {
-	p := param.SlackCallbackPayload{}
+	p := input.SlackCallbackPayload{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrap(err, "validation report submit body")
 	}
 
-	src := param.SlackCallback{}
+	src := input.SlackCallback{}
 	if err := json.Unmarshal([]byte(p.Payload), &src); err != nil {
 		return errors.Wrap(err, "invalid slack report callback response type")
 	}

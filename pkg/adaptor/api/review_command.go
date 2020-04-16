@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -23,9 +23,9 @@ var ReviewCommandControllerSet = wire.NewSet(
 )
 
 func (c *ReviewCommandController) Store(ctx echo.Context, user entity.User) error {
-	p := &param.StoreReviewParam{}
+	p := &input.StoreReviewParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
-		return errors.Wrap(err, "validation store review param")
+		return errors.Wrap(err, "validation store review input")
 	}
 
 	if err := c.ReviewCommandScenario.Create(&user, converter.ConvertCreateReviewParamToCommand(p)); err != nil {
@@ -36,9 +36,9 @@ func (c *ReviewCommandController) Store(ctx echo.Context, user entity.User) erro
 }
 
 func (c *ReviewCommandController) Update(ctx echo.Context, user entity.User) error {
-	p := &param.UpdateReviewParam{}
+	p := &input.UpdateReviewParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
-		return errors.Wrap(err, "validation update review param")
+		return errors.Wrap(err, "validation update review input")
 	}
 
 	if err := c.ReviewCommandScenario.UpdateReview(&user, converter.ConvertUpdateReviewParamToCommand(p)); err != nil {
@@ -49,20 +49,21 @@ func (c *ReviewCommandController) Update(ctx echo.Context, user entity.User) err
 }
 
 func (c *ReviewCommandController) StoreReviewComment(ctx echo.Context, user entity.User) error {
-	reviewCommentParam := &param.CreateReviewComment{}
+	reviewCommentParam := &input.CreateReviewComment{}
 	if err := BindAndValidate(ctx, reviewCommentParam); err != nil {
 		return errors.Wrap(err, "Failed to bind parameters")
 	}
 
-	if err := c.ReviewCommandService.CreateReviewComment(&user, reviewCommentParam.ID, reviewCommentParam.Body); err != nil {
+	comment, err := c.ReviewCommandService.CreateReviewComment(&user, reviewCommentParam.ID, reviewCommentParam.Body)
+	if err != nil {
 		return errors.Wrap(err, "Failed to create review comment")
 	}
 
-	return ctx.JSON(http.StatusOK, "ok")
+	return ctx.JSON(http.StatusOK, converter.ConvertReviewCommentToOutput(comment))
 }
 
 func (c *ReviewCommandController) DeleteReviewComment(ctx echo.Context, user entity.User) error {
-	reviewCommentParam := &param.DeleteReviewCommentParam{}
+	reviewCommentParam := &input.DeleteReviewCommentParam{}
 	if err := BindAndValidate(ctx, reviewCommentParam); err != nil {
 		return errors.Wrap(err, "Failed to bind parameters")
 	}
@@ -75,22 +76,23 @@ func (c *ReviewCommandController) DeleteReviewComment(ctx echo.Context, user ent
 }
 
 func (c *ReviewCommandController) StoreReviewCommentReply(ctx echo.Context, user entity.User) error {
-	p := &param.CreateReviewCommentReply{}
+	p := &input.CreateReviewCommentReply{}
 	if err := BindAndValidate(ctx, p); err != nil {
-		return errors.Wrap(err, "validation store review comment reply param")
+		return errors.Wrap(err, "validation store review comment reply input")
 	}
 
-	if err := c.ReviewCommandService.CreateReviewCommentReply(&user, converter.ConvertCreateReviewCommentReplyParamToCommand(p)); err != nil {
+	reply, err := c.ReviewCommandService.CreateReviewCommentReply(&user, converter.ConvertCreateReviewCommentReplyParamToCommand(p))
+	if err != nil {
 		return errors.Wrap(err, "failed to store review comment reply")
 	}
 
-	return ctx.JSON(http.StatusOK, "ok")
+	return ctx.JSON(http.StatusOK, converter.ConvertReviewCommentReplyToOutput(reply))
 }
 
 func (c *ReviewCommandController) FavoriteReviewComment(ctx echo.Context, user entity.User) error {
-	p := &param.FavoriteReviewComment{}
+	p := &input.FavoriteReviewComment{}
 	if err := BindAndValidate(ctx, p); err != nil {
-		return errors.Wrap(err, "validation favorite review comment param")
+		return errors.Wrap(err, "validation favorite review comment input")
 	}
 
 	if err := c.ReviewCommandService.FavoriteReviewComment(&user, p.ReviewCommentID); err != nil {
@@ -101,9 +103,9 @@ func (c *ReviewCommandController) FavoriteReviewComment(ctx echo.Context, user e
 }
 
 func (c *ReviewCommandController) Delete(ctx echo.Context, user entity.User) error {
-	p := &param.DeleteReviewParam{}
+	p := &input.DeleteReviewParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
-		return errors.Wrap(err, "validation delete review param")
+		return errors.Wrap(err, "validation delete review input")
 	}
 
 	if err := c.ReviewCommandScenario.DeleteReview(p.ID, &user); err != nil {
@@ -114,9 +116,9 @@ func (c *ReviewCommandController) Delete(ctx echo.Context, user entity.User) err
 }
 
 func (c *ReviewCommandController) UnfavoriteReviewComment(ctx echo.Context, user entity.User) error {
-	p := &param.FavoriteReviewComment{}
+	p := &input.FavoriteReviewComment{}
 	if err := BindAndValidate(ctx, p); err != nil {
-		return errors.Wrap(err, "validation un favorite review comment param")
+		return errors.Wrap(err, "validation un favorite review comment input")
 	}
 
 	if err := c.ReviewCommandService.UnfavoriteReviewComment(&user, p.ReviewCommentID); err != nil {

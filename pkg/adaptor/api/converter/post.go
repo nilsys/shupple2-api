@@ -1,8 +1,8 @@
 package converter
 
 import (
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/response"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/output"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
@@ -11,7 +11,7 @@ import (
 /*
  * o -> i
  */
-func ConvertFindPostListParamToQuery(param *param.ListPostParam) *query.FindPostListQuery {
+func ConvertFindPostListParamToQuery(param *input.ListPostParam) *query.FindPostListQuery {
 	return &query.FindPostListQuery{
 		UserID:                 param.UserID,
 		AreaID:                 param.AreaID,
@@ -34,7 +34,7 @@ func ConvertFindPostListParamToQuery(param *param.ListPostParam) *query.FindPost
 	}
 }
 
-func ConvertListFeedPostParamToQuery(param *param.ListFeedPostParam) *query.FindListPaginationQuery {
+func ConvertListFeedPostParamToQuery(param *input.ListFeedPostParam) *query.FindListPaginationQuery {
 	return &query.FindListPaginationQuery{
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffSet(),
@@ -45,21 +45,21 @@ func ConvertListFeedPostParamToQuery(param *param.ListFeedPostParam) *query.Find
  * i -> o
  */
 // ConvertPostToOutput()のスライスバージョン
-func ConvertPostDetailListToOutput(queryPostList *entity.PostDetailList) response.PostList {
-	responsePosts := make([]*response.Post, len(queryPostList.Posts))
+func ConvertPostDetailListToOutput(queryPostList *entity.PostDetailList) output.PostList {
+	responsePosts := make([]*output.Post, len(queryPostList.Posts))
 
 	for i, queryPost := range queryPostList.Posts {
 		responsePosts[i] = ConvertQueryPostToOutput(queryPost)
 	}
 
-	return response.PostList{
+	return output.PostList{
 		TotalNumber: queryPostList.TotalNumber,
 		Posts:       responsePosts,
 	}
 }
 
-func ConvertPostListToOutput(posts []*entity.PostDetail) []*response.Post {
-	responsePosts := make([]*response.Post, len(posts))
+func ConvertPostListToOutput(posts []*entity.PostDetail) []*output.Post {
+	responsePosts := make([]*output.Post, len(posts))
 
 	for i, post := range posts {
 		responsePosts[i] = ConvertQueryPostToOutput(post)
@@ -69,14 +69,14 @@ func ConvertPostListToOutput(posts []*entity.PostDetail) []*response.Post {
 }
 
 // outputの構造体へconvert
-func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
-	return &response.Post{
+func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *output.Post {
+	return &output.Post{
 		ID:              queryPost.ID,
 		Thumbnail:       queryPost.Thumbnail,
 		Title:           queryPost.Title,
 		AreaCategories:  ConvertAreaCategoriesToOutput(queryPost.AreaCategories),
 		ThemeCategories: ConvertThemeCategoriesToOutput(queryPost.ThemeCategories),
-		Creator:         response.NewCreatorFromUser(queryPost.User),
+		Creator:         output.NewCreatorFromUser(queryPost.User),
 		FavoriteCount:   queryPost.FavoriteCount,
 		Views:           queryPost.Views,
 		HideAds:         queryPost.HideAds,
@@ -85,18 +85,18 @@ func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *response.Post {
 	}
 }
 
-func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *response.PostShow {
-	var hashtags = make([]*response.Hashtag, len(post.Hashtag))
-	var bodies = make([]*response.PostBody, len(post.Bodies))
+func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *output.PostShow {
+	var hashtags = make([]*output.Hashtag, len(post.Hashtag))
+	var bodies = make([]*output.PostBody, len(post.Bodies))
 
 	for i, hashtag := range post.Hashtag {
-		hashtags[i] = response.NewHashtag(hashtag.ID, hashtag.Name)
+		hashtags[i] = output.NewHashtag(hashtag.ID, hashtag.Name)
 	}
 	for i, body := range post.Bodies {
-		bodies[i] = response.NewPostBody(body.Page, body.Body)
+		bodies[i] = output.NewPostBody(body.Page, body.Body)
 	}
 
-	return &response.PostShow{
+	return &output.PostShow{
 		ID:              post.ID,
 		Thumbnail:       post.PostTiny.Thumbnail,
 		Title:           post.Title,
@@ -109,7 +109,7 @@ func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *r
 		SEOTitle:        post.SEOTitle,
 		SEODescription:  post.SEODescription,
 		HideAds:         post.HideAds,
-		Creator:         response.NewCreatorFromUser(post.User),
+		Creator:         output.NewCreatorFromUser(post.User),
 		AreaCategories:  ConvertAreaCategoriesToOutput(post.AreaCategories),
 		ThemeCategories: ConvertThemeCategoriesToOutput(post.ThemeCategories),
 		Hashtags:        hashtags,

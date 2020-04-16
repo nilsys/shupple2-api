@@ -1,15 +1,15 @@
 package converter
 
 import (
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/response"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/output"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
 // i/oの構造体からレポジトリで使用するクエリ構造体へconvert
-func ConvertListVlogParamToQuery(param *param.ListVlogParam) *query.FindVlogListQuery {
+func ConvertListVlogParamToQuery(param *input.ListVlogParam) *query.FindVlogListQuery {
 	return &query.FindVlogListQuery{
 		AreaID:        param.AreaID,
 		SubAreaID:     param.SubAreaID,
@@ -22,32 +22,32 @@ func ConvertListVlogParamToQuery(param *param.ListVlogParam) *query.FindVlogList
 	}
 }
 
-func ConvertVlogListToOutput(queryVlogs *entity.VlogList) response.VlogList {
-	responseVlogs := make([]*response.Vlog, len(queryVlogs.Vlogs))
+func ConvertVlogListToOutput(queryVlogs *entity.VlogList) output.VlogList {
+	responseVlogs := make([]*output.Vlog, len(queryVlogs.Vlogs))
 
 	for i, queryVlog := range queryVlogs.Vlogs {
 		responseVlogs[i] = convertVlogToOutput(queryVlog)
 	}
 
-	return response.VlogList{
+	return output.VlogList{
 		TotalNumber: queryVlogs.TotalNumber,
 		Vlogs:       responseVlogs,
 	}
 }
 
-func ConvertVlogDetail(vlog *entity.VlogDetail) *response.VlogDetail {
-	touristSpots := make([]*response.TouristSpot, len(vlog.TouristSpots))
+func ConvertVlogDetail(vlog *entity.VlogDetail) *output.VlogDetail {
+	touristSpots := make([]*output.TouristSpot, len(vlog.TouristSpots))
 	for i, touristSpot := range vlog.TouristSpots {
-		touristSpots[i] = response.NewTouristSpots(touristSpot.ID, touristSpot.Name, touristSpot.Thumbnail)
+		touristSpots[i] = output.NewTouristSpots(touristSpot.ID, touristSpot.Name, touristSpot.Thumbnail)
 	}
 
-	editors := make([]*response.Creator, len(vlog.Editors))
+	editors := make([]*output.Creator, len(vlog.Editors))
 	for i, editor := range vlog.Editors {
-		e := response.NewCreatorFromUser(editor)
+		e := output.NewCreatorFromUser(editor)
 		editors[i] = &e
 	}
 
-	return &response.VlogDetail{
+	return &output.VlogDetail{
 		ID:              vlog.ID,
 		Thumbnail:       vlog.Thumbnail,
 		Title:           vlog.Title,
@@ -69,8 +69,8 @@ func ConvertVlogDetail(vlog *entity.VlogDetail) *response.VlogDetail {
 	}
 }
 
-func convertVlogToOutput(queryVlog *entity.VlogForList) *response.Vlog {
-	return &response.Vlog{
+func convertVlogToOutput(queryVlog *entity.VlogForList) *output.Vlog {
+	return &output.Vlog{
 		ID:              queryVlog.ID,
 		Thumbnail:       queryVlog.Thumbnail,
 		AreaCategories:  ConvertAreaCategoriesToOutput(queryVlog.AreaCategories),

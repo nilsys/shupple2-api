@@ -5,7 +5,7 @@ import (
 
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 
 	"github.com/pkg/errors"
 
@@ -25,7 +25,7 @@ var CategoryQueryControllerSet = wire.NewSet(
 )
 
 func (c *CategoryQueryController) ShowBySlug(ctx echo.Context) error {
-	p := param.ShowPostBySlug{}
+	p := input.ShowPostBySlug{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrap(err, "validation show by slug parameter")
 	}

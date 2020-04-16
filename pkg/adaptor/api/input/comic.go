@@ -1,4 +1,4 @@
-package param
+package input
 
 // 漫画一覧取得APIパラメータ
 type (

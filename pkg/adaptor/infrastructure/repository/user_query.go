@@ -67,7 +67,7 @@ func (r *UserQueryRepositoryImpl) FindUserRankingListByParams(query *query.FindU
 	q := r.buildFindUserRankingListQuery(query)
 	// MEMO: validationを掛けているのであり得ないが
 	if q == nil {
-		return nil, serror.New(nil, serror.CodeInvalidParam, "Invalid list user ranking search param")
+		return nil, serror.New(nil, serror.CodeInvalidParam, "Invalid list user ranking search input")
 	}
 
 	if err := q.

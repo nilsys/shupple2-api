@@ -1,4 +1,4 @@
-package param
+package input
 
 import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
@@ -40,7 +40,7 @@ func (param *ListTouristSpotParams) GetLimit() int {
 // いずれのクエリも飛んで来なかった場合エラーを返す
 func (param *ListTouristSpotParams) Validate() error {
 	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.SpotCategoryID == 0 {
-		return serror.New(nil, serror.CodeInvalidParam, "Invalid show review param")
+		return serror.New(nil, serror.CodeInvalidParam, "Invalid show review input")
 	}
 
 	return nil

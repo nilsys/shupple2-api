@@ -9,7 +9,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
@@ -22,7 +22,7 @@ var ReviewQueryControllerSet = wire.NewSet(
 )
 
 func (c *ReviewQueryController) LisReview(ctx echo.Context) error {
-	reviewParam := &param.ListReviewParams{}
+	reviewParam := &input.ListReviewParams{}
 
 	if err := BindAndValidate(ctx, reviewParam); err != nil {
 		return errors.Wrap(err, "Failed to bind parameters")
@@ -39,9 +39,9 @@ func (c *ReviewQueryController) LisReview(ctx echo.Context) error {
 }
 
 func (c *ReviewQueryController) ListFeedReview(ctx echo.Context) error {
-	p := &param.ListFeedReviewParam{}
+	p := &input.ListFeedReviewParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
-		return errors.Wrap(err, "validation feed review param")
+		return errors.Wrap(err, "validation feed review input")
 	}
 
 	q := converter.ConvertListFeedReviewParamToQuery(p)
@@ -55,7 +55,7 @@ func (c *ReviewQueryController) ListFeedReview(ctx echo.Context) error {
 }
 
 func (c *ReviewQueryController) ShowReview(ctx echo.Context) error {
-	p := &param.ShowReview{}
+	p := &input.ShowReview{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "required review id")
 	}
@@ -69,7 +69,7 @@ func (c *ReviewQueryController) ShowReview(ctx echo.Context) error {
 }
 
 func (c *ReviewQueryController) ListReviewCommentByReviewID(ctx echo.Context) error {
-	p := &param.ListReviewCommentParam{}
+	p := &input.ListReviewCommentParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "Failed to bind parameters")
 	}
@@ -83,7 +83,7 @@ func (c *ReviewQueryController) ListReviewCommentByReviewID(ctx echo.Context) er
 }
 
 func (c *ReviewQueryController) ListFavoriteReview(ctx echo.Context) error {
-	p := &param.ListFeedReviewParam{}
+	p := &input.ListFeedReviewParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list favorite review")
 	}
@@ -99,7 +99,7 @@ func (c *ReviewQueryController) ListFavoriteReview(ctx echo.Context) error {
 }
 
 func (c *ReviewQueryController) ListReviewCommentReply(ctx echo.Context) error {
-	p := &param.ListReviewCommentReply{}
+	p := &input.ListReviewCommentReply{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list review comment reply")
 	}

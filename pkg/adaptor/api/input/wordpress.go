@@ -1,4 +1,4 @@
-package param
+package input
 
 import "github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
 

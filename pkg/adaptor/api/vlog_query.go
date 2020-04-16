@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
@@ -20,7 +20,7 @@ var VlogQueryControllerSet = wire.NewSet(
 )
 
 func (c *VlogQueryController) Show(ctx echo.Context) error {
-	p := &param.ShowVlog{}
+	p := &input.ShowVlog{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "required vlog id")
 	}
@@ -33,9 +33,9 @@ func (c *VlogQueryController) Show(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, converter.ConvertVlogDetail(vlog))
 }
 func (c *VlogQueryController) ListVlog(ctx echo.Context) error {
-	param := &param.ListVlogParam{}
+	param := &input.ListVlogParam{}
 	if err := BindAndValidate(ctx, param); err != nil {
-		return errors.Wrap(err, "invalid show vlogs param")
+		return errors.Wrap(err, "invalid show vlogs input")
 	}
 
 	vlogs, err := c.VlogQueryService.ShowListByParams(converter.ConvertListVlogParamToQuery(param))

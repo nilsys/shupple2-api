@@ -51,7 +51,7 @@ func GetConfig(filename FilePath) (*Config, error) {
 		var metaData MetaData
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Debug("failed aws meta data read response body")
+			log.Debug("failed aws meta data read output body")
 		}
 		log.Debugf("ECS CONTAINER METADATA: %s", string(bodyBytes))
 

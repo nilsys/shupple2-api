@@ -1,4 +1,4 @@
-package response
+package output
 
 import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -28,19 +28,11 @@ type (
 		Interests []string `json:"interests"`
 	}
 
-	// MEMO: ユースケースが増えれば命名返る
-	FollowUser struct {
-		ID        int    `json:"id"`
-		UID       string `json:"uid"`
-		Name      string `json:"name"`
-		Thumbnail string `json:"iconUrl"`
-	}
-
 	UserSummary struct {
-		ID   int    `json:"id"`
-		UID  string `json:"uid"`
-		Name string `json:"name"`
-		Icon string `json:"iconUrl"`
+		ID      int    `json:"id"`
+		UID     string `json:"uid"`
+		Name    string `json:"name"`
+		IconURL string `json:"iconUrl"`
 	}
 
 	MyPageUser struct {
@@ -86,9 +78,9 @@ func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL
 
 func NewUserSummary(id int, uid, name, icon string) *UserSummary {
 	return &UserSummary{
-		ID:   id,
-		UID:  uid,
-		Name: name,
-		Icon: icon,
+		ID:      id,
+		UID:     uid,
+		Name:    name,
+		IconURL: icon,
 	}
 }

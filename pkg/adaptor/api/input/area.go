@@ -1,4 +1,4 @@
-package param
+package input
 
 type (
 	// Area, SubArea, SubSubAreaで共通使用

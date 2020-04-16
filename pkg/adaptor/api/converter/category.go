@@ -1,16 +1,16 @@
 package converter
 
 import (
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/response"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/output"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 )
 
-func ConvertCategoryToOutput(category entity.Category) *response.Category {
-	return response.NewCategory(category.CategoryID(), category.CategoryName(), category.CategoryType(), category.CategorySlug())
+func ConvertCategoryToOutput(category entity.Category) *output.Category {
+	return output.NewCategory(category.CategoryID(), category.CategoryName(), category.CategoryType(), category.CategorySlug())
 }
 
-func ConvertAreaCategoryToOutput(areaCategory *entity.AreaCategory) *response.AreaCategory {
-	return &response.AreaCategory{
+func ConvertAreaCategoryToOutput(areaCategory *entity.AreaCategory) *output.AreaCategory {
+	return &output.AreaCategory{
 		ID:   areaCategory.ID,
 		Name: areaCategory.Name,
 		Slug: areaCategory.Slug,
@@ -18,8 +18,8 @@ func ConvertAreaCategoryToOutput(areaCategory *entity.AreaCategory) *response.Ar
 	}
 }
 
-func ConvertAreaCategoriesToOutput(areaCategories []*entity.AreaCategory) []*response.AreaCategory {
-	var resp = make([]*response.AreaCategory, len(areaCategories))
+func ConvertAreaCategoriesToOutput(areaCategories []*entity.AreaCategory) []*output.AreaCategory {
+	var resp = make([]*output.AreaCategory, len(areaCategories))
 	for i, areaCategory := range areaCategories {
 		resp[i] = ConvertAreaCategoryToOutput(areaCategory)
 	}
@@ -27,8 +27,8 @@ func ConvertAreaCategoriesToOutput(areaCategories []*entity.AreaCategory) []*res
 	return resp
 }
 
-func ConvertThemeCategoryToOutput(themeCategory *entity.ThemeCategory) *response.ThemeCategory {
-	return &response.ThemeCategory{
+func ConvertThemeCategoryToOutput(themeCategory *entity.ThemeCategory) *output.ThemeCategory {
+	return &output.ThemeCategory{
 		ID:   themeCategory.ID,
 		Name: themeCategory.Name,
 		Slug: themeCategory.Slug,
@@ -36,8 +36,8 @@ func ConvertThemeCategoryToOutput(themeCategory *entity.ThemeCategory) *response
 	}
 }
 
-func ConvertThemeCategoriesToOutput(themeCategories []*entity.ThemeCategory) []*response.ThemeCategory {
-	var resp = make([]*response.ThemeCategory, len(themeCategories))
+func ConvertThemeCategoriesToOutput(themeCategories []*entity.ThemeCategory) []*output.ThemeCategory {
+	var resp = make([]*output.ThemeCategory, len(themeCategories))
 	for i, themeCategory := range themeCategories {
 		resp[i] = ConvertThemeCategoryToOutput(themeCategory)
 	}
@@ -45,16 +45,16 @@ func ConvertThemeCategoriesToOutput(themeCategories []*entity.ThemeCategory) []*
 	return resp
 }
 
-func ConvertAreaCategoryDetailToOutput(areaCategoryDetail *entity.AreaCategoryDetail) *response.AreaCategoryDetail {
-	var subArea *response.AreaCategory
-	var subSubArea *response.AreaCategory
+func ConvertAreaCategoryDetailToOutput(areaCategoryDetail *entity.AreaCategoryDetail) *output.AreaCategoryDetail {
+	var subArea *output.AreaCategory
+	var subSubArea *output.AreaCategory
 	if areaCategoryDetail.SubAreaID.Valid {
 		subArea = ConvertAreaCategoryToOutput(areaCategoryDetail.SubArea)
 	}
 	if areaCategoryDetail.SubSubAreaID.Valid {
 		subSubArea = ConvertAreaCategoryToOutput(areaCategoryDetail.SubSubArea)
 	}
-	return &response.AreaCategoryDetail{
+	return &output.AreaCategoryDetail{
 		ID:         areaCategoryDetail.ID,
 		Name:       areaCategoryDetail.Name,
 		Slug:       areaCategoryDetail.Slug,

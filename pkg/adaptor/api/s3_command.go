@@ -8,7 +8,7 @@ import (
 	"github.com/google/wire"
 
 	"github.com/pkg/errors"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 )
@@ -22,7 +22,7 @@ var S3CommandControllerSet = wire.NewSet(
 )
 
 func (c *S3CommandController) Post(ctx echo.Context, user entity.User) error {
-	s3param := param.S3{}
+	s3param := input.S3{}
 	if err := BindAndValidate(ctx, &s3param); err != nil {
 		return errors.Wrap(err, "validation post s3")
 	}

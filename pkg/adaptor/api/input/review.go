@@ -1,4 +1,4 @@
-package param
+package input
 
 import (
 	"unicode/utf8"
@@ -90,7 +90,7 @@ const storeBodyMinimumLimit = 50
 // いずれのクエリも飛んで来なかった場合エラーを返す
 func (param *ListReviewParams) Validate() error {
 	if param.UserID == 0 && param.InnID == 0 && param.TouristSpotID == 0 && param.HashTag == "" && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.MetasearchAreaID == 0 && param.MetasearchSubAreaID == 0 && param.MetasearchSubSubAreaID == 0 && param.Keyward == "" && param.SortBy == 0 {
-		return serror.New(nil, serror.CodeInvalidParam, "Invalid show review param")
+		return serror.New(nil, serror.CodeInvalidParam, "Invalid show review input")
 	}
 
 	return nil

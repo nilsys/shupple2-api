@@ -6,7 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
@@ -19,9 +19,9 @@ var HashtagQueryControllerSet = wire.NewSet(
 )
 
 func (c *HashtagQueryController) ListRecommendHashtag(ctx echo.Context) error {
-	p := &param.ListRecommendHashTagParam{}
+	p := &input.ListRecommendHashTagParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
-		return errors.Wrapf(err, "validation show recommend hashtag list param")
+		return errors.Wrapf(err, "validation show recommend hashtag list input")
 	}
 
 	recommendHashTags, err := c.HashtagQueryService.ShowRecommendList(p.AreaID, p.SubAreaID, p.SubSubAreaID)

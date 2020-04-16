@@ -11,7 +11,6 @@ type (
 	// Review参照系レポジトリ
 	ReviewQueryRepository interface {
 		FindByID(id int) (*entity.Review, error)
-		FindReviewCommentReplyByID(id int) (*entity.ReviewCommentReply, error)
 		ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.QueryReview, error)
 		FindFeedReviewListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
 		FindReviewCommentListByReviewID(reviewID int, limit int) ([]*entity.ReviewComment, error)
@@ -21,6 +20,7 @@ type (
 		IsExistReviewComment(id int) (bool, error)
 		IsExistReviewCommentFavorite(userID, reviewCommentID int) (bool, error)
 		FindReviewCommentByID(id int) (*entity.ReviewComment, error)
+		FindReviewCommentReplyByID(id int) (*entity.ReviewCommentReply, error)
 		FindReviewCommentReplyListByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error)
 	}
 
@@ -34,7 +34,7 @@ type (
 		DecrementFavoriteCount(c context.Context, reviewID int) error
 		PersistReviewMedia(reviewMedia *entity.ReviewMedia) error
 		ShowReviewComment(c context.Context, commentID int) (*entity.ReviewComment, error)
-		CreateReviewComment(c context.Context, comment *entity.ReviewComment) error
+		StoreReviewComment(c context.Context, comment *entity.ReviewComment) error
 		StoreReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply) error
 		IncrementReviewCommentReplyCount(c context.Context, reviewCommentID int) error
 		IncrementReviewCommentFavoriteCount(c context.Context, reviewCommentID int) error

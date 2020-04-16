@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
@@ -20,7 +20,7 @@ var FeatureQueryControllerSet = wire.NewSet(
 )
 
 func (c *FeatureQueryController) ShowQuery(ctx echo.Context) error {
-	p := &param.ShowFeatureParam{}
+	p := &input.ShowFeatureParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation show feature")
 	}
@@ -34,9 +34,9 @@ func (c *FeatureQueryController) ShowQuery(ctx echo.Context) error {
 }
 
 func (c *FeatureQueryController) ListFeature(ctx echo.Context) error {
-	p := &param.ShowFeatureListParam{}
+	p := &input.ShowFeatureListParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
-		return errors.Wrap(err, "validation show feature list param")
+		return errors.Wrap(err, "validation show feature list input")
 	}
 
 	q := converter.ConvertShowFeatureListParamToQuery(p)

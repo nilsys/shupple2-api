@@ -7,7 +7,7 @@ import (
 
 type (
 	ReviewComment struct {
-		ID            int `gorm:"column:id"`
+		ID            int `gorm:"primary_key"`
 		UserID        int
 		ReviewID      int
 		User          *User `gorm:"foreignkey:UserID"`

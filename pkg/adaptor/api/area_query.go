@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
@@ -26,7 +26,7 @@ var AreaQueryControllerSet = wire.NewSet(
 
 // AreaのListを取得して返す
 func (c *AreaQueryController) ListArea(ctx echo.Context) error {
-	p := param.ListAreaParams{}
+	p := input.ListAreaParams{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrap(err, "failed to BindAndValidate")
 	}
@@ -52,7 +52,7 @@ func (c *AreaQueryController) ListArea(ctx echo.Context) error {
 
 // IDに紐づくAreaを返す
 func (c *AreaQueryController) ShowAreaByID(ctx echo.Context) error {
-	p := param.GetArea{}
+	p := input.GetArea{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrapf(err, "ID is invalid")
 	}
@@ -67,7 +67,7 @@ func (c *AreaQueryController) ShowAreaByID(ctx echo.Context) error {
 
 // SubAreaのListを取得して返す
 func (c *AreaQueryController) ListSubArea(ctx echo.Context) error {
-	p := param.ListSubAreaParams{}
+	p := input.ListSubAreaParams{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrap(err, "failed to BindAndValidate AreaCategoryParam")
 	}
@@ -82,7 +82,7 @@ func (c *AreaQueryController) ListSubArea(ctx echo.Context) error {
 
 // IDに紐づくSubAreaを返す
 func (c *AreaQueryController) ShowSubAreaByID(ctx echo.Context) error {
-	p := param.GetArea{}
+	p := input.GetArea{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrapf(err, "ID is invalid")
 	}
@@ -97,7 +97,7 @@ func (c *AreaQueryController) ShowSubAreaByID(ctx echo.Context) error {
 
 // SubSubAreaのListを取得して返す
 func (c *AreaQueryController) ListSubSubArea(ctx echo.Context) error {
-	p := param.ListSubSubAreaParams{}
+	p := input.ListSubSubAreaParams{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrap(err, "failed to BindAndValidate AreaCategoryParam")
 	}
@@ -111,7 +111,7 @@ func (c *AreaQueryController) ListSubSubArea(ctx echo.Context) error {
 }
 
 func (c *AreaQueryController) ShowSubSubAreaByID(ctx echo.Context) error {
-	p := param.GetArea{}
+	p := input.GetArea{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrapf(err, "ID is invalid")
 	}

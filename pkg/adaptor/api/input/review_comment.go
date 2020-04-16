@@ -1,8 +1,8 @@
-package param
+package input
 
 type (
 	CreateReviewCommentReply struct {
-		ReviewCommentID int    `param:"id"`
+		ReviewCommentID int    `param:"id" validate:"required"`
 		Body            string `json:"body"`
 	}
 

@@ -5,7 +5,7 @@ import (
 
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
@@ -24,7 +24,7 @@ var PostQueryControllerSet = wire.NewSet(
 )
 
 func (c *PostQueryController) Show(ctx echo.Context) error {
-	p := &param.GetPost{}
+	p := &input.GetPost{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrapf(err, "validation get post parameter")
 	}
@@ -38,7 +38,7 @@ func (c *PostQueryController) Show(ctx echo.Context) error {
 }
 
 func (c *PostQueryController) ShowBySlug(ctx echo.Context) error {
-	p := &param.ShowPostBySlug{}
+	p := &input.ShowPostBySlug{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation get post by slug parameter")
 	}
@@ -52,7 +52,7 @@ func (c *PostQueryController) ShowBySlug(ctx echo.Context) error {
 }
 
 func (c *PostQueryController) ListPost(ctx echo.Context) error {
-	p := &param.ListPostParam{}
+	p := &input.ListPostParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrapf(err, "validation find post list parameter")
 	}
@@ -68,9 +68,9 @@ func (c *PostQueryController) ListPost(ctx echo.Context) error {
 }
 
 func (c *PostQueryController) ListFeedPost(ctx echo.Context) error {
-	p := &param.ListFeedPostParam{}
+	p := &input.ListFeedPostParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
-		return errors.Wrapf(err, "validation find feed post list param")
+		return errors.Wrapf(err, "validation find feed post list input")
 	}
 
 	q := converter.ConvertListFeedPostParamToQuery(p)
@@ -84,7 +84,7 @@ func (c *PostQueryController) ListFeedPost(ctx echo.Context) error {
 }
 
 func (c *PostQueryController) ListFavoritePost(ctx echo.Context) error {
-	p := &param.ListFeedPostParam{}
+	p := &input.ListFeedPostParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list favorite post")
 	}

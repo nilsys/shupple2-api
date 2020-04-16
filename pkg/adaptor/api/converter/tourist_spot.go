@@ -1,15 +1,15 @@
 package converter
 
 import (
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/response"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/output"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
 // i/oの構造体からレポジトリで使用するクエリ発行用構造体へコンバート
-func ConvertTouristSpotListParamToQuery(param *param.ListTouristSpotParams) *query.FindTouristSpotListQuery {
+func ConvertTouristSpotListParamToQuery(param *input.ListTouristSpotParams) *query.FindTouristSpotListQuery {
 	return &query.FindTouristSpotListQuery{
 		AreaID:         param.AreaID,
 		SubAreaID:      param.SubAreaID,
@@ -21,8 +21,8 @@ func ConvertTouristSpotListParamToQuery(param *param.ListTouristSpotParams) *que
 	}
 }
 
-func ConvertTouristSpotToOutput(touristSpots []*entity.TouristSpot) []*response.TouristSpot {
-	responseTouristSpots := make([]*response.TouristSpot, len(touristSpots))
+func ConvertTouristSpotToOutput(touristSpots []*entity.TouristSpot) []*output.TouristSpot {
+	responseTouristSpots := make([]*output.TouristSpot, len(touristSpots))
 
 	for i, touristSpot := range touristSpots {
 		responseTouristSpots[i] = convertTouristSpotToOutput(touristSpot)
@@ -32,8 +32,8 @@ func ConvertTouristSpotToOutput(touristSpots []*entity.TouristSpot) []*response.
 }
 
 // outputの構造体へconvert
-func convertTouristSpotToOutput(touristSpot *entity.TouristSpot) *response.TouristSpot {
-	return &response.TouristSpot{
+func convertTouristSpotToOutput(touristSpot *entity.TouristSpot) *output.TouristSpot {
+	return &output.TouristSpot{
 		ID:        touristSpot.ID,
 		Name:      touristSpot.Name,
 		Thumbnail: touristSpot.Thumbnail,
@@ -41,14 +41,14 @@ func convertTouristSpotToOutput(touristSpot *entity.TouristSpot) *response.Touri
 	}
 }
 
-func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.TouristSpotDetail) *response.ShowTouristSpot {
-	spotCategories := make([]*response.SpotCategory, len(queryTouristSpot.SpotCategories))
+func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.TouristSpotDetail) *output.ShowTouristSpot {
+	spotCategories := make([]*output.SpotCategory, len(queryTouristSpot.SpotCategories))
 
 	for i, spotCategory := range queryTouristSpot.SpotCategories {
-		spotCategories[i] = response.NewSpotCategory(spotCategory.ID, spotCategory.Name, spotCategory.Slug)
+		spotCategories[i] = output.NewSpotCategory(spotCategory.ID, spotCategory.Name, spotCategory.Slug)
 	}
 
-	return &response.ShowTouristSpot{
+	return &output.ShowTouristSpot{
 		ID:              queryTouristSpot.ID,
 		Slug:            queryTouristSpot.Slug,
 		Name:            queryTouristSpot.Name,
@@ -77,7 +77,7 @@ func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.TouristSpotDetail)
 	}
 }
 
-func ConvertRecommendTouristSpotListParamToQuery(param *param.ListRecommendTouristSpotParam) *query.FindRecommendTouristSpotListQuery {
+func ConvertRecommendTouristSpotListParamToQuery(param *input.ListRecommendTouristSpotParam) *query.FindRecommendTouristSpotListQuery {
 	return &query.FindRecommendTouristSpotListQuery{
 		ID:                    param.ID,
 		TouristSpotCategoryID: param.TouristSpotCategoryID,

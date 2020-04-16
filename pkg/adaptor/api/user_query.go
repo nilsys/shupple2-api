@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
@@ -22,7 +22,7 @@ var UserQueryControllerSet = wire.NewSet(
 )
 
 func (c *UserQueryController) Show(ctx echo.Context) error {
-	p := &param.ShowParam{}
+	p := &input.ShowParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation show user ranking list parameters")
 	}
@@ -36,7 +36,7 @@ func (c *UserQueryController) Show(ctx echo.Context) error {
 }
 
 func (c *UserQueryController) ShowUserRanking(ctx echo.Context) error {
-	p := &param.ListUserRanking{}
+	p := &input.ListUserRanking{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation show user ranking list parameters")
 	}
@@ -52,7 +52,7 @@ func (c *UserQueryController) ShowUserRanking(ctx echo.Context) error {
 }
 
 func (c *UserQueryController) ListFollowingUsers(ctx echo.Context) error {
-	p := &param.ListFollowUser{}
+	p := &input.ListFollowUser{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list following user")
 	}
@@ -63,11 +63,11 @@ func (c *UserQueryController) ListFollowingUsers(ctx echo.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to list user follow")
 	}
-	return ctx.JSON(http.StatusOK, converter.ConvertUsersToFollowUsers(users))
+	return ctx.JSON(http.StatusOK, converter.ConvertUsersToUserSummaryList(users))
 }
 
 func (c *UserQueryController) ListFollowedUsers(ctx echo.Context) error {
-	p := &param.ListFollowUser{}
+	p := &input.ListFollowUser{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list follower user")
 	}
@@ -78,11 +78,11 @@ func (c *UserQueryController) ListFollowedUsers(ctx echo.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to list user follower")
 	}
-	return ctx.JSON(http.StatusOK, converter.ConvertUsersToFollowUsers(users))
+	return ctx.JSON(http.StatusOK, converter.ConvertUsersToUserSummaryList(users))
 }
 
 func (c *UserQueryController) ListFavoritePostUser(ctx echo.Context, user entity.OptionalUser) error {
-	p := &param.ListFavoriteMediaUser{}
+	p := &input.ListFavoriteMediaUser{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "")
 	}
@@ -92,11 +92,11 @@ func (c *UserQueryController) ListFavoritePostUser(ctx echo.Context, user entity
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertUsersToFollowUsers(users))
+	return ctx.JSON(http.StatusOK, converter.ConvertUsersToUserSummaryList(users))
 }
 
 func (c *UserQueryController) ListFavoriteReviewUser(ctx echo.Context, user entity.OptionalUser) error {
-	p := &param.ListFavoriteMediaUser{}
+	p := &input.ListFavoriteMediaUser{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "")
 	}
@@ -106,5 +106,5 @@ func (c *UserQueryController) ListFavoriteReviewUser(ctx echo.Context, user enti
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertUsersToFollowUsers(users))
+	return ctx.JSON(http.StatusOK, converter.ConvertUsersToUserSummaryList(users))
 }

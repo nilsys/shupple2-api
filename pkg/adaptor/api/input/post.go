@@ -1,4 +1,4 @@
-package param
+package input
 
 import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
@@ -53,7 +53,7 @@ const findPostListDefaultPerPage = 10
 // いずれのクエリも飛んでこない場合 or sortの値が期待値以外の場合エラーを返す
 func (param ListPostParam) Validate() error {
 	if param.UserID == 0 && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.MetasearchAreaID == 0 && param.MetasearchSubAreaID == 0 && param.MetasearchSubSubAreaID == 0 && param.InnTypeID == 0 && param.InnDiscerningType == 0 && param.HashTag == "" && param.Keyward == "" && param.SortBy == 0 {
-		return serror.New(nil, serror.CodeInvalidParam, "Invalid find post list param")
+		return serror.New(nil, serror.CodeInvalidParam, "Invalid find post list input")
 	}
 
 	return nil

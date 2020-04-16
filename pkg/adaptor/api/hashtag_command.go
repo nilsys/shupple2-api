@@ -6,7 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 )
@@ -20,9 +20,9 @@ var HashtagCommandControllerSet = wire.NewSet(
 )
 
 func (c *HashtagCommandController) FollowHashtag(ctx echo.Context, user entity.User) error {
-	p := param.FollowParam{}
+	p := input.FollowParam{}
 	if err := BindAndValidate(ctx, &p); err != nil {
-		return errors.Wrap(err, "validation follow hashtag param")
+		return errors.Wrap(err, "validation follow hashtag input")
 	}
 
 	if err := c.HashtagCommandService.FollowHashtag(&user, p.ID); err != nil {
@@ -33,9 +33,9 @@ func (c *HashtagCommandController) FollowHashtag(ctx echo.Context, user entity.U
 }
 
 func (c *HashtagCommandController) UnfollowHashtag(ctx echo.Context, user entity.User) error {
-	p := param.FollowParam{}
+	p := input.FollowParam{}
 	if err := BindAndValidate(ctx, &p); err != nil {
-		return errors.Wrap(err, "validation unfollow hashtag param")
+		return errors.Wrap(err, "validation unfollow hashtag input")
 	}
 
 	if err := c.HashtagCommandService.UnfollowHashtag(&user, p.ID); err != nil {

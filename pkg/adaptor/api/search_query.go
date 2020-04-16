@@ -6,7 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
@@ -19,7 +19,7 @@ var SearchQueryControllerSet = wire.NewSet(
 )
 
 func (c *SearchQueryController) ListSearchSuggestion(ctx echo.Context) error {
-	p := &param.Keyward{}
+	p := &input.Keyward{}
 
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation show search suggestion list")

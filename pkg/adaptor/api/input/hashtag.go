@@ -1,4 +1,4 @@
-package param
+package input
 
 import "github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 
@@ -13,7 +13,7 @@ type (
 
 func (param ListRecommendHashTagParam) Validate() error {
 	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 {
-		return serror.New(nil, serror.CodeInvalidParam, "Invalid find post list param")
+		return serror.New(nil, serror.CodeInvalidParam, "Invalid find post list input")
 	}
 	return nil
 }

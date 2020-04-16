@@ -41,8 +41,11 @@ func (r *ReviewCommandRepositoryImpl) DeleteReview(c context.Context, review *en
 	return nil
 }
 
-func (r *ReviewCommandRepositoryImpl) CreateReviewComment(c context.Context, reviewComment *entity.ReviewComment) error {
-	return errors.Wrap(r.DB(c).Save(reviewComment).Error, "failed to save review comment")
+func (r *ReviewCommandRepositoryImpl) StoreReviewComment(c context.Context, comment *entity.ReviewComment) error {
+	if err := r.DB(c).Save(comment).Error; err != nil {
+		return errors.Wrap(err, "failed to save review_comment")
+	}
+	return nil
 }
 
 func (r *ReviewCommandRepositoryImpl) ShowReviewComment(c context.Context, commentID int) (*entity.ReviewComment, error) {
@@ -105,8 +108,9 @@ func (r *ReviewCommandRepositoryImpl) PersistReviewMedia(reviewMedia *entity.Rev
 
 func (r *ReviewCommandRepositoryImpl) StoreReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply) error {
 	if err := r.DB(c).Save(reply).Error; err != nil {
-		return errors.Wrap(err, "failed to store review comment reply")
+		return errors.Wrap(err, "failed to save review_comment_reply")
 	}
+
 	return nil
 }
 

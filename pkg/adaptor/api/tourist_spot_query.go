@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/param"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
@@ -20,7 +20,7 @@ var TouristSpotQeuryControllerSet = wire.NewSet(
 )
 
 func (c *TouristSpotQueryController) Show(ctx echo.Context) error {
-	p := &param.ShowTouristSpotParam{}
+	p := &input.ShowTouristSpotParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation show post parameter")
 	}
@@ -34,7 +34,7 @@ func (c *TouristSpotQueryController) Show(ctx echo.Context) error {
 }
 
 func (c *TouristSpotQueryController) ListTouristSpot(ctx echo.Context) error {
-	p := &param.ListTouristSpotParams{}
+	p := &input.ListTouristSpotParams{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list tourist_spot parameter")
 	}
@@ -50,7 +50,7 @@ func (c *TouristSpotQueryController) ListTouristSpot(ctx echo.Context) error {
 }
 
 func (c *TouristSpotQueryController) ListRecommendTouristSpot(ctx echo.Context) error {
-	p := &param.ListRecommendTouristSpotParam{}
+	p := &input.ListRecommendTouristSpotParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation recommend list tourist_spot")
 	}
