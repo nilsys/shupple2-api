@@ -26,5 +26,8 @@ slack:
   token: changeme
   callback_key: changeme
   report_channel: changeme
+scripts:
+  import_meatsearch_area_images:
+     metasearch_bucket: metasearch
 
 # vim: set ft=yaml:
