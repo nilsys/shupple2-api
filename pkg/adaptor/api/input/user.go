@@ -7,7 +7,7 @@ import (
 
 type (
 	ShowParam struct {
-		ID int `param:"id" validate:"required"`
+		ID int `query:"id" validate:"required"`
 	}
 
 	ListUserRanking struct {
