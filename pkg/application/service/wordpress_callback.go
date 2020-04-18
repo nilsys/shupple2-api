@@ -34,7 +34,7 @@ func (s *WordpressCallbackServiceImpl) Import(entityType wordpress.EntityType, i
 	var err error
 	switch entityType {
 	case wordpress.EntityTypeUser:
-		err = s.UserCommandService.RegisterWordpressUser(id)
+		err = s.UserCommandService.ImportFromWordpressByID(id)
 	case wordpress.EntityTypePost:
 		_, err = s.PostCommandService.ImportFromWordpressByID(id)
 	case wordpress.EntityTypeLocation:

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	uuid "github.com/satori/go.uuid"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"gopkg.in/guregu/null.v3"
 )
@@ -12,7 +14,7 @@ type (
 	User struct {
 		ID            int `gorm:"primary_key"`
 		UID           string
-		CognitoID     string
+		CognitoID     null.String
 		WordpressID   null.Int
 		MigrationCode null.String
 		Name          string
@@ -81,6 +83,30 @@ type (
 		Name string `json:"name"`
 	}
 )
+
+func NewUserByWordpressUser(wpUser *wordpress.User) *User {
+	return &User{
+		UID:           wpUser.Slug,
+		Name:          wpUser.Name,
+		MigrationCode: null.StringFrom(uuid.NewV4().String()),
+		WordpressID:   null.IntFrom(int64(wpUser.ID)),
+		Profile:       wpUser.Description,
+		Birthdate:     time.Date(1900, 1, 1, 0, 0, 0, 0, time.Local),
+		FacebookURL:   wpUser.Meta.Facebook,
+		TwitterURL:    wpUser.Meta.Twitter,
+		InstagramURL:  wpUser.Meta.Instagram,
+		YoutubeURL:    wpUser.Meta.Youtube,
+	}
+}
+
+func (u *User) PatchByWordpressUser(wpUser *wordpress.User) {
+	u.Name = wpUser.Name
+	u.Profile = wpUser.Description
+	u.FacebookURL = wpUser.Meta.Facebook
+	u.TwitterURL = wpUser.Meta.Twitter
+	u.InstagramURL = wpUser.Meta.Instagram
+	u.YoutubeURL = wpUser.Meta.Youtube
+}
 
 // MEMO: サムネイルロジック仮置き
 func (u *User) IconURL() string {

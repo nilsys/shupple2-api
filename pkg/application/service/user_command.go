@@ -5,25 +5,25 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/service"
-
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/service"
+	"go.uber.org/zap"
+	"gopkg.in/guregu/null.v3"
 
 	"github.com/google/wire"
 	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
-	"gopkg.in/guregu/null.v3"
 )
 
 type (
 	UserCommandService interface {
 		SignUp(user *entity.User, cognitoToken string, migrationCode *string) error
 		Update(user *entity.User, cmd *command.UpdateUser) error
-		RegisterWordpressUser(wordpressUserID int) error
+		ImportFromWordpressByID(wordpressUserID int) error
 		Follow(user *entity.User, targetID int) error
 		Unfollow(user *entity.User, targetID int) error
 	}
@@ -56,7 +56,7 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 	if err != nil {
 		return serror.New(err, serror.CodeUnauthorized, "unauthorized")
 	}
-	user.CognitoID = cognitoID
+	user.CognitoID = null.StringFrom(cognitoID)
 
 	if migrationCode != nil && *migrationCode != "" {
 		existingUser, err := s.UserQueryRepository.FindByMigrationCode(*migrationCode)
@@ -64,6 +64,7 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 			return errors.Wrap(err, "failed to get user by migration code")
 		}
 		user.ID = existingUser.ID
+		user.UID = existingUser.UID // TODO: これでいいのか？
 	}
 
 	if err := s.UserCommandRepository.Store(user); err != nil {
@@ -73,28 +74,38 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 }
 
 // TODO: エラー時はslackに通知飛ばしたほうが良さそう
-func (s *UserCommandServiceImpl) RegisterWordpressUser(wordpressUserID int) error {
-	// すでに紐づけされているユーザーが居る場合はエラー
-	// Wordpress側のユーザー登録時にしか叩かれないので、ありえないはずだが一応チェック
-	_, err := s.UserQueryRepository.FindByWordpressID(wordpressUserID)
-	if !serror.IsErrorCode(err, serror.CodeNotFound) {
-		if err == nil {
-			err = serror.New(nil, serror.CodeInvalidParam, "existing wordpress user; id=%d", wordpressUserID)
-		}
-		return errors.Wrap(err, "failed to register wordpress user")
-	}
-
+func (s *UserCommandServiceImpl) ImportFromWordpressByID(wordpressUserID int) error {
 	wpUsers, err := s.WordpressQueryRepository.FindUsersByIDs([]int{wordpressUserID})
 	if err != nil || len(wpUsers) == 0 {
 		return serror.NewResourcesNotFoundError(err, "wordpress user(id=%d)", wordpressUserID)
 	}
 	wpUser := wpUsers[0]
 
-	if wpUser.Attributes.MediaUserID != "" {
-		return s.updateMapping(wpUser)
+	user, err := s.UserQueryRepository.FindByWordpressID(wordpressUserID)
+	if err != nil {
+		if !serror.IsErrorCode(err, serror.CodeNotFound) {
+			return errors.Wrapf(err, "failed to import wordpress user(id=%d)", wordpressUserID)
+		}
+
+		// 新規登録かつメディア側で登録済みの場合
+		if wpUser.Attributes.MediaUserID != "" {
+			return s.updateMapping(wpUser)
+		}
+
+		// 新規登録でメディア側で登録がない場合
+		return s.registerDummyUserForWordpress(wpUser)
 	}
 
-	return s.registerDummyUserForWordpress(wpUser)
+	// 更新の場合
+	// すでにログイン済みの場合は無視
+	if user.CognitoID.Valid {
+		const msg = "tried to import user already logged in"
+		logger.Info(msg, zap.Int("wordpress_user_id", wordpressUserID))
+		return serror.New(nil, serror.CodeInvalidParam, msg)
+	}
+
+	// TODO: lock取ったほうがいいかも？
+	return s.UpdateUserByWordpress(user, wpUser)
 }
 
 func (s *UserCommandServiceImpl) updateMapping(wpUser *wordpress.User) error {
@@ -119,21 +130,19 @@ func (s *UserCommandServiceImpl) registerDummyUserForWordpress(wpUser *wordpress
 	if err != nil {
 		return errors.Wrap(err, "failed to download avatar")
 	}
-
-	user := &entity.User{
-		UID:           wpUser.Slug,
-		Name:          wpUser.Name,
-		MigrationCode: null.StringFrom(uuid.NewV4().String()),
-		WordpressID:   null.IntFrom(int64(wpUser.ID)),
-		Profile:       wpUser.Description,
-		Birthdate:     time.Date(1900, 1, 1, 0, 0, 0, 0, time.Local),
-		FacebookURL:   wpUser.Meta.Facebook,
-		TwitterURL:    wpUser.Meta.Twitter,
-		InstagramURL:  wpUser.Meta.Instagram,
-		YoutubeURL:    wpUser.Meta.Youtube,
-	}
+	user := entity.NewUserByWordpressUser(wpUser)
 
 	return errors.Wrap(s.UserCommandRepository.StoreWithAvatar(user, avatar), "failed to register dummy user")
+}
+
+func (s *UserCommandServiceImpl) UpdateUserByWordpress(user *entity.User, wpUser *wordpress.User) error {
+	avatar, err := s.WordpressQueryRepository.DownloadAvatar(wpUser.AvatarURLs.Num96)
+	if err != nil {
+		return errors.Wrap(err, "failed to download avatar")
+	}
+	user.PatchByWordpressUser(wpUser)
+
+	return errors.Wrap(s.UserCommandRepository.StoreWithAvatar(user, avatar), "failed to update user by wordpress")
 }
 
 func (s *UserCommandServiceImpl) Follow(user *entity.User, targetID int) error {
