@@ -13,7 +13,7 @@
 bin/
 .data/
 config.yaml
-config.test.yaml
+config.*.yaml
 
 docker-compose.override.yaml
 

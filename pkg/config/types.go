@@ -70,13 +70,12 @@ type (
 	}
 
 	AWS struct {
-		Endpoint         string        `validate:"" yaml:"endpoint"`
-		Region           string        `validate:"required" yaml:"region"`
-		FilesBucket      string        `validate:"required" yaml:"files_bucket"`
-		UserPoolID       string        `validate:"required" yaml:"user_pool_id"`
-		ClientID         string        `validate:"required" yaml:"client_id"`
-		UploadExpire     time.Duration `validate:"required" yaml:"upload_expire"`
-		MetasearchBucket string        `validate:"required" yaml:"metasearch_bucket"`
+		Endpoint     string        `validate:"" yaml:"endpoint"`
+		Region       string        `validate:"required" yaml:"region"`
+		FilesBucket  string        `validate:"required" yaml:"files_bucket"`
+		UserPoolID   string        `validate:"required" yaml:"user_pool_id"`
+		ClientID     string        `validate:"required" yaml:"client_id"`
+		UploadExpire time.Duration `validate:"required" yaml:"upload_expire"`
 	}
 
 	// TODO: 他のアプリが追加されると思うからSlackの下にアプリ毎にconfig作る
