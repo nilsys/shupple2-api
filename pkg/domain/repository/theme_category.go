@@ -19,5 +19,8 @@ type (
 
 		// name部分一致検索
 		SearchByName(name string) ([]*entity.ThemeCategory, error)
+
+		FindAll(excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error)
+		FindThemesByAreaCategoryID(excludeIDs []int, categoryID int) ([]*entity.ThemeCategoryWithPostCount, error)
 	}
 )

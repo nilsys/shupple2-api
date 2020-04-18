@@ -64,3 +64,22 @@ func ConvertAreaCategoryDetailToOutput(areaCategoryDetail *entity.AreaCategoryDe
 		SubSubArea: subSubArea,
 	}
 }
+
+func ConvertThemeCategoryWithPostCountToOutput(themeCategory *entity.ThemeCategoryWithPostCount) *output.ThemeCategory {
+	return &output.ThemeCategory{
+		ID:        themeCategory.ID,
+		Name:      themeCategory.Name,
+		Slug:      themeCategory.Slug,
+		Type:      themeCategory.Type,
+		PostCount: themeCategory.PostCount,
+	}
+}
+
+func ConvertThemeCategoriesWithPostCountToOutput(themeCategories []*entity.ThemeCategoryWithPostCount) []*output.ThemeCategory {
+	var resp = make([]*output.ThemeCategory, len(themeCategories))
+	for i, themeCategory := range themeCategories {
+		resp[i] = ConvertThemeCategoryWithPostCountToOutput(themeCategory)
+	}
+
+	return resp
+}

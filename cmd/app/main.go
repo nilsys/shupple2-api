@@ -47,6 +47,7 @@ type App struct {
 	S3CommandController             api.S3CommandController
 	TouristSpotQueryController      api.TouristSpotQueryController
 	InteresetQueryController        api.InterestQueryController
+	ThemeQueryController            api.ThemeQueryController
 	AreaQueryController             api.AreaQueryController
 	InnQueryController              api.InnQueryController
 	ReportCommandController         api.ReportCommandController
@@ -192,6 +193,11 @@ func setRoutes(app *App) {
 	{
 		inns := api.Group("/inns")
 		inns.GET("", app.InnQueryController.ListByParams)
+	}
+
+	{
+		themes := api.Group("/themes")
+		themes.GET("", app.ThemeQueryController.List)
 	}
 
 	{

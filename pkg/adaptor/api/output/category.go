@@ -18,10 +18,11 @@ type (
 	}
 
 	ThemeCategory struct {
-		ID   int                     `json:"id"`
-		Name string                  `json:"name"`
-		Slug string                  `json:"slug"`
-		Type model.ThemeCategoryType `json:"type"`
+		ID        int                     `json:"id"`
+		Name      string                  `json:"name"`
+		Slug      string                  `json:"slug"`
+		Type      model.ThemeCategoryType `json:"type"`
+		PostCount int                     `json:"post_count"`
 	}
 
 	SpotCategory struct {
