@@ -74,7 +74,7 @@ func skipRecords(reader *csv.Reader, num int) error {
 }
 
 func (s Script) updateArea(dir string) error {
-	const skipRecordsNum = 2
+	const skipRecordsNum = 4
 
 	file, err := os.Open(filepath.Join(dir, areaCSVName))
 	if err != nil {
@@ -244,7 +244,7 @@ func mustToInt(s string) int {
 
 	res, err := strconv.Atoi(s)
 	if err != nil {
-		log.Printf("%+v\n", err)
+		log.Printf("%+v\n", errors.WithStack(err))
 	}
 	return res
 }

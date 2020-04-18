@@ -172,7 +172,7 @@ func (s Script) importUser(wordpressDB *gorm.DB) error {
 		}
 
 		for _, id := range ids {
-			err := s.UserService.RegisterWordpressUser(id)
+			err := s.UserService.ImportFromWordpressByID(id)
 			if err != nil {
 				return errors.WithStack(err)
 			}

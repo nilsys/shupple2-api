@@ -1913,6 +1913,7 @@ components:
           description: |
             ユーザーが決める一意なID
             半角英字のみ
+            migrationCodeがある場合はWordpressから読み取るので指定しないこと
         email:
           type: string
           format: email

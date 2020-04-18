@@ -1,5 +1,12 @@
 package wordpress
 
+import (
+	"bytes"
+	"encoding/json"
+
+	"github.com/pkg/errors"
+)
+
 type (
 	Vlog struct {
 		ID            int             `json:"id"`
@@ -33,12 +40,23 @@ type (
 	}
 
 	VlogAttributes struct {
-		Youtube       string     `json:"youtube"`
-		Series        string     `json:"series"`
-		FilmEdit      []*Creator `json:"film_edit"`
-		MovieLocation []int      `json:"movie_location"`
-		YearMonth     string     `json:"year_month"`
-		RunTime       string     `json:"run_time"`
-		MovieTimeline string     `json:"movie_timeline"`
+		Youtube       string   `json:"youtube"`
+		Series        string   `json:"series"`
+		FilmEdit      Creators `json:"film_edit"`
+		MovieLocation []int    `json:"movie_location"`
+		YearMonth     string   `json:"year_month"`
+		RunTime       string   `json:"run_time"`
+		MovieTimeline string   `json:"movie_timeline"`
 	}
+
+	Creators []*Creator
 )
+
+func (cs *Creators) UnmarshalJSON(body []byte) error {
+	if bytes.Equal(body, falseJSONBytes) {
+		return nil
+	}
+
+	type Alias Creators
+	return errors.WithStack(json.Unmarshal(body, (*Alias)(cs)))
+}

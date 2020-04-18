@@ -12,6 +12,7 @@ const (
 
 var (
 	arrayJSONBytes = []byte("[]")
+	falseJSONBytes = []byte("false")
 )
 
 type (

@@ -17,6 +17,9 @@ aws:
   endpoint: http://localstack:4572
   files_bucket: hoge
   upload_expire: 15m
+  user_pool_id: changeme
+  client_id: changeme
+  metasearch_bucket: changeme
 wordpress:
   base_url: https://stg-admin.stayway.jp/tourism
   user: changeme
