@@ -22,5 +22,8 @@ type (
 
 		FindAll(excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error)
 		FindThemesByAreaCategoryID(excludeIDs []int, categoryID int) ([]*entity.ThemeCategoryWithPostCount, error)
+
+		FindAllSubThemes(themeID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error)
+		FindSubThemesByAreaCategoryIDAndParentThemeID(categoryID, parentID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error)
 	}
 )

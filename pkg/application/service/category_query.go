@@ -21,8 +21,7 @@ type (
 )
 
 var CategoryQueryServiceSet = wire.NewSet(
-	wire.Struct(new(CategoryQueryServiceImpl), "*"),
-	wire.Bind(new(CategoryQueryService), new(*CategoryQueryServiceImpl)),
+	wire.Struct(new(CategoryQueryServiceImpl), "*"), wire.Bind(new(CategoryQueryService), new(*CategoryQueryServiceImpl)),
 )
 
 func (r *CategoryQueryServiceImpl) ShowBySlug(slug string) (entity.Category, error) {

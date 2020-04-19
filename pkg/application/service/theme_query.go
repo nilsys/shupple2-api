@@ -9,7 +9,8 @@ import (
 
 type (
 	ThemeCategoryQueryService interface {
-		ListThemeByParams(excludeIDs []int, categoryID int) ([]*entity.ThemeCategoryWithPostCount, error)
+		ListThemeByParams(categoryID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error)
+		ListSubThemeByParams(categoryID, themeID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error)
 	}
 
 	ThemeCategoryQueryServiceImpl struct {
@@ -22,7 +23,7 @@ var ThemeCategoryQueryServiceSet = wire.NewSet(
 	wire.Bind(new(ThemeCategoryQueryService), new(*ThemeCategoryQueryServiceImpl)),
 )
 
-func (r *ThemeCategoryQueryServiceImpl) ListThemeByParams(excludeIDs []int, categoryID int) ([]*entity.ThemeCategoryWithPostCount, error) {
+func (r *ThemeCategoryQueryServiceImpl) ListThemeByParams(categoryID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error) {
 	if categoryID == 0 {
 		categories, err := r.ThemeCategoryQueryRepository.FindAll(excludeIDs)
 		if err != nil {
@@ -34,6 +35,23 @@ func (r *ThemeCategoryQueryServiceImpl) ListThemeByParams(excludeIDs []int, cate
 	categories, err := r.ThemeCategoryQueryRepository.FindThemesByAreaCategoryID(excludeIDs, categoryID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to find themes by areaCategoryID")
+	}
+
+	return categories, nil
+}
+
+func (r *ThemeCategoryQueryServiceImpl) ListSubThemeByParams(categoryID, themeID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error) {
+	if categoryID == 0 {
+		categories, err := r.ThemeCategoryQueryRepository.FindAllSubThemes(themeID, excludeIDs)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to find subTheme list")
+		}
+		return categories, nil
+	}
+
+	categories, err := r.ThemeCategoryQueryRepository.FindSubThemesByAreaCategoryIDAndParentThemeID(categoryID, themeID, excludeIDs)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to find subTheme list")
 	}
 
 	return categories, nil

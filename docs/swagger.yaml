@@ -1719,7 +1719,7 @@ paths:
       tags:
         - sub_theme
       summary: SubTheme取得API
-      description: Area系パラメータIDに紐づく記事に紐づくThemeの中からParentThemeIDに紐づくThemeをSubThemeとして取得する
+      description: Area系パラメータIDに紐づく記事に紐づくThemeの中からThemeIDに紐づくThemeをSubThemeとして取得する
       parameters:
         - name: themeId
           in: query

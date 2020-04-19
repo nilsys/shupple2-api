@@ -201,6 +201,11 @@ func setRoutes(app *App) {
 	}
 
 	{
+		subThemes := api.Group("/sub_themes")
+		subThemes.GET("", app.ThemeQueryController.ListSubThemeByParentID)
+	}
+
+	{
 		reports := api.Group("/reports")
 		reports.POST("", auth.Require(app.ReportCommandController.Report))
 		reports.POST("/submit", app.ReportCommandController.MarkAsDone, staywayMiddleware.KeyAuth(app.Config.Slack.CallbackKey))

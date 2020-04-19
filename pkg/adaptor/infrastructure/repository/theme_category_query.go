@@ -83,7 +83,6 @@ func (r *ThemeCategoryQueryRepositoryImpl) FindAll(excludeIDs []int) ([]*entity.
 		Where("theme_category.type = ?", model.ThemeCategoryTypeTheme).
 		Order("post_count DESC").
 		Find(&rows).Error; err != nil {
-
 		return nil, errors.Wrap(err, "failed to find theme_category")
 	}
 
@@ -123,6 +122,71 @@ func (r *ThemeCategoryQueryRepositoryImpl) FindThemesByAreaCategoryID(excludeIDs
 		Order("post_count DESC").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find theme_category")
+	}
+
+	return rows, nil
+}
+
+func (r *ThemeCategoryQueryRepositoryImpl) FindAllSubThemes(themeID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error) {
+	var rows []*entity.ThemeCategoryWithPostCount
+
+	/*
+			theme_category AS theme_category
+			post_theme_category AS ptc
+
+			SELECT `theme_category`.*, post_count FROM `theme_category` JOIN (
+		        SELECT ptc.theme_category_id AS id, count(ptc.theme_category_id) AS post_count
+		        FROM post_theme_category ptc
+		        GROUP BY ptc.theme_category_id
+			) tid ON theme_category.id = tid.id
+			WHERE (theme_category.type = 'SubTheme' AND theme_category.theme_id = '1')
+			ORDER BY post_count DESC LIMIT 1000
+	*/
+	// TODO:パフォーマンス調べる
+	if err := r.buildQueryByExcludeIDs(excludeIDs).Limit(defaultAcquisitionNumber).
+		Table("theme_category").
+		Select("theme_category.*, post_count").
+		Joins(`JOIN (
+			SELECT ptc.theme_category_id AS id, count(ptc.theme_category_id) AS post_count 
+			FROM post_theme_category ptc 
+			GROUP BY ptc.theme_category_id
+			) tid ON theme_category.id = tid.id`).
+		Where("theme_category.type = ? AND theme_category.theme_id = ?", model.ThemeCategoryTypeSubTheme, themeID).
+		Order("post_count DESC").
+		Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find all subTheme list")
+	}
+
+	return rows, nil
+}
+
+func (r *ThemeCategoryQueryRepositoryImpl) FindSubThemesByAreaCategoryIDAndParentThemeID(areaCategoryID, themeID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error) {
+	var rows []*entity.ThemeCategoryWithPostCount
+
+	/*
+		theme_category AS theme_category, tc
+		post_area_category AS pac
+		post_theme_category AS ptc
+
+
+			SELECT `theme_category`.*, count(`theme_category`.id) AS post_count
+			FROM `theme_category`
+			JOIN post_theme_category ptc ON ptc.theme_category_id = theme_category.id
+			JOIN post_area_category pac ON pac.post_id = ptc.post_id
+			WHERE (theme_category.theme_id = '1' AND pac.area_category_id = '2' AND theme_category.type = 'SubTheme')
+			GROUP BY theme_category.id
+			ORDER BY count(theme_category.id) DESC LIMIT 1000
+	*/
+	// TODO:パフォーマンス調べる
+	if err := r.buildQueryByExcludeIDs(excludeIDs).Limit(defaultAcquisitionNumber).
+		Table("theme_category").
+		Select("theme_category.*, count(theme_category.id) AS post_count").
+		Joins("JOIN post_theme_category ptc ON ptc.theme_category_id = theme_category.id").
+		Joins("JOIN post_area_category pac ON pac.post_id = ptc.post_id").
+		Where("theme_category.theme_id = ? AND pac.area_category_id = ? AND theme_category.type = ?", themeID, areaCategoryID, model.ThemeCategoryTypeSubTheme).
+		Group("theme_category.id").Order("count(theme_category.id) DESC").
+		Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find subTheme list by areaCategoryID and parentThemeID")
 	}
 
 	return rows, nil
