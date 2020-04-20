@@ -52,8 +52,8 @@ func (r *PostQueryRepositoryImpl) FindPostDetailWithHashtagBySlug(slug string) (
 }
 
 // 検索条件に指定されたクエリ構造体を用い、postを複数参照
-func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuery) (*entity.PostDetailList, error) {
-	var postDetailList entity.PostDetailList
+func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuery) (*entity.PostList, error) {
+	var postList entity.PostList
 
 	q := r.buildFindListByParamsQuery(query)
 
@@ -61,11 +61,11 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 		Order(query.SortBy.GetPostOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
-		Find(&postDetailList.Posts).Count(&postDetailList.TotalNumber).Error; err != nil {
+		Find(&postList.Posts).Count(&postList.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get posts by params")
 	}
 
-	return &postDetailList, nil
+	return &postList, nil
 }
 
 // ユーザーIDからフォローしているハッシュタグ or ユーザーのpost一覧を参照

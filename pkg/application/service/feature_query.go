@@ -9,7 +9,7 @@ import (
 
 type (
 	FeatureQueryService interface {
-		ShowQuery(id int) (*entity.QueryFeature, error)
+		ShowQuery(id int) (*entity.FeatureDetailWithPosts, error)
 		ShowList(query *query.FindListPaginationQuery) (*entity.FeatureList, error)
 	}
 
@@ -24,7 +24,7 @@ var FeatureQueryServiceSet = wire.NewSet(
 )
 
 // QueryFeature参照
-func (s *FeatureQueryServiceImpl) ShowQuery(id int) (*entity.QueryFeature, error) {
+func (s *FeatureQueryServiceImpl) ShowQuery(id int) (*entity.FeatureDetailWithPosts, error) {
 	return s.FeatureQueryRepository.FindQueryFeatureByID(id)
 }
 

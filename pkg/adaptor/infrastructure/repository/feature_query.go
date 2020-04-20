@@ -27,13 +27,27 @@ func (r *FeatureQueryRepositoryImpl) FindByID(id int) (*entity.Feature, error) {
 	return &row, nil
 }
 
-// QueryFeature参照(Feature詳細)
-func (r *FeatureQueryRepositoryImpl) FindQueryFeatureByID(id int) (*entity.QueryFeature, error) {
-	var row entity.QueryFeature
-	if err := r.DB.Table(row.TableName()).First(&row, id).Error; err != nil {
+// FeatureDetail参照(Feature詳細)
+func (r *FeatureQueryRepositoryImpl) FindQueryFeatureByID(id int) (*entity.FeatureDetailWithPosts, error) {
+	var row entity.FeatureDetail
+	var detail entity.FeatureDetailWithPosts
+	if err := r.DB.First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "feature(id=%d)", id)
 	}
-	return &row, nil
+
+	// TODO: N+1
+	// gormの仕様でFeatureDetailのPostDetailの中のタグを付けているsqlが走らない
+	for _, postID := range row.PostIDs {
+		var post entity.PostListTiny
+		if err := r.DB.First(&post, postID.PostID).Error; err != nil {
+			return nil, ErrorToFindSingleRecord(err, "post(id=%d)", postID.PostID)
+		}
+		detail.SetPosts(append(detail.Posts, &post))
+	}
+
+	detail.SetFeature(row)
+
+	return &detail, nil
 }
 
 // 作成日時降順でFeature一覧参照

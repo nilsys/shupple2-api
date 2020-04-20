@@ -28,18 +28,15 @@ func ConvertFeatureListToOutput(features *entity.FeatureList) *output.FeatureLis
 	}
 }
 
-func ConvertQueryFeatureToOutput(feature *entity.QueryFeature) *output.ShowFeature {
-	relationPosts := make([]*output.RelationPost, len(feature.Posts))
-
-	for i, post := range feature.Posts {
-		relationPosts[i] = convertPostToRelationPost(post)
-	}
+func ConvertFeatureDetailPostsToOutput(feature *entity.FeatureDetailWithPosts) *output.ShowFeature {
+	relationPosts := ConvertPostListTiniesToOutput(feature.Posts)
 
 	return &output.ShowFeature{
 		ID:            feature.ID,
 		Slug:          feature.Slug,
 		Thumbnail:     feature.Thumbnail,
 		Title:         feature.Title,
+		Body:          feature.Body,
 		FacebookCount: feature.FacebookCount,
 		TwitterCount:  feature.TwitterCount,
 		Views:         feature.Views,
@@ -47,15 +44,6 @@ func ConvertQueryFeatureToOutput(feature *entity.QueryFeature) *output.ShowFeatu
 		CreatedAt:     model.TimeResponse(feature.CreatedAt),
 		UpdatedAt:     model.TimeResponse(feature.UpdatedAt),
 		RelationPosts: relationPosts,
-	}
-}
-
-func convertPostToRelationPost(post *entity.Post) *output.RelationPost {
-	return &output.RelationPost{
-		ID:        post.ID,
-		Title:     post.Title,
-		Thumbnail: post.Thumbnail,
-		Slug:      post.Slug,
 	}
 }
 

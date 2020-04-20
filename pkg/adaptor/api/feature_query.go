@@ -30,7 +30,7 @@ func (c *FeatureQueryController) ShowQuery(ctx echo.Context) error {
 		return errors.Wrap(err, "failed show query feature")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertQueryFeatureToOutput(queryFeature))
+	return ctx.JSON(http.StatusOK, converter.ConvertFeatureDetailPostsToOutput(queryFeature))
 }
 
 func (c *FeatureQueryController) ListFeature(ctx echo.Context) error {

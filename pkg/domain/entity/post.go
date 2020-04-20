@@ -73,6 +73,19 @@ type (
 		Posts       []*PostDetail
 	}
 
+	PostList struct {
+		TotalNumber int
+		Posts       []*PostListTiny
+	}
+
+	// 一覧用Post
+	PostListTiny struct {
+		PostTiny
+		User            *User            `gorm:"foreignkey:UserID"`
+		AreaCategories  []*AreaCategory  `gorm:"many2many:post_area_category;jointable_foreignkey:post_id;"`
+		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
+	}
+
 	// 参照用Post詳細
 	PostDetailWithHashtag struct {
 		PostTiny
@@ -89,6 +102,10 @@ func (post *PostDetail) TableName() string {
 }
 
 func (post *PostDetailWithHashtag) TableName() string {
+	return "post"
+}
+
+func (post *PostListTiny) TableName() string {
 	return "post"
 }
 

@@ -16,7 +16,7 @@ type (
 
 	FeatureQueryRepository interface {
 		FindByID(id int) (*entity.Feature, error)
-		FindQueryFeatureByID(id int) (*entity.QueryFeature, error)
+		FindQueryFeatureByID(id int) (*entity.FeatureDetailWithPosts, error)
 		FindList(query *query.FindListPaginationQuery) (*entity.FeatureList, error)
 	}
 )

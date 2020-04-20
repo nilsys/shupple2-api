@@ -44,31 +44,16 @@ func ConvertListFeedPostParamToQuery(param *input.ListFeedPostParam) *query.Find
 /*
  * i -> o
  */
-// ConvertPostToOutput()のスライスバージョン
-func ConvertPostDetailListToOutput(queryPostList *entity.PostDetailList) output.PostList {
-	responsePosts := make([]*output.Post, len(queryPostList.Posts))
-
-	for i, queryPost := range queryPostList.Posts {
-		responsePosts[i] = ConvertQueryPostToOutput(queryPost)
-	}
-
-	return output.PostList{
-		TotalNumber: queryPostList.TotalNumber,
-		Posts:       responsePosts,
-	}
-}
-
-func ConvertPostListToOutput(posts []*entity.PostDetail) []*output.Post {
+func ConvertPostDetailListToOutput(posts []*entity.PostDetail) []*output.Post {
 	responsePosts := make([]*output.Post, len(posts))
 
-	for i, post := range posts {
-		responsePosts[i] = ConvertQueryPostToOutput(post)
+	for i, queryPost := range posts {
+		responsePosts[i] = ConvertQueryPostToOutput(queryPost)
 	}
 
 	return responsePosts
 }
 
-// outputの構造体へconvert
 func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *output.Post {
 	return &output.Post{
 		ID:              queryPost.ID,
@@ -115,5 +100,40 @@ func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *o
 		Hashtags:        hashtags,
 		CreatedAt:       model.TimeFmtToFrontStr(post.CreatedAt),
 		UpdatedAt:       model.TimeFmtToFrontStr(post.UpdatedAt),
+	}
+}
+
+func ConvertPostListToOutput(list *entity.PostList) *output.PostList {
+	posts := ConvertPostListTiniesToOutput(list.Posts)
+
+	return &output.PostList{
+		TotalNumber: list.TotalNumber,
+		Posts:       posts,
+	}
+}
+
+func ConvertPostListTiniesToOutput(list []*entity.PostListTiny) []*output.Post {
+	res := make([]*output.Post, len(list))
+
+	for i, tiny := range list {
+		res[i] = ConvertPostListTinyToOutput(tiny)
+	}
+
+	return res
+}
+
+func ConvertPostListTinyToOutput(post *entity.PostListTiny) *output.Post {
+	return &output.Post{
+		ID:              post.ID,
+		Thumbnail:       post.Thumbnail,
+		Title:           post.Title,
+		AreaCategories:  ConvertAreaCategoriesToOutput(post.AreaCategories),
+		ThemeCategories: ConvertThemeCategoriesToOutput(post.ThemeCategories),
+		Creator:         output.NewCreatorFromUser(post.User),
+		FavoriteCount:   post.FavoriteCount,
+		Views:           post.Views,
+		HideAds:         post.HideAds,
+		CreatedAt:       model.TimeResponse(post.CreatedAt),
+		UpdatedAt:       model.TimeResponse(post.UpdatedAt),
 	}
 }

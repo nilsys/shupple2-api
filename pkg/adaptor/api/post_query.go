@@ -64,7 +64,7 @@ func (c *PostQueryController) ListPost(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to find post list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailListToOutput(posts))
+	return ctx.JSON(http.StatusOK, converter.ConvertPostListToOutput(posts))
 }
 
 func (c *PostQueryController) ListFeedPost(ctx echo.Context) error {
@@ -80,7 +80,7 @@ func (c *PostQueryController) ListFeedPost(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to show feed posts")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertPostListToOutput(posts))
+	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailListToOutput(posts))
 }
 
 func (c *PostQueryController) ListFavoritePost(ctx echo.Context) error {
@@ -96,5 +96,5 @@ func (c *PostQueryController) ListFavoritePost(ctx echo.Context) error {
 		return errors.Wrap(err, "failed list favorite post")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertPostListToOutput(posts))
+	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailListToOutput(posts))
 }

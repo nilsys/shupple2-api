@@ -35,10 +35,16 @@ type (
 		PostID    int `gorm:"primary_key"`
 	}
 
-	QueryFeature struct {
+	FeatureDetail struct {
 		FeatureTiny
-		Posts []*Post `gorm:"many2many:feature_post;jointable_foreignkey:feature_id;"`
-		User  *User   `gorm:"foreignkey:UserID"`
+		User    *User          `gorm:"foreignkey:UserID"`
+		PostIDs []*FeaturePost `gorm:"foreignkey:PostID"`
+	}
+
+	FeatureDetailWithPosts struct {
+		FeatureTiny
+		Posts []*PostListTiny `gorm:"many2many:feature_post;jointable_foreignkey:feature_id;association_jointable_foreignkey:post_id;"`
+		User  *User           `gorm:"foreignkey:UserID"`
 	}
 )
 
@@ -58,6 +64,15 @@ func (feature *Feature) SetPosts(postIDs []int) {
 	}
 }
 
-func (queryFeature QueryFeature) TableName() string {
+func (fd FeatureDetail) TableName() string {
 	return "feature"
+}
+
+func (fdp *FeatureDetailWithPosts) SetPosts(posts []*PostListTiny) {
+	fdp.Posts = posts
+}
+
+func (fdp *FeatureDetailWithPosts) SetFeature(feature FeatureDetail) {
+	fdp.FeatureTiny = feature.FeatureTiny
+	fdp.User = feature.User
 }

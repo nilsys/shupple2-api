@@ -2435,26 +2435,8 @@ components:
           description: 最終更新日時, ISO 8601形式
           example: 2020-01-01T13:16+09:00
         relationPosts:
-          type: array
-          items:
-            type: object
-            description: 関連記事
-            properties:
-              id:
-                type: integer
-                description: 記事ID
-                example: 1
-              title:
-                type: string
-                description: 記事タイトル
-                example: 韓国旅行でもっとキレイに！
-              thumbnail:
-                type: string
-                description: サムネイルURL
-                example: https://files.stayway.jp/posts/1
-              slug:
-                type: string
-                description: スラッグ
+          $ref: "#/components/schemas/PostList"
+
     VlogList:
       type: array
       items:
