@@ -80,8 +80,8 @@ func (r *UserQueryRepositoryImpl) FindUserRankingListByParams(query *query.FindU
 	return rows, nil
 }
 
-func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByID(id int) (*entity.UserDetailWithCount, error) {
-	var row entity.UserDetailWithCount
+func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error) {
+	var row entity.UserDetailWithMediaCount
 
 	if err := r.DB.Select("*").Where("user.id = ?", id).
 		Joins("LEFT JOIN (SELECT COUNT(id) as review_count, MAX(user_id) as user_id FROM review WHERE user_id = ?) AS r ON user.id = r.user_id", id).

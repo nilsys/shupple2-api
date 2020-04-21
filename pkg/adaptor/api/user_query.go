@@ -21,15 +21,24 @@ var UserQueryControllerSet = wire.NewSet(
 	wire.Struct(new(UserQueryController), "*"),
 )
 
+func (c *UserQueryController) MyPage(ctx echo.Context, user entity.User) error {
+	myPageUser, err := c.UserQueryService.Show(user.ID)
+	if err != nil {
+		return errors.Wrap(err, "failed to show user")
+	}
+
+	return ctx.JSON(http.StatusOK, converter.ConvertUserDetailWithCountToOutPut(myPageUser))
+}
+
 func (c *UserQueryController) Show(ctx echo.Context) error {
 	p := &input.ShowParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
-		return errors.Wrap(err, "validation show user ranking list parameters")
+		return errors.Wrap(err, "validation show user parameters")
 	}
 
 	user, err := c.UserQueryService.Show(p.ID)
 	if err != nil {
-		return errors.Wrap(err, "validation show user parameter")
+		return errors.Wrap(err, "failed to show user")
 	}
 
 	return ctx.JSON(http.StatusOK, converter.ConvertUserDetailWithCountToOutPut(user))

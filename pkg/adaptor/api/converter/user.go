@@ -135,7 +135,7 @@ func ConvertUserDetailToOutput(user *entity.UserDetail) *output.RankinUser {
 	}
 }
 
-func ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWithCount) *output.MyPageUser {
+func ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWithMediaCount) *output.MyPageUser {
 	interests := make([]string, len(user.Interests))
 	for i, interest := range user.Interests {
 		interests[i] = interest.Name

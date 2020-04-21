@@ -47,13 +47,29 @@ paths:
         - user
       summary: プロフィール取得
       description: |
+        ログインしているユーザーのプロフィール取得
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      security:
+        - iDPCognito: []
+  /users/{id}:
+    get:
+      tags:
+        - user
+      summary: プロフィール取得
+      description: |
         ユーザープロフィール取得
       parameters:
-        - in: query
+        - in: path
           name: id
+          required: true
           description: |
             UserId
-            ＊指定されない場合、tokenからユーザーを取得する
           schema:
             type: integer
       responses:
@@ -126,6 +142,39 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RankingUserList"
+  /users/{id}/follow:
+    post:
+      tags:
+        - user
+      summary: ユーザーフォロー
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: UserId
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ok
+      security:
+        - iDPCognito: []
+    delete:
+      tags:
+        - user
+      summary: ユーザーアンフォロー
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: UserId
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ok
+      security:
+        - iDPCognito: []
   /users/{id}/following:
     get:
       tags:
@@ -1410,6 +1459,39 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HashtagList"
+  /hashtags/{id}/follow:
+    post:
+      tags:
+        - hashtag
+      summary: ハッシュタグフォロー
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: HashtagId
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ok
+      security:
+        - iDPCognito: []
+    delete:
+      tags:
+        - hashtag
+      summary: ハッシュタグアンフォロー
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: hashtagId
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ok
+      security:
+        - iDPCognito: []
   /search/suggestions:
     get:
       tags:

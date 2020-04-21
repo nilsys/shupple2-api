@@ -41,7 +41,7 @@ type (
 		Authenticated bool
 	}
 
-	UserDetailWithCount struct {
+	UserDetailWithMediaCount struct {
 		UserDetail
 		FollowingCount int
 		FollowerCount  int
