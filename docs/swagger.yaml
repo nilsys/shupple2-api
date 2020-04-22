@@ -2380,6 +2380,10 @@ components:
           type: integer
           description: 閲覧数
           example: 6
+        hideAds:
+          type: boolean
+          description: 広告非表示フラグ
+          example: false
         updatedAt:
           type: string
           description: 最終更新日時, ISO 8601形式
@@ -2446,6 +2450,10 @@ components:
           type: string
           description: 最終更新日時, ISO 8601形式
           example: 2020-01-01T13:16+09:00
+        hideAds:
+          type: boolean
+          description: 広告非表示フラグ
+          example: false
     PostBody:
       type: object
       properties:
