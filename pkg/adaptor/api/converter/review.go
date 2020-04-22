@@ -56,23 +56,15 @@ func ConvertReviewCommentToOutput(reviewComment *entity.ReviewComment) *output.R
 }
 
 func ConvertQueryReviewListToOutput(queryReviews []*entity.QueryReview) []*output.Review {
-	responses := make([]*output.Review, len(queryReviews))
+	outputs := make([]*output.Review, len(queryReviews))
 	for i, queryReview := range queryReviews {
-		responses[i] = convertQueryReviewToOutput(queryReview)
+		outputs[i] = convertQueryReviewToOutput(queryReview)
 	}
-	return responses
+	return outputs
 }
 
 func convertQueryReviewToOutput(queryReview *entity.QueryReview) *output.Review {
-	medias := make([]output.ReviewMedia, len(queryReview.Medias))
 	hashtags := make([]output.Hashtag, len(queryReview.Hashtag))
-	for i, media := range queryReview.Medias {
-		medias[i] = output.ReviewMedia{
-			UUID: media.ID,
-			Mime: media.MimeType,
-			URL:  media.GenerateURL(),
-		}
-	}
 	for i, hashtag := range queryReview.Hashtag {
 		hashtags[i] = output.Hashtag{
 			ID:   hashtag.ID,
@@ -87,7 +79,7 @@ func convertQueryReviewToOutput(queryReview *entity.QueryReview) *output.Review 
 		Score:         queryReview.Score,
 		Body:          queryReview.Body,
 		FavoriteCount: queryReview.FavoriteCount,
-		Media:         medias,
+		Media:         ConvertReviewMediaList(queryReview.Medias),
 		Views:         queryReview.Views,
 		Accompanying:  queryReview.Accompanying.String(),
 		UpdatedAt:     model.TimeFmtToFrontStr(queryReview.Review.UpdatedAt),
@@ -99,15 +91,7 @@ func convertQueryReviewToOutput(queryReview *entity.QueryReview) *output.Review 
 }
 
 func ConvertQueryReviewShowToOutput(r *entity.QueryReview) *output.Review {
-	medias := make([]output.ReviewMedia, r.MediaCount)
 	hashtags := make([]output.Hashtag, len(r.Hashtag))
-	for i, media := range r.Medias {
-		medias[i] = output.ReviewMedia{
-			UUID: media.ID,
-			Mime: media.MimeType,
-			URL:  media.GenerateURL(),
-		}
-	}
 	for i, hashtag := range r.Hashtag {
 		hashtags[i] = output.Hashtag{
 			ID:   hashtag.ID,
@@ -122,7 +106,7 @@ func ConvertQueryReviewShowToOutput(r *entity.QueryReview) *output.Review {
 		Score:         r.Score,
 		Body:          r.Body,
 		FavoriteCount: r.FavoriteCount,
-		Media:         medias,
+		Media:         ConvertReviewMediaList(r.Medias),
 		Views:         r.Views,
 		Accompanying:  r.Accompanying.String(),
 		UpdatedAt:     model.TimeFmtToFrontStr(r.Review.UpdatedAt),
@@ -169,4 +153,19 @@ func ConvertUpdateReviewParamToCommand(param *input.UpdateReviewParam) *command.
 		Body:         param.Body,
 		MediaUUIDs:   uuids,
 	}
+}
+
+func ConvertReviewMediaList(reviewMediaList entity.ReviewMediaList) []output.ReviewMedia {
+	reviewMediaList.Sort()
+	medias := make([]output.ReviewMedia, len(reviewMediaList))
+	for i, media := range reviewMediaList {
+		medias[i] = output.ReviewMedia{
+			UUID:     media.ID,
+			Mime:     media.MimeType,
+			URL:      media.GenerateURL(),
+			Priority: media.Priority,
+		}
+	}
+
+	return medias
 }

@@ -25,9 +25,10 @@ type (
 	}
 
 	ReviewMedia struct {
-		UUID string `json:"uuid"`
-		Mime string `json:"mime"`
-		URL  string `json:"url"`
+		UUID     string `json:"uuid"`
+		Mime     string `json:"mime"`
+		URL      string `json:"url"`
+		Priority int    `json:"priority"`
 	}
 
 	// レビューが紐付くinn or tourist_spotの情報

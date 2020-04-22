@@ -7,11 +7,16 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
+	uuid "github.com/satori/go.uuid"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
+)
+
+const (
+	defaultReviewCount = 2
 )
 
 var _ = Describe("ReviewRepositoryTest", func() {
@@ -25,13 +30,40 @@ var _ = Describe("ReviewRepositoryTest", func() {
 		query = tests.ReviewQueryRepositoryImpl
 		command = tests.ReviewCommandRepositoryImpl
 		truncate(db)
+		Expect(db.Save(newUser(userID)).Error).To(Succeed())
+		Expect(db.Save(newTouristSpot(touristSpotID, nil, nil, nil)).Error).To(Succeed())
 	})
+
+	base := newReviewWithMediaCount(reviewID, userID, touristSpotID, 0, defaultReviewCount)
+	baseChanged := newReviewWithMediaCount(reviewID, userID, touristSpotID, 0, defaultReviewCount)
+	baseChanged.Body = "changed"
+	DescribeTable("Storeは引数のreviewを作成するか、その状態になるように更新する",
+		func(before *entity.Review, saved *entity.Review) {
+			if before != nil {
+				Expect(command.StoreReview(context.Background(), before)).To(Succeed())
+			}
+
+			Expect(command.StoreReview(context.Background(), saved)).To(Succeed())
+			actual, err := query.FindByID(saved.ID)
+			Expect(err).To(Succeed())
+
+			Expect(actual.CreatedAt).NotTo(BeZero())
+			Expect(actual.UpdatedAt).NotTo(BeZero())
+			actual.CreatedAt = time.Time{}
+			actual.UpdatedAt = time.Time{}
+			actual.Medias.Sort()
+
+			Expect(actual).To(Equal(saved))
+		},
+		Entry("新規作成", nil, base),
+		Entry("フィールドに変更がある場合", base, baseChanged),
+		Entry("Mediaの個数が増えた場合", base, newReviewWithMediaCount(reviewID, userID, touristSpotID, 0, defaultReviewCount+1)),
+		Entry("Mediaの個数が減った場合", base, newReviewWithMediaCount(reviewID, userID, touristSpotID, 0, defaultReviewCount-1)),
+	)
 
 	Describe("ShowReviewListByParamsのテスト", func() {
 		BeforeEach(func() {
 			Expect(db.Save(hashtag).Error).To(Succeed())
-			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil, nil)))
-			Expect(db.Save(newUser(userID)).Error).To(Succeed())
 			Expect(db.Save(newReview(reviewID, userID, touristSpotID, innID)).Error).To(Succeed())
 			Expect(db.Exec("INSERT INTO review_hashtag(review_id,hashtag_id) VALUES (?,?)", reviewID, hashtag.ID).Error).To(Succeed())
 		})
@@ -64,8 +96,6 @@ var _ = Describe("ReviewRepositoryTest", func() {
 
 	Describe("FindReviewCommentListByReviewID", func() {
 		BeforeEach(func() {
-			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil, nil)))
-
 			Expect(db.Save(newUser(1)).Error).To(Succeed())
 			Expect(db.Save(newUser(2)).Error).To(Succeed())
 			// コメントの存在する投稿
@@ -123,7 +153,6 @@ var _ = Describe("ReviewRepositoryTest", func() {
 	Describe("CreateReviewCommentのテスト",
 		func() {
 			BeforeEach(func() {
-				Expect(db.Save(newTouristSpot(touristSpotID, nil, nil, nil)))
 				Expect(db.Save(newUser(1)).Error).To(Succeed())
 				Expect(db.Save(newReview(1, 1, touristSpotID, innID)).Error).To(Succeed())
 			})
@@ -146,8 +175,6 @@ var _ = Describe("ReviewRepositoryTest", func() {
 	Describe("IncrementReviewCommentCountのテスト",
 		func() {
 			BeforeEach(func() {
-				Expect(db.Save(newTouristSpot(touristSpotID, nil, nil, nil)))
-
 				Expect(db.Save(newUser(1)).Error).To(Succeed())
 				Expect(db.Save(newReview(1, 1, touristSpotID, innID)).Error).To(Succeed())
 			})
@@ -173,8 +200,6 @@ var _ = Describe("ReviewRepositoryTest", func() {
 	Describe("DecrementReviewCommentCountのテスト",
 		func() {
 			BeforeEach(func() {
-				Expect(db.Save(newTouristSpot(touristSpotID, nil, nil, nil)))
-
 				Expect(db.Save(newUser(1)).Error).To(Succeed())
 				Expect(db.Save(newReview(1, 1, touristSpotID, innID)).Error).To(Succeed())
 
@@ -203,7 +228,6 @@ var _ = Describe("ReviewRepositoryTest", func() {
 
 	Describe("ShowReviewCommentのテスト", func() {
 		BeforeEach(func() {
-			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil, nil)))
 			Expect(db.Save(newUser(userID)).Error).To(Succeed())
 			Expect(db.Save(newReview(reviewID, userID, touristSpotID, innID)).Error).To(Succeed())
 
@@ -233,7 +257,6 @@ var _ = Describe("ReviewRepositoryTest", func() {
 
 	Describe("DeleteReviewCommentのテスト", func() {
 		BeforeEach(func() {
-			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil, nil)))
 			Expect(db.Save(newUser(userID)).Error).To(Succeed())
 			Expect(db.Save(newReview(reviewID, userID, touristSpotID, innID)).Error).To(Succeed())
 			Expect(db.Exec("INSERT INTO review_comment(id, user_id, review_id, body, created_at, updated_at) VALUES (1, ?, ?, 'dummy 1', '2020-01-01 10:10:10', '2020-01-01 10:10:10');", userID, reviewID).Error).To(Succeed())
@@ -275,6 +298,18 @@ func newReview(id, userID, touristSpotID, innID int) *entity.Review {
 	}
 	// ここで全てのパラメータにダミーデータが挿入される
 	util.FillDummyString(review, id)
+	return review
+}
+
+func newReviewWithMediaCount(id, userID, touristSpotID, innID, mediaCount int) *entity.Review {
+	review := newReview(id, userID, touristSpotID, innID)
+	review.MediaCount = mediaCount
+	review.Medias = make([]*entity.ReviewMedia, mediaCount)
+	for i := range review.Medias {
+		mediaID := uuid.NewV4().String()
+		review.Medias[i] = entity.NewReviewMedia(mediaID, mediaID, i+1)
+		review.Medias[i].ReviewID = id
+	}
 	return review
 }
 

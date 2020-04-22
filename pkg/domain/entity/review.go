@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"time"
 
@@ -23,7 +24,7 @@ type (
 		Views         int
 		TravelDate    time.Time
 		Accompanying  model.AccompanyingType
-		Medias        []*ReviewMedia   `gorm:"foreignkey:ReviewID"`
+		Medias        ReviewMediaList  `gorm:"foreignkey:ReviewID"`
 		HashtagIDs    []*ReviewHashtag `gorm:"foreignkey:ReviewID"`
 		CreatedAt     time.Time        `gorm:"-;default:current_timestamp"`
 		UpdatedAt     time.Time        `gorm:"-;default:current_timestamp"`
@@ -54,6 +55,8 @@ type (
 		UserID   int
 		ReviewID int
 	}
+
+	ReviewMediaList []*ReviewMedia
 )
 
 func NewUserFavoriteReview(userID, reviewID int) *UserFavoriteReview {
@@ -62,6 +65,7 @@ func NewUserFavoriteReview(userID, reviewID int) *UserFavoriteReview {
 		ReviewID: reviewID,
 	}
 }
+
 func NewReviewMedia(id string, mimeType string, priority int) *ReviewMedia {
 	return &ReviewMedia{
 		ID:       id,
@@ -94,4 +98,8 @@ func (r *Review) HashHashtagIDs() bool {
 // TODO: 仮置き
 func (r *Review) WebURL() string {
 	return "https://stayway.jp/tourism/" + strconv.Itoa(r.ID)
+}
+
+func (list ReviewMediaList) Sort() {
+	sort.Slice(list, func(i, j int) bool { return list[i].Priority < list[j].Priority })
 }
