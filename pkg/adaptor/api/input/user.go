@@ -109,7 +109,7 @@ func (param *ListUserRanking) GetOffset() int {
 	if param.Page == 1 || param.Page == 0 {
 		return 0
 	}
-	return param.GetLimit()*(param.Page-1) + 1
+	return param.GetLimit() * (param.Page - 1)
 }
 
 // PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
@@ -125,7 +125,7 @@ func (param *ListFollowUser) GetOffset() int {
 	if param.Page == 1 || param.Page == 0 {
 		return 0
 	}
-	return param.GetLimit()*(param.Page-1) + 1
+	return param.GetLimit() * (param.Page - 1)
 }
 
 func (p *ListFavoriteMediaUser) GetLimit() int {
@@ -139,5 +139,5 @@ func (p *ListFavoriteMediaUser) GetOffset() int {
 	if p.Page == 1 || p.Page == 0 {
 		return 0
 	}
-	return p.GetLimit()*(p.Page-1) + 1
+	return p.GetLimit() * (p.Page - 1)
 }

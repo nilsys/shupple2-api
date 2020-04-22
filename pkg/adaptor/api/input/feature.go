@@ -26,5 +26,5 @@ func (param ShowFeatureListParam) GetOffSet() int {
 	if param.Page == 1 || param.Page == 0 {
 		return 0
 	}
-	return param.GetLimit()*(param.Page-1) + 1
+	return param.GetLimit() * (param.Page - 1)
 }

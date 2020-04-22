@@ -44,7 +44,7 @@ func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuer
 		Order(query.SortBy.GetVlogOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
-		Find(&rows.Vlogs).Count(&rows.TotalNumber).Error; err != nil {
+		Find(&rows.Vlogs).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find vlogs by params")
 	}
 

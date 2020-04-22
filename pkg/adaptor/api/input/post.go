@@ -72,7 +72,7 @@ func (param ListPostParam) GetOffSet() int {
 	if param.Page == 1 || param.Page == 0 {
 		return 0
 	}
-	return param.GetLimit()*(param.Page-1) + 1
+	return param.GetLimit() * (param.Page - 1)
 }
 
 // PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
@@ -88,5 +88,5 @@ func (param ListFeedPostParam) GetOffSet() int {
 	if param.Page == 1 || param.Page == 0 {
 		return 0
 	}
-	return param.GetLimit()*(param.Page-1) + 1
+	return param.GetLimit() * (param.Page - 1)
 }

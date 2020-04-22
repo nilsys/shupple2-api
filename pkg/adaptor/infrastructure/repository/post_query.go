@@ -61,7 +61,9 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 		Order(query.SortBy.GetPostOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
-		Find(&postList.Posts).Count(&postList.TotalNumber).Error; err != nil {
+		Find(&postList.Posts).
+		Offset(0).
+		Count(&postList.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get posts by params")
 	}
 

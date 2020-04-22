@@ -27,5 +27,5 @@ func (showListParam ShowComicListParam) GetOffSet() int {
 	if showListParam.Page == 1 || showListParam.Page == 0 {
 		return 0
 	}
-	return showListParam.GetLimit()*(showListParam.Page-1) + 1
+	return showListParam.GetLimit() * (showListParam.Page - 1)
 }

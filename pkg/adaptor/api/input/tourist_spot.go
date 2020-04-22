@@ -51,7 +51,7 @@ func (param *ListTouristSpotParams) GetOffset() int {
 	if param.Page == 1 || param.Page == 0 {
 		return 0
 	}
-	return param.GetLimit()*(param.Page-1) + 1
+	return param.GetLimit() * (param.Page - 1)
 }
 
 func (param *ListRecommendTouristSpotParam) GetLimit() int {
@@ -65,5 +65,5 @@ func (param *ListRecommendTouristSpotParam) GetOffset() int {
 	if param.Page == 1 || param.Page == 0 {
 		return 0
 	}
-	return param.GetLimit()*(param.Page-1) + 1
+	return param.GetLimit() * (param.Page - 1)
 }
