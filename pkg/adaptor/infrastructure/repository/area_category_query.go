@@ -13,6 +13,8 @@ type AreaCategoryQueryRepositoryImpl struct {
 	DB *gorm.DB
 }
 
+const sortOrder = "sort_order DESC"
+
 var AreaCategoryQueryRepositorySet = wire.NewSet(
 	wire.Struct(new(AreaCategoryQueryRepositoryImpl), "*"),
 	wire.Bind(new(repository.AreaCategoryQueryRepository), new(*AreaCategoryQueryRepositoryImpl)),
@@ -77,7 +79,7 @@ func (r *AreaCategoryQueryRepositoryImpl) FindBySlug(slug string) (*entity.AreaC
 func (r *AreaCategoryQueryRepositoryImpl) FindByIDs(ids []int) ([]*entity.AreaCategory, error) {
 	var areaCategories []*entity.AreaCategory
 
-	if err := r.DB.Where("id IN (?)", ids).Find(&areaCategories).Error; err != nil {
+	if err := r.DB.Where("id IN (?)", ids).Order(sortOrder).Find(&areaCategories).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get areaCategories")
 	}
 
@@ -88,7 +90,7 @@ func (r *AreaCategoryQueryRepositoryImpl) FindAreaListByAreaGroup(areaGroup mode
 	var rows []*entity.AreaCategory
 	q := r.buildQueryByLimitAndExcludeID(limit, excludeID)
 
-	if err := q.Where("area_group = ? AND type = ?", areaGroup, model.AreaCategoryTypeArea).Find(&rows).Error; err != nil {
+	if err := q.Where("area_group = ? AND type = ?", areaGroup, model.AreaCategoryTypeArea).Order(sortOrder).Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to area list by areaGroup= %s", areaGroup)
 	}
 
@@ -99,7 +101,7 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubAreaListByAreaID(areaID int, li
 	var rows []*entity.AreaCategory
 	q := r.buildQueryByLimitAndExcludeID(limit, excludeID)
 
-	if err := q.Where("area_id = ? AND type = ?", areaID, model.AreaCategoryTypeSubArea).Find(&rows).Error; err != nil {
+	if err := q.Where("area_id = ? AND type = ?", areaID, model.AreaCategoryTypeSubArea).Order(sortOrder).Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to sub_area list by area_id = %d", areaID)
 	}
 
@@ -110,7 +112,7 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubSubAreaListBySubAreaID(subAreaI
 	var rows []*entity.AreaCategory
 	q := r.buildQueryByLimitAndExcludeID(limit, excludeID)
 
-	if err := q.Where("sub_area_id = ? AND type = ?", subAreaID, model.AreaCategoryTypeSubSubArea).Find(&rows).Error; err != nil {
+	if err := q.Where("sub_area_id = ? AND type = ?", subAreaID, model.AreaCategoryTypeSubSubArea).Order(sortOrder).Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to sub_sub_area list by sub_area_id = %d", subAreaID)
 	}
 
@@ -135,7 +137,7 @@ func (r *AreaCategoryQueryRepositoryImpl) buildQueryByLimitAndExcludeID(limit in
 func (r *AreaCategoryQueryRepositoryImpl) SearchByName(name string) ([]*entity.AreaCategory, error) {
 	var rows []*entity.AreaCategory
 
-	if err := r.DB.Where("MATCH(name) AGAINST(?)", name).Limit(defaultSearchSuggestionsNumber).Find(&rows).Error; err != nil {
+	if err := r.DB.Where("MATCH(name) AGAINST(?)", name).Limit(defaultSearchSuggestionsNumber).Order(sortOrder).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find areaCategory list by like name")
 	}
 
@@ -147,7 +149,7 @@ func (r *AreaCategoryQueryRepositoryImpl) SearchAreaByName(name string) ([]*enti
 
 	q := r.buildSearchByNameAndType(name, model.AreaCategoryTypeArea)
 
-	if err := q.Find(&rows).Error; err != nil {
+	if err := q.Order(sortOrder).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to search area by name")
 	}
 
@@ -159,7 +161,7 @@ func (r *AreaCategoryQueryRepositoryImpl) SearchSubAreaByName(name string) ([]*e
 
 	q := r.buildSearchByNameAndType(name, model.AreaCategoryTypeSubArea)
 
-	if err := q.Find(&rows).Error; err != nil {
+	if err := q.Order(sortOrder).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to search area by name")
 	}
 
@@ -171,7 +173,7 @@ func (r *AreaCategoryQueryRepositoryImpl) SearchSubSubAreaByName(name string) ([
 
 	q := r.buildSearchByNameAndType(name, model.AreaCategoryTypeSubSubArea)
 
-	if err := q.Find(&rows).Error; err != nil {
+	if err := q.Order(sortOrder).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to search area by name")
 	}
 
@@ -181,7 +183,7 @@ func (r *AreaCategoryQueryRepositoryImpl) SearchSubSubAreaByName(name string) ([
 func (r *AreaCategoryQueryRepositoryImpl) FindByMetaSearchID(innAreaTypeIDs *entity.InnAreaTypeIDs) ([]*entity.AreaCategory, error) {
 	var rows []*entity.AreaCategory
 
-	if err := r.DB.Where("metasearch_area_id = ?", innAreaTypeIDs.AreaID).Or("metasearch_sub_area_id =?", innAreaTypeIDs.SubAreaID).Or("metasearch_sub_sub_area_id = ?", innAreaTypeIDs.SubSubAreaID).Find(&rows).Error; err != nil {
+	if err := r.DB.Order(sortOrder).Where("metasearch_area_id = ?", innAreaTypeIDs.AreaID).Or("metasearch_sub_area_id =?", innAreaTypeIDs.SubAreaID).Or("metasearch_sub_sub_area_id = ?", innAreaTypeIDs.SubSubAreaID).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find areaCategory list by metasearch_id")
 	}
 

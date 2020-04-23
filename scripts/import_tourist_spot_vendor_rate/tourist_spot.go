@@ -22,7 +22,7 @@ type (
 func (s *Script) touristSpotFromCsv(filepath string) []touristSpot {
 	touristSpots := make([]touristSpot, 0)
 
-	// どっかのドメインに置いて良いかも
+	// TODO: どっかのドメインに置いて良いかも
 	file, err := os.Open(filepath)
 	if err != nil {
 		log.Fatal(err)
