@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/google/wire"
 	"github.com/pkg/errors"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
@@ -23,8 +24,9 @@ type (
 
 	// Review参照系サービス実装
 	ReviewQueryServiceImpl struct {
-		ReviewQueryRepository repository.ReviewQueryRepository
-		InnQueryRepository    repository.InnQueryRepository
+		ReviewQueryRepository       repository.ReviewQueryRepository
+		InnQueryRepository          repository.InnQueryRepository
+		AreaCategoryQueryRepository repository.AreaCategoryQueryRepository
 	}
 )
 
@@ -33,15 +35,51 @@ var ReviewQueryServiceSet = wire.NewSet(
 	wire.Bind(new(ReviewQueryService), new(*ReviewQueryServiceImpl)),
 )
 
+// TODO: リファクタ
 // クエリで飛んで来た検索条件を用いreviewを検索
 func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.QueryReview, error) {
-	innIDs, err := s.InnQueryRepository.FindIDsByAreaID(query.AreaID, query.SubAreaID, query.SubSubAreaID)
-	if err != nil {
-		zap.Error(err)
+	var metasearchAreaID int
+	var metasearchSubAreaID int
+	var metasearchSubSubAreaID int
+	// metasearch側のidで検索する為(metasearch側と乖離している為typeは調べない)
+	if query.AreaID != 0 {
+		area, err := s.AreaCategoryQueryRepository.FindByID(query.AreaID)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to find area_category")
+		}
+		metasearchAreaID = area.MetasearchAreaID
+		metasearchSubAreaID = area.MetasearchAreaID
+		metasearchSubSubAreaID = area.MetasearchAreaID
+	}
+	if query.SubAreaID != 0 {
+		subArea, err := s.AreaCategoryQueryRepository.FindByID(query.SubAreaID)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to find area_category")
+		}
+		metasearchAreaID = subArea.MetasearchSubAreaID
+		metasearchSubAreaID = subArea.MetasearchSubAreaID
+		metasearchSubSubAreaID = subArea.MetasearchSubAreaID
+	}
+	if query.SubSubAreaID != 0 {
+		subSubArea, err := s.AreaCategoryQueryRepository.FindByID(query.SubAreaID)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to find area_category")
+		}
+		metasearchAreaID = subSubArea.MetasearchSubSubAreaID
+		metasearchSubAreaID = subSubArea.MetasearchSubSubAreaID
+		metasearchSubSubAreaID = subSubArea.MetasearchSubSubAreaID
 	}
 
-	// stayway-apiから取得したinn_idを検索に用いる
-	query.InnIDs = innIDs
+	if metasearchAreaID != 0 || metasearchSubAreaID != 0 || metasearchSubSubAreaID != 0 {
+		// 指定されたareaに紐づいているinnのidを取得
+		innIDs, err := s.InnQueryRepository.FindIDsByAreaID(metasearchAreaID, metasearchSubAreaID, metasearchSubSubAreaID)
+		if err != nil {
+			// errorは握り潰す
+			logger.Error("failed metasearch inns api", zap.Error(err))
+		}
+		// stayway-apiから取得したinn_idを検索に用いる
+		query.InnIDs = innIDs
+	}
 
 	reviews, err := s.ReviewQueryRepository.ShowReviewListByParams(query)
 	if err != nil {

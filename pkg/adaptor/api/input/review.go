@@ -87,9 +87,21 @@ const getReviewsDefaultPerPage = 10
 // 投稿内容の最低文字数
 const storeBodyMinimumLimit = 50
 
-// いずれのクエリも飛んで来なかった場合エラーを返す
 func (param *ListReviewParams) Validate() error {
+	// いずれのクエリも飛んで来なかった場合
 	if param.UserID == 0 && param.InnID == 0 && param.TouristSpotID == 0 && param.HashTag == "" && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.MetasearchAreaID == 0 && param.MetasearchSubAreaID == 0 && param.MetasearchSubSubAreaID == 0 && param.Keyward == "" && param.SortBy == 0 {
+		return serror.New(nil, serror.CodeInvalidParam, "Invalid show review input")
+	}
+	// 2つ以上のareaIDが指定されている場合
+	if (param.AreaID != 0 && param.SubAreaID != 0) || (param.SubAreaID != 0 && param.SubSubAreaID != 0) || (param.AreaID != 0 && param.SubSubAreaID != 0) {
+		return serror.New(nil, serror.CodeInvalidParam, "Invalid show review input")
+	}
+	// 2つ以上のmetasearchAreaIDが指定されている場合
+	if (param.MetasearchAreaID != 0 && param.MetasearchSubAreaID != 0) || (param.MetasearchSubAreaID != 0 && param.MetasearchSubSubAreaID != 0) || (param.MetasearchAreaID != 0 && param.MetasearchSubSubAreaID != 0) {
+		return serror.New(nil, serror.CodeInvalidParam, "Invalid show review input")
+	}
+	// areaIDとmetasearchAreaIDが指定されている場合
+	if (param.AreaID != 0 || param.SubAreaID != 0 || param.SubSubAreaID != 0) && (param.MetasearchAreaID != 0 || param.MetasearchSubAreaID != 0 || param.MetasearchSubSubAreaID != 0) {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid show review input")
 	}
 
