@@ -40,6 +40,21 @@ func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuer
 
 	q := r.buildFindByParamsQuery(query)
 
+	// フリーワード検索の場合
+	if query.Keyward != "" {
+		if err := q.
+			Select("*, CASE WHEN MATCH(title) AGAINST(?) THEN 'TRUE' ELSE 'FALSE' END is_matched_title", query.Keyward).
+			Order("is_matched_title desc").
+			Order(query.SortBy.GetVlogOrderQuery()).
+			Limit(query.Limit).
+			Offset(query.OffSet).
+			Find(&rows.Vlogs).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+			return nil, errors.Wrap(err, "failed find vlogs by params")
+		}
+
+		return &rows, nil
+	}
+
 	if err := q.
 		Order(query.SortBy.GetVlogOrderQuery()).
 		Limit(query.Limit).

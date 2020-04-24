@@ -57,6 +57,23 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 
 	q := r.buildFindListByParamsQuery(query)
 
+	// フリーワード検索の場合
+	if query.Keyward != "" {
+		if err := q.
+			Select("*, CASE WHEN MATCH(title) AGAINST(?) THEN 'TRUE' ELSE 'FALSE' END is_matched_title", query.Keyward).
+			Order("is_matched_title desc").
+			Order(query.SortBy.GetPostOrderQuery()).
+			Limit(query.Limit).
+			Offset(query.OffSet).
+			Find(&postList.Posts).
+			Offset(0).
+			Count(&postList.TotalNumber).Error; err != nil {
+			return nil, errors.Wrapf(err, "Failed get posts by params")
+		}
+
+		return &postList, nil
+	}
+
 	if err := q.
 		Order(query.SortBy.GetPostOrderQuery()).
 		Limit(query.Limit).
