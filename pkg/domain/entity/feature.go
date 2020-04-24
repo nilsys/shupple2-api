@@ -38,7 +38,7 @@ type (
 	FeatureDetail struct {
 		FeatureTiny
 		User    *User          `gorm:"foreignkey:UserID"`
-		PostIDs []*FeaturePost `gorm:"foreignkey:PostID"`
+		PostIDs []*FeaturePost `gorm:"foreignkey:FeatureID"`
 	}
 
 	FeatureDetailWithPosts struct {
