@@ -44,11 +44,17 @@ type (
 		HashtagID int `gorm:"primary_key"`
 	}
 
-	// 参照用Review
-	QueryReview struct {
+	ReviewDetail struct {
 		Review
 		User    *User      `gorm:"foreignkey:UserID"`
 		Hashtag []*Hashtag `gorm:"many2many:review_hashtag;jointable_foreignkey:review_id;"`
+	}
+
+	ReviewDetailWithIsFavorite struct {
+		Review
+		IsFavorite bool
+		User       *User      `gorm:"foreignkey:UserID"`
+		Hashtag    []*Hashtag `gorm:"many2many:review_hashtag;jointable_foreignkey:review_id;"`
 	}
 
 	UserFavoriteReview struct {
@@ -83,7 +89,7 @@ func (r *ReviewMedia) GenerateURL() string {
 	return "https://stayway.jp/image/" + r.ID
 }
 
-func (r *QueryReview) TableName() string {
+func (r *ReviewDetail) TableName() string {
 	return "review"
 }
 
@@ -98,6 +104,10 @@ func (r *Review) HashHashtagIDs() bool {
 // TODO: 仮置き
 func (r *Review) WebURL() string {
 	return "https://stayway.jp/tourism/" + strconv.Itoa(r.ID)
+}
+
+func (rdi ReviewDetailWithIsFavorite) TableName() string {
+	return "review"
 }
 
 func (list ReviewMediaList) Sort() {

@@ -70,6 +70,40 @@ func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *output.Post {
 	}
 }
 
+func ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite) *output.PostShow {
+	var hashtags = make([]*output.Hashtag, len(post.Hashtag))
+	var bodies = make([]*output.PostBody, len(post.Bodies))
+
+	for i, hashtag := range post.Hashtag {
+		hashtags[i] = output.NewHashtag(hashtag.ID, hashtag.Name)
+	}
+	for i, body := range post.Bodies {
+		bodies[i] = output.NewPostBody(body.Page, body.Body)
+	}
+
+	return &output.PostShow{
+		ID:              post.ID,
+		Thumbnail:       post.PostTiny.Thumbnail,
+		Title:           post.Title,
+		Body:            bodies,
+		TOC:             post.TOC,
+		FavoriteCount:   post.FavoriteCount,
+		FacebookCount:   post.FacebookCount,
+		TwitterCount:    post.TwitterCount,
+		Views:           post.Views,
+		SEOTitle:        post.SEOTitle,
+		SEODescription:  post.SEODescription,
+		HideAds:         post.HideAds,
+		IsFavorited:     post.IsFavorite,
+		Creator:         output.NewCreatorFromUser(post.User),
+		AreaCategories:  ConvertAreaCategoriesToOutput(post.AreaCategories),
+		ThemeCategories: ConvertThemeCategoriesToOutput(post.ThemeCategories),
+		Hashtags:        hashtags,
+		CreatedAt:       model.TimeFmtToFrontStr(post.CreatedAt),
+		UpdatedAt:       model.TimeFmtToFrontStr(post.UpdatedAt),
+	}
+}
+
 func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *output.PostShow {
 	var hashtags = make([]*output.Hashtag, len(post.Hashtag))
 	var bodies = make([]*output.PostBody, len(post.Bodies))
@@ -133,6 +167,7 @@ func ConvertPostListTinyToOutput(post *entity.PostListTiny) *output.Post {
 		FavoriteCount:   post.FavoriteCount,
 		Views:           post.Views,
 		HideAds:         post.HideAds,
+		IsFavorite:      post.IsFavorite,
 		CreatedAt:       model.TimeResponse(post.CreatedAt),
 		UpdatedAt:       model.TimeResponse(post.UpdatedAt),
 	}

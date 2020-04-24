@@ -4,7 +4,6 @@ import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 
 // フロント返却用Review
 type (
-	// TODO: usecaseが増えたら、命名考える
 	Review struct {
 		ID            int             `json:"id"`
 		InnID         int             `json:"innId"`
@@ -15,13 +14,12 @@ type (
 		Media         []ReviewMedia   `json:"media"`
 		Views         int             `json:"views"`
 		Accompanying  string          `json:"accompanying"`
-		UpdatedAt     string          `json:"udpatedAt"`
+		UpdatedAt     string          `json:"updatedAt"`
 		TravelDate    model.YearMonth `json:"travelDate"`
 		CommentCount  int             `json:"commentCount"`
+		IsFavorited   bool            `json:"isFavorited"`
 		Hashtag       []Hashtag       `json:"hashtag"`
 		Creator       Creator         `json:"creator"`
-		// TODO:
-		AssociatedContent ReviewTarget `json:"associatedContent"`
 	}
 
 	ReviewMedia struct {
@@ -44,6 +42,7 @@ type (
 		Body          string             `json:"body"`
 		ReplyCount    int                `json:"replyCount"`
 		FavoriteCount int                `json:"favoriteCount"`
+		IsFavorited   bool               `json:"isFavorited"`
 		CreatedAt     model.TimeResponse `json:"createdAt"`
 	}
 
@@ -51,17 +50,19 @@ type (
 		ID          int                `json:"id"`
 		UserSummary *UserSummary       `json:"user"`
 		Body        string             `json:"body"`
+		IsFavorited bool               `json:"isFavorited"`
 		CreatedAt   model.TimeResponse `json:"createdAt"`
 	}
 )
 
-func NewReviewComment(userSummary *UserSummary, body string, createdAt model.TimeResponse, id, replyCount, favoriteCount int) *ReviewComment {
+func NewReviewComment(userSummary *UserSummary, body string, createdAt model.TimeResponse, id, replyCount, favoriteCount int, isFavorite bool) *ReviewComment {
 	return &ReviewComment{
 		ID:            id,
 		UserSummary:   userSummary,
 		Body:          body,
 		ReplyCount:    replyCount,
 		FavoriteCount: favoriteCount,
+		IsFavorited:   isFavorite,
 		CreatedAt:     createdAt,
 	}
 }

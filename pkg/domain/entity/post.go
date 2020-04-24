@@ -81,7 +81,8 @@ type (
 	// 一覧用Post
 	PostListTiny struct {
 		PostTiny
-		User            *User            `gorm:"foreignkey:UserID"`
+		User            *User `gorm:"foreignkey:UserID"`
+		IsFavorite      bool
 		AreaCategories  []*AreaCategory  `gorm:"many2many:post_area_category;jointable_foreignkey:post_id;"`
 		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
 	}
@@ -91,6 +92,16 @@ type (
 		PostTiny
 		Bodies          []*PostBody      `gorm:"foreignkey:PostID"`
 		User            *User            `gorm:"foreignkey:UserID"`
+		AreaCategories  []*AreaCategory  `gorm:"many2many:post_area_category;jointable_foreignkey:post_id;"`
+		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
+		Hashtag         []*Hashtag       `gorm:"many2many:post_hashtag;jointable_foreignkey:post_id;"`
+	}
+
+	PostDetailWithHashtagAndIsFavorite struct {
+		PostTiny
+		Bodies          []*PostBody `gorm:"foreignkey:PostID"`
+		User            *User       `gorm:"foreignkey:UserID"`
+		IsFavorite      bool
 		AreaCategories  []*AreaCategory  `gorm:"many2many:post_area_category;jointable_foreignkey:post_id;"`
 		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
 		Hashtag         []*Hashtag       `gorm:"many2many:post_hashtag;jointable_foreignkey:post_id;"`
@@ -166,4 +177,8 @@ func NewUserFavoritePost(userID, postID int) *UserFavoritePost {
 		UserID: userID,
 		PostID: postID,
 	}
+}
+
+func (p *PostDetailWithHashtagAndIsFavorite) TableName() string {
+	return "post"
 }

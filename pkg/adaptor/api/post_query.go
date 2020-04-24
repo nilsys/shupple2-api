@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
@@ -23,18 +25,18 @@ var PostQueryControllerSet = wire.NewSet(
 	wire.Struct(new(PostQueryController), "*"),
 )
 
-func (c *PostQueryController) Show(ctx echo.Context) error {
+func (c *PostQueryController) Show(ctx echo.Context, ouser entity.OptionalUser) error {
 	p := &input.GetPost{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrapf(err, "validation get post parameter")
 	}
 
-	post, err := c.PostService.ShowQueryByID(p.ID)
+	post, err := c.PostService.ShowQueryByID(p.ID, ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to get post")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailWithHashtagToOutput(post))
+	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post))
 }
 
 func (c *PostQueryController) ShowBySlug(ctx echo.Context) error {
@@ -51,7 +53,7 @@ func (c *PostQueryController) ShowBySlug(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailWithHashtagToOutput(post))
 }
 
-func (c *PostQueryController) ListPost(ctx echo.Context) error {
+func (c *PostQueryController) ListPost(ctx echo.Context, ouser entity.OptionalUser) error {
 	p := &input.ListPostParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrapf(err, "validation find post list parameter")
@@ -59,7 +61,7 @@ func (c *PostQueryController) ListPost(ctx echo.Context) error {
 
 	query := converter.ConvertFindPostListParamToQuery(p)
 
-	posts, err := c.PostService.ListByParams(query)
+	posts, err := c.PostService.ListByParams(query, ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to find post list")
 	}

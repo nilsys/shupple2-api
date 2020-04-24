@@ -25,11 +25,10 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	if err != nil {
 		return nil, err
 	}
-	aws := configConfig.AWS
 	script := &Script{
 		DB:         db,
 		AWSSession: session,
-		AWSConfig:  aws,
+		Config:     configConfig,
 	}
 	return script, nil
 }

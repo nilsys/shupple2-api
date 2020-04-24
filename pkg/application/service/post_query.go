@@ -12,10 +12,10 @@ type (
 	// Post参照系サービス
 	PostQueryService interface {
 		ShowByID(id int) (*entity.Post, error)
-		ShowQueryByID(id int) (*entity.PostDetailWithHashtag, error)
+		ShowQueryByID(id int, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, error)
 		ShowQueryBySlug(slug string) (*entity.PostDetailWithHashtag, error)
 		ListFavoritePost(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
-		ListByParams(query *query.FindPostListQuery) (*entity.PostList, error)
+		ListByParams(query *query.FindPostListQuery, ouser entity.OptionalUser) (*entity.PostList, error)
 		ListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
 	}
 
@@ -39,7 +39,10 @@ func (s *PostQueryServiceImpl) ShowByID(id int) (*entity.Post, error) {
 	return post, nil
 }
 
-func (s *PostQueryServiceImpl) ShowQueryByID(id int) (*entity.PostDetailWithHashtag, error) {
+func (s *PostQueryServiceImpl) ShowQueryByID(id int, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, error) {
+	if ouser.Authenticated {
+		return s.PostQueryRepository.FindPostDetailWithHashtagAndIsFavoriteByID(id, ouser.ID)
+	}
 	return s.PostQueryRepository.FindPostDetailWithHashtagByID(id)
 }
 
@@ -48,7 +51,15 @@ func (s *PostQueryServiceImpl) ShowQueryBySlug(slug string) (*entity.PostDetailW
 }
 
 // 記事一覧参照
-func (s *PostQueryServiceImpl) ListByParams(query *query.FindPostListQuery) (*entity.PostList, error) {
+func (s *PostQueryServiceImpl) ListByParams(query *query.FindPostListQuery, ouser entity.OptionalUser) (*entity.PostList, error) {
+	if ouser.Authenticated {
+		posts, err := s.PostQueryRepository.FindListWithIsFavoriteByParams(query, ouser.ID)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed find post with is_favorite by params")
+		}
+		return posts, nil
+	}
+
 	posts, err := s.PostQueryRepository.FindListByParams(query)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed find post by params")

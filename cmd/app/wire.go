@@ -18,7 +18,6 @@ import (
 
 var controllerSet = wire.NewSet(
 	api.PostQueryControllerSet,
-	api.PostCommandControllerSet,
 	api.PostFavoriteCommandControllerSet,
 	api.CategoryQueryControllerSet,
 	api.ComicQueryControllerSet,

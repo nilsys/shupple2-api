@@ -13,12 +13,12 @@ import (
 type (
 	// Review参照系サービス
 	ReviewQueryService interface {
-		ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.QueryReview, error)
-		ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
-		ShowQueryReview(id int) (*entity.QueryReview, error)
+		ShowReviewListByParams(query *query.ShowReviewListQuery, ouser entity.OptionalUser) ([]*entity.ReviewDetailWithIsFavorite, error)
+		ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error)
+		ShowQueryReview(id int, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavorite, error)
 		ShowReview(id int) (*entity.Review, error)
-		ListReviewCommentByReviewID(reviewID int, limit int) ([]*entity.ReviewComment, error)
-		ListFavoriteReview(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error)
+		ListReviewCommentByReviewID(reviewID int, limit int, ouser entity.OptionalUser) ([]*entity.ReviewCommentWithIsFavorite, error)
+		ListFavoriteReview(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error)
 		ListReviewCommentReplyByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error)
 	}
 
@@ -37,7 +37,7 @@ var ReviewQueryServiceSet = wire.NewSet(
 
 // TODO: リファクタ
 // クエリで飛んで来た検索条件を用いreviewを検索
-func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.QueryReview, error) {
+func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewListQuery, ouser entity.OptionalUser) ([]*entity.ReviewDetailWithIsFavorite, error) {
 	var metasearchAreaID int
 	var metasearchSubAreaID int
 	var metasearchSubSubAreaID int
@@ -81,6 +81,15 @@ func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewL
 		query.InnIDs = innIDs
 	}
 
+	// 認証されているユーザーの場合、お気に入りしているかのフラグも取得する
+	if ouser.Authenticated {
+		reviews, err := s.ReviewQueryRepository.ShowReviewWithIsFavoriteListByParams(query, ouser.ID)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to show review list from repo")
+		}
+		return reviews, nil
+	}
+
 	reviews, err := s.ReviewQueryRepository.ShowReviewListByParams(query)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to show review list from repo")
@@ -89,11 +98,14 @@ func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewL
 	return reviews, nil
 }
 
-func (s *ReviewQueryServiceImpl) ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error) {
+func (s *ReviewQueryServiceImpl) ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error) {
 	return s.ReviewQueryRepository.FindFeedReviewListByUserID(userID, query)
 }
 
-func (s *ReviewQueryServiceImpl) ShowQueryReview(id int) (*entity.QueryReview, error) {
+func (s *ReviewQueryServiceImpl) ShowQueryReview(id int, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavorite, error) {
+	if ouser.Authenticated {
+		return s.ReviewQueryRepository.FindQueryReviewWithIsFavoriteByID(id, ouser.ID)
+	}
 	return s.ReviewQueryRepository.FindQueryReviewByID(id)
 }
 
@@ -110,11 +122,14 @@ func (s *ReviewQueryServiceImpl) ShowReview(id int) (*entity.Review, error) {
 	return s.ReviewQueryRepository.FindByID(id)
 }
 
-func (s *ReviewQueryServiceImpl) ListReviewCommentByReviewID(reviewID int, limit int) ([]*entity.ReviewComment, error) {
+func (s *ReviewQueryServiceImpl) ListReviewCommentByReviewID(reviewID int, limit int, ouser entity.OptionalUser) ([]*entity.ReviewCommentWithIsFavorite, error) {
+	if ouser.Authenticated {
+		return s.ReviewQueryRepository.FindReviewCommentWithIsFavoriteListByReviewID(reviewID, limit, ouser.ID)
+	}
 	return s.ReviewQueryRepository.FindReviewCommentListByReviewID(reviewID, limit)
 }
 
-func (s *ReviewQueryServiceImpl) ListFavoriteReview(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error) {
+func (s *ReviewQueryServiceImpl) ListFavoriteReview(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error) {
 	return s.ReviewQueryRepository.FindFavoriteListByUserID(userID, query)
 }
 

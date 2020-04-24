@@ -14,6 +14,7 @@ type (
 		FavoriteCount   int                `json:"favoriteCount"`
 		Views           int                `json:"views"`
 		HideAds         bool               `json:"hideAds"`
+		IsFavorite      bool               `json:"isFavorite"`
 		CreatedAt       model.TimeResponse `json:"createdAt"`
 		UpdatedAt       model.TimeResponse `json:"updatedAt"`
 	}
@@ -36,6 +37,7 @@ type (
 		SEOTitle        string           `json:"seoTitle"`
 		SEODescription  string           `json:"seoDescription"`
 		HideAds         bool             `json:"hideAds"`
+		IsFavorited     bool             `json:"isFavorited"`
 		Creator         Creator          `json:"creator"`
 		AreaCategories  []*AreaCategory  `json:"areaCategories"`
 		ThemeCategories []*ThemeCategory `json:"themeCategories"`

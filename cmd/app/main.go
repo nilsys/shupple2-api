@@ -27,7 +27,6 @@ type App struct {
 	DB                              *gorm.DB
 	Echo                            *echo.Echo
 	AuthorizeWrapper                staywayMiddleware.Authorize
-	PostCommandController           api.PostCommandController
 	PostQueryController             api.PostQueryController
 	PostFavoriteCommandController   api.PostFavoriteCommandController
 	CategoryQueryController         api.CategoryQueryController
@@ -81,9 +80,8 @@ func setRoutes(app *App) {
 
 	{
 		posts := api.Group("/posts")
-		posts.GET("", app.PostQueryController.ListPost)
-		posts.POST("", app.PostCommandController.Store)
-		posts.GET("/:id", app.PostQueryController.Show)
+		posts.GET("", auth.Optional(app.PostQueryController.ListPost))
+		posts.GET("/:id", auth.Optional(app.PostQueryController.Show))
 		posts.GET("/:slug/slug", app.PostQueryController.ShowBySlug)
 		posts.PUT("/:id/favorite", auth.Require(app.PostFavoriteCommandController.Store))
 		posts.DELETE("/:id/favorite", auth.Require(app.PostFavoriteCommandController.Delete))
@@ -112,16 +110,15 @@ func setRoutes(app *App) {
 
 	{
 		reviews := api.Group("/reviews")
-		reviews.GET("", app.ReviewQueryController.LisReview)
+		reviews.GET("", auth.Optional(app.ReviewQueryController.LisReview))
 		reviews.DELETE("/comment/:id", auth.Require(app.ReviewCommandController.DeleteReviewComment))
 		reviews.POST("/:id/comment", auth.Require(app.ReviewCommandController.StoreReviewComment))
-		reviews.GET("/:id/comment", app.ReviewQueryController.ListReviewCommentByReviewID)
+		reviews.GET("/:id/comment", auth.Optional(app.ReviewQueryController.ListReviewCommentByReviewID))
 		reviews.POST("", auth.Require(app.ReviewCommandController.Store))
 		reviews.PUT("/:id", auth.Require(app.ReviewCommandController.Update))
 		reviews.DELETE("/:id", auth.Require(app.ReviewCommandController.Delete))
-		reviews.GET("/:id", app.ReviewQueryController.ShowReview)
+		reviews.GET("/:id", auth.Optional(app.ReviewQueryController.ShowReview))
 		reviews.POST("/:id/comment", auth.Require(app.ReviewCommandController.StoreReviewComment))
-		reviews.GET("/:id/comment", app.ReviewQueryController.ListReviewCommentByReviewID)
 		reviews.GET("/comment/:id/reply", app.ReviewQueryController.ListReviewCommentReply)
 		reviews.POST("/comment/:id/reply", auth.Require(app.ReviewCommandController.StoreReviewCommentReply))
 		reviews.PUT("/comment/:id/favorite", auth.Require(app.ReviewCommandController.FavoriteReviewComment))

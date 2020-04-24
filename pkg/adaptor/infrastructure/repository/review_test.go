@@ -84,7 +84,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 					result.User.CreatedAt = time.Time{}
 					result.User.UpdatedAt = time.Time{}
 				}
-				Expect(actual).To(Equal([]*entity.QueryReview{newQueryReview(hashtag.Name, hashtag.ID)}))
+				Expect(actual).To(Equal([]*entity.ReviewDetailWithIsFavorite{newReviewDetailWithIsFavorite(hashtag.Name, hashtag.ID)}))
 			},
 			Entry("正常系_全条件検索", newShowReviewListParam(userID, innID, touristSpotID, hashtag.Name)),
 			Entry("正常系_UserID検索", newShowReviewListParam(userID, 0, 0, "")),
@@ -313,9 +313,9 @@ func newReviewWithMediaCount(id, userID, touristSpotID, innID, mediaCount int) *
 	return review
 }
 
-func newQueryReview(hashtagName string, hashtagID int) *entity.QueryReview {
+func newReviewDetailWithIsFavorite(hashtagName string, hashtagID int) *entity.ReviewDetailWithIsFavorite {
 	review := newReview(reviewID, userID, touristSpotID, innID)
-	queryReview := &entity.QueryReview{
+	queryReview := &entity.ReviewDetailWithIsFavorite{
 		Review: entity.Review{
 			ID:            review.ID,
 			UserID:        review.UserID,

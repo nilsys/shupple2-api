@@ -19,6 +19,20 @@ type (
 		DeletedAt     *time.Time
 	}
 
+	ReviewCommentWithIsFavorite struct {
+		ID            int `gorm:"primary_key"`
+		UserID        int
+		ReviewID      int
+		User          *User `gorm:"foreignkey:UserID"`
+		Body          string
+		ReplyCount    int
+		FavoriteCount int
+		IsFavorited   bool
+		CreatedAt     time.Time `gorm:"default:current_timestamp"`
+		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
+		DeletedAt     *time.Time
+	}
+
 	ReviewCommentReply struct {
 		ID              int `gorm:"primary_key"`
 		UserID          int
@@ -61,4 +75,8 @@ func (r *ReviewComment) WebURL() string {
 
 func (r *ReviewCommentReply) WebURL() string {
 	return "https://stayway.jp/tourism" + strconv.Itoa(r.ID)
+}
+
+func (r *ReviewCommentWithIsFavorite) TableName() string {
+	return "review_comment"
 }

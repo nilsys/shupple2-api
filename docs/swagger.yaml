@@ -2280,6 +2280,11 @@ components:
           type: integer
           description: コメント数
           example: 4
+        isFavorited:
+          type: boolean
+          description: |
+            良いねしているかフラグ
+            ＊認証を挟まない場合はfalse
         media:
           type: array
           items:
@@ -2319,6 +2324,11 @@ components:
           type: integer
           description: コメントに対するいいね数
           example: 5
+        isFavorited:
+          type: boolean
+          description: |
+            良いねしているかフラグ
+            ＊認証を挟まない場合はfalse
         createdAt:
           type: string
           format: date-time
@@ -2340,6 +2350,11 @@ components:
           $ref: "#/components/schemas/UserSummary"
         body:
           type: string
+        isFavorited:
+          type: boolean
+          description: |
+            良いねしているかフラグ
+            ＊認証を挟まない場合はfalse
         createdAt:
           type: string
           format: date-time
@@ -2380,6 +2395,11 @@ components:
           type: integer
           description: 閲覧数
           example: 6
+        isFavorited:
+          type: boolean
+          description: |
+            良いねしているかフラグ
+            ＊認証を挟まない場合はfalse
         hideAds:
           type: boolean
           description: 広告非表示フラグ
@@ -2430,6 +2450,11 @@ components:
           type: integer
           description: いいね数
           example: 3
+        isFavorited:
+          type: boolean
+          description: |
+            良いねしているかフラグ
+            ＊認証を挟まない場合はfalse
         facebookCount:
           type: integer
           description: Facebookシェア数
@@ -2579,6 +2604,11 @@ components:
           type: string
           description: シリーズ名
           example: ~シリーズ~
+        isFavorited:
+          type: boolean
+          description: |
+            良いねしているかフラグ
+            ＊認証を挟まない場合はfalse
         shootingDate:
           type: string
           description: 撮影日時, ISO 8601形式
@@ -2865,6 +2895,11 @@ components:
           type: string
           description: 本文
           example: HTML(未定)
+        isFavorited:
+          type: boolean
+          description: |
+            良いねしているかフラグ
+            ＊認証を挟まない場合はfalse
         createdAt:
           type: string
           description: 公開日時, ISO 8601形式

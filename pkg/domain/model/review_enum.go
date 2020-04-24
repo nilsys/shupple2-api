@@ -12,3 +12,15 @@ func (sortBy ReviewSortBy) GetReviewOrderQuery() string {
 		return "created_at DESC"
 	}
 }
+
+// Joinしている時にテーブル指定をする
+func (sortBy ReviewSortBy) GetReviewOrderQueryForJoin() string {
+	switch sortBy {
+	case ReviewSortByNEW:
+		return "review.created_at DESC"
+	case ReviewSortByRECOMMEND:
+		return "review.views DESC"
+	default:
+		return "review.created_at DESC"
+	}
+}

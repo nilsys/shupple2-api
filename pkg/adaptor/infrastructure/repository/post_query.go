@@ -31,10 +31,24 @@ func (r *PostQueryRepositoryImpl) FindByID(id int) (*entity.Post, error) {
 	return &row, nil
 }
 
-func (r *PostQueryRepositoryImpl) FindPostDetailWithHashtagByID(id int) (*entity.PostDetailWithHashtag, error) {
-	var row entity.PostDetailWithHashtag
+func (r *PostQueryRepositoryImpl) FindPostDetailWithHashtagByID(id int) (*entity.PostDetailWithHashtagAndIsFavorite, error) {
+	var row entity.PostDetailWithHashtagAndIsFavorite
 
 	if err := r.DB.First(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "post(id=%d)", id)
+	}
+
+	return &row, nil
+}
+
+func (r *PostQueryRepositoryImpl) FindPostDetailWithHashtagAndIsFavoriteByID(id, userID int) (*entity.PostDetailWithHashtagAndIsFavorite, error) {
+	var row entity.PostDetailWithHashtagAndIsFavorite
+
+	if err := r.DB.
+		Select("post.*, CASE WHEN user_favorite_post.post_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Joins("LEFT JOIN user_favorite_post ON post.id = user_favorite_post.post_id AND user_favorite_post.user_id = ?", userID).
+		First(&row, id).
+		Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "post(id=%d)", id)
 	}
 
@@ -81,6 +95,24 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 		Find(&postList.Posts).
 		Offset(0).
 		Count(&postList.TotalNumber).Error; err != nil {
+		return nil, errors.Wrapf(err, "Failed get posts by params")
+	}
+
+	return &postList, nil
+}
+
+func (r *PostQueryRepositoryImpl) FindListWithIsFavoriteByParams(query *query.FindPostListQuery, userID int) (*entity.PostList, error) {
+	var postList entity.PostList
+
+	q := r.buildFindListByParamsQuery(query)
+
+	if err := q.
+		Select("post.*, CASE WHEN user_favorite_post.post_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Joins("LEFT JOIN user_favorite_post ON post.id = user_favorite_post.post_id AND user_favorite_post.user_id = ?", userID).
+		Order(query.SortBy.GetPostOrderQuery()).
+		Limit(query.Limit).
+		Offset(query.OffSet).
+		Find(&postList.Posts).Count(&postList.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get posts by params")
 	}
 

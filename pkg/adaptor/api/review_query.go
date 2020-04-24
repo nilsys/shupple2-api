@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 
 	"github.com/google/wire"
@@ -21,7 +23,7 @@ var ReviewQueryControllerSet = wire.NewSet(
 	wire.Struct(new(ReviewQueryController), "*"),
 )
 
-func (c *ReviewQueryController) LisReview(ctx echo.Context) error {
+func (c *ReviewQueryController) LisReview(ctx echo.Context, ouser entity.OptionalUser) error {
 	reviewParam := &input.ListReviewParams{}
 
 	if err := BindAndValidate(ctx, reviewParam); err != nil {
@@ -30,12 +32,12 @@ func (c *ReviewQueryController) LisReview(ctx echo.Context) error {
 
 	reviewQuery := converter.ConvertFindReviewListParamToQuery(reviewParam)
 
-	r, err := c.ReviewQueryService.ShowReviewListByParams(reviewQuery)
+	r, err := c.ReviewQueryService.ShowReviewListByParams(reviewQuery, ouser)
 	if err != nil {
 		return errors.Wrap(err, "Failed to show review list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewListToOutput(r))
+	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewDetailWithIsFavoriteListToOutput(r))
 }
 
 func (c *ReviewQueryController) ListFeedReview(ctx echo.Context) error {
@@ -54,32 +56,32 @@ func (c *ReviewQueryController) ListFeedReview(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewListToOutput(reviews))
 }
 
-func (c *ReviewQueryController) ShowReview(ctx echo.Context) error {
+func (c *ReviewQueryController) ShowReview(ctx echo.Context, ouser entity.OptionalUser) error {
 	p := &input.ShowReview{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "required review id")
 	}
 
-	review, err := c.ReviewQueryService.ShowQueryReview(p.ID)
+	review, err := c.ReviewQueryService.ShowQueryReview(p.ID, ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed show review")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewShowToOutput(review))
+	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewDetailWithIsFavoriteToOutput(review))
 }
 
-func (c *ReviewQueryController) ListReviewCommentByReviewID(ctx echo.Context) error {
+func (c *ReviewQueryController) ListReviewCommentByReviewID(ctx echo.Context, ouser entity.OptionalUser) error {
 	p := &input.ListReviewCommentParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "Failed to bind parameters")
 	}
 
-	reviewComments, err := c.ReviewQueryService.ListReviewCommentByReviewID(p.ID, p.GetLimit())
+	reviewComments, err := c.ReviewQueryService.ListReviewCommentByReviewID(p.ID, p.GetLimit(), ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to show review comment list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertReviewCommentListToOutput(reviewComments))
+	return ctx.JSON(http.StatusOK, converter.ConvertReviewCommentWithIsFavoriteListToOutput(reviewComments))
 }
 
 func (c *ReviewQueryController) ListFavoriteReview(ctx echo.Context) error {

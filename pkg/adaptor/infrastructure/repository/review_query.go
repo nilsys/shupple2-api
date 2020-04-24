@@ -24,8 +24,8 @@ var ReviewQueryRepositorySet = wire.NewSet(
 )
 
 // パスパラメータで飛んで来た検索条件を用いreviewを検索
-func (r *ReviewQueryRepositoryImpl) ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.QueryReview, error) {
-	var reviews []*entity.QueryReview
+func (r *ReviewQueryRepositoryImpl) ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.ReviewDetailWithIsFavorite, error) {
+	var reviews []*entity.ReviewDetailWithIsFavorite
 
 	q := r.buildShowReviewListQuery(query)
 
@@ -40,9 +40,29 @@ func (r *ReviewQueryRepositoryImpl) ShowReviewListByParams(query *query.ShowRevi
 	return reviews, nil
 }
 
+// パスパラメータで飛んで来た検索条件を用いreviewを検索
+// UserIDで指定されたUserがお気に入りしているかどうかのフラグ
+func (r *ReviewQueryRepositoryImpl) ShowReviewWithIsFavoriteListByParams(query *query.ShowReviewListQuery, userID int) ([]*entity.ReviewDetailWithIsFavorite, error) {
+	var reviews []*entity.ReviewDetailWithIsFavorite
+
+	q := r.buildShowReviewListQuery(query)
+
+	if err := q.
+		Select("review.*, CASE WHEN user_favorite_review.review_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Limit(query.Limit).
+		Offset(query.OffSet).
+		Order(query.SortBy.GetReviewOrderQueryForJoin()).
+		Joins("LEFT JOIN user_favorite_review ON review.id = user_favorite_review.review_id AND user_favorite_review.user_id = ?", userID).
+		Find(&reviews).Error; err != nil {
+		return nil, errors.Wrapf(err, "Failed get reviews by params")
+	}
+
+	return reviews, nil
+}
+
 // ユーザーIDからフォローしているハッシュタグ or ユーザーのreview一覧を参照
-func (r *ReviewQueryRepositoryImpl) FindFeedReviewListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error) {
-	var reviews []*entity.QueryReview
+func (r *ReviewQueryRepositoryImpl) FindFeedReviewListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error) {
+	var reviews []*entity.ReviewDetail
 
 	q := r.buildFindFeedListQuery(userID)
 
@@ -57,8 +77,8 @@ func (r *ReviewQueryRepositoryImpl) FindFeedReviewListByUserID(userID int, query
 	return reviews, nil
 }
 
-func (r *ReviewQueryRepositoryImpl) FindQueryReviewByID(id int) (*entity.QueryReview, error) {
-	var row entity.QueryReview
+func (r *ReviewQueryRepositoryImpl) FindQueryReviewByID(id int) (*entity.ReviewDetailWithIsFavorite, error) {
+	var row entity.ReviewDetailWithIsFavorite
 
 	q := r.DB
 
@@ -71,8 +91,24 @@ func (r *ReviewQueryRepositoryImpl) FindQueryReviewByID(id int) (*entity.QueryRe
 	return &row, nil
 }
 
-func (r *ReviewQueryRepositoryImpl) FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.QueryReview, error) {
-	var rows []*entity.QueryReview
+func (r *ReviewQueryRepositoryImpl) FindQueryReviewWithIsFavoriteByID(id, userID int) (*entity.ReviewDetailWithIsFavorite, error) {
+	var row entity.ReviewDetailWithIsFavorite
+
+	q := r.DB
+
+	if err := q.
+		Select("review.*, CASE WHEN user_favorite_review.review_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Joins("LEFT JOIN user_favorite_review ON review.id = user_favorite_review.review_id AND user_favorite_review.user_id = ?", userID).
+		First(&row, id).
+		Error; err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("failed find review by id=%d", id))
+	}
+
+	return &row, nil
+}
+
+func (r *ReviewQueryRepositoryImpl) FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error) {
+	var rows []*entity.ReviewDetail
 
 	if err := r.DB.
 		Joins("INNER JOIN (SELECT review_id, updated_at FROM user_favorite_review WHERE user_id = ?) uf ON review.id = uf.review_id", userID).
@@ -173,21 +209,40 @@ func (r *ReviewQueryRepositoryImpl) IsExist(id int) (bool, error) {
 	return ErrorToIsExist(err, "review(id=%d)", id)
 }
 
-func (r *ReviewQueryRepositoryImpl) FindReviewCommentListByReviewID(reviewID int, limit int) ([]*entity.ReviewComment, error) {
-	var results []*entity.ReviewComment
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentListByReviewID(reviewID int, limit int) ([]*entity.ReviewCommentWithIsFavorite, error) {
+	var comments []*entity.ReviewCommentWithIsFavorite
 
 	err := r.DB.
 		Where("review_id = ?", reviewID).
 		Order("created_at DESC").
 		Limit(limit).
-		Find(&results).
+		Find(&comments).
 		Error
 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed find review comments.")
 	}
 
-	return results, nil
+	return comments, nil
+}
+
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentWithIsFavoriteListByReviewID(reviewID int, limit int, userID int) ([]*entity.ReviewCommentWithIsFavorite, error) {
+	var comments []*entity.ReviewCommentWithIsFavorite
+
+	err := r.DB.
+		Select("review_comment.*, CASE WHEN user_favorite_review_comment.review_comment_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorited").
+		Joins("LEFT JOIN user_favorite_review_comment ON review_comment.id = user_favorite_review_comment.review_comment_id AND user_favorite_review_comment.user_id = ?", userID).
+		Where("review_id = ?", reviewID).
+		Order("created_at DESC").
+		Limit(limit).
+		Find(&comments).
+		Error
+
+	if err != nil {
+		return nil, errors.Wrap(err, "failed find review comments.")
+	}
+
+	return comments, nil
 }
 
 func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyListByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error) {

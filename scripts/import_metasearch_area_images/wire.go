@@ -11,7 +11,6 @@ import (
 func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	wire.Build(
 		wire.Struct(new(Script), "*"),
-		wire.FieldsOf(new(*config.Config), "AWS"),
 		config.GetConfig,
 		repository.RepositoriesSet,
 	)
