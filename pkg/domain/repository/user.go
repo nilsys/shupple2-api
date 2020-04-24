@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"io"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
@@ -11,7 +12,7 @@ type (
 	UserCommandRepository interface {
 		Store(user *entity.User) error
 		Update(user *entity.User) error
-		StoreWithAvatar(user *entity.User, avatar []byte) error
+		StoreWithAvatar(user *entity.User, avatar io.Reader, contentType string) error
 		UpdateWordpressID(userID, wordpressUserID int) error
 		StoreFollow(c context.Context, following *entity.UserFollowing, followed *entity.UserFollowed) error
 		DeleteFollow(userID, targetID int) error

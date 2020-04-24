@@ -3,7 +3,6 @@ package repository
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"path"
 	"reflect"
@@ -11,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/google/wire"
+	"github.com/labstack/echo/v4"
 	"github.com/mitchellh/reflectwalk"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/dto"
@@ -125,15 +125,16 @@ func (r *WordpressQueryRepositoryImpl) FindMediaByIDs(ids []int) ([]*wordpress.M
 }
 
 // http通信するだけなのでどこにでも置けるが、便宜的にココに置く
-func (r *WordpressQueryRepositoryImpl) DownloadAvatar(avatarURL string) ([]byte, error) {
+func (r *WordpressQueryRepositoryImpl) DownloadAvatar(avatarURL string) (*wordpress.MediaBody, error) {
 	resp, err := r.Client.Get(avatarURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get avatar")
 	}
-	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
-	return body, errors.Wrap(err, "failed to read avatar")
+	return &wordpress.MediaBody{
+		ContentType: resp.Header.Get(echo.HeaderContentType),
+		Body:        resp.Body,
+	}, nil
 }
 
 func (r *WordpressQueryRepositoryImpl) gets(wPath string, ids []int, result interface{}) error {

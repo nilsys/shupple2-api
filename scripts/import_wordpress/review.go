@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"regexp"
 	"strconv"
 	"time"
@@ -205,13 +204,14 @@ func (s Script) uploadMedia(reviewID int, mediaIDStr string) ([]*command.CreateR
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+	defer mediaBody.Body.Close()
 
 	key := model.UploadedS3Path(media.UUID)
 	_, err = s.MediaUploader.Upload(&s3manager.UploadInput{
 		Bucket:      &s.AWSConfig.FilesBucket,
 		Key:         &key,
-		Body:        bytes.NewReader(mediaBody),
-		ContentType: aws.String(media.MimeType),
+		Body:        mediaBody.Body,
+		ContentType: aws.String(mediaBody.ContentType),
 	})
 	if err != nil {
 		return nil, errors.WithStack(err)

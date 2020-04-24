@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"fmt"
+	"bytes"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
@@ -85,6 +85,7 @@ var _ = Describe("UserRepositoryImpl", func() {
 	})
 
 	Describe("StoreWithAvatar", func() {
+		const contentType = "image/jpeg"
 		var (
 			base       *entity.User
 			baseAvatar []byte
@@ -97,7 +98,7 @@ var _ = Describe("UserRepositoryImpl", func() {
 		})
 
 		JustBeforeEach(func() {
-			err = command.StoreWithAvatar(base, baseAvatar)
+			err = command.StoreWithAvatar(base, bytes.NewReader(baseAvatar), contentType)
 		})
 
 		Describe("avatarの保存をした上でStoreと同様の動作をする", func() {
@@ -116,7 +117,9 @@ var _ = Describe("UserRepositoryImpl", func() {
 					Expect(user).To(Equal(base))
 				})
 				It("Avatarが正常に保存される", func() {
-					size, err := getS3ObjectSize(fmt.Sprintf(avatarKeyFormat, base.ID))
+					user, err := query.FindByID(base.ID)
+					Expect(err).To(Succeed())
+					size, err := getS3ObjectSize(user.S3AvatarPath())
 					Expect(err).To(Succeed())
 					Expect(size).To(Equal(len(baseAvatar)))
 				})
@@ -130,7 +133,7 @@ var _ = Describe("UserRepositoryImpl", func() {
 				BeforeEach(func() {
 					existing := *base
 					existing.Name = "changed"
-					Expect(command.StoreWithAvatar(&existing, baseAvatar[:1])).To(Succeed())
+					Expect(command.StoreWithAvatar(&existing, bytes.NewReader(baseAvatar[:1]), contentType)).To(Succeed())
 					base.ID = existing.ID
 				})
 

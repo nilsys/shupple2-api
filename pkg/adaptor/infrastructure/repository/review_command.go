@@ -97,6 +97,7 @@ func (r *ReviewCommandRepositoryImpl) PersistReviewMedia(reviewMedia *entity.Rev
 		Bucket:      aws.String(r.AWSConfig.FilesBucket),
 		Key:         aws.String(reviewMedia.S3Path()),
 		ContentType: aws.String(reviewMedia.MimeType),
+		ACL:         aws.String(s3.ObjectCannedACLPublicRead),
 	}
 	_, err := s3.New(r.AWSSession).CopyObject(req)
 	if err != nil {

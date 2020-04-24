@@ -93,7 +93,7 @@ func (s *UserCommandServiceImpl) ImportFromWordpressByID(wordpressUserID int) er
 		}
 
 		// 新規登録でメディア側で登録がない場合
-		return s.registerDummyUserForWordpress(wpUser)
+		return s.storeWithAvatar(entity.NewUserByWordpressUser(wpUser), wpUser)
 	}
 
 	// 更新の場合
@@ -105,7 +105,8 @@ func (s *UserCommandServiceImpl) ImportFromWordpressByID(wordpressUserID int) er
 	}
 
 	// TODO: lock取ったほうがいいかも？
-	return s.UpdateUserByWordpress(user, wpUser)
+	user.PatchByWordpressUser(wpUser)
+	return s.storeWithAvatar(user, wpUser)
 }
 
 func (s *UserCommandServiceImpl) updateMapping(wpUser *wordpress.User) error {
@@ -125,24 +126,18 @@ func (s *UserCommandServiceImpl) updateMapping(wpUser *wordpress.User) error {
 	return s.UserCommandRepository.UpdateWordpressID(targetUser.ID, wpUser.ID)
 }
 
-func (s *UserCommandServiceImpl) registerDummyUserForWordpress(wpUser *wordpress.User) error {
+func (s *UserCommandServiceImpl) storeWithAvatar(user *entity.User, wpUser *wordpress.User) error {
 	avatar, err := s.WordpressQueryRepository.DownloadAvatar(wpUser.AvatarURLs.Num96)
 	if err != nil {
 		return errors.Wrap(err, "failed to download avatar")
 	}
-	user := entity.NewUserByWordpressUser(wpUser)
+	defer avatar.Body.Close()
 
-	return errors.Wrap(s.UserCommandRepository.StoreWithAvatar(user, avatar), "failed to register dummy user")
-}
-
-func (s *UserCommandServiceImpl) UpdateUserByWordpress(user *entity.User, wpUser *wordpress.User) error {
-	avatar, err := s.WordpressQueryRepository.DownloadAvatar(wpUser.AvatarURLs.Num96)
-	if err != nil {
-		return errors.Wrap(err, "failed to download avatar")
+	if err := s.UserCommandRepository.StoreWithAvatar(user, avatar.Body, avatar.ContentType); err != nil {
+		return errors.Wrap(err, "faield to store user avatar")
 	}
-	user.PatchByWordpressUser(wpUser)
 
-	return errors.Wrap(s.UserCommandRepository.StoreWithAvatar(user, avatar), "failed to update user by wordpress")
+	return nil
 }
 
 func (s *UserCommandServiceImpl) Follow(user *entity.User, targetID int) error {

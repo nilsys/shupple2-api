@@ -1,13 +1,14 @@
 package repository
 
 import (
-	"bytes"
 	"context"
 	"fmt"
+	"io"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	uuid "github.com/satori/go.uuid"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
@@ -26,10 +27,6 @@ type UserCommandRepositoryImpl struct {
 	AWSSession    *session.Session
 }
 
-const (
-	avatarKeyFormat = "avatars/%d"
-)
-
 var UserCommandRepositorySet = wire.NewSet(
 	wire.Struct(new(UserCommandRepositoryImpl), "*"),
 	wire.Bind(new(repository.UserCommandRepository), new(*UserCommandRepositoryImpl)),
@@ -47,23 +44,27 @@ func (r *UserCommandRepositoryImpl) Update(user *entity.User) error {
 	return nil
 }
 
-func (r *UserCommandRepositoryImpl) StoreWithAvatar(user *entity.User, avatar []byte) error {
+func (r *UserCommandRepositoryImpl) StoreWithAvatar(user *entity.User, avatar io.Reader, contentType string) error {
+	user.AvatarUUID = uuid.NewV4().String()
 	return Transaction(r.DB(context.TODO()), func(tx *gorm.DB) error {
 		if err := tx.Save(user).Error; err != nil {
 			return errors.Wrap(err, "failed to save user")
 		}
 
-		key := fmt.Sprintf(avatarKeyFormat, user.ID)
 		_, err := r.MediaUploader.Upload(&s3manager.UploadInput{
-			Bucket: &r.AWSConfig.FilesBucket,
-			Key:    &key,
-			Body:   bytes.NewReader(avatar),
+			Bucket:      aws.String(r.AWSConfig.FilesBucket),
+			Key:         aws.String(user.S3AvatarPath()),
+			Body:        avatar,
+			ACL:         aws.String(s3.ObjectCannedACLPublicRead),
+			ContentType: aws.String(contentType),
 		})
+
 		if err != nil {
 			return errors.Wrap(err, "failed to save upload avatar")
 		}
 
 		return nil
+
 	})
 }
 
@@ -101,60 +102,48 @@ func (r *UserCommandRepositoryImpl) DeleteFollow(userID, targetID int) error {
 	})
 }
 
-// TODO: 消す事考える
 func (r *UserCommandRepositoryImpl) PersistUserImage(user *entity.User) error {
+	svc := s3.New(r.AWSSession)
+
 	if user.AvatarUUID != "" {
-		avatarFrom := fmt.Sprint(r.AWSConfig.FilesBucket, "/", model.UploadedS3Path(user.AvatarUUID))
-		svc := s3.New(r.AWSSession)
-
-		avatarGetReq := &s3.GetObjectInput{
-			Bucket: aws.String(r.AWSConfig.FilesBucket),
-			Key:    aws.String(avatarFrom),
-		}
-
-		o, err := svc.GetObject(avatarGetReq)
-		if err != nil {
-			return errors.Wrap(err, "failed to get s3 tmp object")
-		}
-
-		avatarCopyReq := &s3.CopyObjectInput{
-			CopySource:  aws.String(avatarFrom),
-			Bucket:      aws.String(r.AWSConfig.FilesBucket),
-			Key:         aws.String(user.S3AvatarPath()),
-			ContentType: o.ContentType,
-		}
-
-		_, err = svc.CopyObject(avatarCopyReq)
-		if err != nil {
-			return errors.Wrap(err, "failed to copy s3 object")
+		if err := r.persistImage(svc, user.AvatarUUID, user.S3AvatarPath()); err != nil {
+			return errors.Wrap(err, "failed to persist avatar")
 		}
 	}
 
 	if user.HeaderUUID != "" {
-		headerFrom := fmt.Sprint(r.AWSConfig.FilesBucket, "/", model.UploadedS3Path(user.HeaderUUID))
-		svc := s3.New(r.AWSSession)
-
-		headerGetReq := &s3.GetObjectInput{
-			Bucket: aws.String(r.AWSConfig.FilesBucket),
-			Key:    aws.String(headerFrom),
+		if err := r.persistImage(svc, user.HeaderUUID, user.S3HeaderPath()); err != nil {
+			return errors.Wrap(err, "failed to persist header")
 		}
+	}
 
-		o, err := svc.GetObject(headerGetReq)
-		if err != nil {
-			return errors.Wrap(err, "failed to get s3 tmp object")
-		}
+	return nil
+}
 
-		headerCopyReq := &s3.CopyObjectInput{
-			CopySource:  aws.String(headerFrom),
-			Bucket:      aws.String(r.AWSConfig.FilesBucket),
-			Key:         aws.String(user.S3HeaderPath()),
-			ContentType: o.ContentType,
-		}
+func (r *UserCommandRepositoryImpl) persistImage(svc *s3.S3, uuid, dest string) error {
+	from := fmt.Sprint(r.AWSConfig.FilesBucket, "/", model.UploadedS3Path(uuid))
 
-		_, err = svc.CopyObject(headerCopyReq)
-		if err != nil {
-			return errors.Wrap(err, "failed to copy s3 object")
-		}
+	headReq := &s3.HeadObjectInput{
+		Bucket: aws.String(r.AWSConfig.FilesBucket),
+		Key:    aws.String(from),
+	}
+
+	o, err := svc.HeadObject(headReq)
+	if err != nil {
+		return errors.Wrap(err, "failed to get s3 tmp object")
+	}
+
+	copyReq := &s3.CopyObjectInput{
+		CopySource:  aws.String(from),
+		Bucket:      aws.String(r.AWSConfig.FilesBucket),
+		Key:         aws.String(dest),
+		ACL:         aws.String(s3.ObjectCannedACLPublicRead),
+		ContentType: o.ContentType,
+	}
+
+	_, err = svc.CopyObject(copyReq)
+	if err != nil {
+		return errors.Wrap(err, "failed to copy s3 object")
 	}
 
 	return nil
