@@ -13,6 +13,7 @@ import (
 var _ = Describe("ReviewRepositoryTest", func() {
 	var (
 		command *NoticeCommandRepositoryImpl
+		query   *NoticeQueryRepositoryImpl
 	)
 
 	Describe("StoreNoticeのテスト", func() {
@@ -60,4 +61,83 @@ var _ = Describe("ReviewRepositoryTest", func() {
 			Entry("正常系"),
 		)
 	})
+
+	Describe("MarkedAsReadのテスト", func() {
+		targetUserID := userID
+		triggeredUserID := userID + 1
+
+		BeforeEach(func() {
+			command = &NoticeCommandRepositoryImpl{DAO: DAO{UnderlyingDB: db}}
+
+			truncate(db)
+			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil, nil)))
+
+			Expect(db.Save(newUser(targetUserID)).Error).To(Succeed())
+			Expect(db.Save(newUser(triggeredUserID)).Error).To(Succeed())
+			Expect(db.Save(newReview(reviewID, targetUserID, touristSpotID, innID)).Error).To(Succeed())
+			Expect(db.Save(newReviewComment(triggeredUserID, reviewID)))
+			Expect(db.Save(newNotice(targetUserID, triggeredUserID, reviewID)))
+			Expect(db.Save(newNotice(targetUserID, triggeredUserID, reviewID)))
+			Expect(db.Save(newNotice(targetUserID, triggeredUserID, reviewID)))
+			Expect(db.Save(newNotice(targetUserID, triggeredUserID, reviewID)))
+		})
+
+		DescribeTable("正常系",
+			func() {
+				var ids []int
+				err := db.Table("notice").Select("id").Find(&ids).Error
+				Expect(err).To(Succeed())
+
+				err = command.MarkAsRead(ids)
+				Expect(err).To(Succeed())
+
+				var actual int
+				err = db.
+					Table("notice").
+					Where("is_read = ?", true).
+					Count(&actual).
+					Error
+
+				// 全部既読になっているか
+				Expect(err).To(Succeed())
+				Expect(actual).To(Equal(0))
+			},
+			Entry("正常系"),
+		)
+	})
+
+	Describe("ListNoticeのテスト", func() {
+		targetUserID := userID
+		triggeredUserID := userID + 1
+
+		BeforeEach(func() {
+			query = &NoticeQueryRepositoryImpl{DB: db}
+
+			truncate(db)
+			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil, nil)))
+
+			Expect(db.Save(newUser(targetUserID)).Error).To(Succeed())
+			Expect(db.Save(newUser(triggeredUserID)).Error).To(Succeed())
+			Expect(db.Save(newReview(reviewID, targetUserID, touristSpotID, innID)).Error).To(Succeed())
+			Expect(db.Save(newReviewComment(triggeredUserID, reviewID)))
+			Expect(db.Save(newNotice(targetUserID, triggeredUserID, reviewID)))
+			Expect(db.Save(newNotice(targetUserID, triggeredUserID, reviewID)))
+			Expect(db.Save(newNotice(targetUserID, triggeredUserID, reviewID)))
+			Expect(db.Save(newNotice(targetUserID, triggeredUserID, reviewID)))
+		})
+
+		DescribeTable("正常系",
+			func() {
+				actual, err := query.ListNotice(targetUserID, 2)
+				Expect(err).To(Succeed())
+
+				Expect(len(actual)).To(Equal(2))
+			},
+			Entry("正常系"),
+		)
+	})
 })
+
+func newNotice(userID, triggeredUser int, actionTargetID int) *entity.Notice {
+	return entity.NewNotice(userID, triggeredUser, model.NoticeActionTypeTAGGED, model.NoticeActionTargetTypeREVIEW, actionTargetID)
+}

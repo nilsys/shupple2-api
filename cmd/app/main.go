@@ -49,6 +49,7 @@ type App struct {
 	ThemeQueryController            api.ThemeQueryController
 	AreaQueryController             api.AreaQueryController
 	InnQueryController              api.InnQueryController
+	NoticeQueryController           api.NoticeQueryController
 	ReportCommandController         api.ReportCommandController
 }
 
@@ -191,6 +192,11 @@ func setRoutes(app *App) {
 	{
 		inns := api.Group("/inns")
 		inns.GET("", app.InnQueryController.ListByParams)
+	}
+
+	{
+		notices := api.Group("/notice")
+		notices.GET("", auth.Require(app.NoticeQueryController.ListNotices))
 	}
 
 	{

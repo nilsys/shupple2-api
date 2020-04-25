@@ -39,6 +39,7 @@ var controllerSet = wire.NewSet(
 	api.InterestQueryControllerSet,
 	api.AreaQueryControllerSet,
 	api.InnQueryControllerSet,
+	api.NoticeQueryControllerSet,
 	api.ReportCommandControllerSet,
 )
 
@@ -84,6 +85,7 @@ var serviceSet = wire.NewSet(
 	service.ProvideAuthService,
 	service.InterestQueryServiceSet,
 	service.InnQueryServiceSet,
+	service.NoticeQueryServiceSet,
 	service.ReportCommandServiceSet,
 )
 

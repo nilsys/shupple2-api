@@ -192,8 +192,9 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		Client:           clientClient,
 	}
 	reviewQueryServiceImpl := &service.ReviewQueryServiceImpl{
-		ReviewQueryRepository: reviewQueryRepositoryImpl,
-		InnQueryRepository:    innQueryRepositoryImpl,
+		ReviewQueryRepository:       reviewQueryRepositoryImpl,
+		InnQueryRepository:          innQueryRepositoryImpl,
+		AreaCategoryQueryRepository: areaCategoryQueryRepositoryImpl,
 	}
 	reviewCommandRepositoryImpl := &repository.ReviewCommandRepositoryImpl{
 		DAO:        dao,

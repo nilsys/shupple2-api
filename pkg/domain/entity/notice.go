@@ -11,6 +11,7 @@ type (
 		ID               int
 		UserID           int
 		TriggeredUserID  int
+		TriggeredUser    *User `gorm:"foreignkey:TriggeredUserID"`
 		ActionType       model.NoticeActionType
 		ActionTargetType model.NoticeActionTargetType
 		ActionTargetID   int
