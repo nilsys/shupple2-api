@@ -6,12 +6,14 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 )
 
 type HashtagCommandController struct {
+	converter.Converters
 	service.HashtagCommandService
 }
 

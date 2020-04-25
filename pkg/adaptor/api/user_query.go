@@ -14,6 +14,7 @@ import (
 )
 
 type UserQueryController struct {
+	converter.Converters
 	service.UserQueryService
 }
 
@@ -27,7 +28,7 @@ func (c *UserQueryController) MyPage(ctx echo.Context, user entity.User) error {
 		return errors.Wrap(err, "failed to show user")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertUserDetailWithCountToOutPut(myPageUser))
+	return ctx.JSON(http.StatusOK, c.ConvertUserDetailWithCountToOutPut(myPageUser))
 }
 
 func (c *UserQueryController) Show(ctx echo.Context) error {
@@ -41,7 +42,7 @@ func (c *UserQueryController) Show(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to show user")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertUserDetailWithCountToOutPut(user))
+	return ctx.JSON(http.StatusOK, c.ConvertUserDetailWithCountToOutPut(user))
 }
 
 func (c *UserQueryController) ShowUserRanking(ctx echo.Context) error {
@@ -50,14 +51,14 @@ func (c *UserQueryController) ShowUserRanking(ctx echo.Context) error {
 		return errors.Wrap(err, "validation show user ranking list parameters")
 	}
 
-	q := converter.ConvertListRankinUserParamToQuery(p)
+	q := c.ConvertListRankinUserParamToQuery(p)
 
 	users, err := c.UserQueryService.ShowUserRanking(q)
 	if err != nil {
 		return errors.Wrap(err, "failed to show user ranking list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertUserRankingToOutput(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUserRankingToOutput(users))
 }
 
 func (c *UserQueryController) ListFollowingUsers(ctx echo.Context) error {
@@ -66,13 +67,13 @@ func (c *UserQueryController) ListFollowingUsers(ctx echo.Context) error {
 		return errors.Wrap(err, "validation list following user")
 	}
 
-	q := converter.ConvertListFollowUserParamToQuery(p)
+	q := c.ConvertListFollowUserParamToQuery(p)
 
 	users, err := c.UserQueryService.ListFollowing(q)
 	if err != nil {
 		return errors.Wrap(err, "failed to list user follow")
 	}
-	return ctx.JSON(http.StatusOK, converter.ConvertUsersToUserSummaryList(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUsersToUserSummaryList(users))
 }
 
 func (c *UserQueryController) ListFollowedUsers(ctx echo.Context) error {
@@ -81,13 +82,13 @@ func (c *UserQueryController) ListFollowedUsers(ctx echo.Context) error {
 		return errors.Wrap(err, "validation list follower user")
 	}
 
-	q := converter.ConvertListFollowUserParamToQuery(p)
+	q := c.ConvertListFollowUserParamToQuery(p)
 
 	users, err := c.UserQueryService.ListFollowed(q)
 	if err != nil {
 		return errors.Wrap(err, "failed to list user follower")
 	}
-	return ctx.JSON(http.StatusOK, converter.ConvertUsersToUserSummaryList(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUsersToUserSummaryList(users))
 }
 
 func (c *UserQueryController) ListFavoritePostUser(ctx echo.Context, user entity.OptionalUser) error {
@@ -96,12 +97,12 @@ func (c *UserQueryController) ListFavoritePostUser(ctx echo.Context, user entity
 		return errors.Wrap(err, "")
 	}
 
-	users, err := c.UserQueryService.ListFavoritePostUser(p.MediaID, &user, converter.ConvertListFavoriteMediaUserToQuery(p))
+	users, err := c.UserQueryService.ListFavoritePostUser(p.MediaID, &user, c.ConvertListFavoriteMediaUserToQuery(p))
 	if err != nil {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertUsersToUserSummaryList(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUsersToUserSummaryList(users))
 }
 
 func (c *UserQueryController) ListFavoriteReviewUser(ctx echo.Context, user entity.OptionalUser) error {
@@ -110,10 +111,10 @@ func (c *UserQueryController) ListFavoriteReviewUser(ctx echo.Context, user enti
 		return errors.Wrap(err, "")
 	}
 
-	users, err := c.UserQueryService.ListFavoriteReviewUser(p.MediaID, &user, converter.ConvertListFavoriteMediaUserToQuery(p))
+	users, err := c.UserQueryService.ListFavoriteReviewUser(p.MediaID, &user, c.ConvertListFavoriteMediaUserToQuery(p))
 	if err != nil {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertUsersToUserSummaryList(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUsersToUserSummaryList(users))
 }

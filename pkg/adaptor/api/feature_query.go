@@ -12,6 +12,7 @@ import (
 )
 
 type FeatureQueryController struct {
+	converter.Converters
 	FeatureQueryService service.FeatureQueryService
 }
 
@@ -30,7 +31,7 @@ func (c *FeatureQueryController) ShowQuery(ctx echo.Context) error {
 		return errors.Wrap(err, "failed show query feature")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertFeatureDetailPostsToOutput(queryFeature))
+	return ctx.JSON(http.StatusOK, c.ConvertFeatureDetailPostsToOutput(queryFeature))
 }
 
 func (c *FeatureQueryController) ListFeature(ctx echo.Context) error {
@@ -39,12 +40,12 @@ func (c *FeatureQueryController) ListFeature(ctx echo.Context) error {
 		return errors.Wrap(err, "validation show feature list input")
 	}
 
-	q := converter.ConvertShowFeatureListParamToQuery(p)
+	q := c.ConvertShowFeatureListParamToQuery(p)
 
 	features, err := c.FeatureQueryService.ShowList(q)
 	if err != nil {
 		return errors.Wrap(err, "failed show feature list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertFeatureListToOutput(features))
+	return ctx.JSON(http.StatusOK, c.ConvertFeatureListToOutput(features))
 }

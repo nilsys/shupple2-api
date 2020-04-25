@@ -5,6 +5,7 @@ import (
 	"time"
 
 	uuid "github.com/satori/go.uuid"
+	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"gopkg.in/guregu/null.v3"
@@ -109,12 +110,28 @@ func (u *User) PatchByWordpressUser(wpUser *wordpress.User) {
 }
 
 // MEMO: サムネイルロジック仮置き
-func (u *User) IconURL() string {
-	return "https://files.stayway.jp/avatar/" + u.AvatarUUID
+func (u *User) AvatarURL(filesURL config.URL) string {
+	if u.AvatarUUID == "" {
+		return ""
+	}
+	filesURL.Path = u.S3AvatarPath()
+	return filesURL.String()
 }
 
-func (u *User) HeaderURL() string {
-	return "https://files.stayway.jp/avatar/" + u.HeaderUUID
+func (u *User) HeaderURL(filesURL config.URL) string {
+	if u.HeaderUUID == "" {
+		return ""
+	}
+	filesURL.Path = u.S3HeaderPath()
+	return filesURL.String()
+}
+
+func (u *User) S3AvatarPath() string {
+	return fmt.Sprintf("user/%s", u.AvatarUUID)
+}
+
+func (u *User) S3HeaderPath() string {
+	return fmt.Sprintf("user/%s", u.HeaderUUID)
 }
 
 func (u *User) IsSelfID(id int) bool {
@@ -144,14 +161,6 @@ func NewUserFollowHashtag(userID, hashtagID int) *UserFollowHashtag {
 
 func (q *UserDetail) TableName() string {
 	return "user"
-}
-
-func (u *User) S3AvatarPath() string {
-	return fmt.Sprintf("user/%s", u.AvatarUUID)
-}
-
-func (u *User) S3HeaderPath() string {
-	return fmt.Sprintf("user/%s", u.HeaderUUID)
 }
 
 func (u *OptionalUser) IsAuthorized() bool {

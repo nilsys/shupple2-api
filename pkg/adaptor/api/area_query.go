@@ -16,6 +16,7 @@ import (
 
 type (
 	AreaQueryController struct {
+		converter.Converters
 		AreaQueryService service.AreaQueryService
 	}
 )
@@ -47,7 +48,7 @@ func (c *AreaQueryController) ListArea(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to get areaCategories")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertAreaCategoriesToOutput(areaCategories))
+	return ctx.JSON(http.StatusOK, c.ConvertAreaCategoriesToOutput(areaCategories))
 }
 
 // IDに紐づくAreaを返す
@@ -62,7 +63,7 @@ func (c *AreaQueryController) ShowAreaByID(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to areaCategory")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertAreaCategoryDetailToOutput(areaCategoryDetail))
+	return ctx.JSON(http.StatusOK, c.ConvertAreaCategoryDetailToOutput(areaCategoryDetail))
 }
 
 // SubAreaのListを取得して返す
@@ -77,7 +78,7 @@ func (c *AreaQueryController) ListSubArea(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to get areaCategories")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertAreaCategoriesToOutput(areaCategories))
+	return ctx.JSON(http.StatusOK, c.ConvertAreaCategoriesToOutput(areaCategories))
 }
 
 // IDに紐づくSubAreaを返す
@@ -92,7 +93,7 @@ func (c *AreaQueryController) ShowSubAreaByID(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to areaCategory")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertAreaCategoryDetailToOutput(areaCategory))
+	return ctx.JSON(http.StatusOK, c.ConvertAreaCategoryDetailToOutput(areaCategory))
 }
 
 // SubSubAreaのListを取得して返す
@@ -107,7 +108,7 @@ func (c *AreaQueryController) ListSubSubArea(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to get areaCategories")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertAreaCategoriesToOutput(areaCategories))
+	return ctx.JSON(http.StatusOK, c.ConvertAreaCategoriesToOutput(areaCategories))
 }
 
 func (c *AreaQueryController) ShowSubSubAreaByID(ctx echo.Context) error {
@@ -121,5 +122,5 @@ func (c *AreaQueryController) ShowSubSubAreaByID(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to areaCategory")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertAreaCategoryDetailToOutput(areaCategory))
+	return ctx.JSON(http.StatusOK, c.ConvertAreaCategoryDetailToOutput(areaCategory))
 }

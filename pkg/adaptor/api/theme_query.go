@@ -13,6 +13,7 @@ import (
 
 type (
 	ThemeQueryController struct {
+		converter.Converters
 		service.ThemeCategoryQueryService
 	}
 )
@@ -32,7 +33,7 @@ func (c *ThemeQueryController) List(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to get list of themes")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertThemeCategoriesWithPostCountToOutput(categories))
+	return ctx.JSON(http.StatusOK, c.ConvertThemeCategoriesWithPostCountToOutput(categories))
 }
 
 func (c *ThemeQueryController) ListSubThemeByParentID(ctx echo.Context) error {
@@ -45,5 +46,5 @@ func (c *ThemeQueryController) ListSubThemeByParentID(ctx echo.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to get subTheme list")
 	}
-	return ctx.JSON(http.StatusOK, converter.ConvertThemeCategoriesWithPostCountToOutput(categories))
+	return ctx.JSON(http.StatusOK, c.ConvertThemeCategoriesWithPostCountToOutput(categories))
 }

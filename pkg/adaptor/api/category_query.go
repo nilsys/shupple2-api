@@ -16,6 +16,7 @@ import (
 
 type (
 	CategoryQueryController struct {
+		converter.Converters
 		CategoryQueryService service.CategoryQueryService
 	}
 )
@@ -35,5 +36,5 @@ func (c *CategoryQueryController) ShowBySlug(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to show by slug")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertCategoryToOutput(category))
+	return ctx.JSON(http.StatusOK, c.ConvertCategoryToOutput(category))
 }

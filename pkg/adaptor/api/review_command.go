@@ -14,6 +14,7 @@ import (
 )
 
 type ReviewCommandController struct {
+	converter.Converters
 	scenario.ReviewCommandScenario
 	service.ReviewCommandService
 }
@@ -28,7 +29,7 @@ func (c *ReviewCommandController) Store(ctx echo.Context, user entity.User) erro
 		return errors.Wrap(err, "validation store review input")
 	}
 
-	if err := c.ReviewCommandScenario.Create(&user, converter.ConvertCreateReviewParamToCommand(p)); err != nil {
+	if err := c.ReviewCommandScenario.Create(&user, c.ConvertCreateReviewParamToCommand(p)); err != nil {
 		return errors.Wrap(err, "failed to store review")
 	}
 
@@ -41,7 +42,7 @@ func (c *ReviewCommandController) Update(ctx echo.Context, user entity.User) err
 		return errors.Wrap(err, "validation update review input")
 	}
 
-	if err := c.ReviewCommandScenario.UpdateReview(&user, converter.ConvertUpdateReviewParamToCommand(p)); err != nil {
+	if err := c.ReviewCommandScenario.UpdateReview(&user, c.ConvertUpdateReviewParamToCommand(p)); err != nil {
 		return errors.Wrap(err, "failed to update review")
 	}
 
@@ -59,7 +60,7 @@ func (c *ReviewCommandController) StoreReviewComment(ctx echo.Context, user enti
 		return errors.Wrap(err, "Failed to create review comment")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertReviewCommentToOutput(comment))
+	return ctx.JSON(http.StatusOK, c.ConvertReviewCommentToOutput(comment))
 }
 
 func (c *ReviewCommandController) DeleteReviewComment(ctx echo.Context, user entity.User) error {
@@ -81,12 +82,12 @@ func (c *ReviewCommandController) StoreReviewCommentReply(ctx echo.Context, user
 		return errors.Wrap(err, "validation store review comment reply input")
 	}
 
-	reply, err := c.ReviewCommandService.CreateReviewCommentReply(&user, converter.ConvertCreateReviewCommentReplyParamToCommand(p))
+	reply, err := c.ReviewCommandService.CreateReviewCommentReply(&user, c.ConvertCreateReviewCommentReplyParamToCommand(p))
 	if err != nil {
 		return errors.Wrap(err, "failed to store review comment reply")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertReviewCommentReplyToOutput(reply))
+	return ctx.JSON(http.StatusOK, c.ConvertReviewCommentReplyToOutput(reply))
 }
 
 func (c *ReviewCommandController) FavoriteReviewComment(ctx echo.Context, user entity.User) error {

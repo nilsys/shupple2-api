@@ -12,6 +12,7 @@ import (
 )
 
 type ComicQueryController struct {
+	converter.Converters
 	service.ComicQueryService
 }
 
@@ -30,7 +31,7 @@ func (c *ComicQueryController) Show(ctx echo.Context) error {
 		return errors.Wrap(err, "failed show comic")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertQueryComicOutput(comicDetail))
+	return ctx.JSON(http.StatusOK, c.ConvertQueryComicOutput(comicDetail))
 }
 
 func (c *ComicQueryController) ListComic(ctx echo.Context) error {
@@ -39,10 +40,10 @@ func (c *ComicQueryController) ListComic(ctx echo.Context) error {
 		return errors.Wrapf(err, "validation show comic list input")
 	}
 
-	comics, err := c.ComicQueryService.ShowList(converter.ConvertShowComicListParamToQuery(params))
+	comics, err := c.ComicQueryService.ShowList(c.ConvertShowComicListParamToQuery(params))
 	if err != nil {
 		return errors.Wrapf(err, "failed show comic list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertComicListToOutput(comics))
+	return ctx.JSON(http.StatusOK, c.ConvertComicListToOutput(comics))
 }

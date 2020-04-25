@@ -16,6 +16,7 @@ import (
 )
 
 type ReviewQueryController struct {
+	converter.Converters
 	ReviewQueryService service.ReviewQueryService
 }
 
@@ -30,14 +31,14 @@ func (c *ReviewQueryController) LisReview(ctx echo.Context, ouser entity.Optiona
 		return errors.Wrap(err, "Failed to bind parameters")
 	}
 
-	reviewQuery := converter.ConvertFindReviewListParamToQuery(reviewParam)
+	reviewQuery := c.ConvertFindReviewListParamToQuery(reviewParam)
 
 	r, err := c.ReviewQueryService.ShowReviewListByParams(reviewQuery, ouser)
 	if err != nil {
 		return errors.Wrap(err, "Failed to show review list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewDetailWithIsFavoriteListToOutput(r))
+	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteListToOutput(r))
 }
 
 func (c *ReviewQueryController) ListFeedReview(ctx echo.Context) error {
@@ -46,14 +47,14 @@ func (c *ReviewQueryController) ListFeedReview(ctx echo.Context) error {
 		return errors.Wrap(err, "validation feed review input")
 	}
 
-	q := converter.ConvertListFeedReviewParamToQuery(p)
+	q := c.ConvertListFeedReviewParamToQuery(p)
 
 	reviews, err := c.ReviewQueryService.ShowListFeed(p.UserID, q)
 	if err != nil {
 		return errors.Wrap(err, "failed to show feed review list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewListToOutput(reviews))
+	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewListToOutput(reviews))
 }
 
 func (c *ReviewQueryController) ShowReview(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -67,7 +68,7 @@ func (c *ReviewQueryController) ShowReview(ctx echo.Context, ouser entity.Option
 		return errors.Wrap(err, "failed show review")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewDetailWithIsFavoriteToOutput(review))
+	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteToOutput(review))
 }
 
 func (c *ReviewQueryController) ListReviewCommentByReviewID(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -81,7 +82,7 @@ func (c *ReviewQueryController) ListReviewCommentByReviewID(ctx echo.Context, ou
 		return errors.Wrap(err, "failed to show review comment list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertReviewCommentWithIsFavoriteListToOutput(reviewComments))
+	return ctx.JSON(http.StatusOK, c.ConvertReviewCommentWithIsFavoriteListToOutput(reviewComments))
 }
 
 func (c *ReviewQueryController) ListFavoriteReview(ctx echo.Context) error {
@@ -90,14 +91,14 @@ func (c *ReviewQueryController) ListFavoriteReview(ctx echo.Context) error {
 		return errors.Wrap(err, "validation list favorite review")
 	}
 
-	q := converter.ConvertListFeedReviewParamToQuery(p)
+	q := c.ConvertListFeedReviewParamToQuery(p)
 
 	reviews, err := c.ReviewQueryService.ListFavoriteReview(p.UserID, q)
 	if err != nil {
 		return errors.Wrap(err, "failed list favorite review")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertQueryReviewListToOutput(reviews))
+	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewListToOutput(reviews))
 }
 
 func (c *ReviewQueryController) ListReviewCommentReply(ctx echo.Context) error {
@@ -111,5 +112,5 @@ func (c *ReviewQueryController) ListReviewCommentReply(ctx echo.Context) error {
 		return errors.Wrap(err, "failed list review comment reply")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertReviewCommentReplyListToOutput(replies))
+	return ctx.JSON(http.StatusOK, c.ConvertReviewCommentReplyListToOutput(replies))
 }

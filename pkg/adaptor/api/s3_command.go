@@ -8,12 +8,14 @@ import (
 	"github.com/google/wire"
 
 	"github.com/pkg/errors"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 )
 
 type S3CommandController struct {
+	converter.Converters
 	service.S3CommandService
 }
 

@@ -8,18 +8,18 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
-func ConvertShowFeatureListParamToQuery(param *input.ShowFeatureListParam) *query.FindListPaginationQuery {
+func (c Converters) ConvertShowFeatureListParamToQuery(param *input.ShowFeatureListParam) *query.FindListPaginationQuery {
 	return &query.FindListPaginationQuery{
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffSet(),
 	}
 }
 
-func ConvertFeatureListToOutput(features *entity.FeatureList) *output.FeatureList {
+func (c Converters) ConvertFeatureListToOutput(features *entity.FeatureList) *output.FeatureList {
 	responseFeatures := make([]*output.Feature, len(features.Features))
 
 	for i, feature := range features.Features {
-		responseFeatures[i] = convertFeatureToOutput(feature)
+		responseFeatures[i] = c.convertFeatureToOutput(feature)
 	}
 
 	return &output.FeatureList{
@@ -28,8 +28,8 @@ func ConvertFeatureListToOutput(features *entity.FeatureList) *output.FeatureLis
 	}
 }
 
-func ConvertFeatureDetailPostsToOutput(feature *entity.FeatureDetailWithPosts) *output.ShowFeature {
-	relationPosts := ConvertPostListTiniesToOutput(feature.Posts)
+func (c Converters) ConvertFeatureDetailPostsToOutput(feature *entity.FeatureDetailWithPosts) *output.ShowFeature {
+	relationPosts := c.ConvertPostListTiniesToOutput(feature.Posts)
 
 	return &output.ShowFeature{
 		ID:            feature.ID,
@@ -40,14 +40,14 @@ func ConvertFeatureDetailPostsToOutput(feature *entity.FeatureDetailWithPosts) *
 		FacebookCount: feature.FacebookCount,
 		TwitterCount:  feature.TwitterCount,
 		Views:         feature.Views,
-		Creator:       output.NewCreatorFromUser(feature.User),
+		Creator:       c.NewCreatorFromUser(feature.User),
 		CreatedAt:     model.TimeResponse(feature.CreatedAt),
 		UpdatedAt:     model.TimeResponse(feature.UpdatedAt),
 		RelationPosts: relationPosts,
 	}
 }
 
-func convertFeatureToOutput(feature *entity.Feature) *output.Feature {
+func (c Converters) convertFeatureToOutput(feature *entity.Feature) *output.Feature {
 	return &output.Feature{
 		ID:        feature.ID,
 		Title:     feature.Title,

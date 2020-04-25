@@ -10,7 +10,7 @@ import (
 )
 
 // i/oの構造体からレポジトリで使用するクエリ発行用構造体へコンバート
-func ConvertFindReviewListParamToQuery(param *input.ListReviewParams) *query.ShowReviewListQuery {
+func (c Converters) ConvertFindReviewListParamToQuery(param *input.ListReviewParams) *query.ShowReviewListQuery {
 	return &query.ShowReviewListQuery{
 		UserID:                 param.UserID,
 		InnID:                  param.InnID,
@@ -28,15 +28,15 @@ func ConvertFindReviewListParamToQuery(param *input.ListReviewParams) *query.Sho
 	}
 }
 
-func ConvertListFeedReviewParamToQuery(param *input.ListFeedReviewParam) *query.FindListPaginationQuery {
+func (c Converters) ConvertListFeedReviewParamToQuery(param *input.ListFeedReviewParam) *query.FindListPaginationQuery {
 	return &query.FindListPaginationQuery{
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffset(),
 	}
 }
 
-func ConvertReviewCommentToOutput(reviewComment *entity.ReviewComment) *output.ReviewComment {
-	userSummary := output.NewUserSummary(reviewComment.User.ID, reviewComment.User.UID, reviewComment.User.Name, reviewComment.User.IconURL())
+func (c Converters) ConvertReviewCommentToOutput(reviewComment *entity.ReviewComment) *output.ReviewComment {
+	userSummary := output.NewUserSummary(reviewComment.User.ID, reviewComment.User.UID, reviewComment.User.Name, reviewComment.User.AvatarURL(c.filesURL()))
 	return output.NewReviewComment(
 		userSummary,
 		reviewComment.Body,
@@ -48,16 +48,16 @@ func ConvertReviewCommentToOutput(reviewComment *entity.ReviewComment) *output.R
 	)
 }
 
-func ConvertReviewCommentWithIsFavoriteListToOutput(reviewComments []*entity.ReviewCommentWithIsFavorite) []*output.ReviewComment {
+func (c Converters) ConvertReviewCommentWithIsFavoriteListToOutput(reviewComments []*entity.ReviewCommentWithIsFavorite) []*output.ReviewComment {
 	reviewCommentOutputs := make([]*output.ReviewComment, len(reviewComments))
 	for i, reviewComment := range reviewComments {
-		reviewCommentOutputs[i] = ConvertReviewCommentWithIsFavoriteToOutput(reviewComment)
+		reviewCommentOutputs[i] = c.ConvertReviewCommentWithIsFavoriteToOutput(reviewComment)
 	}
 	return reviewCommentOutputs
 }
 
-func ConvertReviewCommentWithIsFavoriteToOutput(reviewComment *entity.ReviewCommentWithIsFavorite) *output.ReviewComment {
-	userSummary := output.NewUserSummary(reviewComment.User.ID, reviewComment.User.UID, reviewComment.User.Name, reviewComment.User.IconURL())
+func (c Converters) ConvertReviewCommentWithIsFavoriteToOutput(reviewComment *entity.ReviewCommentWithIsFavorite) *output.ReviewComment {
+	userSummary := output.NewUserSummary(reviewComment.User.ID, reviewComment.User.UID, reviewComment.User.Name, reviewComment.User.AvatarURL(c.filesURL()))
 	return output.NewReviewComment(
 		userSummary,
 		reviewComment.Body,
@@ -69,23 +69,23 @@ func ConvertReviewCommentWithIsFavoriteToOutput(reviewComment *entity.ReviewComm
 	)
 }
 
-func ConvertQueryReviewListToOutput(queryReviews []*entity.ReviewDetail) []*output.Review {
+func (c Converters) ConvertQueryReviewListToOutput(queryReviews []*entity.ReviewDetail) []*output.Review {
 	outputs := make([]*output.Review, len(queryReviews))
 	for i, queryReview := range queryReviews {
-		outputs[i] = convertQueryReviewToOutput(queryReview)
+		outputs[i] = c.convertQueryReviewToOutput(queryReview)
 	}
 	return outputs
 }
 
-func ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews []*entity.ReviewDetailWithIsFavorite) []*output.Review {
+func (c Converters) ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews []*entity.ReviewDetailWithIsFavorite) []*output.Review {
 	responses := make([]*output.Review, len(reviews))
 	for i, queryReview := range reviews {
-		responses[i] = ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview)
+		responses[i] = c.ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview)
 	}
 	return responses
 }
 
-func ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview *entity.ReviewDetailWithIsFavorite) *output.Review {
+func (c Converters) ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview *entity.ReviewDetailWithIsFavorite) *output.Review {
 	hashtags := make([]output.Hashtag, len(queryReview.Hashtag))
 	for i, hashtag := range queryReview.Hashtag {
 		hashtags[i] = output.Hashtag{
@@ -101,19 +101,19 @@ func ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview *entity.ReviewDe
 		Score:         queryReview.Score,
 		Body:          queryReview.Body,
 		FavoriteCount: queryReview.FavoriteCount,
-		Media:         ConvertReviewMediaList(queryReview.Medias),
+		Media:         c.ConvertReviewMediaList(queryReview.Medias),
 		Views:         queryReview.Views,
 		Accompanying:  queryReview.Accompanying.String(),
 		UpdatedAt:     model.TimeFmtToFrontStr(queryReview.Review.UpdatedAt),
 		TravelDate:    model.NewYearMonth(queryReview.TravelDate),
 		Hashtag:       hashtags,
 		CommentCount:  queryReview.CommentCount,
-		Creator:       output.NewCreatorFromUser(queryReview.User),
+		Creator:       c.NewCreatorFromUser(queryReview.User),
 		IsFavorited:   queryReview.IsFavorite,
 	}
 }
 
-func convertQueryReviewToOutput(queryReview *entity.ReviewDetail) *output.Review {
+func (c Converters) convertQueryReviewToOutput(queryReview *entity.ReviewDetail) *output.Review {
 	medias := make([]output.ReviewMedia, len(queryReview.Medias))
 	hashtags := make([]output.Hashtag, len(queryReview.Hashtag))
 	for i, media := range queryReview.Medias {
@@ -137,18 +137,18 @@ func convertQueryReviewToOutput(queryReview *entity.ReviewDetail) *output.Review
 		Score:         queryReview.Score,
 		Body:          queryReview.Body,
 		FavoriteCount: queryReview.FavoriteCount,
-		Media:         ConvertReviewMediaList(queryReview.Medias),
+		Media:         c.ConvertReviewMediaList(queryReview.Medias),
 		Views:         queryReview.Views,
 		Accompanying:  queryReview.Accompanying.String(),
 		UpdatedAt:     model.TimeFmtToFrontStr(queryReview.Review.UpdatedAt),
 		TravelDate:    model.NewYearMonth(queryReview.TravelDate),
 		CommentCount:  queryReview.CommentCount,
 		Hashtag:       hashtags,
-		Creator:       output.NewCreatorFromUser(queryReview.User),
+		Creator:       c.NewCreatorFromUser(queryReview.User),
 	}
 }
 
-func ConvertCreateReviewParamToCommand(param *input.StoreReviewParam) *command.CreateReview {
+func (c Converters) ConvertCreateReviewParamToCommand(param *input.StoreReviewParam) *command.CreateReview {
 	uuids := make([]*command.CreateReviewMedia, len(param.MediaUUIDs))
 	for i, media := range param.MediaUUIDs {
 		uuids[i] = &command.CreateReviewMedia{
@@ -168,7 +168,7 @@ func ConvertCreateReviewParamToCommand(param *input.StoreReviewParam) *command.C
 	}
 }
 
-func ConvertUpdateReviewParamToCommand(param *input.UpdateReviewParam) *command.UpdateReview {
+func (c Converters) ConvertUpdateReviewParamToCommand(param *input.UpdateReviewParam) *command.UpdateReview {
 	uuids := make([]*command.CreateReviewMedia, len(param.MediaUUIDs))
 	for i, media := range param.MediaUUIDs {
 		uuids[i] = &command.CreateReviewMedia{
@@ -186,7 +186,7 @@ func ConvertUpdateReviewParamToCommand(param *input.UpdateReviewParam) *command.
 	}
 }
 
-func ConvertReviewMediaList(reviewMediaList entity.ReviewMediaList) []output.ReviewMedia {
+func (c Converters) ConvertReviewMediaList(reviewMediaList entity.ReviewMediaList) []output.ReviewMedia {
 	reviewMediaList.Sort()
 	medias := make([]output.ReviewMedia, len(reviewMediaList))
 	for i, media := range reviewMediaList {

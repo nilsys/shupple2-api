@@ -16,6 +16,7 @@ import (
 )
 
 type UserCommandController struct {
+	converter.Converters
 	service.UserCommandService
 }
 
@@ -29,7 +30,7 @@ func (c *UserCommandController) SignUp(ctx echo.Context) error {
 		return errors.Wrap(err, "validation store user input")
 	}
 
-	err := c.UserCommandService.SignUp(converter.ConvertStoreUserParamToEntity(&p), p.CognitoToken, p.MigrationCode)
+	err := c.UserCommandService.SignUp(c.ConvertStoreUserParamToEntity(&p), p.CognitoToken, p.MigrationCode)
 	if err != nil {
 		return errors.Wrap(err, "failed to store user")
 	}
@@ -44,7 +45,7 @@ func (c *UserCommandController) Update(ctx echo.Context, user entity.User) error
 		return errors.Wrap(err, "validation store user image input")
 	}
 
-	err := c.UserCommandService.Update(&user, converter.ConvertUpdateUserParamToCmd(&p))
+	err := c.UserCommandService.Update(&user, c.ConvertUpdateUserParamToCmd(&p))
 	if err != nil {
 		return errors.Wrap(err, "failed to store user image")
 	}

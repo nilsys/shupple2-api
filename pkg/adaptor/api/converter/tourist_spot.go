@@ -9,7 +9,7 @@ import (
 )
 
 // i/oの構造体からレポジトリで使用するクエリ発行用構造体へコンバート
-func ConvertTouristSpotListParamToQuery(param *input.ListTouristSpotParams) *query.FindTouristSpotListQuery {
+func (c Converters) ConvertTouristSpotListParamToQuery(param *input.ListTouristSpotParams) *query.FindTouristSpotListQuery {
 	return &query.FindTouristSpotListQuery{
 		AreaID:         param.AreaID,
 		SubAreaID:      param.SubAreaID,
@@ -21,18 +21,18 @@ func ConvertTouristSpotListParamToQuery(param *input.ListTouristSpotParams) *que
 	}
 }
 
-func ConvertTouristSpotToOutput(touristSpots []*entity.TouristSpot) []*output.TouristSpot {
+func (c Converters) ConvertTouristSpotToOutput(touristSpots []*entity.TouristSpot) []*output.TouristSpot {
 	responseTouristSpots := make([]*output.TouristSpot, len(touristSpots))
 
 	for i, touristSpot := range touristSpots {
-		responseTouristSpots[i] = convertTouristSpotToOutput(touristSpot)
+		responseTouristSpots[i] = c.convertTouristSpotToOutput(touristSpot)
 	}
 
 	return responseTouristSpots
 }
 
 // outputの構造体へconvert
-func convertTouristSpotToOutput(touristSpot *entity.TouristSpot) *output.TouristSpot {
+func (c Converters) convertTouristSpotToOutput(touristSpot *entity.TouristSpot) *output.TouristSpot {
 	return &output.TouristSpot{
 		ID:        touristSpot.ID,
 		Name:      touristSpot.Name,
@@ -41,7 +41,7 @@ func convertTouristSpotToOutput(touristSpot *entity.TouristSpot) *output.Tourist
 	}
 }
 
-func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.TouristSpotDetail) *output.ShowTouristSpot {
+func (c Converters) ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.TouristSpotDetail) *output.ShowTouristSpot {
 	spotCategories := make([]*output.SpotCategory, len(queryTouristSpot.SpotCategories))
 
 	for i, spotCategory := range queryTouristSpot.SpotCategories {
@@ -69,15 +69,15 @@ func ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.TouristSpotDetail)
 		Rate:            queryTouristSpot.Rate,
 		VendorRate:      queryTouristSpot.VendorRate,
 		ReviewCount:     queryTouristSpot.ReviewCount,
-		AreaCategories:  ConvertAreaCategoriesToOutput(queryTouristSpot.AreaCategories),
-		ThemeCategories: ConvertThemeCategoriesToOutput(queryTouristSpot.ThemeCategories),
+		AreaCategories:  c.ConvertAreaCategoriesToOutput(queryTouristSpot.AreaCategories),
+		ThemeCategories: c.ConvertThemeCategoriesToOutput(queryTouristSpot.ThemeCategories),
 		SpotCategories:  spotCategories,
 		CreatedAt:       model.TimeResponse(queryTouristSpot.CreatedAt),
 		UpdatedAt:       model.TimeResponse(queryTouristSpot.UpdatedAt),
 	}
 }
 
-func ConvertRecommendTouristSpotListParamToQuery(param *input.ListRecommendTouristSpotParam) *query.FindRecommendTouristSpotListQuery {
+func (c Converters) ConvertRecommendTouristSpotListParamToQuery(param *input.ListRecommendTouristSpotParam) *query.FindRecommendTouristSpotListQuery {
 	return &query.FindRecommendTouristSpotListQuery{
 		ID:                    param.ID,
 		TouristSpotCategoryID: param.TouristSpotCategoryID,

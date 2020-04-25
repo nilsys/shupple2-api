@@ -14,6 +14,7 @@ import (
 )
 
 type ReportCommandController struct {
+	converter.Converters
 	service.ReportCommandService
 }
 
@@ -27,7 +28,7 @@ func (c *ReportCommandController) Report(ctx echo.Context, user entity.User) err
 		return errors.Wrap(err, "validation report param")
 	}
 
-	cmd := converter.ConvertReportToCmd(&p)
+	cmd := c.ConvertReportToCmd(&p)
 
 	if err := c.ReportCommandService.Report(&user, cmd); err != nil {
 		return errors.Wrap(err, "failed to report")
@@ -47,7 +48,7 @@ func (c *ReportCommandController) MarkAsDone(ctx echo.Context) error {
 		return errors.Wrap(err, "invalid slack report callback response type")
 	}
 
-	cmd, err := converter.ConvertSlackReportCallbackPayloadToCmd(&p)
+	cmd, err := c.ConvertSlackReportCallbackPayloadToCmd(&p)
 	if err != nil {
 		return errors.Wrap(err, "failed to convert to cmd")
 	}

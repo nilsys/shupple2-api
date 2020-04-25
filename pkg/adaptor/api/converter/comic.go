@@ -9,7 +9,7 @@ import (
 )
 
 // i/oの構造体からレポジトリで使用するクエリ構造体へconvert
-func ConvertShowComicListParamToQuery(param *input.ShowComicListParam) *query.FindListPaginationQuery {
+func (c Converters) ConvertShowComicListParamToQuery(param *input.ShowComicListParam) *query.FindListPaginationQuery {
 	return &query.FindListPaginationQuery{
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffSet(),
@@ -17,11 +17,11 @@ func ConvertShowComicListParamToQuery(param *input.ShowComicListParam) *query.Fi
 }
 
 // ConvertComicToOutput()のスライスバージョン
-func ConvertComicListToOutput(comics *entity.ComicList) output.ComicList {
+func (c Converters) ConvertComicListToOutput(comics *entity.ComicList) output.ComicList {
 	responseComics := make([]*output.Comic, len(comics.Comics))
 
 	for i, comic := range comics.Comics {
-		responseComics[i] = convertComicToOutput(comic)
+		responseComics[i] = c.convertComicToOutput(comic)
 	}
 
 	return output.ComicList{
@@ -30,7 +30,7 @@ func ConvertComicListToOutput(comics *entity.ComicList) output.ComicList {
 	}
 }
 
-func ConvertQueryComicOutput(queryComic *entity.QueryComic) *output.ShowComic {
+func (c Converters) ConvertQueryComicOutput(queryComic *entity.QueryComic) *output.ShowComic {
 	return &output.ShowComic{
 		ID:        queryComic.Comic.ID,
 		Slug:      queryComic.Comic.Slug,
@@ -38,12 +38,12 @@ func ConvertQueryComicOutput(queryComic *entity.QueryComic) *output.ShowComic {
 		Thumbnail: queryComic.Comic.Thumbnail,
 		Body:      queryComic.Comic.Body,
 		CreatedAt: model.TimeResponse(queryComic.Comic.CreatedAt),
-		Creator:   output.NewCreatorFromUser(queryComic.User),
+		Creator:   c.NewCreatorFromUser(queryComic.User),
 	}
 }
 
 // outputの構造体へconvert
-func convertComicToOutput(comic *entity.Comic) *output.Comic {
+func (c Converters) convertComicToOutput(comic *entity.Comic) *output.Comic {
 	return &output.Comic{
 		ID:        comic.ID,
 		Slug:      comic.Slug,

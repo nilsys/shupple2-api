@@ -1,7 +1,6 @@
 package output
 
 import (
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
 
@@ -55,13 +54,6 @@ type (
 		Interests      []string     `json:"interests"`
 	}
 )
-
-func NewCreatorFromUser(user *entity.User) Creator {
-	return NewCreator(
-		user.ID, user.UID, user.IconURL(), user.Name, user.Profile,
-		user.FacebookURL, user.InstagramURL, user.TwitterURL, user.YoutubeURL,
-	)
-}
 
 func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL, twitterURL, youtubeURL string) Creator {
 	return Creator{

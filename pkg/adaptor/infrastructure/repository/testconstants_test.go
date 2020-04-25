@@ -15,9 +15,6 @@ const (
 	reviewID        = 191
 	hashtagID       = 201
 	innID           = 211
-
-	mockReviewPerPage = 10
-	mockReviewPage    = 1
 )
 
 var (

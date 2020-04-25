@@ -12,6 +12,7 @@ import (
 )
 
 type NoticeQueryController struct {
+	converter.Converters
 	NoticeQueryService service.NoticeQueryService
 }
 
@@ -24,5 +25,5 @@ func (c *NoticeQueryController) ListNotices(ctx echo.Context, user entity.User) 
 	if err != nil {
 		return errors.Wrap(err, "Failed to show notice list")
 	}
-	return ctx.JSON(http.StatusOK, converter.ConvertListNoticeToOutput(notices))
+	return ctx.JSON(http.StatusOK, c.ConvertListNoticeToOutput(notices))
 }

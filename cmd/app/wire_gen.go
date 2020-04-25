@@ -9,6 +9,7 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/middleware"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
@@ -46,6 +47,9 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		AuthService: authService,
 		UserRepo:    userQueryRepositoryImpl,
 	}
+	converters := converter.Converters{
+		Config: configConfig,
+	}
 	postQueryRepositoryImpl := &repository.PostQueryRepositoryImpl{
 		DB: db,
 	}
@@ -53,6 +57,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		PostQueryRepository: postQueryRepositoryImpl,
 	}
 	postQueryController := api.PostQueryController{
+		Converters:  converters,
 		PostService: postQueryServiceImpl,
 	}
 	dao := repository.DAO{
@@ -89,6 +94,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		TransactionService:            transactionServiceImpl,
 	}
 	postFavoriteCommandController := api.PostFavoriteCommandController{
+		Converters:                 converters,
 		PostFavoriteCommandService: postFavoriteCommandServiceImpl,
 	}
 	areaCategoryQueryRepositoryImpl := &repository.AreaCategoryQueryRepositoryImpl{
@@ -106,6 +112,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		SpotCategoryRepository:  spotCategoryQueryRepositoryImpl,
 	}
 	categoryQueryController := api.CategoryQueryController{
+		Converters:           converters,
 		CategoryQueryService: categoryQueryServiceImpl,
 	}
 	comicQueryRepositoryImpl := &repository.ComicQueryRepositoryImpl{
@@ -116,6 +123,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		UserQueryRepository:  userQueryRepositoryImpl,
 	}
 	comicQueryController := api.ComicQueryController{
+		Converters:        converters,
 		ComicQueryService: comicQueryServiceImpl,
 	}
 	reviewQueryRepositoryImpl := &repository.ReviewQueryRepositoryImpl{
@@ -135,6 +143,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		AreaCategoryQueryRepository: areaCategoryQueryRepositoryImpl,
 	}
 	reviewQueryController := api.ReviewQueryController{
+		Converters:         converters,
 		ReviewQueryService: reviewQueryServiceImpl,
 	}
 	session, err := repository.ProvideAWSSession(configConfig)
@@ -175,6 +184,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		HashtagCommandService: hashtagCommandServiceImpl,
 	}
 	reviewCommandController := api.ReviewCommandController{
+		Converters:            converters,
 		ReviewCommandScenario: reviewCommandScenarioImpl,
 		ReviewCommandService:  reviewCommandServiceImpl,
 	}
@@ -193,15 +203,18 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		TransactionService:              transactionServiceImpl,
 	}
 	reviewFavoriteCommandController := api.ReviewFavoriteCommandController{
+		Converters:                   converters,
 		ReviewFavoriteCommandService: reviewFavoriteCommandServiceImpl,
 	}
 	hashtagQueryServiceImpl := &service.HashtagQueryServiceImpl{
 		HashtagQueryRepository: hashtagQueryRepositoryImpl,
 	}
 	hashtagQueryController := api.HashtagQueryController{
+		Converters:          converters,
 		HashtagQueryService: hashtagQueryServiceImpl,
 	}
 	hashtagCommandController := api.HashtagCommandController{
+		Converters:            converters,
 		HashtagCommandService: hashtagCommandServiceImpl,
 	}
 	touristSpotQueryRepositoryImpl := &repository.TouristSpotQueryRepositoryImpl{
@@ -215,6 +228,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		UserQueryRepository:          userQueryRepositoryImpl,
 	}
 	searchQueryController := api.SearchQueryController{
+		Converters:         converters,
 		SearchQueryService: searchQueryServiceImpl,
 	}
 	featureQueryRepositoryImpl := &repository.FeatureQueryRepositoryImpl{
@@ -224,6 +238,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		FeatureQueryRepository: featureQueryRepositoryImpl,
 	}
 	featureQueryController := api.FeatureQueryController{
+		Converters:          converters,
 		FeatureQueryService: featureQueryServiceImpl,
 	}
 	vlogQueryRepositoryImpl := &repository.VlogQueryRepositoryImpl{
@@ -233,12 +248,14 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		VlogQueryRepository: vlogQueryRepositoryImpl,
 	}
 	vlogQueryController := api.VlogQueryController{
+		Converters:       converters,
 		VlogQueryService: vlogQueryServiceImpl,
 	}
 	userQueryServiceImpl := &service.UserQueryServiceImpl{
 		UserQueryRepository: userQueryRepositoryImpl,
 	}
 	userQueryController := api.UserQueryController{
+		Converters:       converters,
 		UserQueryService: userQueryServiceImpl,
 	}
 	uploader := repository.ProvideS3Uploader(session)
@@ -260,12 +277,14 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		TransactionService:       transactionServiceImpl,
 	}
 	userCommandController := api.UserCommandController{
+		Converters:         converters,
 		UserCommandService: userCommandServiceImpl,
 	}
 	healthCheckRepositoryImpl := &repository.HealthCheckRepositoryImpl{
 		DB: db,
 	}
 	healthCheckController := api.HealthCheckController{
+		Converters:            converters,
 		HealthCheckRepository: healthCheckRepositoryImpl,
 		Config:                configConfig,
 	}
@@ -363,6 +382,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		VlogCommandService:         vlogCommandServiceImpl,
 	}
 	wordpressCallbackController := api.WordpressCallbackController{
+		Converters:               converters,
 		WordpressCallbackService: wordpressCallbackServiceImpl,
 	}
 	s3SignatureFactory := factory.S3SignatureFactory{
@@ -373,12 +393,14 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		S3SignatureFactory: s3SignatureFactory,
 	}
 	s3CommandController := api.S3CommandController{
+		Converters:       converters,
 		S3CommandService: s3CommandServiceImpl,
 	}
 	touristSpotQueryServiceImpl := &service.TouristSpotQueryServiceImpl{
 		TouristSpotQueryRepository: touristSpotQueryRepositoryImpl,
 	}
 	touristSpotQueryController := api.TouristSpotQueryController{
+		Converters:              converters,
 		TouristSpotQueryService: touristSpotQueryServiceImpl,
 	}
 	interestQueryRepositoryImpl := &repository.InterestQueryRepositoryImpl{
@@ -388,18 +410,21 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		InterestQueryRepository: interestQueryRepositoryImpl,
 	}
 	interestQueryController := api.InterestQueryController{
+		Converters:           converters,
 		InterestQueryService: interestQueryServiceImpl,
 	}
 	themeCategoryQueryServiceImpl := &service.ThemeCategoryQueryServiceImpl{
 		ThemeCategoryQueryRepository: themeCategoryQueryRepositoryImpl,
 	}
 	themeQueryController := api.ThemeQueryController{
+		Converters:                converters,
 		ThemeCategoryQueryService: themeCategoryQueryServiceImpl,
 	}
 	areaQueryServiceImpl := &service.AreaQueryServiceImpl{
 		Repository: areaCategoryQueryRepositoryImpl,
 	}
 	areaQueryController := api.AreaQueryController{
+		Converters:       converters,
 		AreaQueryService: areaQueryServiceImpl,
 	}
 	innQueryServiceImpl := &service.InnQueryServiceImpl{
@@ -408,6 +433,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		TouristSpotQueryRepository:  touristSpotQueryRepositoryImpl,
 	}
 	innQueryController := api.InnQueryController{
+		Converters:      converters,
 		InnQueryService: innQueryServiceImpl,
 	}
 	noticeQueryRepositoryImpl := &repository.NoticeQueryRepositoryImpl{
@@ -445,6 +471,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		TransactionService:      transactionServiceImpl,
 	}
 	reportCommandController := api.ReportCommandController{
+		Converters:           converters,
 		ReportCommandService: reportCommandServiceImpl,
 	}
 	app := &App{
@@ -486,7 +513,7 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.PostQueryControllerSet, api.PostFavoriteCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.ThemeQueryControllerSet, api.WordpressCallbackControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet, api.AreaQueryControllerSet, api.InnQueryControllerSet, api.NoticeQueryControllerSet, api.ReportCommandControllerSet)
+var controllerSet = wire.NewSet(converter.ConvertersSet, api.PostQueryControllerSet, api.PostFavoriteCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.ThemeQueryControllerSet, api.WordpressCallbackControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet, api.AreaQueryControllerSet, api.InnQueryControllerSet, api.NoticeQueryControllerSet, api.ReportCommandControllerSet)
 
 var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet)
 

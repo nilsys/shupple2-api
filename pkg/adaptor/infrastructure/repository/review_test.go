@@ -8,10 +8,9 @@ import (
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 	uuid "github.com/satori/go.uuid"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
@@ -21,13 +20,13 @@ const (
 
 var _ = Describe("ReviewRepositoryTest", func() {
 	var (
-		query   *ReviewQueryRepositoryImpl
-		command *ReviewCommandRepositoryImpl
-		hashtag *entity.Hashtag = newHashtag(hashtagID)
+		queryRepo *ReviewQueryRepositoryImpl
+		command   *ReviewCommandRepositoryImpl
+		hashtag   *entity.Hashtag = newHashtag(hashtagID)
 	)
 
 	BeforeEach(func() {
-		query = tests.ReviewQueryRepositoryImpl
+		queryRepo = tests.ReviewQueryRepositoryImpl
 		command = tests.ReviewCommandRepositoryImpl
 		truncate(db)
 		Expect(db.Save(newUser(userID)).Error).To(Succeed())
@@ -44,7 +43,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 			}
 
 			Expect(command.StoreReview(context.Background(), saved)).To(Succeed())
-			actual, err := query.FindByID(saved.ID)
+			actual, err := queryRepo.FindByID(saved.ID)
 			Expect(err).To(Succeed())
 
 			Expect(actual.CreatedAt).NotTo(BeZero())
@@ -69,9 +68,8 @@ var _ = Describe("ReviewRepositoryTest", func() {
 		})
 
 		DescribeTable("ShowReviewListByParams",
-			func(param *input.ListReviewParams) {
-				queryStruct := converter.ConvertFindReviewListParamToQuery(param)
-				actual, err := query.ShowReviewListByParams(queryStruct)
+			func(param *query.ShowReviewListQuery) {
+				actual, err := queryRepo.ShowReviewListByParams(param)
 				Expect(err).To(Succeed())
 
 				for _, result := range actual {
@@ -86,11 +84,11 @@ var _ = Describe("ReviewRepositoryTest", func() {
 				}
 				Expect(actual).To(Equal([]*entity.ReviewDetailWithIsFavorite{newReviewDetailWithIsFavorite(hashtag.Name, hashtag.ID)}))
 			},
-			Entry("正常系_全条件検索", newShowReviewListParam(userID, innID, touristSpotID, hashtag.Name)),
-			Entry("正常系_UserID検索", newShowReviewListParam(userID, 0, 0, "")),
-			Entry("正常系_InnID検索", newShowReviewListParam(0, innID, 0, "")),
-			Entry("正常系_SpotID検索", newShowReviewListParam(0, 0, touristSpotID, "")),
-			Entry("正常系_HashTag検索", newShowReviewListParam(0, 0, 0, hashtag.Name)),
+			Entry("正常系_全条件検索", newShowReviewListQuery(userID, innID, touristSpotID, hashtag.Name)),
+			Entry("正常系_UserID検索", newShowReviewListQuery(userID, 0, 0, "")),
+			Entry("正常系_InnID検索", newShowReviewListQuery(0, innID, 0, "")),
+			Entry("正常系_SpotID検索", newShowReviewListQuery(0, 0, touristSpotID, "")),
+			Entry("正常系_HashTag検索", newShowReviewListQuery(0, 0, 0, hashtag.Name)),
 		)
 	})
 
@@ -111,7 +109,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 
 		DescribeTable("コメントの存在する投稿の場合",
 			func(id int) {
-				actual, err := query.FindReviewCommentListByReviewID(id, 2)
+				actual, err := queryRepo.FindReviewCommentListByReviewID(id, 2)
 				Expect(err).To(Succeed())
 
 				// 新しい順になっている
@@ -129,7 +127,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 
 		DescribeTable("コメントの存在する投稿の場合",
 			func(id int) {
-				actual, err := query.FindReviewCommentListByReviewID(id, 1)
+				actual, err := queryRepo.FindReviewCommentListByReviewID(id, 1)
 				Expect(err).To(Succeed())
 
 				// 取得は一件だけ
@@ -140,7 +138,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 
 		DescribeTable("コメントの存在しない投稿の場合",
 			func(id int) {
-				actual, err := query.FindReviewCommentListByReviewID(id, 2)
+				actual, err := queryRepo.FindReviewCommentListByReviewID(id, 2)
 				Expect(err).To(Succeed())
 
 				// コメントが0件であること
@@ -344,13 +342,12 @@ func newReviewComment(userID, reviewID int) *entity.ReviewComment {
 	)
 }
 
-func newShowReviewListParam(userID, innID, touristSpotID int, hashtag string) *input.ListReviewParams {
-	return &input.ListReviewParams{
+func newShowReviewListQuery(userID, innID, touristSpotID int, hashtag string) *query.ShowReviewListQuery {
+	return &query.ShowReviewListQuery{
 		UserID:        userID,
 		InnID:         innID,
 		TouristSpotID: touristSpotID,
 		HashTag:       hashtag,
-		PerPage:       mockReviewPerPage,
-		Page:          mockReviewPage,
+		Limit:         defaultAcquisitionNumber,
 	}
 }

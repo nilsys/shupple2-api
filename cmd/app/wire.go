@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/middleware"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
@@ -17,6 +18,7 @@ import (
 )
 
 var controllerSet = wire.NewSet(
+	converter.ConvertersSet,
 	api.PostQueryControllerSet,
 	api.PostFavoriteCommandControllerSet,
 	api.CategoryQueryControllerSet,

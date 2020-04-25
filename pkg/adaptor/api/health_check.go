@@ -6,11 +6,13 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
 type HealthCheckController struct {
+	converter.Converters
 	repository.HealthCheckRepository
 	Config *config.Config
 }

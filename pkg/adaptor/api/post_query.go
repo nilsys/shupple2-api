@@ -17,6 +17,7 @@ import (
 
 type (
 	PostQueryController struct {
+		converter.Converters
 		PostService service.PostQueryService
 	}
 )
@@ -36,7 +37,7 @@ func (c *PostQueryController) Show(ctx echo.Context, ouser entity.OptionalUser) 
 		return errors.Wrap(err, "failed to get post")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post))
+	return ctx.JSON(http.StatusOK, c.ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post))
 }
 
 func (c *PostQueryController) ShowBySlug(ctx echo.Context) error {
@@ -50,7 +51,7 @@ func (c *PostQueryController) ShowBySlug(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to get post by slug")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailWithHashtagToOutput(post))
+	return ctx.JSON(http.StatusOK, c.ConvertPostDetailWithHashtagToOutput(post))
 }
 
 func (c *PostQueryController) ListPost(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -59,14 +60,14 @@ func (c *PostQueryController) ListPost(ctx echo.Context, ouser entity.OptionalUs
 		return errors.Wrapf(err, "validation find post list parameter")
 	}
 
-	query := converter.ConvertFindPostListParamToQuery(p)
+	query := c.ConvertFindPostListParamToQuery(p)
 
 	posts, err := c.PostService.ListByParams(query, ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to find post list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertPostListToOutput(posts))
+	return ctx.JSON(http.StatusOK, c.ConvertPostListToOutput(posts))
 }
 
 func (c *PostQueryController) ListFeedPost(ctx echo.Context) error {
@@ -75,14 +76,14 @@ func (c *PostQueryController) ListFeedPost(ctx echo.Context) error {
 		return errors.Wrapf(err, "validation find feed post list input")
 	}
 
-	q := converter.ConvertListFeedPostParamToQuery(p)
+	q := c.ConvertListFeedPostParamToQuery(p)
 
 	posts, err := c.PostService.ListFeed(p.UserID, q)
 	if err != nil {
 		return errors.Wrap(err, "failed to show feed posts")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailListToOutput(posts))
+	return ctx.JSON(http.StatusOK, c.ConvertPostDetailListToOutput(posts))
 }
 
 func (c *PostQueryController) ListFavoritePost(ctx echo.Context) error {
@@ -91,12 +92,12 @@ func (c *PostQueryController) ListFavoritePost(ctx echo.Context) error {
 		return errors.Wrap(err, "validation list favorite post")
 	}
 
-	q := converter.ConvertListFeedPostParamToQuery(p)
+	q := c.ConvertListFeedPostParamToQuery(p)
 
 	posts, err := c.PostService.ListFavoritePost(p.UserID, q)
 	if err != nil {
 		return errors.Wrap(err, "failed list favorite post")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertPostDetailListToOutput(posts))
+	return ctx.JSON(http.StatusOK, c.ConvertPostDetailListToOutput(posts))
 }

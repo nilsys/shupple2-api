@@ -9,7 +9,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 )
 
-func ConvertReportToCmd(p *input.Report) *command.Report {
+func (c Converters) ConvertReportToCmd(p *input.Report) *command.Report {
 	return &command.Report{
 		TargetID:   p.TargetID,
 		TargetType: p.TargetType,
@@ -17,7 +17,7 @@ func ConvertReportToCmd(p *input.Report) *command.Report {
 	}
 }
 
-func ConvertSlackReportCallbackPayloadToCmd(p *input.SlackCallbackPayload) (*command.MarkAsReport, error) {
+func (c Converters) ConvertSlackReportCallbackPayloadToCmd(p *input.SlackCallbackPayload) (*command.MarkAsReport, error) {
 	src := input.SlackCallback{}
 	if err := json.Unmarshal([]byte(p.Payload), &src); err != nil {
 		return nil, errors.Wrap(err, "invalid slack report callback response type")

@@ -11,7 +11,7 @@ import (
 /*
  * o -> i
  */
-func ConvertFindPostListParamToQuery(param *input.ListPostParam) *query.FindPostListQuery {
+func (c Converters) ConvertFindPostListParamToQuery(param *input.ListPostParam) *query.FindPostListQuery {
 	return &query.FindPostListQuery{
 		UserID:                 param.UserID,
 		AreaID:                 param.AreaID,
@@ -34,7 +34,7 @@ func ConvertFindPostListParamToQuery(param *input.ListPostParam) *query.FindPost
 	}
 }
 
-func ConvertListFeedPostParamToQuery(param *input.ListFeedPostParam) *query.FindListPaginationQuery {
+func (c Converters) ConvertListFeedPostParamToQuery(param *input.ListFeedPostParam) *query.FindListPaginationQuery {
 	return &query.FindListPaginationQuery{
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffSet(),
@@ -44,24 +44,24 @@ func ConvertListFeedPostParamToQuery(param *input.ListFeedPostParam) *query.Find
 /*
  * i -> o
  */
-func ConvertPostDetailListToOutput(posts []*entity.PostDetail) []*output.Post {
+func (c Converters) ConvertPostDetailListToOutput(posts []*entity.PostDetail) []*output.Post {
 	responsePosts := make([]*output.Post, len(posts))
 
 	for i, queryPost := range posts {
-		responsePosts[i] = ConvertQueryPostToOutput(queryPost)
+		responsePosts[i] = c.ConvertQueryPostToOutput(queryPost)
 	}
 
 	return responsePosts
 }
 
-func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *output.Post {
+func (c Converters) ConvertQueryPostToOutput(queryPost *entity.PostDetail) *output.Post {
 	return &output.Post{
 		ID:              queryPost.ID,
 		Thumbnail:       queryPost.Thumbnail,
 		Title:           queryPost.Title,
-		AreaCategories:  ConvertAreaCategoriesToOutput(queryPost.AreaCategories),
-		ThemeCategories: ConvertThemeCategoriesToOutput(queryPost.ThemeCategories),
-		Creator:         output.NewCreatorFromUser(queryPost.User),
+		AreaCategories:  c.ConvertAreaCategoriesToOutput(queryPost.AreaCategories),
+		ThemeCategories: c.ConvertThemeCategoriesToOutput(queryPost.ThemeCategories),
+		Creator:         c.NewCreatorFromUser(queryPost.User),
 		FavoriteCount:   queryPost.FavoriteCount,
 		Views:           queryPost.Views,
 		HideAds:         queryPost.HideAds,
@@ -70,7 +70,7 @@ func ConvertQueryPostToOutput(queryPost *entity.PostDetail) *output.Post {
 	}
 }
 
-func ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite) *output.PostShow {
+func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite) *output.PostShow {
 	var hashtags = make([]*output.Hashtag, len(post.Hashtag))
 	var bodies = make([]*output.PostBody, len(post.Bodies))
 
@@ -95,16 +95,16 @@ func ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWi
 		SEODescription:  post.SEODescription,
 		HideAds:         post.HideAds,
 		IsFavorited:     post.IsFavorite,
-		Creator:         output.NewCreatorFromUser(post.User),
-		AreaCategories:  ConvertAreaCategoriesToOutput(post.AreaCategories),
-		ThemeCategories: ConvertThemeCategoriesToOutput(post.ThemeCategories),
+		Creator:         c.NewCreatorFromUser(post.User),
+		AreaCategories:  c.ConvertAreaCategoriesToOutput(post.AreaCategories),
+		ThemeCategories: c.ConvertThemeCategoriesToOutput(post.ThemeCategories),
 		Hashtags:        hashtags,
 		CreatedAt:       model.TimeFmtToFrontStr(post.CreatedAt),
 		UpdatedAt:       model.TimeFmtToFrontStr(post.UpdatedAt),
 	}
 }
 
-func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *output.PostShow {
+func (c Converters) ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *output.PostShow {
 	var hashtags = make([]*output.Hashtag, len(post.Hashtag))
 	var bodies = make([]*output.PostBody, len(post.Bodies))
 
@@ -128,17 +128,17 @@ func ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *o
 		SEOTitle:        post.SEOTitle,
 		SEODescription:  post.SEODescription,
 		HideAds:         post.HideAds,
-		Creator:         output.NewCreatorFromUser(post.User),
-		AreaCategories:  ConvertAreaCategoriesToOutput(post.AreaCategories),
-		ThemeCategories: ConvertThemeCategoriesToOutput(post.ThemeCategories),
+		Creator:         c.NewCreatorFromUser(post.User),
+		AreaCategories:  c.ConvertAreaCategoriesToOutput(post.AreaCategories),
+		ThemeCategories: c.ConvertThemeCategoriesToOutput(post.ThemeCategories),
 		Hashtags:        hashtags,
 		CreatedAt:       model.TimeFmtToFrontStr(post.CreatedAt),
 		UpdatedAt:       model.TimeFmtToFrontStr(post.UpdatedAt),
 	}
 }
 
-func ConvertPostListToOutput(list *entity.PostList) *output.PostList {
-	posts := ConvertPostListTiniesToOutput(list.Posts)
+func (c Converters) ConvertPostListToOutput(list *entity.PostList) *output.PostList {
+	posts := c.ConvertPostListTiniesToOutput(list.Posts)
 
 	return &output.PostList{
 		TotalNumber: list.TotalNumber,
@@ -146,24 +146,24 @@ func ConvertPostListToOutput(list *entity.PostList) *output.PostList {
 	}
 }
 
-func ConvertPostListTiniesToOutput(list []*entity.PostListTiny) []*output.Post {
+func (c Converters) ConvertPostListTiniesToOutput(list []*entity.PostListTiny) []*output.Post {
 	res := make([]*output.Post, len(list))
 
 	for i, tiny := range list {
-		res[i] = ConvertPostListTinyToOutput(tiny)
+		res[i] = c.ConvertPostListTinyToOutput(tiny)
 	}
 
 	return res
 }
 
-func ConvertPostListTinyToOutput(post *entity.PostListTiny) *output.Post {
+func (c Converters) ConvertPostListTinyToOutput(post *entity.PostListTiny) *output.Post {
 	return &output.Post{
 		ID:              post.ID,
 		Thumbnail:       post.Thumbnail,
 		Title:           post.Title,
-		AreaCategories:  ConvertAreaCategoriesToOutput(post.AreaCategories),
-		ThemeCategories: ConvertThemeCategoriesToOutput(post.ThemeCategories),
-		Creator:         output.NewCreatorFromUser(post.User),
+		AreaCategories:  c.ConvertAreaCategoriesToOutput(post.AreaCategories),
+		ThemeCategories: c.ConvertThemeCategoriesToOutput(post.ThemeCategories),
+		Creator:         c.NewCreatorFromUser(post.User),
 		FavoriteCount:   post.FavoriteCount,
 		Views:           post.Views,
 		HideAds:         post.HideAds,

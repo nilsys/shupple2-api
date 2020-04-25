@@ -15,7 +15,7 @@ import (
 /*
  * o -> i
  */
-func ConvertListRankinUserParamToQuery(param *input.ListUserRanking) *query.FindUserRankingListQuery {
+func (c Converters) ConvertListRankinUserParamToQuery(param *input.ListUserRanking) *query.FindUserRankingListQuery {
 	fromDate, _ := model.ParseTimeFromFrontStr(param.FromDate)
 	toDate, _ := model.ParseTimeFromFrontStr(param.ToDate)
 
@@ -31,7 +31,7 @@ func ConvertListRankinUserParamToQuery(param *input.ListUserRanking) *query.Find
 	}
 }
 
-func ConvertListFollowUserParamToQuery(param *input.ListFollowUser) *query.FindFollowUser {
+func (c Converters) ConvertListFollowUserParamToQuery(param *input.ListFollowUser) *query.FindFollowUser {
 	return &query.FindFollowUser{
 		ID:     param.ID,
 		Limit:  param.GetLimit(),
@@ -39,7 +39,7 @@ func ConvertListFollowUserParamToQuery(param *input.ListFollowUser) *query.FindF
 	}
 }
 
-func ConvertStoreUserParamToEntity(param *input.StoreUser) *entity.User {
+func (c Converters) ConvertStoreUserParamToEntity(param *input.StoreUser) *entity.User {
 	interests := make([]*entity.UserInterest, len(param.Interests))
 	for i, interest := range param.Interests {
 		interests[i] = &entity.UserInterest{InterestID: interest}
@@ -60,7 +60,7 @@ func ConvertStoreUserParamToEntity(param *input.StoreUser) *entity.User {
 	}
 }
 
-func ConvertUpdateUserParamToCmd(param *input.UpdateUser) *command.UpdateUser {
+func (c Converters) ConvertUpdateUserParamToCmd(param *input.UpdateUser) *command.UpdateUser {
 	interests := make([]*entity.UserInterest, len(param.Interests))
 	for i, interest := range param.Interests {
 		interests[i] = &entity.UserInterest{InterestID: interest}
@@ -82,7 +82,7 @@ func ConvertUpdateUserParamToCmd(param *input.UpdateUser) *command.UpdateUser {
 	}
 }
 
-func ConvertListFavoriteMediaUserToQuery(param *input.ListFavoriteMediaUser) *query.FindListPaginationQuery {
+func (c Converters) ConvertListFavoriteMediaUserToQuery(param *input.ListFavoriteMediaUser) *query.FindListPaginationQuery {
 	return &query.FindListPaginationQuery{
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffset(),
@@ -92,35 +92,35 @@ func ConvertListFavoriteMediaUserToQuery(param *input.ListFavoriteMediaUser) *qu
 /*
  * i -> o
  */
-func ConvertUserRankingToOutput(users []*entity.UserDetail) []*output.RankinUser {
+func (c Converters) ConvertUserRankingToOutput(users []*entity.UserDetail) []*output.RankinUser {
 	userRanking := make([]*output.RankinUser, len(users))
 
 	for i, user := range users {
-		userRanking[i] = ConvertUserDetailToOutput(user)
+		userRanking[i] = c.ConvertUserDetailToOutput(user)
 	}
 
 	return userRanking
 }
 
-func ConvertUsersToUserSummaryList(users []*entity.User) []*output.UserSummary {
+func (c Converters) ConvertUsersToUserSummaryList(users []*entity.User) []*output.UserSummary {
 	followUsers := make([]*output.UserSummary, len(users))
 	for i, user := range users {
-		followUsers[i] = convertUserToUserSummary(user)
+		followUsers[i] = c.convertUserToUserSummary(user)
 	}
 	return followUsers
 }
 
-func convertUserToUserSummary(user *entity.User) *output.UserSummary {
+func (c Converters) convertUserToUserSummary(user *entity.User) *output.UserSummary {
 	return &output.UserSummary{
 		ID:      user.ID,
 		UID:     user.UID,
 		Name:    user.Name,
-		IconURL: user.IconURL(),
+		IconURL: user.AvatarURL(c.filesURL()),
 	}
 }
 
 // UserDetailをランキング一覧で返す型にコンバート
-func ConvertUserDetailToOutput(user *entity.UserDetail) *output.RankinUser {
+func (c Converters) ConvertUserDetailToOutput(user *entity.UserDetail) *output.RankinUser {
 	interests := make([]string, len(user.Interests))
 	for i, interest := range user.Interests {
 		interests[i] = interest.Name
@@ -130,12 +130,12 @@ func ConvertUserDetailToOutput(user *entity.UserDetail) *output.RankinUser {
 		ID:        user.ID,
 		Name:      user.Name,
 		Profile:   user.Profile,
-		Thumbnail: user.IconURL(),
+		Thumbnail: user.AvatarURL(c.filesURL()),
 		Interests: interests,
 	}
 }
 
-func ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWithMediaCount) *output.MyPageUser {
+func (c Converters) ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWithMediaCount) *output.MyPageUser {
 	interests := make([]string, len(user.Interests))
 	for i, interest := range user.Interests {
 		interests[i] = interest.Name
@@ -149,8 +149,8 @@ func ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWithMediaCount) *
 		Birthdate:      model.Date(user.Birthdate),
 		Email:          user.Email,
 		Gender:         user.Gender,
-		Icon:           user.IconURL(),
-		Header:         user.HeaderURL(),
+		Icon:           user.AvatarURL(c.filesURL()),
+		Header:         user.HeaderURL(c.filesURL()),
 		Facebook:       user.FacebookURL,
 		Instagram:      user.InstagramURL,
 		Twitter:        user.TwitterURL,
@@ -160,4 +160,11 @@ func ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWithMediaCount) *
 		FollowedCount:  user.FollowerCount,
 		Interests:      interests,
 	}
+}
+
+func (c Converters) NewCreatorFromUser(user *entity.User) output.Creator {
+	return output.NewCreator(
+		user.ID, user.UID, user.AvatarURL(c.filesURL()), user.Name, user.Profile,
+		user.FacebookURL, user.InstagramURL, user.TwitterURL, user.YoutubeURL,
+	)
 }

@@ -5,11 +5,11 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 )
 
-func ConvertListNoticeToOutput(notices []*entity.Notice) *output.NoticeList {
+func (c Converters) ConvertListNoticeToOutput(notices []*entity.Notice) *output.NoticeList {
 	responses := make([]*output.Notice, len(notices))
 	unReadCount := 0
 	for i, notice := range notices {
-		responses[i] = convertNoticeToOutput(notice)
+		responses[i] = c.convertNoticeToOutput(notice)
 		if !notice.IsRead {
 			unReadCount++
 		}
@@ -21,7 +21,7 @@ func ConvertListNoticeToOutput(notices []*entity.Notice) *output.NoticeList {
 	}
 }
 
-func convertNoticeToOutput(notice *entity.Notice) *output.Notice {
-	user := output.NewUserSummary(notice.TriggeredUser.ID, notice.TriggeredUser.UID, notice.TriggeredUser.Name, notice.TriggeredUser.IconURL())
+func (c Converters) convertNoticeToOutput(notice *entity.Notice) *output.Notice {
+	user := output.NewUserSummary(notice.TriggeredUser.ID, notice.TriggeredUser.UID, notice.TriggeredUser.Name, notice.TriggeredUser.AvatarURL(c.filesURL()))
 	return output.NewNotice(user, &notice.ActionType, &notice.ActionTargetType, notice.ActionTargetID, notice.IsRead)
 }

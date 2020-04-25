@@ -9,7 +9,7 @@ import (
 )
 
 // i/oの構造体からレポジトリで使用するクエリ構造体へconvert
-func ConvertListVlogParamToQuery(param *input.ListVlogParam) *query.FindVlogListQuery {
+func (c Converters) ConvertListVlogParamToQuery(param *input.ListVlogParam) *query.FindVlogListQuery {
 	return &query.FindVlogListQuery{
 		AreaID:        param.AreaID,
 		SubAreaID:     param.SubAreaID,
@@ -22,11 +22,11 @@ func ConvertListVlogParamToQuery(param *input.ListVlogParam) *query.FindVlogList
 	}
 }
 
-func ConvertVlogListToOutput(queryVlogs *entity.VlogList) output.VlogList {
+func (c Converters) ConvertVlogListToOutput(queryVlogs *entity.VlogList) output.VlogList {
 	responseVlogs := make([]*output.Vlog, len(queryVlogs.Vlogs))
 
 	for i, queryVlog := range queryVlogs.Vlogs {
-		responseVlogs[i] = convertVlogToOutput(queryVlog)
+		responseVlogs[i] = c.convertVlogToOutput(queryVlog)
 	}
 
 	return output.VlogList{
@@ -35,7 +35,7 @@ func ConvertVlogListToOutput(queryVlogs *entity.VlogList) output.VlogList {
 	}
 }
 
-func ConvertVlogDetail(vlog *entity.VlogDetail) *output.VlogDetail {
+func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail) *output.VlogDetail {
 	touristSpots := make([]*output.TouristSpot, len(vlog.TouristSpots))
 	for i, touristSpot := range vlog.TouristSpots {
 		touristSpots[i] = output.NewTouristSpots(touristSpot.ID, touristSpot.Name, touristSpot.Thumbnail)
@@ -43,7 +43,7 @@ func ConvertVlogDetail(vlog *entity.VlogDetail) *output.VlogDetail {
 
 	editors := make([]*output.Creator, len(vlog.Editors))
 	for i, editor := range vlog.Editors {
-		e := output.NewCreatorFromUser(editor)
+		e := c.NewCreatorFromUser(editor)
 		editors[i] = &e
 	}
 
@@ -61,20 +61,20 @@ func ConvertVlogDetail(vlog *entity.VlogDetail) *output.VlogDetail {
 		FacebookCount:   vlog.FacebookCount,
 		TwitterCount:    vlog.TwitterCount,
 		Editors:         editors,
-		AreaCategories:  ConvertAreaCategoriesToOutput(vlog.AreaCategories),
-		ThemeCategories: ConvertThemeCategoriesToOutput(vlog.ThemeCategories),
+		AreaCategories:  c.ConvertAreaCategoriesToOutput(vlog.AreaCategories),
+		ThemeCategories: c.ConvertThemeCategoriesToOutput(vlog.ThemeCategories),
 		TouristSpot:     touristSpots,
 		CreatedAt:       model.TimeResponse(vlog.CreatedAt),
 		UpdatedAt:       model.TimeResponse(vlog.UpdatedAt),
 	}
 }
 
-func convertVlogToOutput(queryVlog *entity.VlogForList) *output.Vlog {
+func (c Converters) convertVlogToOutput(queryVlog *entity.VlogForList) *output.Vlog {
 	return &output.Vlog{
 		ID:              queryVlog.ID,
 		Thumbnail:       queryVlog.Thumbnail,
-		AreaCategories:  ConvertAreaCategoriesToOutput(queryVlog.AreaCategories),
-		ThemeCategories: ConvertThemeCategoriesToOutput(queryVlog.ThemeCategories),
+		AreaCategories:  c.ConvertAreaCategoriesToOutput(queryVlog.AreaCategories),
+		ThemeCategories: c.ConvertThemeCategoriesToOutput(queryVlog.ThemeCategories),
 		Title:           queryVlog.VlogTiny.Title,
 	}
 }

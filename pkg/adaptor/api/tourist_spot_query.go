@@ -12,6 +12,7 @@ import (
 )
 
 type TouristSpotQueryController struct {
+	converter.Converters
 	service.TouristSpotQueryService
 }
 
@@ -30,7 +31,7 @@ func (c *TouristSpotQueryController) Show(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to get tourist_spot")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertQueryTouristSpotToOutput(touristSpot))
+	return ctx.JSON(http.StatusOK, c.ConvertQueryTouristSpotToOutput(touristSpot))
 }
 
 func (c *TouristSpotQueryController) ListTouristSpot(ctx echo.Context) error {
@@ -39,14 +40,14 @@ func (c *TouristSpotQueryController) ListTouristSpot(ctx echo.Context) error {
 		return errors.Wrap(err, "validation list tourist_spot parameter")
 	}
 
-	q := converter.ConvertTouristSpotListParamToQuery(p)
+	q := c.ConvertTouristSpotListParamToQuery(p)
 
 	touristSpots, err := c.TouristSpotQueryService.List(q)
 	if err != nil {
 		return errors.Wrap(err, "failed to get tourist_spot list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertTouristSpotToOutput(touristSpots))
+	return ctx.JSON(http.StatusOK, c.ConvertTouristSpotToOutput(touristSpots))
 }
 
 func (c *TouristSpotQueryController) ListRecommendTouristSpot(ctx echo.Context) error {
@@ -55,12 +56,12 @@ func (c *TouristSpotQueryController) ListRecommendTouristSpot(ctx echo.Context) 
 		return errors.Wrap(err, "validation recommend list tourist_spot")
 	}
 
-	q := converter.ConvertRecommendTouristSpotListParamToQuery(p)
+	q := c.ConvertRecommendTouristSpotListParamToQuery(p)
 
 	touristSpots, err := c.TouristSpotQueryService.ListRecommend(q)
 	if err != nil {
 		return errors.Wrap(err, "failed to get recommend tourist_spot list")
 	}
 
-	return ctx.JSON(http.StatusOK, converter.ConvertTouristSpotToOutput(touristSpots))
+	return ctx.JSON(http.StatusOK, c.ConvertTouristSpotToOutput(touristSpots))
 }
