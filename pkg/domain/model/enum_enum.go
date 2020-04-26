@@ -134,17 +134,20 @@ func (x *AreaCategoryType) UnmarshalText(text []byte) error {
 }
 
 const (
+	// AreaGroupUndefined is a AreaGroup of type Undefined
+	AreaGroupUndefined AreaGroup = iota
 	// AreaGroupJapan is a AreaGroup of type Japan
-	AreaGroupJapan AreaGroup = iota + 1
+	AreaGroupJapan
 	// AreaGroupWorld is a AreaGroup of type World
 	AreaGroupWorld
 )
 
-const _AreaGroupName = "japanworld"
+const _AreaGroupName = "UndefinedJapanWorld"
 
 var _AreaGroupMap = map[AreaGroup]string{
-	1: _AreaGroupName[0:5],
-	2: _AreaGroupName[5:10],
+	0: _AreaGroupName[0:9],
+	1: _AreaGroupName[9:14],
+	2: _AreaGroupName[14:19],
 }
 
 // String implements the Stringer interface.
@@ -156,8 +159,9 @@ func (x AreaGroup) String() string {
 }
 
 var _AreaGroupValue = map[string]AreaGroup{
-	_AreaGroupName[0:5]:  1,
-	_AreaGroupName[5:10]: 2,
+	_AreaGroupName[0:9]:   0,
+	_AreaGroupName[9:14]:  1,
+	_AreaGroupName[14:19]: 2,
 }
 
 // ParseAreaGroup attempts to convert a string to a AreaGroup

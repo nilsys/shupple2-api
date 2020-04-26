@@ -1539,7 +1539,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Category"
+                $ref: "#/components/schemas/CategoryForSlug"
   /areas:
     get:
       tags:
@@ -2991,6 +2991,34 @@ components:
           example: hokkaido
         type:
           type: string
+    CategoryForSlug:
+      type: object
+      required:
+        - id
+        - name
+        - slug
+        - type
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        name:
+          type: string
+          description: カテゴリ名
+          example: 北海道
+        slug:
+          type: string
+          description: スラッグ
+          example: hokkaido
+        type:
+          type: string
+        areaGroup:
+          type: string
+          enum:
+            - Undefined
+            - Japan
+            - World
     AreaCategoryList:
       type: array
       items:

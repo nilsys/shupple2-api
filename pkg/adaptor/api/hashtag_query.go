@@ -31,5 +31,5 @@ func (c *HashtagQueryController) ListRecommendHashtag(ctx echo.Context) error {
 		return errors.Wrap(err, "failed show recommend hashtags")
 	}
 
-	return ctx.JSON(http.StatusOK, recommendHashTags)
+	return ctx.JSON(http.StatusOK, c.ConvertHashtagListToOutput(recommendHashTags))
 }

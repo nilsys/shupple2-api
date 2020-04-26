@@ -33,7 +33,7 @@ ENUM(BUISINESS = 1, COUPLE, FAMILY, FRIEND, ONLY, WITHCHILD)
 type AccompanyingType int
 
 /*
-ENUM(japan = 1, world=2)
+ENUM(Undefined, Japan, World)
 */
 type AreaGroup int
 

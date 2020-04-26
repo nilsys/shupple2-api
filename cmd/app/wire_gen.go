@@ -445,6 +445,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		TransactionService:      transactionServiceImpl,
 	}
 	noticeQueryController := api.NoticeQueryController{
+		Converters:         converters,
 		NoticeQueryService: noticeQueryServiceImpl,
 	}
 	slack := configConfig.Slack

@@ -3,10 +3,11 @@ package converter
 import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/output"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
 
-func (c Converters) ConvertCategoryToOutput(category entity.Category) *output.Category {
-	return output.NewCategory(category.CategoryID(), category.CategoryName(), category.CategoryType(), category.CategorySlug())
+func (c Converters) ConvertCategoryToOutput(category entity.Category, group model.AreaGroup) *output.Category {
+	return output.NewCategory(category.CategoryID(), category.CategoryName(), category.CategoryType(), category.CategorySlug(), group)
 }
 
 func (c Converters) ConvertAreaCategoryToOutput(areaCategory *entity.AreaCategory) *output.AreaCategory {

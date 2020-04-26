@@ -31,10 +31,10 @@ func (c *CategoryQueryController) ShowBySlug(ctx echo.Context) error {
 		return errors.Wrap(err, "validation show by slug parameter")
 	}
 
-	category, err := c.CategoryQueryService.ShowBySlug(p.Slug)
+	category, areaGroup, err := c.CategoryQueryService.ShowBySlug(p.Slug)
 	if err != nil {
 		return errors.Wrap(err, "failed to show by slug")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertCategoryToOutput(category))
+	return ctx.JSON(http.StatusOK, c.ConvertCategoryToOutput(category, areaGroup))
 }

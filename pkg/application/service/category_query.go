@@ -4,13 +4,14 @@ import (
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
 type (
 	CategoryQueryService interface {
-		ShowBySlug(slug string) (entity.Category, error)
+		ShowBySlug(slug string) (entity.Category, model.AreaGroup, error)
 	}
 
 	CategoryQueryServiceImpl struct {
@@ -24,27 +25,19 @@ var CategoryQueryServiceSet = wire.NewSet(
 	wire.Struct(new(CategoryQueryServiceImpl), "*"), wire.Bind(new(CategoryQueryService), new(*CategoryQueryServiceImpl)),
 )
 
-func (r *CategoryQueryServiceImpl) ShowBySlug(slug string) (entity.Category, error) {
+func (r *CategoryQueryServiceImpl) ShowBySlug(slug string) (entity.Category, model.AreaGroup, error) {
 	areaCategory, err := r.AreaCategoryRepository.FindBySlug(slug)
 	if err != nil && serror.IsErrorCode(err, serror.CodeNotFound) {
-		return nil, errors.Wrap(err, "failed to find area category by slug")
+		return nil, model.AreaGroupUndefined, errors.Wrap(err, "failed to find area category by slug")
 	}
 	if areaCategory != nil {
-		return areaCategory, nil
+		return areaCategory, areaCategory.AreaGroup, nil
 	}
 
 	themeCategory, err := r.ThemeCategoryRepository.FindBySlug(slug)
 	if err != nil && serror.IsErrorCode(err, serror.CodeNotFound) {
-		return nil, errors.Wrap(err, "failed to find theme category by slug")
-	}
-	if themeCategory != nil {
-		return themeCategory, nil
+		return nil, model.AreaGroupUndefined, errors.Wrap(err, "failed to find theme category by slug")
 	}
 
-	spotCategory, err := r.AreaCategoryRepository.FindBySlug(slug)
-	if err != nil && serror.IsErrorCode(err, serror.CodeNotFound) {
-		return nil, errors.Wrap(err, "failed to find spotCategory by slug")
-	}
-
-	return spotCategory, nil
+	return themeCategory, model.AreaGroupUndefined, nil
 }

@@ -4,10 +4,11 @@ import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 
 type (
 	Category struct {
-		ID   int    `json:"id"`
-		Name string `json:"name"`
-		Slug string `json:"slug"`
-		Type string `json:"type"`
+		ID        int             `json:"id"`
+		Name      string          `json:"name"`
+		Slug      string          `json:"slug"`
+		Type      string          `json:"type"`
+		AreaGroup model.AreaGroup `json:"areaGroup"`
 	}
 
 	AreaCategory struct {
@@ -42,12 +43,13 @@ type (
 	}
 )
 
-func NewCategory(id int, name, categoryType, slug string) *Category {
+func NewCategory(id int, name, categoryType, slug string, group model.AreaGroup) *Category {
 	return &Category{
-		ID:   id,
-		Name: name,
-		Slug: slug,
-		Type: categoryType,
+		ID:        id,
+		Name:      name,
+		Slug:      slug,
+		Type:      categoryType,
+		AreaGroup: group,
 	}
 }
 
