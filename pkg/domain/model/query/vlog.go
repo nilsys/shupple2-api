@@ -9,6 +9,7 @@ type (
 		SubAreaID     int
 		SubSubAreaID  int
 		TouristSpotID int
+		UserID        int
 		SortBy        model.MediaSortBy
 		Keyward       string
 		Limit         int

@@ -15,6 +15,7 @@ func (c Converters) ConvertListVlogParamToQuery(param *input.ListVlogParam) *que
 		SubAreaID:     param.SubAreaID,
 		SubSubAreaID:  param.SubSubAreaID,
 		TouristSpotID: param.TouristSpotID,
+		UserID:        param.UserID,
 		SortBy:        param.SortBy,
 		Keyward:       param.Keyward,
 		Limit:         param.GetLimit(),

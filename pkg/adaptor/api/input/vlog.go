@@ -16,6 +16,7 @@ type (
 		SubAreaID     int               `query:"subAreaId"`
 		SubSubAreaID  int               `query:"subSubAreaId"`
 		TouristSpotID int               `query:"touristSpotId"`
+		UserID        int               `query:"userId"`
 		SortBy        model.MediaSortBy `query:"sortBy"`
 		Keyward       string            `query:"q"`
 		Page          int               `query:"page"`
@@ -27,7 +28,7 @@ const listVlogDefaultPerPage = 10
 
 // いずれのクエリも飛んでこない場合 or sortの値が期待値以外の場合エラーを返す
 func (param ListVlogParam) Validate() error {
-	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.TouristSpotID == 0 && param.Keyward == "" && param.SortBy == 0 {
+	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.TouristSpotID == 0 && param.UserID == 0 && param.Keyward == "" && param.SortBy == 0 {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid show vlog list input")
 	}
 

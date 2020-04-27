@@ -86,6 +86,10 @@ func (r *VlogQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindVlogLi
 		q = q.Where("id IN (SELECT vlog_id FROM vlog_tourist_spot WHERE tourist_spot_id = ?)", query.TouristSpotID)
 	}
 
+	if query.UserID != 0 {
+		q = q.Where("user_id = ?", query.UserID)
+	}
+
 	// TODO: titleに引っかかる物が優先順位が高い、その後body
 	if query.Keyward != "" {
 		q = q.Where("MATCH(title) AGAINST(?)", query.Keyward).Or("MATCH(body) AGAINST(?)", query.Keyward)
