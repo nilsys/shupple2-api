@@ -53,10 +53,10 @@ func (s *Script) touristSpotFromCsv(filepath string) []touristSpot {
 
 func geoCodeToLng(str string) float64 {
 	items := strings.Split(str, ",")
-	if len(items) == 0 {
+	if len(items) < 2 {
 		return 0.0
 	}
-	lng, _ := strconv.ParseFloat(items[0], 64)
+	lng, _ := strconv.ParseFloat(items[1], 64)
 	return math.Round(lng*10000) / 10000
 }
 
@@ -65,6 +65,6 @@ func geoCodeToLat(str string) float64 {
 	if len(items) < 2 {
 		return 0.0
 	}
-	lat, _ := strconv.ParseFloat(items[1], 64)
+	lat, _ := strconv.ParseFloat(items[0], 64)
 	return math.Round(lat*10000) / 10000
 }

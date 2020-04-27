@@ -63,7 +63,7 @@ func (s Script) importVendorRate(touristSpots []*entity.TouristSpot, touristSpot
 			continue
 		}
 		for _, touristSpot := range touristSpots {
-			if math.Round(touristSpot.Lng.Float64*10000)/10000 == touristSpotFromCsv.Lng && math.Round(touristSpot.Lat.Float64*10000)/10000 == touristSpotFromCsv.Lat {
+			if math.Round(touristSpot.Lng.Float64*10000)/10000 == math.Round(touristSpotFromCsv.Lng*10000)/10000 && math.Round(touristSpot.Lat.Float64*10000)/10000 == math.Round(touristSpotFromCsv.Lat*10000)/10000 {
 				if err := s.DB.Exec("UPDATE tourist_spot SET vendor_rate = ? WHERE id = ?;", touristSpotFromCsv.Rate, touristSpot.ID).Error; err != nil {
 					log.Fatal(err)
 				}
