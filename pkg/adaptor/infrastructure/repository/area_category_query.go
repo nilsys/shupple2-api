@@ -13,7 +13,7 @@ type AreaCategoryQueryRepositoryImpl struct {
 	DB *gorm.DB
 }
 
-const sortOrder = "sort_order DESC"
+const sortOrder = "sort_order ASC"
 
 var AreaCategoryQueryRepositorySet = wire.NewSet(
 	wire.Struct(new(AreaCategoryQueryRepositoryImpl), "*"),
