@@ -10,9 +10,9 @@ import (
 
 type (
 	AreaQueryService interface {
-		ListAreaByParams(areaGroupID model.AreaGroup, limit int, excludeID []int) ([]*entity.AreaCategory, error)
-		ListSubAreaByParams(areaID int, limit int, excludeID []int) ([]*entity.AreaCategory, error)
-		ListSubSubAreaByParams(subAreaID int, limit int, excludeID []int) ([]*entity.AreaCategory, error)
+		ListAreaByParams(areaGroupID model.AreaGroup, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
+		ListSubAreaByParams(areaID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
+		ListSubSubAreaByParams(subAreaID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
 
 		ShowAreaByID(id int) (*entity.AreaCategoryDetail, error)
 		ShowSubAreaByID(id int) (*entity.AreaCategoryDetail, error)
@@ -29,7 +29,7 @@ var AreaCategoryQueryServiceSet = wire.NewSet(
 	wire.Bind(new(AreaQueryService), new(*AreaQueryServiceImpl)),
 )
 
-func (r *AreaQueryServiceImpl) ListAreaByParams(areaGroup model.AreaGroup, limit int, excludeID []int) ([]*entity.AreaCategory, error) {
+func (r *AreaQueryServiceImpl) ListAreaByParams(areaGroup model.AreaGroup, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
 	areaCategories, err := r.Repository.FindAreaListByAreaGroup(areaGroup, limit, excludeID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to list area")
@@ -37,7 +37,7 @@ func (r *AreaQueryServiceImpl) ListAreaByParams(areaGroup model.AreaGroup, limit
 	return areaCategories, nil
 }
 
-func (r *AreaQueryServiceImpl) ListSubAreaByParams(areaID int, limit int, excludeID []int) ([]*entity.AreaCategory, error) {
+func (r *AreaQueryServiceImpl) ListSubAreaByParams(areaID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
 	areaCategories, err := r.Repository.FindSubAreaListByAreaID(areaID, limit, excludeID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to list sub area")
@@ -45,7 +45,7 @@ func (r *AreaQueryServiceImpl) ListSubAreaByParams(areaID int, limit int, exclud
 	return areaCategories, nil
 }
 
-func (r *AreaQueryServiceImpl) ListSubSubAreaByParams(subAreaID int, limit int, excludeID []int) ([]*entity.AreaCategory, error) {
+func (r *AreaQueryServiceImpl) ListSubSubAreaByParams(subAreaID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
 	areaCategories, err := r.Repository.FindSubSubAreaListBySubAreaID(subAreaID, limit, excludeID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to list sub sub area")

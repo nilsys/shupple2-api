@@ -20,9 +20,9 @@ type (
 		FindBySlug(slug string) (*entity.AreaCategory, error)
 		FindByIDs(ids []int) ([]*entity.AreaCategory, error)
 
-		FindAreaListByAreaGroup(areaGroup model.AreaGroup, limit int, excludeID []int) ([]*entity.AreaCategory, error)
-		FindSubAreaListByAreaID(areaID, limit int, excludeID []int) ([]*entity.AreaCategory, error)
-		FindSubSubAreaListBySubAreaID(subAreaID, limit int, excludeID []int) ([]*entity.AreaCategory, error)
+		FindAreaListByAreaGroup(areaGroup model.AreaGroup, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
+		FindSubAreaListByAreaID(areaID, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
+		FindSubSubAreaListBySubAreaID(subAreaID, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
 
 		// FindByTouristSpotID(touristSpotID int) ([]*entity.AreaCategory, error)
 		// FindByMetaSearchID(innAreaTypeIDs *entity.InnAreaTypeIDs) ([]*entity.AreaCategory, error)

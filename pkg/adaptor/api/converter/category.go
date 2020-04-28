@@ -66,20 +66,38 @@ func (c Converters) ConvertAreaCategoryDetailToOutput(areaCategoryDetail *entity
 	}
 }
 
-func (c Converters) ConvertThemeCategoryWithPostCountToOutput(themeCategory *entity.ThemeCategoryWithPostCount) *output.ThemeCategory {
-	return &output.ThemeCategory{
-		ID:        themeCategory.ID,
-		Name:      themeCategory.Name,
-		Slug:      themeCategory.Slug,
-		Type:      themeCategory.Type,
+func (c Converters) ConvertThemeCategoryWithPostCountToOutput(themeCategory *entity.ThemeCategoryWithPostCount) *output.ThemeCategoryWithPostCount {
+	return &output.ThemeCategoryWithPostCount{
+		ThemeCategory: output.ThemeCategory{
+			ID:   themeCategory.ID,
+			Name: themeCategory.Name,
+			Slug: themeCategory.Slug,
+			Type: themeCategory.Type,
+		},
 		PostCount: themeCategory.PostCount,
 	}
 }
 
-func (c Converters) ConvertThemeCategoriesWithPostCountToOutput(themeCategories []*entity.ThemeCategoryWithPostCount) []*output.ThemeCategory {
-	var resp = make([]*output.ThemeCategory, len(themeCategories))
+func (c Converters) ConvertThemeCategoriesWithPostCountToOutput(themeCategories []*entity.ThemeCategoryWithPostCount) []*output.ThemeCategoryWithPostCount {
+	var resp = make([]*output.ThemeCategoryWithPostCount, len(themeCategories))
 	for i, themeCategory := range themeCategories {
 		resp[i] = c.ConvertThemeCategoryWithPostCountToOutput(themeCategory)
+	}
+
+	return resp
+}
+
+func (c Converters) ConvertAreaCategoryWithPostCountToOutput(areaCategory *entity.AreaCategoryWithPostCount) *output.AreaCategoryWithPostCount {
+	return &output.AreaCategoryWithPostCount{
+		AreaCategory: *c.ConvertAreaCategoryToOutput(&areaCategory.AreaCategory),
+		PostCount:    areaCategory.PostCount,
+	}
+}
+
+func (c Converters) ConvertAreaCategoriesWithPostCountToOutput(areaCategories []*entity.AreaCategoryWithPostCount) []*output.AreaCategoryWithPostCount {
+	var resp = make([]*output.AreaCategoryWithPostCount, len(areaCategories))
+	for i, areaCategory := range areaCategories {
+		resp[i] = c.ConvertAreaCategoryWithPostCountToOutput(areaCategory)
 	}
 
 	return resp

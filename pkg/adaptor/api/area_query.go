@@ -48,7 +48,7 @@ func (c *AreaQueryController) ListArea(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to get areaCategories")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertAreaCategoriesToOutput(areaCategories))
+	return ctx.JSON(http.StatusOK, c.ConvertAreaCategoriesWithPostCountToOutput(areaCategories))
 }
 
 // IDに紐づくAreaを返す
@@ -78,7 +78,7 @@ func (c *AreaQueryController) ListSubArea(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to get areaCategories")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertAreaCategoriesToOutput(areaCategories))
+	return ctx.JSON(http.StatusOK, c.ConvertAreaCategoriesWithPostCountToOutput(areaCategories))
 }
 
 // IDに紐づくSubAreaを返す
@@ -108,7 +108,7 @@ func (c *AreaQueryController) ListSubSubArea(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to get areaCategories")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertAreaCategoriesToOutput(areaCategories))
+	return ctx.JSON(http.StatusOK, c.ConvertAreaCategoriesWithPostCountToOutput(areaCategories))
 }
 
 func (c *AreaQueryController) ShowSubSubAreaByID(ctx echo.Context) error {

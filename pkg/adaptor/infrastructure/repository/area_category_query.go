@@ -86,33 +86,72 @@ func (r *AreaCategoryQueryRepositoryImpl) FindByIDs(ids []int) ([]*entity.AreaCa
 	return areaCategories, nil
 }
 
-func (r *AreaCategoryQueryRepositoryImpl) FindAreaListByAreaGroup(areaGroup model.AreaGroup, limit int, excludeID []int) ([]*entity.AreaCategory, error) {
-	var rows []*entity.AreaCategory
+func (r *AreaCategoryQueryRepositoryImpl) FindAreaListByAreaGroup(areaGroup model.AreaGroup, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
+	var rows []*entity.AreaCategoryWithPostCount
 	q := r.buildQueryByLimitAndExcludeID(limit, excludeID)
 
-	if err := q.Where("area_group = ? AND type = ?", areaGroup, model.AreaCategoryTypeArea).Order(sortOrder).Find(&rows).Error; err != nil {
+	/*
+		SELECT area_category.*, count(pac.post_id) as post_count
+		FROM `area_category`
+		LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id
+		WHERE (area_group = 'japan' AND type = 'Area')
+		GROUP BY area_category.id
+		ORDER BY post_count DESC LIMIT 1000
+	*/
+	if err := q.
+		Select("area_category.*, count(pac.post_id) as post_count").
+		Joins("LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id").
+		Where("area_group = ? AND type = ?", areaGroup, model.AreaCategoryTypeArea).
+		Group("area_category.id").Order("post_count DESC").
+		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to area list by areaGroup= %s", areaGroup)
 	}
 
 	return rows, nil
 }
 
-func (r *AreaCategoryQueryRepositoryImpl) FindSubAreaListByAreaID(areaID int, limit int, excludeID []int) ([]*entity.AreaCategory, error) {
-	var rows []*entity.AreaCategory
+func (r *AreaCategoryQueryRepositoryImpl) FindSubAreaListByAreaID(areaID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
+	var rows []*entity.AreaCategoryWithPostCount
 	q := r.buildQueryByLimitAndExcludeID(limit, excludeID)
 
-	if err := q.Where("area_id = ? AND type = ?", areaID, model.AreaCategoryTypeSubArea).Order(sortOrder).Find(&rows).Error; err != nil {
+	/*
+		SELECT area_category.*, count(pac.post_id) as post_count
+		FROM `area_category`
+		LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id
+		WHERE (area_id = '1' AND type = 'SubArea')
+		GROUP BY area_category.id
+		ORDER BY post_count DESC LIMIT 1000
+	*/
+	if err := q.
+		Select("area_category.*, count(pac.post_id) as post_count").
+		Joins("LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id").
+		Where("area_id = ? AND type = ?", areaID, model.AreaCategoryTypeSubArea).
+		Group("area_category.id").Order("post_count DESC").
+		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to sub_area list by area_id = %d", areaID)
 	}
 
 	return rows, nil
 }
 
-func (r *AreaCategoryQueryRepositoryImpl) FindSubSubAreaListBySubAreaID(subAreaID int, limit int, excludeID []int) ([]*entity.AreaCategory, error) {
-	var rows []*entity.AreaCategory
+func (r *AreaCategoryQueryRepositoryImpl) FindSubSubAreaListBySubAreaID(subAreaID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
+	var rows []*entity.AreaCategoryWithPostCount
 	q := r.buildQueryByLimitAndExcludeID(limit, excludeID)
 
-	if err := q.Where("sub_area_id = ? AND type = ?", subAreaID, model.AreaCategoryTypeSubSubArea).Order(sortOrder).Find(&rows).Error; err != nil {
+	/*
+		SELECT area_category.*, count(pac.post_id) as post_count
+		FROM `area_category`
+		LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id
+		WHERE (sub_area_id = '1' AND type = 'SubSubArea')
+		GROUP BY area_category.id
+		ORDER BY post_count DESC LIMIT 1000
+	*/
+	if err := q.
+		Select("area_category.*, count(pac.post_id) as post_count").
+		Joins("LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id").
+		Where("sub_area_id = ? AND type = ?", subAreaID, model.AreaCategoryTypeSubSubArea).
+		Group("area_category.id").Order("post_count DESC").
+		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to sub_sub_area list by sub_area_id = %d", subAreaID)
 	}
 

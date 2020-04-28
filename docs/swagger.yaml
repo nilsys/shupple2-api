@@ -2965,10 +2965,6 @@ components:
           type: string
           description: youtubeのurl
           example: https://www.youtube.com/channel/L2pzA7wzUluismTWYbmvlEeD
-    CategoryList:
-      type: array
-      items:
-        $ref: "#/components/schemas/Category"
     Category:
       type: object
       required:
@@ -3022,7 +3018,7 @@ components:
     AreaCategoryList:
       type: array
       items:
-        $ref: "#/components/schemas/AreaCategory"
+        $ref: "#/components/schemas/AreaCategoryWithPostCount"
     AreaCategorySummary:
       type: object
       required:
@@ -3067,6 +3063,10 @@ components:
           type: string
           description: カテゴリ名
           example: 北海道
+        slug:
+          type: string
+          description: スラッグ
+          example: hokkaido
         type:
           type: string
           enum:
@@ -3074,6 +3074,36 @@ components:
             - Area
             - SubArea
             - SubSubArea
+    AreaCategoryWithPostCount:
+      type: object
+      required:
+        - id
+        - name
+        - type
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        name:
+          type: string
+          description: カテゴリ名
+          example: 北海道
+        slug:
+          type: string
+          description: スラッグ
+          example: hokkaido
+        type:
+          type: string
+          enum:
+            - Undefined
+            - Area
+            - SubArea
+            - SubSubArea
+        postCount:
+          type: integer
+          description: 記事数
+          example: 3
     ThemeCategoryList:
       type: array
       items:
@@ -3099,6 +3129,10 @@ components:
             - Undefined
             - Theme
             - SubTheme
+        postCount:
+          type: integer
+          description: 記事数
+          example: 3
     RankingUserList:
       type: array
       items:

@@ -19,11 +19,15 @@ type (
 	}
 
 	ThemeCategory struct {
-		ID        int                     `json:"id"`
-		Name      string                  `json:"name"`
-		Slug      string                  `json:"slug"`
-		Type      model.ThemeCategoryType `json:"type"`
-		PostCount int                     `json:"post_count"`
+		ID   int                     `json:"id"`
+		Name string                  `json:"name"`
+		Slug string                  `json:"slug"`
+		Type model.ThemeCategoryType `json:"type"`
+	}
+
+	ThemeCategoryWithPostCount struct {
+		ThemeCategory
+		PostCount int `json:"post_count"`
 	}
 
 	SpotCategory struct {
@@ -40,6 +44,11 @@ type (
 		Area       *AreaCategory          `json:"area"`
 		SubArea    *AreaCategory          `json:"subArea,omitempty"`
 		SubSubArea *AreaCategory          `json:"subSubArea,omitempty"`
+	}
+
+	AreaCategoryWithPostCount struct {
+		AreaCategory
+		PostCount int `json:"post_count"`
 	}
 )
 

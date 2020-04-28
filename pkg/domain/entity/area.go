@@ -34,6 +34,11 @@ type (
 		SubArea    *AreaCategory
 		SubSubArea *AreaCategory
 	}
+
+	AreaCategoryWithPostCount struct {
+		AreaCategory
+		PostCount int
+	}
 )
 
 func (ac AreaCategory) CategoryType() string {
@@ -50,4 +55,8 @@ func (acd *AreaCategoryDetail) SetSubArea(subArea *AreaCategory) {
 
 func (acd *AreaCategoryDetail) SetSubSubArea(subSubArea *AreaCategory) {
 	acd.SubSubArea = subSubArea
+}
+
+func (acwpc *AreaCategoryWithPostCount) TableName() string {
+	return "area_category"
 }
