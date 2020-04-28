@@ -102,7 +102,7 @@ func (r *AreaCategoryQueryRepositoryImpl) FindAreaListByAreaGroup(areaGroup mode
 		Select("area_category.*, count(pac.post_id) as post_count").
 		Joins("LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id").
 		Where("area_group = ? AND type = ?", areaGroup, model.AreaCategoryTypeArea).
-		Group("area_category.id").Order("post_count DESC").
+		Group("area_category.id").Order(sortOrder).Order("post_count DESC").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to area list by areaGroup= %s", areaGroup)
 	}
@@ -126,7 +126,7 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubAreaListByAreaID(areaID int, li
 		Select("area_category.*, count(pac.post_id) as post_count").
 		Joins("LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id").
 		Where("area_id = ? AND type = ?", areaID, model.AreaCategoryTypeSubArea).
-		Group("area_category.id").Order("post_count DESC").
+		Group("area_category.id").Order(sortOrder).Order("post_count DESC").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to sub_area list by area_id = %d", areaID)
 	}
@@ -150,7 +150,7 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubSubAreaListBySubAreaID(subAreaI
 		Select("area_category.*, count(pac.post_id) as post_count").
 		Joins("LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id").
 		Where("sub_area_id = ? AND type = ?", subAreaID, model.AreaCategoryTypeSubSubArea).
-		Group("area_category.id").Order("post_count DESC").
+		Group("area_category.id").Order(sortOrder).Order("post_count DESC").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to sub_sub_area list by sub_area_id = %d", subAreaID)
 	}
