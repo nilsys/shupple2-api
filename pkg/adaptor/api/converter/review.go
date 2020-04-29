@@ -23,6 +23,8 @@ func (c Converters) ConvertFindReviewListParamToQuery(param *input.ListReviewPar
 		MetasearchSubAreaID:    param.MetasearchSubAreaID,
 		MetasearchSubSubAreaID: param.MetasearchSubSubAreaID,
 		SortBy:                 param.SortBy,
+		Keyward:                param.Keyward,
+		ExcludeID:              param.ExcludeID,
 		Limit:                  param.GetLimit(),
 		OffSet:                 param.GetOffset(),
 	}
@@ -77,12 +79,15 @@ func (c Converters) ConvertQueryReviewListToOutput(queryReviews []*entity.Review
 	return outputs
 }
 
-func (c Converters) ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews []*entity.ReviewDetailWithIsFavorite) []*output.Review {
-	responses := make([]*output.Review, len(reviews))
-	for i, queryReview := range reviews {
+func (c Converters) ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews *entity.ReviewDetailWithIsFavoriteList) output.ReviewDetailIsFavoriteList {
+	responses := make([]*output.Review, len(reviews.Reviews))
+	for i, queryReview := range reviews.Reviews {
 		responses[i] = c.ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview)
 	}
-	return responses
+	return output.ReviewDetailIsFavoriteList{
+		TotalNumber: reviews.TotalNumber,
+		Reviews:     reviews.Reviews,
+	}
 }
 
 func (c Converters) ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview *entity.ReviewDetailWithIsFavorite) *output.Review {

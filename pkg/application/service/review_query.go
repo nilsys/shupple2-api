@@ -13,7 +13,7 @@ import (
 type (
 	// Review参照系サービス
 	ReviewQueryService interface {
-		ShowReviewListByParams(query *query.ShowReviewListQuery, ouser entity.OptionalUser) ([]*entity.ReviewDetailWithIsFavorite, error)
+		ShowReviewListByParams(query *query.ShowReviewListQuery, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavoriteList, error)
 		ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error)
 		ShowQueryReview(id int, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavorite, error)
 		ShowReview(id int) (*entity.Review, error)
@@ -37,7 +37,7 @@ var ReviewQueryServiceSet = wire.NewSet(
 
 // TODO: リファクタ
 // クエリで飛んで来た検索条件を用いreviewを検索
-func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewListQuery, ouser entity.OptionalUser) ([]*entity.ReviewDetailWithIsFavorite, error) {
+func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewListQuery, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavoriteList, error) {
 	var metasearchAreaID int
 	var metasearchSubAreaID int
 	var metasearchSubSubAreaID int

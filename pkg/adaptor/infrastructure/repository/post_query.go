@@ -156,7 +156,7 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 	q := r.DB
 
 	if query.UserID != 0 {
-		q = q.Where("user_id = ?", query.UserID)
+		q = q.Where("post.user_id = ?", query.UserID)
 	}
 
 	if query.AreaID != 0 {

@@ -405,9 +405,14 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Review"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  reviews:
+                    $ref: "#/components/schemas/Review"
     post:
       tags:
         - review

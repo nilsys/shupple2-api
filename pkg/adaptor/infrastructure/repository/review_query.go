@@ -24,8 +24,8 @@ var ReviewQueryRepositorySet = wire.NewSet(
 )
 
 // パスパラメータで飛んで来た検索条件を用いreviewを検索
-func (r *ReviewQueryRepositoryImpl) ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.ReviewDetailWithIsFavorite, error) {
-	var reviews []*entity.ReviewDetailWithIsFavorite
+func (r *ReviewQueryRepositoryImpl) ShowReviewListByParams(query *query.ShowReviewListQuery) (*entity.ReviewDetailWithIsFavoriteList, error) {
+	var rows entity.ReviewDetailWithIsFavoriteList
 
 	q := r.buildShowReviewListQuery(query)
 
@@ -33,17 +33,17 @@ func (r *ReviewQueryRepositoryImpl) ShowReviewListByParams(query *query.ShowRevi
 		Limit(query.Limit).
 		Offset(query.OffSet).
 		Order(query.SortBy.GetReviewOrderQuery()).
-		Find(&reviews).Error; err != nil {
+		Find(&rows.Reviews).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get reviews by params")
 	}
 
-	return reviews, nil
+	return &rows, nil
 }
 
 // パスパラメータで飛んで来た検索条件を用いreviewを検索
 // UserIDで指定されたUserがお気に入りしているかどうかのフラグ
-func (r *ReviewQueryRepositoryImpl) ShowReviewWithIsFavoriteListByParams(query *query.ShowReviewListQuery, userID int) ([]*entity.ReviewDetailWithIsFavorite, error) {
-	var reviews []*entity.ReviewDetailWithIsFavorite
+func (r *ReviewQueryRepositoryImpl) ShowReviewWithIsFavoriteListByParams(query *query.ShowReviewListQuery, userID int) (*entity.ReviewDetailWithIsFavoriteList, error) {
+	var rows entity.ReviewDetailWithIsFavoriteList
 
 	q := r.buildShowReviewListQuery(query)
 
@@ -53,11 +53,11 @@ func (r *ReviewQueryRepositoryImpl) ShowReviewWithIsFavoriteListByParams(query *
 		Offset(query.OffSet).
 		Order(query.SortBy.GetReviewOrderQueryForJoin()).
 		Joins("LEFT JOIN user_favorite_review ON review.id = user_favorite_review.review_id AND user_favorite_review.user_id = ?", userID).
-		Find(&reviews).Error; err != nil {
+		Find(&rows.Reviews).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get reviews by params")
 	}
 
-	return reviews, nil
+	return &rows, nil
 }
 
 // ユーザーIDからフォローしているハッシュタグ or ユーザーのreview一覧を参照
@@ -127,7 +127,7 @@ func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowRe
 	q := r.DB
 
 	if query.UserID != 0 {
-		q = q.Where("user_id = ?", query.UserID)
+		q = q.Where("review.user_id = ?", query.UserID)
 	}
 
 	if query.InnID != 0 {
@@ -176,6 +176,10 @@ func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowRe
 
 	if query.Keyward != "" {
 		q = q.Where("MATCH(body) AGAINST(?)", query.Keyward)
+	}
+
+	if query.ExcludeID != 0 {
+		q = q.Not("id = ?", query.ExcludeID)
 	}
 
 	return q

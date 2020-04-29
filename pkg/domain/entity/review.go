@@ -63,6 +63,11 @@ type (
 		ReviewID int
 	}
 
+	ReviewDetailWithIsFavoriteList struct {
+		TotalNumber int
+		Reviews     []*ReviewDetailWithIsFavorite
+	}
+
 	ReviewMediaList []*ReviewMedia
 )
 

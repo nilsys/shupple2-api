@@ -1,6 +1,9 @@
 package output
 
-import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+import (
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+)
 
 // フロント返却用Review
 type (
@@ -52,6 +55,11 @@ type (
 		Body        string             `json:"body"`
 		IsFavorited bool               `json:"isFavorited"`
 		CreatedAt   model.TimeResponse `json:"createdAt"`
+	}
+
+	ReviewDetailIsFavoriteList struct {
+		TotalNumber int                                  `json:"totalNumber"`
+		Reviews     []*entity.ReviewDetailWithIsFavorite `json:"reviews"`
 	}
 )
 

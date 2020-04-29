@@ -19,6 +19,7 @@ type (
 		MetasearchSubSubAreaID int
 		SortBy                 model.ReviewSortBy
 		Keyward                string
+		ExcludeID              int
 		Limit                  int
 		OffSet                 int
 		// InnQueryRepositoryから取得後にいれる

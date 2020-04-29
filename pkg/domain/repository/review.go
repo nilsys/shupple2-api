@@ -11,8 +11,8 @@ type (
 	// Review参照系レポジトリ
 	ReviewQueryRepository interface {
 		FindByID(id int) (*entity.Review, error)
-		ShowReviewListByParams(query *query.ShowReviewListQuery) ([]*entity.ReviewDetailWithIsFavorite, error)
-		ShowReviewWithIsFavoriteListByParams(query *query.ShowReviewListQuery, userID int) ([]*entity.ReviewDetailWithIsFavorite, error)
+		ShowReviewListByParams(query *query.ShowReviewListQuery) (*entity.ReviewDetailWithIsFavoriteList, error)
+		ShowReviewWithIsFavoriteListByParams(query *query.ShowReviewListQuery, userID int) (*entity.ReviewDetailWithIsFavoriteList, error)
 		FindFeedReviewListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error)
 		FindReviewCommentListByReviewID(reviewID int, limit int) ([]*entity.ReviewCommentWithIsFavorite, error)
 		FindReviewCommentWithIsFavoriteListByReviewID(reviewID int, limit int, userID int) ([]*entity.ReviewCommentWithIsFavorite, error)

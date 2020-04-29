@@ -21,6 +21,7 @@ type (
 		MetasearchSubSubAreaID int                `query:"metasearchSubSubAreaId"`
 		SortBy                 model.ReviewSortBy `query:"sortBy"`
 		Keyward                string             `query:"q"`
+		ExcludeID              int                `query:"excludeId"`
 		PerPage                int                `query:"perPage"`
 		Page                   int                `query:"page"`
 	}
