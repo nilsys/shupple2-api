@@ -80,16 +80,21 @@ func (r *UserQueryRepositoryImpl) FindUserRankingListByParams(query *query.FindU
 	return rows, nil
 }
 
-func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error) {
+func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByUID(uid string) (*entity.UserDetailWithMediaCount, error) {
+	var dto entity.UserTable
 	var row entity.UserDetailWithMediaCount
 
-	if err := r.DB.Select("*").Where("user.id = ?", id).
-		Joins("LEFT JOIN (SELECT COUNT(id) as review_count, MAX(user_id) as user_id FROM review WHERE user_id = ?) AS r ON user.id = r.user_id", id).
-		Joins("LEFT JOIN (SELECT COUNT(id) as post_count, MAX(user_id) as user_id FROM post WHERE user_id = ?) AS p ON user.id = p.user_id", id).
-		Joins("LEFT JOIN (SELECT COUNT(target_id) as following_count, MAX(user_id) as user_id FROM user_following WHERE user_id = ?) AS ufi ON user.id = ufi.user_id", id).
-		Joins("LEFT JOIN (SELECT COUNT(user_id) as followed_count, MAX(target_id) as target_id FROM user_followed WHERE target_id = ?) AS ufe ON user.id = ufe.target_id", id).
+	if err := r.DB.Where("uid = ?", uid).First(&dto).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "user(uid=%s)", uid)
+	}
+
+	if err := r.DB.Select("*").Where("user.id = ?", dto.ID).
+		Joins("LEFT JOIN (SELECT COUNT(id) as review_count, MAX(user_id) as user_id FROM review WHERE user_id = ?) AS r ON user.id = r.user_id", dto.ID).
+		Joins("LEFT JOIN (SELECT COUNT(id) as post_count, MAX(user_id) as user_id FROM post WHERE user_id = ?) AS p ON user.id = p.user_id", dto.ID).
+		Joins("LEFT JOIN (SELECT COUNT(target_id) as following_count, MAX(user_id) as user_id FROM user_following WHERE user_id = ?) AS ufi ON user.id = ufi.user_id", dto.ID).
+		Joins("LEFT JOIN (SELECT COUNT(user_id) as followed_count, MAX(target_id) as target_id FROM user_followed WHERE target_id = ?) AS ufe ON user.id = ufe.target_id", dto.ID).
 		First(&row).Error; err != nil {
-		return nil, ErrorToFindSingleRecord(err, "user(id=%d)", id)
+		return nil, ErrorToFindSingleRecord(err, "user(id=%d)", dto.ID)
 	}
 
 	return &row, nil

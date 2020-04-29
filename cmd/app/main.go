@@ -93,7 +93,7 @@ func setRoutes(app *App) {
 		users.POST("", app.UserCommandController.SignUp)
 		users.PUT("", auth.Require(app.UserCommandController.Update))
 		users.GET("", auth.Require(app.UserQueryController.MyPage))
-		users.GET("/:id", app.UserQueryController.Show)
+		users.GET("/:uid", app.UserQueryController.Show)
 		users.GET("/:id/posts/feed", app.PostQueryController.ListFeedPost)
 		users.GET("/:id/reviews/feed", app.ReviewQueryController.ListFeedReview)
 		users.GET("/ranking", app.UserQueryController.ShowUserRanking)

@@ -23,7 +23,7 @@ var UserQueryControllerSet = wire.NewSet(
 )
 
 func (c *UserQueryController) MyPage(ctx echo.Context, user entity.User) error {
-	myPageUser, err := c.UserQueryService.Show(user.ID)
+	myPageUser, err := c.UserQueryService.Show(user.UID)
 	if err != nil {
 		return errors.Wrap(err, "failed to show user")
 	}
@@ -37,7 +37,7 @@ func (c *UserQueryController) Show(ctx echo.Context) error {
 		return errors.Wrap(err, "validation show user parameters")
 	}
 
-	user, err := c.UserQueryService.Show(p.ID)
+	user, err := c.UserQueryService.Show(p.UID)
 	if err != nil {
 		return errors.Wrap(err, "failed to show user")
 	}

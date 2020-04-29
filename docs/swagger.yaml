@@ -57,7 +57,7 @@ paths:
                 $ref: "#/components/schemas/User"
       security:
         - iDPCognito: []
-  /users/{id}:
+  /users/{uid}:
     get:
       tags:
         - user
@@ -66,12 +66,12 @@ paths:
         ユーザープロフィール取得
       parameters:
         - in: path
-          name: id
+          name: uid
           required: true
           description: |
-            UserId
+            uid
           schema:
-            type: integer
+            type: string
       responses:
         "200":
           description: ok
@@ -2079,15 +2079,21 @@ components:
           type: integer
           description: 一番上に表示される記事
           example: 50
-        facebook:
+        facebookUrl:
           type: string
           description: facebook url
-        instagram:
+        instagramUrl:
           type: string
           description: instagram url
-        twitter:
+        twitterUrl:
           type: string
           description: twitter url
+        youtubeUrl:
+          type: string
+          description: youtube url
+        url:
+          type: string
+          description: 任意のurl
         livingArea:
           type: string
           description: 居住地
@@ -2965,6 +2971,14 @@ components:
           type: string
           description: youtubeのurl
           example: https://www.youtube.com/channel/L2pzA7wzUluismTWYbmvlEeD
+        url:
+          type: string
+          description: 任意のurl
+          example: https://www.creator.com
+    CategoryList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Category"
     Category:
       type: object
       required:

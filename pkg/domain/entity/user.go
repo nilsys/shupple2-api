@@ -37,6 +37,30 @@ type (
 		DeletedAt     *time.Time
 	}
 
+	UserTable struct {
+		ID            int `gorm:"primary_key"`
+		UID           string
+		CognitoID     null.String
+		WordpressID   null.Int
+		MigrationCode null.String
+		Name          string
+		Email         string
+		Birthdate     time.Time
+		Gender        model.Gender
+		Profile       string
+		AvatarUUID    string
+		HeaderUUID    string
+		URL           string
+		FacebookURL   string
+		InstagramURL  string
+		TwitterURL    string
+		YoutubeURL    string
+		LivingArea    string
+		CreatedAt     time.Time `gorm:"-;default:current_timestamp"`
+		UpdatedAt     time.Time `gorm:"-;default:current_timestamp"`
+		DeletedAt     *time.Time
+	}
+
 	OptionalUser struct {
 		User
 		Authenticated bool
@@ -157,6 +181,10 @@ func NewUserFollowHashtag(userID, hashtagID int) *UserFollowHashtag {
 		UserID:    userID,
 		HashtagID: hashtagID,
 	}
+}
+
+func (u *UserTable) TableName() string {
+	return "user"
 }
 
 func (q *UserDetail) TableName() string {

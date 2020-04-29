@@ -9,7 +9,7 @@ import (
 
 type (
 	UserQueryService interface {
-		Show(id int) (*entity.UserDetailWithMediaCount, error)
+		Show(uid string) (*entity.UserDetailWithMediaCount, error)
 		ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error)
 		ListFollowing(query *query.FindFollowUser) ([]*entity.User, error)
 		ListFollowed(query *query.FindFollowUser) ([]*entity.User, error)
@@ -27,8 +27,8 @@ var UserQueryServiceSet = wire.NewSet(
 	wire.Bind(new(UserQueryService), new(*UserQueryServiceImpl)),
 )
 
-func (s *UserQueryServiceImpl) Show(id int) (*entity.UserDetailWithMediaCount, error) {
-	return s.UserQueryRepository.FindUserDetailWithCountByID(id)
+func (s *UserQueryServiceImpl) Show(uid string) (*entity.UserDetailWithMediaCount, error) {
+	return s.UserQueryRepository.FindUserDetailWithCountByUID(uid)
 }
 
 func (s *UserQueryServiceImpl) ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error) {

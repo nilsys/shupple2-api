@@ -151,9 +151,10 @@ func (c Converters) ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWi
 		Gender:         user.Gender,
 		Icon:           user.AvatarURL(c.filesURL()),
 		Header:         user.HeaderURL(c.filesURL()),
-		Facebook:       user.FacebookURL,
-		Instagram:      user.InstagramURL,
-		Twitter:        user.TwitterURL,
+		FacebookURL:    user.FacebookURL,
+		InstagramURL:   user.InstagramURL,
+		TwitterURL:     user.TwitterURL,
+		URL:            user.URL,
 		LivingArea:     user.LivingArea,
 		PostCount:      user.PostCount + user.ReviewCount,
 		FollowingCount: user.FollowingCount,
@@ -165,6 +166,6 @@ func (c Converters) ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWi
 func (c Converters) NewCreatorFromUser(user *entity.User) output.Creator {
 	return output.NewCreator(
 		user.ID, user.UID, user.AvatarURL(c.filesURL()), user.Name, user.Profile,
-		user.FacebookURL, user.InstagramURL, user.TwitterURL, user.YoutubeURL,
+		user.FacebookURL, user.InstagramURL, user.TwitterURL, user.YoutubeURL, user.URL,
 	)
 }

@@ -15,6 +15,7 @@ type (
 		InstagramURL string `json:"instagramUrl"`
 		TwitterURL   string `json:"twitterUrl"`
 		YoutubeURL   string `json:"youtubeUrl"`
+		URL          string `json:"url"`
 	}
 
 	// ユーザーランキングで返すレスポンス型
@@ -44,9 +45,10 @@ type (
 		Gender         model.Gender `json:"gender"`
 		Icon           string       `json:"iconUrl"`
 		Header         string       `json:"headerUrl"`
-		Facebook       string       `json:"facebook"`
-		Instagram      string       `json:"instagram"`
-		Twitter        string       `json:"twitter"`
+		FacebookURL    string       `json:"facebookUrl"`
+		InstagramURL   string       `json:"instagramUrl"`
+		TwitterURL     string       `json:"twitterUrl"`
+		URL            string       `json:"url"`
 		LivingArea     string       `json:"livingArea"`
 		PostCount      int          `json:"postCount"`
 		FollowingCount int          `json:"followingCount"`
@@ -55,7 +57,7 @@ type (
 	}
 )
 
-func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL, twitterURL, youtubeURL string) Creator {
+func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL, twitterURL, youtubeURL, url string) Creator {
 	return Creator{
 		ID:           id,
 		UID:          uid,
@@ -65,6 +67,8 @@ func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL
 		FacebookURL:  facebookURL,
 		InstagramURL: instagramURL,
 		TwitterURL:   twitterURL,
+		YoutubeURL:   youtubeURL,
+		URL:          url,
 	}
 }
 
