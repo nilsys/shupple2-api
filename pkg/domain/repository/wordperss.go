@@ -14,6 +14,7 @@ type (
 		FindVlogsByIDs(ids []int) ([]*wordpress.Vlog, error)
 		FindMediaByIDs(ids []int) ([]*wordpress.Media, error)
 		FindPostTagsByIDs(ids []int) ([]*wordpress.PostTag, error)
-		DownloadAvatar(avatarURL string) (*wordpress.MediaBody, error)
+		FetchMediaBodyByID(id int) (*wordpress.MediaBody, error)
+		FetchResource(url string) (*wordpress.MediaBody, error)
 	}
 )

@@ -20,10 +20,11 @@ type User struct {
 }
 
 type UserMeta struct {
-	Facebook  string `json:"facebook"`
-	Twitter   string `json:"twitter"`
-	Instagram string `json:"instagram"`
-	Youtube   string `json:"youtube"`
+	Facebook     string `json:"facebook"`
+	Twitter      string `json:"twitter"`
+	Instagram    string `json:"instagram"`
+	Youtube      string `json:"youtube"`
+	WPUserAvatar int    `json:"wp_user_avatar"`
 }
 
 type UserAttributes struct {

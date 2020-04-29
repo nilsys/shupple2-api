@@ -124,8 +124,18 @@ func (r *WordpressQueryRepositoryImpl) FindMediaByIDs(ids []int) ([]*wordpress.M
 	return res, r.gets(listMediaPath, ids, &res)
 }
 
+func (r *WordpressQueryRepositoryImpl) FetchMediaBodyByID(id int) (*wordpress.MediaBody, error) {
+	mediaList, err := r.FindMediaByIDs([]int{id})
+	if err != nil || len(mediaList) == 0 {
+		return nil, serror.NewResourcesNotFoundError(err, "media body(id=%d)", id)
+	}
+
+	media := mediaList[0]
+	return r.FetchResource(media.SourceURL)
+}
+
 // http通信するだけなのでどこにでも置けるが、便宜的にココに置く
-func (r *WordpressQueryRepositoryImpl) DownloadAvatar(avatarURL string) (*wordpress.MediaBody, error) {
+func (r *WordpressQueryRepositoryImpl) FetchResource(avatarURL string) (*wordpress.MediaBody, error) {
 	resp, err := r.Client.Get(avatarURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get avatar")

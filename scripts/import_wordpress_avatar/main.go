@@ -59,13 +59,16 @@ func (s Script) Run() error {
 			continue
 		}
 
-		avatar, err := s.downloadAvatar(int(user.WordpressID.Int64))
+		wpUsers, err := s.WordpressRepo.FindUsersByIDs([]int{int(user.WordpressID.Int64)})
 		if err != nil {
 			return errors.WithStack(err)
 		}
-		defer avatar.Body.Close()
+		if len(wpUsers) == 0 {
+			return errors.New("wp user not found")
+		}
+		wpUser := wpUsers[0]
 
-		if err := s.UserRepo.StoreWithAvatar(user, avatar.Body, avatar.ContentType); err != nil {
+		if err := s.storeWithAvatar(user, wpUser); err != nil {
 			return errors.WithStack(err)
 		}
 	}
@@ -73,15 +76,26 @@ func (s Script) Run() error {
 	return nil
 }
 
-func (s Script) downloadAvatar(userID int) (*wordpress.MediaBody, error) {
-	wpUsers, err := s.WordpressRepo.FindUsersByIDs([]int{userID})
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	if len(wpUsers) == 0 {
-		return nil, errors.New("not found user")
-	}
-	wpUser := wpUsers[0]
+// このScriptのためだけにexportするのは微妙なので、UserCommandRepositoryImplからコピペ
+func (s Script) storeWithAvatar(user *entity.User, wpUser *wordpress.User) error {
+	var (
+		avatar *wordpress.MediaBody
+		err    error
+	)
 
-	return s.WordpressRepo.DownloadAvatar(wpUser.AvatarURLs.Num96)
+	if wpUser.Meta.WPUserAvatar != 0 {
+		avatar, err = s.WordpressRepo.FetchMediaBodyByID(wpUser.Meta.WPUserAvatar)
+	} else {
+		avatar, err = s.WordpressRepo.FetchResource(wpUser.AvatarURLs.Num96)
+	}
+	if err != nil {
+		return errors.Wrap(err, "failed to download avatar")
+	}
+	defer avatar.Body.Close()
+
+	if err := s.UserRepo.StoreWithAvatar(user, avatar.Body, avatar.ContentType); err != nil {
+		return errors.Wrap(err, "faield to store user avatar")
+	}
+
+	return nil
 }

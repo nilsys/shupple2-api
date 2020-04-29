@@ -127,7 +127,16 @@ func (s *UserCommandServiceImpl) updateMapping(wpUser *wordpress.User) error {
 }
 
 func (s *UserCommandServiceImpl) storeWithAvatar(user *entity.User, wpUser *wordpress.User) error {
-	avatar, err := s.WordpressQueryRepository.DownloadAvatar(wpUser.AvatarURLs.Num96)
+	var (
+		avatar *wordpress.MediaBody
+		err    error
+	)
+
+	if wpUser.Meta.WPUserAvatar != 0 {
+		avatar, err = s.WordpressQueryRepository.FetchMediaBodyByID(wpUser.Meta.WPUserAvatar)
+	} else {
+		avatar, err = s.WordpressQueryRepository.FetchResource(wpUser.AvatarURLs.Num96)
+	}
 	if err != nil {
 		return errors.Wrap(err, "failed to download avatar")
 	}
