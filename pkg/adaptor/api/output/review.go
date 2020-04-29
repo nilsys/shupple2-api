@@ -8,21 +8,22 @@ import (
 // フロント返却用Review
 type (
 	Review struct {
-		ID            int             `json:"id"`
-		InnID         int             `json:"innId"`
-		TouristSpotID int             `json:"touristSpotId"`
-		Score         int             `json:"score"`
-		Body          string          `json:"body"`
-		FavoriteCount int             `json:"favoriteCount"`
-		Media         []ReviewMedia   `json:"media"`
-		Views         int             `json:"views"`
-		Accompanying  string          `json:"accompanying"`
-		UpdatedAt     string          `json:"updatedAt"`
-		TravelDate    model.YearMonth `json:"travelDate"`
-		CommentCount  int             `json:"commentCount"`
-		IsFavorited   bool            `json:"isFavorited"`
-		Hashtag       []Hashtag       `json:"hashtag"`
-		Creator       Creator         `json:"creator"`
+		ID            int                `json:"id"`
+		InnID         int                `json:"innId"`
+		TouristSpotID int                `json:"touristSpotId"`
+		Score         int                `json:"score"`
+		Body          string             `json:"body"`
+		FavoriteCount int                `json:"favoriteCount"`
+		Media         []ReviewMedia      `json:"media"`
+		Views         int                `json:"views"`
+		Accompanying  string             `json:"accompanying"`
+		CreatedAt     model.TimeResponse `json:"createdAt"`
+		UpdatedAt     model.TimeResponse `json:"updatedAt"`
+		TravelDate    model.YearMonth    `json:"travelDate"`
+		CommentCount  int                `json:"commentCount"`
+		IsFavorited   bool               `json:"isFavorited"`
+		Hashtag       []Hashtag          `json:"hashtag"`
+		Creator       Creator            `json:"creator"`
 	}
 
 	ReviewMedia struct {

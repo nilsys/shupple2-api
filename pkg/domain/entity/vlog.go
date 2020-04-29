@@ -69,6 +69,7 @@ type (
 		AreaCategories  []*AreaCategory  `gorm:"many2many:vlog_area_category;jointable_foreignkey:vlog_id;"`
 		ThemeCategories []*ThemeCategory `gorm:"many2many:vlog_theme_category;jointable_foreignkey:vlog_id;"`
 		TouristSpots    []*TouristSpot   `gorm:"many2many:vlog_tourist_spot;jointable_foreignkey:vlog_id;"`
+		User            *User            `gorm:"foreignkey:UserID"`
 		Editors         []*User          `gorm:"many2many:vlog_editor;jointable_foreignkey:vlog_id;"`
 	}
 )

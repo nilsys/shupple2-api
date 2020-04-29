@@ -61,6 +61,7 @@ func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail) *output.VlogDetai
 		Timeline:        vlog.Timeline,
 		FacebookCount:   vlog.FacebookCount,
 		TwitterCount:    vlog.TwitterCount,
+		Creator:         c.NewCreatorFromUser(vlog.User),
 		Editors:         editors,
 		AreaCategories:  c.ConvertAreaCategoriesToOutput(vlog.AreaCategories),
 		ThemeCategories: c.ConvertThemeCategoriesToOutput(vlog.ThemeCategories),

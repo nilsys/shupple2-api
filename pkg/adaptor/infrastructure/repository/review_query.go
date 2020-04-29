@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/google/wire"
@@ -85,7 +84,7 @@ func (r *ReviewQueryRepositoryImpl) FindQueryReviewByID(id int) (*entity.ReviewD
 	if err := q.
 		First(&row, id).
 		Error; err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed find review by id=%d", id))
+		return nil, ErrorToFindSingleRecord(err, "review(id=%d)", id)
 	}
 
 	return &row, nil
@@ -101,7 +100,7 @@ func (r *ReviewQueryRepositoryImpl) FindQueryReviewWithIsFavoriteByID(id, userID
 		Joins("LEFT JOIN user_favorite_review ON review.id = user_favorite_review.review_id AND user_favorite_review.user_id = ?", userID).
 		First(&row, id).
 		Error; err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("failed find review by id=%d", id))
+		return nil, ErrorToFindSingleRecord(err, "review(id=%d)", id)
 	}
 
 	return &row, nil

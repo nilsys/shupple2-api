@@ -31,6 +31,7 @@ type (
 		FacebookCount   int                `json:"facebookCount"`
 		TwitterCount    int                `json:"twitterCount"`
 		IsFavorited     bool               `json:"isFavorited"`
+		Creator         Creator            `json:"creator"`
 		Editors         []*Creator         `json:"editors"`
 		AreaCategories  []*AreaCategory    `json:"areaCategories"`
 		ThemeCategories []*ThemeCategory   `json:"themeCategories"`

@@ -2278,6 +2278,10 @@ components:
           description: いいね数
         accompanying:
           $ref: "#/components/schemas/Accompanying"
+        createdAt:
+          type: string
+          description: 投稿日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
         updatedAt:
           type: string
           description: 最終更新日時, ISO 8601形式
@@ -2441,11 +2445,11 @@ components:
         areaCategories:
           type: array
           items:
-            $ref: "#/components/schemas/Category"
+            $ref: "#/components/schemas/AreaCategory"
         themeCategories:
           type: array
           items:
-            $ref: "#/components/schemas/Category"
+            $ref: "#/components/schemas/ThemeCategory"
         hashtags:
           $ref: "#/components/schemas/HashtagList"
         title:
@@ -2655,6 +2659,8 @@ components:
           type: integer
           description: Twitterシェア数
           example: 5
+        creator:
+          $ref: "#/components/schemas/Creator"
         editors:
           type: array
           description: 共同編集者
@@ -3044,6 +3050,7 @@ components:
         - id
         - name
         - type
+        - slug
         - area
       properties:
         id:
@@ -3054,6 +3061,10 @@ components:
           type: string
           description: カテゴリ名
           example: 北海道
+        slug:
+          type: string
+          description: スラッグ
+          example: hokkaido
         type:
           type: string
           enum:
@@ -3072,6 +3083,7 @@ components:
       required:
         - id
         - name
+        - slug
         - type
       properties:
         id:
@@ -3126,8 +3138,8 @@ components:
     ThemeCategoryList:
       type: array
       items:
-        $ref: "#/components/schemas/ThemeCategory"
-    ThemeCategory:
+        $ref: "#/components/schemas/ThemeCategoryWithPostCount"
+    ThemeCategoryWithPostCount:
       type: object
       required:
         - id
@@ -3152,6 +3164,27 @@ components:
           type: integer
           description: 記事数
           example: 3
+    ThemeCategory:
+      type: object
+      required:
+        - id
+        - name
+        - type
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        name:
+          type: string
+          description: カテゴリ名
+          example: 初めての民泊
+        type:
+          type: string
+          enum:
+            - Undefined
+            - Theme
+            - SubTheme
     RankingUserList:
       type: array
       items:
