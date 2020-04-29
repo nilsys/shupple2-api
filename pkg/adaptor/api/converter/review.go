@@ -120,7 +120,7 @@ func (c Converters) convertQueryReviewToOutput(queryReview *entity.ReviewDetail)
 		medias[i] = output.ReviewMedia{
 			UUID: media.ID,
 			Mime: media.MimeType,
-			URL:  media.GenerateURL(),
+			URL:  media.URL(c.filesURL()),
 		}
 	}
 	for i, hashtag := range queryReview.Hashtag {
@@ -193,7 +193,7 @@ func (c Converters) ConvertReviewMediaList(reviewMediaList entity.ReviewMediaLis
 		medias[i] = output.ReviewMedia{
 			UUID:     media.ID,
 			Mime:     media.MimeType,
-			URL:      media.GenerateURL(),
+			URL:      media.URL(c.filesURL()),
 			Priority: media.Priority,
 		}
 	}

@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
 
@@ -84,9 +85,9 @@ func (r *ReviewMedia) S3Path() string {
 	return fmt.Sprintf("review/%d/%s", r.ReviewID, r.ID)
 }
 
-// TODO: 仮置き
-func (r *ReviewMedia) GenerateURL() string {
-	return "https://stayway.jp/image/" + r.ID
+func (r *ReviewMedia) URL(filesURL config.URL) string {
+	filesURL.Path = r.S3Path()
+	return filesURL.String()
 }
 
 func (r *ReviewDetail) TableName() string {
