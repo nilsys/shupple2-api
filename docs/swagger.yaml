@@ -1457,6 +1457,11 @@ paths:
             いずれか1つ以上必須
           schema:
             type: integer
+        - in: query
+          name: perPage
+          description: 件数
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -2388,6 +2393,10 @@ components:
           type: string
           description: サムネイルURL
           example: http://example.com/img/1
+        slug:
+          type: string
+          description: スラッグ
+          example: hokkaido
         areaCategories:
           type: array
           items:
@@ -2438,6 +2447,10 @@ components:
           type: string
           description: サムネイルURL
           example: http://example.com/img/1
+        slug:
+          type: string
+          description: スラッグ
+          example: hokkaido
         body:
           type: array
           items:

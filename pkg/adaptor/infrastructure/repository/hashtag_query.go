@@ -32,7 +32,7 @@ func (r *HashtagQueryRepositoryImpl) FindByNames(names []string) (map[string]*en
 	return result, nil
 }
 
-func (r *HashtagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSubAreaID int) ([]*entity.Hashtag, error) {
+func (r *HashtagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSubAreaID, limit int) ([]*entity.Hashtag, error) {
 	var rows []*entity.Hashtag
 
 	q := r.buildFindRecommendListQuery(areaID, subAreaID, subSubAreaID)
@@ -40,7 +40,7 @@ func (r *HashtagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSub
 	if err := q.
 		Order("post_count + review_count DESC").
 		Find(&rows).
-		Limit(defaultAcquisitionNumber).
+		Limit(limit).
 		Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to find get recommend reviews")
 	}

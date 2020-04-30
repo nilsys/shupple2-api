@@ -21,12 +21,12 @@ var HashtagQueryControllerSet = wire.NewSet(
 )
 
 func (c *HashtagQueryController) ListRecommendHashtag(ctx echo.Context) error {
-	p := &input.ListRecommendHashTagParam{}
+	p := &input.ListRecommendHashtagParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrapf(err, "validation show recommend hashtag list input")
 	}
 
-	recommendHashTags, err := c.HashtagQueryService.ShowRecommendList(p.AreaID, p.SubAreaID, p.SubSubAreaID)
+	recommendHashTags, err := c.HashtagQueryService.ShowRecommendList(p.AreaID, p.SubAreaID, p.SubSubAreaID, p.PerPage)
 	if err != nil {
 		return errors.Wrap(err, "failed show recommend hashtags")
 	}

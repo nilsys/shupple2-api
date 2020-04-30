@@ -24,12 +24,16 @@ type Script struct {
 type Config struct {
 	ImportMetasearchAreaImages struct {
 		MetasearchBucket string `yaml:"metasearch_bucket"`
+		MediaBucket      string `yaml:"media_bucket"`
 	} `yaml:"import_meatsearch_area_images"`
 }
 
 const (
-	areaBucketPrefix    = "static/area_category"
-	subAreaBucketPrefix = "static/sub_area_category"
+	metasearchAreaBucket    = "area_category"
+	metasearchSubAreaBucket = "sub_area_category"
+	areaBucketPrefix        = "static/area_category"
+	subAreaBucketPrefix     = "static/sub_area_category"
+	subSubAreaBucketPrefix  = "static/sub_sub_area_category"
 )
 
 // local: docker-compose run --rm app go run ./scripts/import_metasearch_area_images
@@ -54,11 +58,12 @@ func (s Script) importMetasearchAreaCategoryImages() error {
 		return errors.Wrap(err, "failed to load script config")
 	}
 
+	// scriptなので動かすときにcredential必要
 	svc := s3.New(s.AWSSession)
 
 	areaReq := &s3.ListObjectsInput{
 		Bucket: aws.String(config.ImportMetasearchAreaImages.MetasearchBucket),
-		Prefix: aws.String(areaBucketPrefix),
+		Prefix: aws.String(metasearchAreaBucket),
 	}
 
 	ao, err := svc.ListObjects(areaReq)
@@ -68,7 +73,7 @@ func (s Script) importMetasearchAreaCategoryImages() error {
 
 	subAreaReq := &s3.ListObjectsInput{
 		Bucket: aws.String(config.ImportMetasearchAreaImages.MetasearchBucket),
-		Prefix: aws.String(subAreaBucketPrefix),
+		Prefix: aws.String(metasearchSubAreaBucket),
 	}
 
 	so, err := svc.ListObjects(subAreaReq)
@@ -78,42 +83,69 @@ func (s Script) importMetasearchAreaCategoryImages() error {
 
 	os := append(ao.Contents, so.Contents...)
 
+	// subareaに対して
 	for _, metasearchID := range os {
 		var category entity.AreaCategory
-		if err := s.DB.Where("metasearch_area_id = ?", s.trimKey(*metasearchID.Key)).Or("metasearch_sub_area_id = ?", s.trimKey(*metasearchID.Key)).Or("metasearch_sub_area_id = ?", s.trimKey(*metasearchID.Key)).Or("metasearch_sub_sub_area_id = ?", s.trimKey(*metasearchID.Key)).First(&category).Error; err != nil {
+		key := s.trimKey(*metasearchID.Key)
+		if key == "" {
+			continue
+		}
+		if err := s.DB.Where("metasearch_area_id = ? AND type = ?", key, model.AreaCategoryTypeSubArea).First(&category).Error; err != nil {
 			if gorm.IsRecordNotFoundError(err) {
 				continue
 			}
 			return errors.Wrap(err, "failed to find area_category")
 		}
-		switch category.Type {
-		case model.AreaCategoryTypeArea:
-			copyReq := s.copyObject(config.ImportMetasearchAreaImages.MetasearchBucket, config.ImportMetasearchAreaImages.MetasearchBucket+"/"+*metasearchID.Key, areaBucketPrefix+"/"+strconv.Itoa(category.ID))
-			_, err = svc.CopyObject(copyReq)
-			if err != nil {
-				return errors.Wrap(err, "failed to copy s3 object")
-			}
-		case model.AreaCategoryTypeSubArea:
-			copyReq := s.copyObject(config.ImportMetasearchAreaImages.MetasearchBucket, config.ImportMetasearchAreaImages.MetasearchBucket+"/"+*metasearchID.Key, subAreaBucketPrefix+"/"+strconv.Itoa(category.ID))
-			_, err = svc.CopyObject(copyReq)
-			if err != nil {
-				return errors.Wrap(err, "failed to copy s3 object")
-			}
+		copyReq := s.copyObject(config.ImportMetasearchAreaImages.MetasearchBucket+"/"+*metasearchID.Key, config.ImportMetasearchAreaImages.MediaBucket, subAreaBucketPrefix+"/"+strconv.Itoa(category.ID)+"/"+s.getFileName(*metasearchID.Key))
+		_, err = svc.CopyObject(copyReq)
+		if err != nil {
+			return errors.Wrap(err, "failed to copy s3 object")
 		}
 	}
 
+	// sub_sub_areaに対して
+	for _, metasearchID := range os {
+		var category entity.AreaCategory
+		key := s.trimKey(*metasearchID.Key)
+		if key == "" {
+			continue
+		}
+		if err := s.DB.Where("metasearch_sub_area_id = ? AND type = ?", key, model.AreaCategoryTypeSubSubArea).First(&category).Error; err != nil {
+			if gorm.IsRecordNotFoundError(err) {
+				continue
+			}
+			return errors.Wrap(err, "failed to find area_category")
+		}
+		copyReq := s.copyObject(config.ImportMetasearchAreaImages.MetasearchBucket+"/"+*metasearchID.Key, config.ImportMetasearchAreaImages.MediaBucket, subSubAreaBucketPrefix+"/"+strconv.Itoa(category.ID)+"/"+s.getFileName(*metasearchID.Key))
+		_, err = svc.CopyObject(copyReq)
+		if err != nil {
+			return errors.Wrap(err, "failed to copy s3 object")
+		}
+	}
 	return nil
 }
 
-func (s Script) copyObject(bucket, source, key string) *s3.CopyObjectInput {
+func (s Script) copyObject(from, bucket, key string) *s3.CopyObjectInput {
 	return &s3.CopyObjectInput{
+		CopySource: aws.String(from),
 		Bucket:     aws.String(bucket),
-		CopySource: aws.String(source),
 		Key:        aws.String(key),
+		ACL:        aws.String(s3.ObjectCannedACLPublicRead),
 	}
 }
 
 func (s Script) trimKey(str string) string {
-	tmp := strings.Replace(str, areaBucketPrefix+"/", "", -1)
-	return strings.Replace(tmp, subAreaBucketPrefix+"/", "", -1)
+	tmp := strings.Split(str, "/")
+	if len(tmp) < 2 {
+		return ""
+	}
+	return tmp[1]
+}
+
+func (s Script) getFileName(str string) string {
+	tmp := strings.Split(str, "/")
+	if len(tmp) < 2 {
+		return ""
+	}
+	return tmp[2]
 }

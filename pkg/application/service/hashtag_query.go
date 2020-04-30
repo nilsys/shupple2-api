@@ -9,7 +9,7 @@ import (
 type (
 	// HashTag参照系サービス
 	HashtagQueryService interface {
-		ShowRecommendList(areID, subAreaID, subSubAreaID int) ([]*entity.Hashtag, error)
+		ShowRecommendList(areID, subAreaID, subSubAreaID, limit int) ([]*entity.Hashtag, error)
 	}
 
 	// HashTag参照系サービス実装
@@ -24,6 +24,6 @@ var HashtagQueryServiceSet = wire.NewSet(
 )
 
 // おすすめHashTag一覧参照
-func (s *HashtagQueryServiceImpl) ShowRecommendList(areaID, subAreaID, subSubAreaID int) ([]*entity.Hashtag, error) {
-	return s.HashtagQueryRepository.FindRecommendList(areaID, subAreaID, subSubAreaID)
+func (s *HashtagQueryServiceImpl) ShowRecommendList(areaID, subAreaID, subSubAreaID, limit int) ([]*entity.Hashtag, error) {
+	return s.HashtagQueryRepository.FindRecommendList(areaID, subAreaID, subSubAreaID, limit)
 }

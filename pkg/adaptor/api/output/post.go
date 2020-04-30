@@ -10,6 +10,7 @@ type (
 		AreaCategories  []*AreaCategory    `json:"areaCategories"`
 		ThemeCategories []*ThemeCategory   `json:"themeCategories"`
 		Title           string             `json:"title"`
+		Slug            string             `json:"slug"`
 		Creator         Creator            `json:"creator"`
 		FavoriteCount   int                `json:"favoriteCount"`
 		Views           int                `json:"views"`
@@ -28,6 +29,7 @@ type (
 		ID              int              `json:"id"`
 		Thumbnail       string           `json:"thumbnail"`
 		Title           string           `json:"title"`
+		Slug            string           `json:"slug"`
 		Body            []*PostBody      `json:"body"`
 		TOC             string           `json:"toc"`
 		FavoriteCount   int              `json:"favoriteCount"`
