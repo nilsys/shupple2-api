@@ -1,7 +1,6 @@
 package output
 
 import (
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
 
@@ -59,8 +58,8 @@ type (
 	}
 
 	ReviewDetailIsFavoriteList struct {
-		TotalNumber int                                  `json:"totalNumber"`
-		Reviews     []*entity.ReviewDetailWithIsFavorite `json:"reviews"`
+		TotalNumber int       `json:"totalNumber"`
+		Reviews     []*Review `json:"reviews"`
 	}
 )
 

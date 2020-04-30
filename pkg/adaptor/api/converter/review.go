@@ -86,7 +86,7 @@ func (c Converters) ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews *
 	}
 	return output.ReviewDetailIsFavoriteList{
 		TotalNumber: reviews.TotalNumber,
-		Reviews:     reviews.Reviews,
+		Reviews:     responses,
 	}
 }
 
