@@ -43,3 +43,10 @@ func (r *PostCommandRepositoryImpl) IncrementFavoriteCount(c context.Context, po
 func (r *PostCommandRepositoryImpl) DecrementFavoriteCount(c context.Context, postID int) error {
 	return errors.Wrapf(r.DB(c).Exec("UPDATE post SET favorite_count = favorite_count - 1 WHERE id = ?", postID).Error, "failed to update")
 }
+
+func (r *PostCommandRepositoryImpl) UpdateViewsByID(id, views int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE post SET views = ? WHERE id = ?", views, id).Error; err != nil {
+		return errors.Wrap(err, "failed to update post.views")
+	}
+	return nil
+}

@@ -35,3 +35,10 @@ func (r *VlogCommandRepositoryImpl) DeleteByID(id int) error {
 	e.ID = id
 	return errors.Wrapf(r.DB(context.Background()).Delete(e).Error, "failed to delete vlog(id=%d)", id)
 }
+
+func (r *VlogCommandRepositoryImpl) UpdateViewsByID(id, views int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE vlog SET views = ? WHERE id = ?", views, id).Error; err != nil {
+		return errors.Wrap(err, "failed to update vlog.views")
+	}
+	return nil
+}

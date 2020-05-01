@@ -25,6 +25,8 @@ wordpress:
   user: changeme
   password: changeme
   callback_key: changeme
+google_analytics:
+  view_id: 10
 slack:
   token: changeme
   callback_key: changeme

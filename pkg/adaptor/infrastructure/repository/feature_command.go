@@ -35,3 +35,10 @@ func (r *FeatureCommandRepositoryImpl) DeleteByID(id int) error {
 	e.ID = id
 	return errors.Wrapf(r.DB(context.Background()).Delete(e).Error, "failed to delete feature(id=%d)", id)
 }
+
+func (r *FeatureCommandRepositoryImpl) UpdateViewsByID(id, views int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE feature SET views = ? WHERE id = ?", views, id).Error; err != nil {
+		return errors.Wrap(err, "failed to update feature.views")
+	}
+	return nil
+}

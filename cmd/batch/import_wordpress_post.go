@@ -20,6 +20,6 @@ func (b *Batch) cliImportWordpressPost() cli.Command {
 	}
 }
 
-func (b *Batch) importWordpressPost(c cli.Context) error {
+func (b *Batch) importWordpressPost(c *cli.Context) error {
 	return b.WordpressCallbackService.Import(wordpress.EntityTypePost, c.Int(flagNameID))
 }

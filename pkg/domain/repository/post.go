@@ -14,9 +14,11 @@ type (
 		DeleteByID(c context.Context, id int) error
 		IncrementFavoriteCount(c context.Context, postID int) error
 		DecrementFavoriteCount(c context.Context, postID int) error
+		UpdateViewsByID(id, views int) error
 	}
 
 	PostQueryRepository interface {
+		FindByLastID(lastID, limit int) ([]*entity.Post, error)
 		FindByID(id int) (*entity.Post, error)
 		FindPostDetailWithHashtagByID(id int) (*entity.PostDetailWithHashtagAndIsFavorite, error)
 		FindPostDetailWithHashtagAndIsFavoriteByID(id, userID int) (*entity.PostDetailWithHashtagAndIsFavorite, error)

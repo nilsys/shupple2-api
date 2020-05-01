@@ -66,6 +66,16 @@ func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuer
 	return &rows, nil
 }
 
+func (r *VlogQueryRepositoryImpl) FindAll() ([]*entity.Vlog, error) {
+	var rows []*entity.Vlog
+
+	if err := r.DB.Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find all vlog")
+	}
+
+	return rows, nil
+}
+
 // クエリ構造体を用い、FindListByParams()で使用するsqlクエリを作成
 func (r *VlogQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindVlogListQuery) *gorm.DB {
 	q := r.DB

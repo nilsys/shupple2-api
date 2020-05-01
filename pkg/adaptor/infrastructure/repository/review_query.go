@@ -121,6 +121,16 @@ func (r *ReviewQueryRepositoryImpl) FindFavoriteListByUserID(userID int, query *
 	return rows, nil
 }
 
+func (r *ReviewQueryRepositoryImpl) FindAll() ([]*entity.Review, error) {
+	var rows []*entity.Review
+
+	if err := r.DB.Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find all review")
+	}
+
+	return rows, nil
+}
+
 // パスパラメータで飛んで来た値によって検索クエリを切り替える
 func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowReviewListQuery) *gorm.DB {
 	q := r.DB

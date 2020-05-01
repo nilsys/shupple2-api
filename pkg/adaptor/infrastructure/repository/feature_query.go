@@ -58,3 +58,13 @@ func (r *FeatureQueryRepositoryImpl) FindList(query *query.FindListPaginationQue
 	}
 	return &rows, nil
 }
+
+func (r *FeatureQueryRepositoryImpl) FindAll() ([]*entity.Feature, error) {
+	var rows []*entity.Feature
+
+	if err := r.DB.Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find all feature")
+	}
+
+	return rows, nil
+}

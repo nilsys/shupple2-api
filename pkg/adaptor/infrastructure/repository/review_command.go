@@ -150,6 +150,13 @@ func (r *ReviewCommandRepositoryImpl) DeleteReviewCommentFavoriteByID(c context.
 	return nil
 }
 
+func (r *ReviewCommandRepositoryImpl) UpdateViewsByID(id, views int) error {
+	if err := r.DB(context.TODO()).Exec("UPDATE review SET views = ? WHERE id = ?", views, id).Error; err != nil {
+		return errors.Wrap(err, "failed to update review.views")
+	}
+	return nil
+}
+
 func (r *ReviewCommandRepositoryImpl) DeleteReviewByID(c context.Context, id int) error {
 	if err := r.DB(c).Where("id = ?", id).Delete(entity.Review{}).Error; err != nil {
 		return errors.Wrap(err, "failed to update review.deleted_at")

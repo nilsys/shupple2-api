@@ -22,6 +22,16 @@ var PostQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.PostQueryRepository), new(*PostQueryRepositoryImpl)),
 )
 
+func (r *PostQueryRepositoryImpl) FindByLastID(lastID, limit int) ([]*entity.Post, error) {
+	var rows []*entity.Post
+
+	if err := r.DB.Where("id > ?", lastID).Order("id").Limit(limit).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find post")
+	}
+
+	return rows, nil
+}
+
 func (r *PostQueryRepositoryImpl) FindByID(id int) (*entity.Post, error) {
 	var row entity.Post
 

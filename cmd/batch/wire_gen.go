@@ -189,9 +189,34 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		TouristSpotCommandService:  touristSpotCommandServiceImpl,
 		VlogCommandService:         vlogCommandServiceImpl,
 	}
+	postQueryRepositoryImpl := &repository.PostQueryRepositoryImpl{
+		DB: db,
+	}
+	reviewQueryRepositoryImpl := &repository.ReviewQueryRepositoryImpl{
+		DB: db,
+	}
+	reviewCommandRepositoryImpl := &repository.ReviewCommandRepositoryImpl{
+		DAO:        dao,
+		AWSSession: session,
+		AWSConfig:  aws,
+	}
+	vlogQueryRepositoryImpl := &repository.VlogQueryRepositoryImpl{
+		DB: db,
+	}
+	featureQueryRepositoryImpl := &repository.FeatureQueryRepositoryImpl{
+		DB: db,
+	}
 	batch := &Batch{
 		Config:                   configConfig,
 		WordpressCallbackService: wordpressCallbackServiceImpl,
+		PostQueryRepository:      postQueryRepositoryImpl,
+		PostCommandRepository:    postCommandRepositoryImpl,
+		ReviewQueryRepository:    reviewQueryRepositoryImpl,
+		ReviewCommandRepository:  reviewCommandRepositoryImpl,
+		VlogQueryRepository:      vlogQueryRepositoryImpl,
+		VlogCommandRepository:    vlogCommandRepositoryImpl,
+		FeatureQueryRepository:   featureQueryRepositoryImpl,
+		FeatureCommandRepository: featureCommandRepositoryImpl,
 	}
 	return batch, nil
 }

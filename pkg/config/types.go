@@ -13,16 +13,17 @@ type (
 	FilePath string
 
 	Config struct {
-		Version     string
-		Development *Development `validate:"omitempty" yaml:"development"`
-		Database    string       `validate:"required" yaml:"database"`
-		Migrate     Migrate      `validate:"" yaml:"migrate"`
-		Logger      *Logger      `validate:"" yaml:"logger"`
-		Stayway     Stayway      `validate:"required" yaml:"stayway"`
-		Wordpress   Wordpress    `validate:"required" yaml:"wordpress"`
-		AWS         AWS          `validate:"required" yaml:"aws"`
-		Slack       Slack        `validate:"required" yaml:"slack"`
-		Env         Env
+		Version         string
+		Development     *Development    `validate:"omitempty" yaml:"development"`
+		Database        string          `validate:"required" yaml:"database"`
+		Migrate         Migrate         `validate:"" yaml:"migrate"`
+		Logger          *Logger         `validate:"" yaml:"logger"`
+		Stayway         Stayway         `validate:"required" yaml:"stayway"`
+		Wordpress       Wordpress       `validate:"required" yaml:"wordpress"`
+		AWS             AWS             `validate:"required" yaml:"aws"`
+		Slack           Slack           `validate:"required" yaml:"slack"`
+		GoogleAnalytics GoogleAnalytics `validate:"required" yaml:"google_analytics"`
+		Env             Env
 
 		// scripts配下のスクリプト固有の設定
 		Scripts yaml.Node `validate:"" yaml:"scripts"`
@@ -76,6 +77,10 @@ type (
 		UserPoolID   string        `validate:"required" yaml:"user_pool_id"`
 		ClientID     string        `validate:"required" yaml:"client_id"`
 		UploadExpire time.Duration `validate:"required" yaml:"upload_expire"`
+	}
+
+	GoogleAnalytics struct {
+		ViewID int `validate:"required" yaml:"view_id"`
 	}
 
 	// TODO: 他のアプリが追加されると思うからSlackの下にアプリ毎にconfig作る
