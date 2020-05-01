@@ -1381,7 +1381,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TouristSpotList"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  touristSpots:
+                    $ref: "#/components/schemas/TouristSpotList"
   "/tourist_spots/{touristSpotId}":
     get:
       tags:
@@ -2712,6 +2719,42 @@ components:
           type: string
           description: サムネイルURL
           example: http://example.com/img/1
+        address:
+          type: string
+          description: 住所
+          example: 東京都渋谷区道玄坂１丁目１０−１０番８号 １F・2F 渋谷道玄坂東急ビル
+        latitude:
+          type: number
+          format: double
+          description: 緯度
+          example: 35.65695
+        longitude:
+          type: number
+          format: double
+          description: 経度
+          example: 139.698556
+        accessCar:
+          type: string
+          description: 車でのアクセス
+        accessTrain:
+          type: string
+          description: 電車でのアクセス
+        accessBus:
+          type: string
+          description: バスでのアクセス
+        rate:
+          type: number
+          format: double
+          description: 評価
+          example: 3.5
+        vendorRate:
+          type: number
+          format: double
+          description: 外部評価
+          example: 2.5
+        reviewCount:
+          type: number
+          description: レビュー件数
     TouristSpotShow:
       type: object
       required:
