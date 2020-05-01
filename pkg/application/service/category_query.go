@@ -27,7 +27,8 @@ var CategoryQueryServiceSet = wire.NewSet(
 
 func (r *CategoryQueryServiceImpl) ShowBySlug(slug string) (entity.Category, model.AreaGroup, error) {
 	areaCategory, err := r.AreaCategoryRepository.FindBySlug(slug)
-	if err != nil && serror.IsErrorCode(err, serror.CodeNotFound) {
+	// area_categoryで見つからなければtheme_categoryから探す
+	if err != nil && !serror.IsErrorCode(err, serror.CodeNotFound) {
 		return nil, model.AreaGroupUndefined, errors.Wrap(err, "failed to find area category by slug")
 	}
 	if areaCategory != nil {
@@ -35,7 +36,8 @@ func (r *CategoryQueryServiceImpl) ShowBySlug(slug string) (entity.Category, mod
 	}
 
 	themeCategory, err := r.ThemeCategoryRepository.FindBySlug(slug)
-	if err != nil && serror.IsErrorCode(err, serror.CodeNotFound) {
+	// theme_categoryでも見つからなければ404
+	if err != nil {
 		return nil, model.AreaGroupUndefined, errors.Wrap(err, "failed to find theme category by slug")
 	}
 
