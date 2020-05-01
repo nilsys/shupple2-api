@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 
@@ -32,6 +34,8 @@ type Batch struct {
 }
 
 func main() {
+	start := time.Now()
+
 	batch, err := InitializeBatch(config.DefaultConfigFilePath)
 	if err != nil {
 		log.Fatal(err)
@@ -40,6 +44,10 @@ func main() {
 	if err := batch.Run(os.Args); err != nil {
 		logger.Fatal(err.Error())
 	}
+
+	end := time.Now()
+
+	fmt.Printf("%f秒\n", (end.Sub(start)).Seconds())
 }
 
 func (b *Batch) Run(args []string) error {
