@@ -242,6 +242,6 @@ func (r *UserQueryRepositoryImpl) buildFindUserRankingListQuery(query *query.Fin
 			Order("user_views_count.views_count DESC")
 	}
 
-	return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(monthly_views) AS views_count FROM (SELECT user_id, monthly_views FROM review WHERE updated_at BETWEEN ? AND ? UNION ALL SELECT user_id, monthly_views FROM post WHERE updated_at BETWEEN ? AND ?) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id", query.FromDate, query.ToDate, query.FromDate, query.ToDate).
+	return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(monthly_views) AS views_count FROM (SELECT user_id, monthly_views FROM review UNION ALL SELECT user_id, monthly_views FROM post) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id").
 		Order("user_views_count.views_count DESC")
 }
