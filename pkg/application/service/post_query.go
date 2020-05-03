@@ -14,9 +14,9 @@ type (
 		ShowByID(id int) (*entity.Post, error)
 		ShowQueryByID(id int, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, error)
 		ShowQueryBySlug(slug string) (*entity.PostDetailWithHashtag, error)
-		ListFavoritePost(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
 		ListByParams(query *query.FindPostListQuery, ouser entity.OptionalUser) (*entity.PostList, error)
-		ListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
+		ListFeed(ouser entity.OptionalUser, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error)
+		ListFavoritePost(ouser entity.OptionalUser, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error)
 	}
 
 	// Post参照系サービス実装
@@ -69,11 +69,17 @@ func (s *PostQueryServiceImpl) ListByParams(query *query.FindPostListQuery, ouse
 }
 
 // ユーザーがフォローしたユーザー or ハッシュタグの記事一覧参照
-func (s *PostQueryServiceImpl) ListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error) {
-	return s.PostQueryRepository.FindFeedListByUserID(userID, query)
+func (s *PostQueryServiceImpl) ListFeed(ouser entity.OptionalUser, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
+	if ouser.Authenticated {
+		return s.PostQueryRepository.FindFeedListWithIsFavoriteByUserID(ouser.ID, targetUserID, query)
+	}
+	return s.PostQueryRepository.FindFeedListByUserID(targetUserID, query)
 }
 
 // ユーザーがいいねした記事一覧参照
-func (s *PostQueryServiceImpl) ListFavoritePost(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error) {
-	return s.PostQueryRepository.FindFavoriteListByUserID(userID, query)
+func (s *PostQueryServiceImpl) ListFavoritePost(ouser entity.OptionalUser, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
+	if ouser.Authenticated {
+		return s.PostQueryRepository.FindFavoriteListWithIsFavoriteByUserID(ouser.ID, targetUserID, query)
+	}
+	return s.PostQueryRepository.FindFavoriteListByUserID(targetUserID, query)
 }

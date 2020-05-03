@@ -130,35 +130,68 @@ func (r *PostQueryRepositoryImpl) FindListWithIsFavoriteByParams(query *query.Fi
 }
 
 // ユーザーIDからフォローしているハッシュタグ or ユーザーのpost一覧を参照
-func (r *PostQueryRepositoryImpl) FindFeedListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error) {
-	var posts []*entity.PostDetail
+func (r *PostQueryRepositoryImpl) FindFeedListByUserID(targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
+	var rows entity.PostList
 
-	q := r.buildFindFeedListQuery(userID)
+	q := r.buildFindFeedListQuery(targetUserID)
 
 	if err := q.
 		Order("created_at DESC").
 		Limit(query.Limit).
 		Offset(query.Offset).
-		Find(&posts).Error; err != nil {
+		Find(&rows.Posts).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed find feed posts")
 	}
 
-	return posts, nil
+	return &rows, nil
 }
 
-// 引数にとったUserID
-func (r *PostQueryRepositoryImpl) FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error) {
-	var rows []*entity.PostDetail
+func (r *PostQueryRepositoryImpl) FindFeedListWithIsFavoriteByUserID(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
+	var rows entity.PostList
+
+	q := r.buildFindFeedListQuery(targetUserID)
+
+	if err := q.
+		Select("post.*, CASE WHEN user_favorite_post.post_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Joins("LEFT JOIN user_favorite_post ON post.id = user_favorite_post.post_id AND user_favorite_post.user_id = ?", userID).
+		Order("created_at DESC").
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Find(&rows.Posts).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		return nil, errors.Wrapf(err, "failed find feed posts")
+	}
+
+	return &rows, nil
+}
+
+func (r *PostQueryRepositoryImpl) FindFavoriteListByUserID(targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
+	var rows entity.PostList
 
 	if err := r.DB.
-		Joins("INNER JOIN (SELECT post_id, updated_at FROM user_favorite_post WHERE user_id = ?) uf ON post.id = uf.post_id", userID).
+		Joins("INNER JOIN (SELECT post_id, created_at FROM user_favorite_post WHERE user_id = ?) uf ON post.id = uf.post_id", targetUserID).
 		Order("uf.created_at DESC").
 		Limit(query.Limit).
 		Offset(query.Offset).
-		Find(&rows).Error; err != nil {
-		return nil, errors.Wrapf(err, "failed find favorite posts by userID=%d", userID)
+		Find(&rows.Posts).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		return nil, errors.Wrapf(err, "failed find favorite posts by userID=%d", targetUserID)
 	}
-	return rows, nil
+	return &rows, nil
+}
+
+func (r *PostQueryRepositoryImpl) FindFavoriteListWithIsFavoriteByUserID(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
+	var rows entity.PostList
+
+	if err := r.DB.
+		Select("post.*, CASE WHEN user_favorite_post.post_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Joins("LEFT JOIN user_favorite_post ON post.id = user_favorite_post.post_id AND user_favorite_post.user_id = ?", userID).
+		Joins("INNER JOIN (SELECT post_id, created_at FROM user_favorite_post WHERE user_id = ?) uf ON post.id = uf.post_id", targetUserID).
+		Order("uf.created_at DESC").
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Find(&rows.Posts).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		return nil, errors.Wrapf(err, "failed find favorite posts by userID=%d", targetUserID)
+	}
+	return &rows, nil
 }
 
 // クエリ構造体を用い、検索クエリを作成
@@ -237,7 +270,7 @@ func (r *PostQueryRepositoryImpl) buildFindFeedListQuery(userID int) *gorm.DB {
 	q := r.DB
 
 	if userID != 0 {
-		q = q.Where("user_id IN (SELECT target_id FROM user_following WHERE user_id = ?)", userID).Or("id IN (SELECT post_id FROM post_hashtag WHERE hashtag_id IN (SELECT hashtag_id FROM user_follow_hashtag WHERE user_id = ?))", userID)
+		q = q.Where("post.user_id IN (SELECT target_id FROM user_following WHERE user_id = ?)", userID).Or("id IN (SELECT post_id FROM post_hashtag WHERE hashtag_id IN (SELECT hashtag_id FROM user_follow_hashtag WHERE user_id = ?))", userID)
 	}
 
 	return q

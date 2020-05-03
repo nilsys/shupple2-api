@@ -14,11 +14,11 @@ type (
 	// Review参照系サービス
 	ReviewQueryService interface {
 		ShowReviewListByParams(query *query.ShowReviewListQuery, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavoriteList, error)
-		ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error)
+		ListFeed(ouser entity.OptionalUser, userID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error)
 		ShowQueryReview(id int, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavorite, error)
 		ShowReview(id int) (*entity.Review, error)
 		ListReviewCommentByReviewID(reviewID int, limit int, ouser entity.OptionalUser) ([]*entity.ReviewCommentWithIsFavorite, error)
-		ListFavoriteReview(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error)
+		ListFavoriteReview(ouser entity.OptionalUser, userID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error)
 		ListReviewCommentReplyByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error)
 	}
 
@@ -98,7 +98,10 @@ func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewL
 	return reviews, nil
 }
 
-func (s *ReviewQueryServiceImpl) ShowListFeed(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error) {
+func (s *ReviewQueryServiceImpl) ListFeed(ouser entity.OptionalUser, userID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error) {
+	if ouser.Authenticated {
+		return s.ReviewQueryRepository.FindFeedReviewWithIsFavoriteListByUserID(ouser.ID, userID, query)
+	}
 	return s.ReviewQueryRepository.FindFeedReviewListByUserID(userID, query)
 }
 
@@ -129,8 +132,11 @@ func (s *ReviewQueryServiceImpl) ListReviewCommentByReviewID(reviewID int, limit
 	return s.ReviewQueryRepository.FindReviewCommentListByReviewID(reviewID, limit)
 }
 
-func (s *ReviewQueryServiceImpl) ListFavoriteReview(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error) {
-	return s.ReviewQueryRepository.FindFavoriteListByUserID(userID, query)
+func (s *ReviewQueryServiceImpl) ListFavoriteReview(ouser entity.OptionalUser, userID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error) {
+	if ouser.Authenticated {
+		return s.ReviewQueryRepository.FindFavoriteReviewWithIsFavoriteListByUserID(ouser.ID, userID, query)
+	}
+	return s.ReviewQueryRepository.FindFavoriteReviewListByUserID(userID, query)
 }
 
 func (s *ReviewQueryServiceImpl) ListReviewCommentReplyByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error) {

@@ -70,7 +70,7 @@ func (c *PostQueryController) ListPost(ctx echo.Context, ouser entity.OptionalUs
 	return ctx.JSON(http.StatusOK, c.ConvertPostListToOutput(posts))
 }
 
-func (c *PostQueryController) ListFeedPost(ctx echo.Context) error {
+func (c *PostQueryController) ListFeedPost(ctx echo.Context, ouser entity.OptionalUser) error {
 	p := &input.ListFeedPostParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrapf(err, "validation find feed post list input")
@@ -78,15 +78,15 @@ func (c *PostQueryController) ListFeedPost(ctx echo.Context) error {
 
 	q := c.ConvertListFeedPostParamToQuery(p)
 
-	posts, err := c.PostService.ListFeed(p.UserID, q)
+	posts, err := c.PostService.ListFeed(ouser, p.UserID, q)
 	if err != nil {
 		return errors.Wrap(err, "failed to show feed posts")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertPostDetailListToOutput(posts))
+	return ctx.JSON(http.StatusOK, c.ConvertPostListToOutput(posts))
 }
 
-func (c *PostQueryController) ListFavoritePost(ctx echo.Context) error {
+func (c *PostQueryController) ListFavoritePost(ctx echo.Context, ouser entity.OptionalUser) error {
 	p := &input.ListFeedPostParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list favorite post")
@@ -94,10 +94,10 @@ func (c *PostQueryController) ListFavoritePost(ctx echo.Context) error {
 
 	q := c.ConvertListFeedPostParamToQuery(p)
 
-	posts, err := c.PostService.ListFavoritePost(p.UserID, q)
+	posts, err := c.PostService.ListFavoritePost(ouser, p.UserID, q)
 	if err != nil {
 		return errors.Wrap(err, "failed list favorite post")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertPostDetailListToOutput(posts))
+	return ctx.JSON(http.StatusOK, c.ConvertPostListToOutput(posts))
 }

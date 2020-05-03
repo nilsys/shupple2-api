@@ -128,6 +128,7 @@ func (c Converters) ConvertUserDetailToOutput(user *entity.UserDetail) *output.R
 
 	return &output.RankinUser{
 		ID:        user.ID,
+		UID:       user.UID,
 		Name:      user.Name,
 		Profile:   user.Profile,
 		Thumbnail: user.AvatarURL(c.filesURL()),

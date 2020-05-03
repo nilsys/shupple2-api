@@ -25,8 +25,10 @@ type (
 		FindPostDetailWithHashtagBySlug(slug string) (*entity.PostDetailWithHashtag, error)
 		FindListByParams(query *query.FindPostListQuery) (*entity.PostList, error)
 		FindListWithIsFavoriteByParams(query *query.FindPostListQuery, userID int) (*entity.PostList, error)
-		FindFeedListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
-		FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.PostDetail, error)
+		FindFeedListByUserID(targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error)
+		FindFeedListWithIsFavoriteByUserID(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error)
+		FindFavoriteListByUserID(targetUseID int, query *query.FindListPaginationQuery) (*entity.PostList, error)
+		FindFavoriteListWithIsFavoriteByUserID(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error)
 		IsExist(id int) (bool, error)
 	}
 

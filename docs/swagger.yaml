@@ -731,7 +731,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /user/{userId}/feed/reviews:
+  /users/{userId}/feed/reviews:
     get:
       tags:
         - review
@@ -762,10 +762,15 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Review"
-  /user/{userId}/favorite/reviews:
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  reviews:
+                    $ref: "#/components/schemas/Review"
+  /users/{userId}/favorite/reviews:
     get:
       tags:
         - review
@@ -796,9 +801,14 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Review"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  reviews:
+                    $ref: "#/components/schemas/Review"
   /posts:
     get:
       tags:
@@ -1040,7 +1050,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /user/{userId}/feed/posts:
+  /users/{userId}/feed/posts:
     get:
       tags:
         - post
@@ -1071,8 +1081,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PostList"
-  /user/{userId}/favorite/posts:
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  posts:
+                    $ref: "#/components/schemas/PostList"
+  /users/{userId}/favorite/posts:
     get:
       tags:
         - post
@@ -1103,7 +1120,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PostList"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  posts:
+                    $ref: "#/components/schemas/PostList"
   /feature_posts:
     get:
       tags:

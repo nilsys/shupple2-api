@@ -20,7 +20,7 @@ type (
 
 	// ユーザーランキングで返すレスポンス型
 	RankinUser struct {
-		ID        int      `jso:"id"`
+		ID        int      `json:"id"`
 		UID       string   `json:"uid"`
 		Name      string   `json:"name"`
 		Profile   string   `json:"profile"`

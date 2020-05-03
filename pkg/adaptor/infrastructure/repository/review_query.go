@@ -60,8 +60,8 @@ func (r *ReviewQueryRepositoryImpl) ShowReviewWithIsFavoriteListByParams(query *
 }
 
 // ユーザーIDからフォローしているハッシュタグ or ユーザーのreview一覧を参照
-func (r *ReviewQueryRepositoryImpl) FindFeedReviewListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error) {
-	var reviews []*entity.ReviewDetail
+func (r *ReviewQueryRepositoryImpl) FindFeedReviewListByUserID(userID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error) {
+	var rows entity.ReviewDetailWithIsFavoriteList
 
 	q := r.buildFindFeedListQuery(userID)
 
@@ -69,11 +69,29 @@ func (r *ReviewQueryRepositoryImpl) FindFeedReviewListByUserID(userID int, query
 		Limit(query.Limit).
 		Offset(query.Offset).
 		Order("created_at DESC").
-		Find(&reviews).Error; err != nil {
+		Find(&rows.Reviews).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find feed reviews")
 	}
 
-	return reviews, nil
+	return &rows, nil
+}
+
+func (r *ReviewQueryRepositoryImpl) FindFeedReviewWithIsFavoriteListByUserID(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error) {
+	var rows entity.ReviewDetailWithIsFavoriteList
+
+	q := r.buildFindFeedListQuery(targetUserID)
+
+	if err := q.
+		Select("review.*, CASE WHEN user_favorite_review.review_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Order("created_at DESC").
+		Joins("LEFT JOIN user_favorite_review ON review.id = user_favorite_review.review_id AND user_favorite_review.user_id = ?", userID).
+		Find(&rows.Reviews).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find feed reviews")
+	}
+
+	return &rows, nil
 }
 
 func (r *ReviewQueryRepositoryImpl) FindQueryReviewByID(id int) (*entity.ReviewDetailWithIsFavorite, error) {
@@ -106,19 +124,36 @@ func (r *ReviewQueryRepositoryImpl) FindQueryReviewWithIsFavoriteByID(id, userID
 	return &row, nil
 }
 
-func (r *ReviewQueryRepositoryImpl) FindFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) ([]*entity.ReviewDetail, error) {
-	var rows []*entity.ReviewDetail
+func (r *ReviewQueryRepositoryImpl) FindFavoriteReviewListByUserID(userID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error) {
+	var rows entity.ReviewDetailWithIsFavoriteList
 
 	if err := r.DB.
-		Joins("INNER JOIN (SELECT review_id, updated_at FROM user_favorite_review WHERE user_id = ?) uf ON review.id = uf.review_id", userID).
+		Joins("INNER JOIN (SELECT review_id, created_at FROM user_favorite_review WHERE user_id = ?) uf ON review.id = uf.review_id", userID).
 		Order("uf.created_at DESC").
 		Limit(query.Limit).
 		Offset(query.Offset).
-		Find(&rows).Error; err != nil {
+		Find(&rows.Reviews).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed find favorite reviews by userID=%d", userID)
 	}
 
-	return rows, nil
+	return &rows, nil
+}
+
+func (r *ReviewQueryRepositoryImpl) FindFavoriteReviewWithIsFavoriteListByUserID(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error) {
+	var rows entity.ReviewDetailWithIsFavoriteList
+
+	if err := r.DB.
+		Select("review.*, CASE WHEN user_favorite_review.review_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Joins("LEFT JOIN user_favorite_review ON review.id = user_favorite_review.review_id AND user_favorite_review.user_id = ?", userID).
+		Joins("INNER JOIN (SELECT review_id, created_at FROM user_favorite_review WHERE user_id = ?) uf ON review.id = uf.review_id", targetUserID).
+		Order("uf.created_at DESC").
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Find(&rows.Reviews).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		return nil, errors.Wrapf(err, "failed find favorite reviews by userID=%d", targetUserID)
+	}
+
+	return &rows, nil
 }
 
 func (r *ReviewQueryRepositoryImpl) FindAll() ([]*entity.Review, error) {
@@ -198,7 +233,7 @@ func (r *ReviewQueryRepositoryImpl) buildFindFeedListQuery(userID int) *gorm.DB 
 	q := r.DB
 
 	if userID != 0 {
-		q = q.Where("user_id IN (SELECT target_id FROM user_follow WHERE user_id = ?)", userID).Or("review.id IN (SELECT review_id FROM review_hashtag WHERE hashtag_id IN (SELECT hashtag_id FROM user_follow_hashtag WHERE user_id = ?))", userID)
+		q = q.Where("review.user_id IN (SELECT target_id FROM user_following WHERE user_id = ?)", userID).Or("review.id IN (SELECT review_id FROM review_hashtag WHERE hashtag_id IN (SELECT hashtag_id FROM user_follow_hashtag WHERE user_id = ?))", userID)
 	}
 
 	return q

@@ -106,6 +106,10 @@ type (
 		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
 		Hashtag         []*Hashtag       `gorm:"many2many:post_hashtag;jointable_foreignkey:post_id;"`
 	}
+
+	PostDetailWithHashtagAndIsFavoriteList struct {
+		TotalNumber int
+	}
 )
 
 func (post *PostDetail) TableName() string {
