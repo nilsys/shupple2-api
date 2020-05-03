@@ -6,12 +6,9 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
-
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 )
 
 type (
@@ -32,18 +29,7 @@ func (c *AreaQueryController) ListArea(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to BindAndValidate")
 	}
 
-	// TODO: APIのパラメータを変える
-	var areaGroup model.AreaGroup
-	switch p.AreaGroupID {
-	case 1:
-		areaGroup = model.AreaGroupJapan
-	case 2:
-		areaGroup = model.AreaGroupWorld
-	default:
-		return serror.New(nil, serror.CodeInvalidParam, "unknown are group")
-	}
-
-	areaCategories, err := c.AreaQueryService.ListAreaByParams(areaGroup, p.PerPage, p.ExcludeID)
+	areaCategories, err := c.AreaQueryService.ListAreaByParams(p.AreaGroup, p.PerPage, p.ExcludeID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get areaCategories")
 	}

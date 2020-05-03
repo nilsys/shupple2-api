@@ -30,7 +30,7 @@ var AreaCategoryQueryServiceSet = wire.NewSet(
 )
 
 func (r *AreaQueryServiceImpl) ListAreaByParams(areaGroup model.AreaGroup, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
-	areaCategories, err := r.Repository.FindAreaListByAreaGroup(areaGroup, limit, excludeID)
+	areaCategories, err := r.Repository.FindAreaListHavingPostByAreaGroup(areaGroup, limit, excludeID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to list area")
 	}
@@ -38,7 +38,7 @@ func (r *AreaQueryServiceImpl) ListAreaByParams(areaGroup model.AreaGroup, limit
 }
 
 func (r *AreaQueryServiceImpl) ListSubAreaByParams(areaID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
-	areaCategories, err := r.Repository.FindSubAreaListByAreaID(areaID, limit, excludeID)
+	areaCategories, err := r.Repository.FindSubAreaListHavingPostByAreaID(areaID, limit, excludeID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to list sub area")
 	}
@@ -46,7 +46,7 @@ func (r *AreaQueryServiceImpl) ListSubAreaByParams(areaID int, limit int, exclud
 }
 
 func (r *AreaQueryServiceImpl) ListSubSubAreaByParams(subAreaID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
-	areaCategories, err := r.Repository.FindSubSubAreaListBySubAreaID(subAreaID, limit, excludeID)
+	areaCategories, err := r.Repository.FindSubSubAreaListHavingPostBySubAreaID(subAreaID, limit, excludeID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to list sub sub area")
 	}

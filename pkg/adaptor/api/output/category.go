@@ -27,7 +27,7 @@ type (
 
 	ThemeCategoryWithPostCount struct {
 		ThemeCategory
-		PostCount int `json:"post_count"`
+		PostCount int `json:"postCount"`
 	}
 
 	SpotCategory struct {
@@ -48,7 +48,7 @@ type (
 
 	AreaCategoryWithPostCount struct {
 		AreaCategory
-		PostCount int `json:"post_count"`
+		PostCount int `json:"postCount"`
 	}
 )
 
