@@ -39,8 +39,8 @@ func (r *HashtagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSub
 
 	if err := q.
 		Order("post_count + review_count DESC").
-		Find(&rows).
 		Limit(limit).
+		Find(&rows).
 		Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to find get recommend reviews")
 	}
