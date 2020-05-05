@@ -45,39 +45,41 @@ func (r *TouristSpotQueryRepositoryImpl) FindDetailByID(id int) (*entity.Tourist
 	return &row, nil
 }
 
-// TODO: rateに関して
 // https://github.com/stayway-corp/stayway-media-api/issues/56
-func (r *TouristSpotQueryRepositoryImpl) FindListByParams(query *query.FindTouristSpotListQuery) ([]*entity.TouristSpot, error) {
-	var rows []*entity.TouristSpot
+func (r *TouristSpotQueryRepositoryImpl) FindListByParams(query *query.FindTouristSpotListQuery) (*entity.TouristSpotList, error) {
+	var rows entity.TouristSpotList
 
 	q := r.buildFindListByParamsQuery(query)
 
 	if err := q.
+		Select("*").
+		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
 		Limit(query.Limit).
 		Offset(query.OffSet).
 		Order("vendor_rate desc").
-		Find(&rows).Error; err != nil {
+		Find(&rows.TouristSpots).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get tourist_spots by params")
 	}
 
-	return rows, nil
+	return &rows, nil
 }
 
-// TODO: rateに関して
 // https://github.com/stayway-corp/stayway-media-api/issues/56
-func (r *TouristSpotQueryRepositoryImpl) FindRecommendListByParams(query *query.FindRecommendTouristSpotListQuery) ([]*entity.TouristSpot, error) {
-	var rows []*entity.TouristSpot
+func (r *TouristSpotQueryRepositoryImpl) FindRecommendListByParams(query *query.FindRecommendTouristSpotListQuery) (*entity.TouristSpotList, error) {
+	var rows entity.TouristSpotList
 
 	q := r.buildFindRecommendListQuery(query)
 
 	if err := q.
+		Select("*").
+		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
 		Limit(query.Limit).
 		Offset(query.OffSet).
 		Order("vendor_rate desc").
-		Find(&rows).Error; err != nil {
+		Find(&rows.TouristSpots).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrap(err, "failed get recommend tourist_spots by params")
 	}
-	return rows, nil
+	return &rows, nil
 }
 
 // name部分一致検索

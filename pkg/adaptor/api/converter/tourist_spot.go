@@ -21,23 +21,35 @@ func (c Converters) ConvertTouristSpotListParamToQuery(param *input.ListTouristS
 	}
 }
 
-func (c Converters) ConvertTouristSpotToOutput(touristSpots []*entity.TouristSpot) []*output.TouristSpot {
-	responseTouristSpots := make([]*output.TouristSpot, len(touristSpots))
+func (c Converters) ConvertTouristSpotToOutput(touristSpots *entity.TouristSpotList) *output.TouristSpotList {
+	responseTouristSpots := make([]*output.TouristSpot, len(touristSpots.TouristSpots))
 
-	for i, touristSpot := range touristSpots {
+	for i, touristSpot := range touristSpots.TouristSpots {
 		responseTouristSpots[i] = c.convertTouristSpotToOutput(touristSpot)
 	}
 
-	return responseTouristSpots
+	return &output.TouristSpotList{
+		TotalNumber:  touristSpots.TotalNumber,
+		TouristSpots: responseTouristSpots,
+	}
 }
 
 // outputの構造体へconvert
-func (c Converters) convertTouristSpotToOutput(touristSpot *entity.TouristSpot) *output.TouristSpot {
+func (c Converters) convertTouristSpotToOutput(touristSpot *entity.TouristSpotListTiny) *output.TouristSpot {
 	return &output.TouristSpot{
-		ID:        touristSpot.ID,
-		Name:      touristSpot.Name,
-		Thumbnail: touristSpot.Thumbnail,
-		URL:       touristSpot.WebsiteURL,
+		ID:          touristSpot.ID,
+		Name:        touristSpot.Name,
+		Thumbnail:   touristSpot.Thumbnail,
+		URL:         touristSpot.WebsiteURL,
+		Address:     touristSpot.Address,
+		Latitude:    touristSpot.Lat,
+		Longitude:   touristSpot.Lng,
+		AccessCar:   touristSpot.AccessCar,
+		AccessTrain: touristSpot.AccessTrain,
+		AccessBus:   touristSpot.AccessBus,
+		Rate:        touristSpot.Rate,
+		VendorRate:  touristSpot.VendorRate,
+		ReviewCount: touristSpot.ReviewCount,
 	}
 }
 

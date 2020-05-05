@@ -32,6 +32,16 @@ type (
 		DeletedAt    *time.Time `json:"-"`
 	}
 
+	TouristSpotList struct {
+		TotalNumber  int
+		TouristSpots []*TouristSpotListTiny
+	}
+
+	TouristSpotListTiny struct {
+		TouristSpotTiny
+		ReviewCount int
+	}
+
 	TouristSpot struct {
 		TouristSpotTiny
 		AreaCategoryIDs  []*TouristSpotAreaCategory  `gorm:"foreignkey:TouristSpotID"`
@@ -105,5 +115,9 @@ func (ts *TouristSpot) SetSpotCategories(spotCategoryIDs []int) {
 
 // テーブル名
 func (queryTouristSpot *TouristSpotDetail) TableName() string {
+	return "tourist_spot"
+}
+
+func (t *TouristSpotListTiny) TableName() string {
 	return "tourist_spot"
 }

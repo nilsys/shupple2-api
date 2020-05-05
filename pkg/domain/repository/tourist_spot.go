@@ -20,8 +20,8 @@ type (
 		FindAll() ([]*entity.TouristSpot, error)
 		FindByID(id int) (*entity.TouristSpot, error)
 		FindDetailByID(id int) (*entity.TouristSpotDetail, error)
-		FindListByParams(query *query.FindTouristSpotListQuery) ([]*entity.TouristSpot, error)
-		FindRecommendListByParams(query *query.FindRecommendTouristSpotListQuery) ([]*entity.TouristSpot, error)
+		FindListByParams(query *query.FindTouristSpotListQuery) (*entity.TouristSpotList, error)
+		FindRecommendListByParams(query *query.FindRecommendTouristSpotListQuery) (*entity.TouristSpotList, error)
 		// name部分一致検索
 		SearchByName(name string) ([]*entity.TouristSpot, error)
 	}

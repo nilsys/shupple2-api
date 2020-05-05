@@ -11,8 +11,8 @@ type (
 	// TouristSpot参照系サービス
 	TouristSpotQueryService interface {
 		Show(id int) (*entity.TouristSpotDetail, error)
-		List(query *query.FindTouristSpotListQuery) ([]*entity.TouristSpot, error)
-		ListRecommend(query *query.FindRecommendTouristSpotListQuery) ([]*entity.TouristSpot, error)
+		List(query *query.FindTouristSpotListQuery) (*entity.TouristSpotList, error)
+		ListRecommend(query *query.FindRecommendTouristSpotListQuery) (*entity.TouristSpotList, error)
 	}
 
 	// TouristSpot参照系サービス実装
@@ -32,11 +32,11 @@ func (s *TouristSpotQueryServiceImpl) Show(id int) (*entity.TouristSpotDetail, e
 }
 
 // TouristSpot一覧参照
-func (s *TouristSpotQueryServiceImpl) List(query *query.FindTouristSpotListQuery) ([]*entity.TouristSpot, error) {
+func (s *TouristSpotQueryServiceImpl) List(query *query.FindTouristSpotListQuery) (*entity.TouristSpotList, error) {
 	return s.TouristSpotQueryRepository.FindListByParams(query)
 }
 
 // おすすめTouristSpot一覧取得
-func (s *TouristSpotQueryServiceImpl) ListRecommend(query *query.FindRecommendTouristSpotListQuery) ([]*entity.TouristSpot, error) {
+func (s *TouristSpotQueryServiceImpl) ListRecommend(query *query.FindRecommendTouristSpotListQuery) (*entity.TouristSpotList, error) {
 	return s.TouristSpotQueryRepository.FindRecommendListByParams(query)
 }

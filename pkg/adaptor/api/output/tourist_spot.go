@@ -8,10 +8,24 @@ import (
 
 type (
 	TouristSpot struct {
-		ID        int    `json:"id"`
-		Name      string `json:"name"`
-		Thumbnail string `json:"thumbnail"`
-		URL       string `json:"url"`
+		ID          int        `json:"id"`
+		Name        string     `json:"name"`
+		Thumbnail   string     `json:"thumbnail"`
+		URL         string     `json:"url"`
+		Address     string     `json:"address"`
+		Latitude    null.Float `json:"latitude"`
+		Longitude   null.Float `json:"longitude"`
+		AccessCar   string     `json:"accessCar"`
+		AccessTrain string     `json:"accessTrain"`
+		AccessBus   string     `json:"accessBus"`
+		Rate        float64    `json:"rate"`
+		VendorRate  float64    `json:"vendorRate"`
+		ReviewCount int        `json:"reviewCount"`
+	}
+
+	TouristSpotList struct {
+		TotalNumber  int            `json:"totalNumber"`
+		TouristSpots []*TouristSpot `json:"touristSpots"`
 	}
 
 	ShowTouristSpot struct {

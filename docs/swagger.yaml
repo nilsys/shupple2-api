@@ -1459,7 +1459,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TouristSpotList"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  touristSpots:
+                    $ref: "#/components/schemas/TouristSpotList"
   /hashtags/recommend:
     get:
       tags:
