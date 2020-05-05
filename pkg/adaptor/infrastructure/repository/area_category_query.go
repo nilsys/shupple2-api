@@ -91,21 +91,27 @@ func (r *AreaCategoryQueryRepositoryImpl) FindAreaListHavingPostByAreaGroup(area
 	q := r.buildQueryByLimitAndExcludeID(limit, excludeID)
 
 	/*
-		SELECT area_category.*, count(pac.post_id) as post_count
-		FROM `area_category`
-		LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id
-		WHERE (area_group = 'japan' AND type = 'Area')
-		GROUP BY area_category.id
-		HAVING post_count > 0
+		area_category AS area_category, ac
+		post_area_category AS pac
+
+		 SELECT area_category.*, post_count FROM `area_category` JOIN(
+				SELECT ac.*, count(ac.id) AS post_count FROM post_area_category pac
+				JOIN area_category ac ON pac.area_category_id = ac.id
+				GROUP BY ac.id
+		) a ON a.area_id = area_category.id
+		WHERE (area_category.area_group = 'Japan' AND area_category.type = 'Area')
+		HAVING (post_count > 0)
 		ORDER BY post_count DESC LIMIT 1000
 	*/
 	if err := q.
-		Select("area_category.*, count(pac.post_id) as post_count").
-		Joins("LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id").
-		Where("area_group = ? AND type = ?", areaGroup, model.AreaCategoryTypeArea).
-		Group("area_category.id").
+		Select("area_category.*, post_count").
+		Joins(`JOIN(
+			SELECT ac.*, count(ac.id) AS post_count FROM post_area_category pac
+			JOIN area_category ac ON pac.area_category_id = ac.id
+			GROUP BY ac.id) a ON a.area_id = area_category.id`).
+		Where("area_category.area_group = ? AND area_category.type = ?", areaGroup, model.AreaCategoryTypeArea).
 		Having("post_count > 0").
-		Order(sortOrder).Order("post_count DESC").
+		Order("post_count DESC").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to area list by areaGroup= %s", areaGroup)
 	}
@@ -118,21 +124,29 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubAreaListHavingPostByAreaID(area
 	q := r.buildQueryByLimitAndExcludeID(limit, excludeID)
 
 	/*
-		SELECT area_category.*, count(pac.post_id) as post_count
-		FROM `area_category`
-		LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id
-		WHERE (area_id = '1' AND type = 'SubArea')
-		GROUP BY area_category.id
-		HAVING post_count > 0
+		area_category AS area_category, ac
+		post_area_category AS pac
+
+		SELECT area_category.*, post_count FROM `area_category` JOIN(
+			SELECT ac.*, count(ac.id) AS post_count FROM post_area_category pac
+			JOIN area_category ac ON pac.area_category_id = ac.id
+			WHERE (ac.type = 'SubArea' OR ac.type = 'SubSubArea')
+			GROUP BY ac.id
+		)a ON area_category.id = a.sub_area_id
+		WHERE (area_category.area_id = '7' AND area_category.type = 'SubArea')
+		HAVING (post_count > 0)
 		ORDER BY post_count DESC LIMIT 1000
 	*/
 	if err := q.
-		Select("area_category.*, count(pac.post_id) as post_count").
-		Joins("LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id").
-		Where("area_id = ? AND type = ?", areaID, model.AreaCategoryTypeSubArea).
-		Group("area_category.id").
+		Select("area_category.*, post_count").
+		Joins(`JOIN(
+			SELECT ac.*, count(ac.id) AS post_count FROM post_area_category pac
+			JOIN area_category ac ON pac.area_category_id = ac.id
+			WHERE (ac.type = ? OR ac.type = ?)
+			GROUP BY ac.id)a ON area_category.id = a.sub_area_id`, model.AreaCategoryTypeSubArea, model.AreaCategoryTypeSubSubArea).
+		Where("area_category.area_id = ? AND area_category.type = ?", areaID, model.AreaCategoryTypeSubArea).
 		Having("post_count > 0").
-		Order(sortOrder).Order("post_count DESC").
+		Order("post_count DESC").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to sub_area list by area_id = %d", areaID)
 	}
@@ -147,7 +161,7 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubSubAreaListHavingPostBySubAreaI
 	/*
 		SELECT area_category.*, count(pac.post_id) as post_count
 		FROM `area_category`
-		LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id
+		JOIN post_area_category pac ON area_category.id = pac.area_category_id
 		WHERE (sub_area_id = '1' AND type = 'SubSubArea')
 		GROUP BY area_category.id
 		HAVING post_count > 0
@@ -155,11 +169,11 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubSubAreaListHavingPostBySubAreaI
 	*/
 	if err := q.
 		Select("area_category.*, count(pac.post_id) as post_count").
-		Joins("LEFT OUTER JOIN post_area_category pac ON area_category.id = pac.area_category_id").
+		Joins("JOIN post_area_category pac ON area_category.id = pac.area_category_id").
 		Where("sub_area_id = ? AND type = ?", subAreaID, model.AreaCategoryTypeSubSubArea).
 		Group("area_category.id").
 		Having("post_count > 0").
-		Order(sortOrder).Order("post_count DESC").
+		Order("post_count DESC").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to sub_sub_area list by sub_area_id = %d", subAreaID)
 	}
