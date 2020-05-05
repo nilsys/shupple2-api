@@ -2188,12 +2188,6 @@ components:
             format yyyy-MM
         accompanying:
           $ref: "#/components/schemas/Accompanying"
-        hashtagId:
-          type: array
-          description: |
-            ハッシュタグID
-          items:
-            type: integer
         spotId:
           type: integer
         innId:
@@ -2204,6 +2198,7 @@ components:
           type: string
         mediaUuids:
           type: array
+          description: 1枚目から順番に
           items:
             type: object
             properties:
@@ -2364,6 +2359,9 @@ components:
         url:
           type: string
           format: url
+        priority:
+          type: integer
+          description: 順番
     ReviewComment:
       type: object
       properties:
