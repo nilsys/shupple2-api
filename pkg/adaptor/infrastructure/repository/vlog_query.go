@@ -41,9 +41,9 @@ func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuer
 	q := r.buildFindByParamsQuery(query)
 
 	// フリーワード検索の場合
-	if query.Keyward != "" {
+	if query.Keyword != "" {
 		if err := q.
-			Select("*, CASE WHEN MATCH(title) AGAINST(?) THEN 'TRUE' ELSE 'FALSE' END is_matched_title", query.Keyward).
+			Select("*, CASE WHEN title LIKE ? THEN 'TRUE' ELSE 'FALSE' END is_matched_title", query.SQLLikeKeyword()).
 			Order("is_matched_title desc").
 			Order(query.SortBy.GetVlogOrderQuery()).
 			Limit(query.Limit).
@@ -100,9 +100,8 @@ func (r *VlogQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindVlogLi
 		q = q.Where("user_id = ?", query.UserID)
 	}
 
-	// TODO: titleに引っかかる物が優先順位が高い、その後body
-	if query.Keyward != "" {
-		q = q.Where("MATCH(title) AGAINST(?)", query.Keyward).Or("MATCH(body) AGAINST(?)", query.Keyward)
+	if query.Keyword != "" {
+		q = q.Where("title LIKE ?", query.SQLLikeKeyword()).Or("body LIKE ?", query.SQLLikeKeyword())
 	}
 
 	return q

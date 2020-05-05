@@ -218,8 +218,8 @@ func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowRe
 		q = q.Where("updated_at BETWEEN ? AND ?", time.Date(time.Now().Year(), time.Now().Month()-recommendMonthPeriod, time.Now().Day(), 0, 0, 0, 0, time.Local), time.Now())
 	}
 
-	if query.Keyward != "" {
-		q = q.Where("MATCH(body) AGAINST(?)", query.Keyward)
+	if query.Keyword != "" {
+		q = q.Where("body LIKE ?", query.SQLLikeKeyword())
 	}
 
 	if query.ExcludeID != 0 {

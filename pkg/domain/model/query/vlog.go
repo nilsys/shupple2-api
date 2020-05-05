@@ -11,8 +11,12 @@ type (
 		TouristSpotID int
 		UserID        int
 		SortBy        model.MediaSortBy
-		Keyward       string
+		Keyword       string
 		Limit         int
 		OffSet        int
 	}
 )
+
+func (q *FindVlogListQuery) SQLLikeKeyword() string {
+	return "%" + q.Keyword + "%"
+}

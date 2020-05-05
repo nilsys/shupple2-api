@@ -82,9 +82,9 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 	q := r.buildFindListByParamsQuery(query)
 
 	// フリーワード検索の場合
-	if query.Keyward != "" {
+	if query.Keyword != "" {
 		if err := q.
-			Select("*, CASE WHEN MATCH(title) AGAINST(?) THEN 'TRUE' ELSE 'FALSE' END is_matched_title", query.Keyward).
+			Select("*, CASE WHEN title LIKE ? THEN 'TRUE' ELSE 'FALSE' END is_matched_title", query.SQLLikeKeyword()).
 			Order("is_matched_title desc").
 			Order(query.SortBy.GetPostOrderQuery()).
 			Limit(query.Limit).
@@ -254,9 +254,8 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 		q = q.Where("id IN (SELECT post_id FROM post_hashtag WHERE hashtag_id = (SELECT id FROM hashtag WHERE name = ?))", query.HashTag)
 	}
 
-	// TODO: titleに引っかかる物が優先順位が高い、その後body
-	if query.Keyward != "" {
-		q = q.Where("MATCH(title) AGAINST(?)", query.Keyward).Or("id IN (SELECT post_id FROM post_body WHERE MATCH(body) AGAINST(?))", query.Keyward)
+	if query.Keyword != "" {
+		q = q.Where("title LIKE ?", query.SQLLikeKeyword()).Or("id IN (SELECT post_id FROM post_body WHERE body LIKE ?)", query.SQLLikeKeyword())
 	}
 
 	if query.SortBy == model.MediaSortByRANKING {

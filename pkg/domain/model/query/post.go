@@ -20,8 +20,12 @@ type (
 		ThemeID                int
 		HashTag                string
 		SortBy                 model.MediaSortBy
-		Keyward                string
+		Keyword                string
 		Limit                  int
 		OffSet                 int
 	}
 )
+
+func (q *FindPostListQuery) SQLLikeKeyword() string {
+	return "%" + q.Keyword + "%"
+}

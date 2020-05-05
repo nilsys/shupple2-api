@@ -23,7 +23,7 @@ func (c Converters) ConvertFindReviewListParamToQuery(param *input.ListReviewPar
 		MetasearchSubAreaID:    param.MetasearchSubAreaID,
 		MetasearchSubSubAreaID: param.MetasearchSubSubAreaID,
 		SortBy:                 param.SortBy,
-		Keyward:                param.Keyward,
+		Keyword:                param.Keyward,
 		ExcludeID:              param.ExcludeID,
 		Limit:                  param.GetLimit(),
 		OffSet:                 param.GetOffset(),
