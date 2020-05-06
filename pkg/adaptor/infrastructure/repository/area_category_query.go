@@ -94,10 +94,10 @@ func (r *AreaCategoryQueryRepositoryImpl) FindAreaListHavingPostByAreaGroup(area
 		area_category AS area_category, ac
 		post_area_category AS pac
 
-		 SELECT area_category.*, post_count FROM `area_category` JOIN(
-				SELECT ac.*, count(ac.id) AS post_count FROM post_area_category pac
+		SELECT area_category.*, post_count FROM `area_category` JOIN(
+				SELECT ac.area_id, count(ac.id) AS post_count FROM post_area_category pac
 				JOIN area_category ac ON pac.area_category_id = ac.id
-				GROUP BY ac.id
+				GROUP BY ac.area_id
 		) a ON a.area_id = area_category.id
 		WHERE (area_category.area_group = 'Japan' AND area_category.type = 'Area')
 		HAVING (post_count > 0)
@@ -106,9 +106,9 @@ func (r *AreaCategoryQueryRepositoryImpl) FindAreaListHavingPostByAreaGroup(area
 	if err := q.
 		Select("area_category.*, post_count").
 		Joins(`JOIN(
-			SELECT ac.*, count(ac.id) AS post_count FROM post_area_category pac
+			SELECT ac.area_id, count(ac.id) AS post_count FROM post_area_category pac
 			JOIN area_category ac ON pac.area_category_id = ac.id
-			GROUP BY ac.id) a ON a.area_id = area_category.id`).
+			GROUP BY ac.area_id) a ON a.area_id = area_category.id`).
 		Where("area_category.area_group = ? AND area_category.type = ?", areaGroup, model.AreaCategoryTypeArea).
 		Having("post_count > 0").
 		Order("post_count DESC").
@@ -128,10 +128,10 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubAreaListHavingPostByAreaID(area
 		post_area_category AS pac
 
 		SELECT area_category.*, post_count FROM `area_category` JOIN(
-			SELECT ac.*, count(ac.id) AS post_count FROM post_area_category pac
+			SELECT ac.sub_area_id, count(ac.id) AS post_count FROM post_area_category pac
 			JOIN area_category ac ON pac.area_category_id = ac.id
 			WHERE (ac.type = 'SubArea' OR ac.type = 'SubSubArea')
-			GROUP BY ac.id
+			GROUP BY ac.sub_area_id
 		)a ON area_category.id = a.sub_area_id
 		WHERE (area_category.area_id = '7' AND area_category.type = 'SubArea')
 		HAVING (post_count > 0)
@@ -140,10 +140,10 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubAreaListHavingPostByAreaID(area
 	if err := q.
 		Select("area_category.*, post_count").
 		Joins(`JOIN(
-			SELECT ac.*, count(ac.id) AS post_count FROM post_area_category pac
+			SELECT ac.sub_area_id, count(ac.id) AS post_count FROM post_area_category pac
 			JOIN area_category ac ON pac.area_category_id = ac.id
 			WHERE (ac.type = ? OR ac.type = ?)
-			GROUP BY ac.id)a ON area_category.id = a.sub_area_id`, model.AreaCategoryTypeSubArea, model.AreaCategoryTypeSubSubArea).
+			GROUP BY ac.sub_area_id)a ON area_category.id = a.sub_area_id`, model.AreaCategoryTypeSubArea, model.AreaCategoryTypeSubSubArea).
 		Where("area_category.area_id = ? AND area_category.type = ?", areaID, model.AreaCategoryTypeSubArea).
 		Having("post_count > 0").
 		Order("post_count DESC").
