@@ -111,6 +111,7 @@ func (r *AreaCategoryQueryRepositoryImpl) FindAreaListHavingPostByAreaGroup(area
 			GROUP BY ac.area_id) a ON a.area_id = area_category.id`).
 		Where("area_category.area_group = ? AND area_category.type = ?", areaGroup, model.AreaCategoryTypeArea).
 		Having("post_count > 0").
+		Order(sortOrder).
 		Order("post_count DESC").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to area list by areaGroup= %s", areaGroup)
@@ -146,6 +147,7 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubAreaListHavingPostByAreaID(area
 			GROUP BY ac.sub_area_id)a ON area_category.id = a.sub_area_id`, model.AreaCategoryTypeSubArea, model.AreaCategoryTypeSubSubArea).
 		Where("area_category.area_id = ? AND area_category.type = ?", areaID, model.AreaCategoryTypeSubArea).
 		Having("post_count > 0").
+		Order(sortOrder).
 		Order("post_count DESC").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to sub_area list by area_id = %d", areaID)
@@ -173,6 +175,7 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubSubAreaListHavingPostBySubAreaI
 		Where("sub_area_id = ? AND type = ?", subAreaID, model.AreaCategoryTypeSubSubArea).
 		Group("area_category.id").
 		Having("post_count > 0").
+		Order(sortOrder).
 		Order("post_count DESC").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed to sub_sub_area list by sub_area_id = %d", subAreaID)
