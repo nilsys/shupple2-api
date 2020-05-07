@@ -41,6 +41,7 @@ type (
 		Name       string                 `json:"name"`
 		Slug       string                 `json:"slug"`
 		Type       model.AreaCategoryType `json:"type"`
+		AreaGroup  model.AreaGroup        `json:"areaGroup"`
 		Area       *AreaCategory          `json:"area"`
 		SubArea    *AreaCategory          `json:"subArea,omitempty"`
 		SubSubArea *AreaCategory          `json:"subSubArea,omitempty"`

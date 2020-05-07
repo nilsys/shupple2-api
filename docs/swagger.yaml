@@ -3163,6 +3163,12 @@ components:
             - Area
             - SubArea
             - SubSubArea
+        areaGroup:
+          type: string
+          enum:
+            - Undefined
+            - Japan
+            - World
         area:
           $ref: "#/components/schemas/AreaCategory"
         subArea:

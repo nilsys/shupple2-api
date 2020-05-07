@@ -60,6 +60,7 @@ func (c Converters) ConvertAreaCategoryDetailToOutput(areaCategoryDetail *entity
 		Name:       areaCategoryDetail.Name,
 		Slug:       areaCategoryDetail.Slug,
 		Type:       areaCategoryDetail.Type,
+		AreaGroup:  areaCategoryDetail.AreaGroup,
 		Area:       c.ConvertAreaCategoryToOutput(areaCategoryDetail.Area),
 		SubArea:    subArea,
 		SubSubArea: subSubArea,
