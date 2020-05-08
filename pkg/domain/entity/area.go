@@ -45,6 +45,10 @@ func (ac AreaCategory) CategoryType() string {
 	return ac.Type.String()
 }
 
+func (acd *AreaCategoryDetail) Set(area *AreaCategory) {
+	acd.AreaCategory = *area
+}
+
 func (acd *AreaCategoryDetail) SetArea(area *AreaCategory) {
 	acd.Area = area
 }

@@ -20,6 +20,28 @@ type (
 		UpdatedAt       model.TimeResponse `json:"updatedAt"`
 	}
 
+	// PostQueryController.ListPost()でのみ使用中
+	PostWithAreaCategoryDetail struct {
+		ID              int                   `json:"id"`
+		Thumbnail       string                `json:"thumbnail"`
+		AreaCategories  []*AreaCategoryDetail `json:"areaCategories"`
+		ThemeCategories []*ThemeCategory      `json:"themeCategories"`
+		Title           string                `json:"title"`
+		Slug            string                `json:"slug"`
+		Creator         Creator               `json:"creator"`
+		FavoriteCount   int                   `json:"favoriteCount"`
+		Views           int                   `json:"views"`
+		HideAds         bool                  `json:"hideAds"`
+		IsFavorite      bool                  `json:"isFavorite"`
+		CreatedAt       model.TimeResponse    `json:"createdAt"`
+		UpdatedAt       model.TimeResponse    `json:"updatedAt"`
+	}
+
+	PostWthAreaCategoryDetailList struct {
+		TotalNumber int                           `json:"totalNumber"`
+		Posts       []*PostWithAreaCategoryDetail `json:"posts"`
+	}
+
 	PostList struct {
 		TotalNumber int     `json:"totalNumber"`
 		Posts       []*Post `json:"posts"`

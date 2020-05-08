@@ -176,3 +176,57 @@ func (c Converters) ConvertPostListTinyToOutput(post *entity.PostListTiny) *outp
 		UpdatedAt:       model.TimeResponse(post.UpdatedAt),
 	}
 }
+
+func (c Converters) ConvertPostListTinyWithAreaCategoryForListToOutput(posts *entity.PostList, areaCategories map[int]*entity.AreaCategory) *output.PostWthAreaCategoryDetailList {
+	postsRes := make([]*output.PostWithAreaCategoryDetail, len(posts.Posts))
+
+	for i, post := range posts.Posts {
+		postsRes[i] = c.ConvertPostListTinyWithAreaCategoryToOutput(post, areaCategories)
+	}
+
+	return &output.PostWthAreaCategoryDetailList{
+		TotalNumber: posts.TotalNumber,
+		Posts:       postsRes,
+	}
+}
+
+func (c Converters) ConvertPostListTinyWithAreaCategoryToOutput(post *entity.PostListTiny, areaCategories map[int]*entity.AreaCategory) *output.PostWithAreaCategoryDetail {
+	areaCategoriesRes := make([]*output.AreaCategoryDetail, 0)
+	for _, areaCate := range post.AreaCategories {
+		var subArea *output.AreaCategory
+		var subSubArea *output.AreaCategory
+		if areaCate.SubAreaID.Valid {
+			subArea = c.ConvertAreaCategoryToOutput(areaCategories[int(areaCate.SubAreaID.Int64)])
+		}
+		if areaCate.SubSubAreaID.Valid {
+			subSubArea = c.ConvertAreaCategoryToOutput(areaCategories[int(areaCate.SubSubAreaID.Int64)])
+		}
+
+		areaCategoriesRes = append(areaCategoriesRes, &output.AreaCategoryDetail{
+			ID:         areaCate.ID,
+			Name:       areaCate.Name,
+			Slug:       areaCate.Slug,
+			Type:       areaCate.Type,
+			AreaGroup:  areaCate.AreaGroup,
+			Area:       c.ConvertAreaCategoryToOutput(areaCategories[areaCate.AreaID]),
+			SubArea:    subArea,
+			SubSubArea: subSubArea,
+		})
+	}
+
+	return &output.PostWithAreaCategoryDetail{
+		ID:              post.ID,
+		Thumbnail:       post.Thumbnail,
+		AreaCategories:  areaCategoriesRes,
+		ThemeCategories: c.ConvertThemeCategoriesToOutput(post.ThemeCategories),
+		Title:           post.Title,
+		Slug:            post.Slug,
+		Creator:         c.NewCreatorFromUser(post.User),
+		FavoriteCount:   post.FavoriteCount,
+		Views:           post.Views,
+		HideAds:         post.HideAds,
+		IsFavorite:      post.IsFavorite,
+		CreatedAt:       model.TimeResponse(post.CreatedAt),
+		UpdatedAt:       model.TimeResponse(post.UpdatedAt),
+	}
+}

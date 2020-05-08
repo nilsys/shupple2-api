@@ -53,8 +53,12 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	postQueryRepositoryImpl := &repository.PostQueryRepositoryImpl{
 		DB: db,
 	}
+	areaCategoryQueryRepositoryImpl := &repository.AreaCategoryQueryRepositoryImpl{
+		DB: db,
+	}
 	postQueryServiceImpl := &service.PostQueryServiceImpl{
-		PostQueryRepository: postQueryRepositoryImpl,
+		PostQueryRepository:         postQueryRepositoryImpl,
+		AreaCategoryQueryRepository: areaCategoryQueryRepositoryImpl,
 	}
 	postQueryController := api.PostQueryController{
 		Converters:  converters,
@@ -96,9 +100,6 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	postFavoriteCommandController := api.PostFavoriteCommandController{
 		Converters:                 converters,
 		PostFavoriteCommandService: postFavoriteCommandServiceImpl,
-	}
-	areaCategoryQueryRepositoryImpl := &repository.AreaCategoryQueryRepositoryImpl{
-		DB: db,
 	}
 	themeCategoryQueryRepositoryImpl := &repository.ThemeCategoryQueryRepositoryImpl{
 		DB: db,

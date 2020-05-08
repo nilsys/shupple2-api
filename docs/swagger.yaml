@@ -956,7 +956,7 @@ paths:
                     description: 検索総件数
                     example: 120
                   posts:
-                    $ref: "#/components/schemas/PostList"
+                    $ref: "#/components/schemas/PostWithAreaCategorySummaryList"
   /posts/:id:
     get:
       tags:
@@ -2432,6 +2432,64 @@ components:
         createdAt:
           type: string
           format: date-time
+    PostWithAreaCategorySummaryList:
+      type: array
+      items:
+        $ref: "#/components/schemas/PostWithAreaCategorySummary"
+    PostWithAreaCategorySummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 記事ID
+          example: 1
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: http://example.com/img/1
+        slug:
+          type: string
+          description: スラッグ
+          example: hokkaido
+        areaCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/AreaCategorySummary"
+        themeCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+        title:
+          type: string
+          description: 記事タイトル
+          example: 埼玉の春を満喫♪
+        creator:
+          $ref: "#/components/schemas/Creator"
+        favoriteCount:
+          type: integer
+          description: いいね数
+          example: 3
+        views:
+          type: integer
+          description: 閲覧数
+          example: 6
+        isFavorited:
+          type: boolean
+          description: |
+            良いねしているかフラグ
+            ＊認証を挟まない場合はfalse
+        hideAds:
+          type: boolean
+          description: 広告非表示フラグ
+          example: false
+        updatedAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
+        createdAt:
+          type: string
+          description: 最終更新日時, ISO 8601形式
+          example: 2020-01-01T13:16+09:00
     PostList:
       type: array
       items:

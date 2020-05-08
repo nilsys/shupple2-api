@@ -62,12 +62,12 @@ func (c *PostQueryController) ListPost(ctx echo.Context, ouser entity.OptionalUs
 
 	query := c.ConvertFindPostListParamToQuery(p)
 
-	posts, err := c.PostService.ListByParams(query, ouser)
+	posts, areaCategoriesMap, err := c.PostService.ListByParams(query, ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to find post list")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertPostListToOutput(posts))
+	return ctx.JSON(http.StatusOK, c.ConvertPostListTinyWithAreaCategoryForListToOutput(posts, areaCategoriesMap))
 }
 
 func (c *PostQueryController) ListFeedPost(ctx echo.Context, ouser entity.OptionalUser) error {

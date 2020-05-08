@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"sort"
 	"time"
 )
 
@@ -106,10 +107,6 @@ type (
 		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
 		Hashtag         []*Hashtag       `gorm:"many2many:post_hashtag;jointable_foreignkey:post_id;"`
 	}
-
-	PostDetailWithHashtagAndIsFavoriteList struct {
-		TotalNumber int
-	}
 )
 
 func (post *PostDetail) TableName() string {
@@ -185,4 +182,42 @@ func NewUserFavoritePost(userID, postID int) *UserFavoritePost {
 
 func (p *PostDetailWithHashtagAndIsFavorite) TableName() string {
 	return "post"
+}
+
+func (p *PostList) AreaCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, post := range p.Posts {
+		for _, area := range post.AreaCategories {
+			ids = append(ids, area.AreaID)
+
+			if area.SubAreaID.Valid {
+				// MEMO: int64->intに変換しているので値が溢れる可能性がある
+				ids = append(ids, int(area.SubAreaID.Int64))
+			}
+
+			if area.SubSubAreaID.Valid {
+				// MEMO: int64->intに変換しているので値が溢れる可能性がある
+				ids = append(ids, int(area.SubSubAreaID.Int64))
+			}
+		}
+	}
+
+	// 昇順
+	sort.Slice(ids, func(i, j int) bool {
+		return ids[i] < ids[j]
+	})
+
+	results := make([]int, 0)
+
+	// 重複,0削除
+	encountered := map[int]bool{}
+	for i := 0; i < len(ids); i++ {
+		if !encountered[ids[i]] && ids[i] != 0 {
+			encountered[ids[i]] = true
+			results = append(results, ids[i])
+		}
+	}
+
+	return results
 }
