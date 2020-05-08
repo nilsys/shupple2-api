@@ -61,7 +61,7 @@ func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewL
 		metasearchSubSubAreaID = subArea.MetasearchSubAreaID
 	}
 	if query.SubSubAreaID != 0 {
-		subSubArea, err := s.AreaCategoryQueryRepository.FindByID(query.SubAreaID)
+		subSubArea, err := s.AreaCategoryQueryRepository.FindByID(query.SubSubAreaID)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to find area_category")
 		}
