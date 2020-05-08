@@ -2,8 +2,9 @@ package main
 
 import (
 	"log"
-	"strconv"
 	"strings"
+
+	"github.com/aws/aws-sdk-go/aws/credentials"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -59,7 +60,12 @@ func (s Script) importMetasearchAreaCategoryImages() error {
 	}
 
 	// scriptなので動かすときにcredential必要
-	svc := s3.New(s.AWSSession)
+	creds := credentials.NewStaticCredentials("", "", "")
+	sess, err := session.NewSession(&aws.Config{
+		Credentials: creds,
+		Region:      aws.String("ap-northeast-1"),
+	})
+	svc := s3.New(sess)
 
 	areaReq := &s3.ListObjectsInput{
 		Bucket: aws.String(config.ImportMetasearchAreaImages.MetasearchBucket),
@@ -81,10 +87,8 @@ func (s Script) importMetasearchAreaCategoryImages() error {
 		return errors.Wrap(err, "failed to get s3 tmp object")
 	}
 
-	os := append(ao.Contents, so.Contents...)
-
 	// subareaに対して
-	for _, metasearchID := range os {
+	for _, metasearchID := range ao.Contents {
 		var category entity.AreaCategory
 		key := s.trimKey(*metasearchID.Key)
 		if key == "" {
@@ -96,7 +100,7 @@ func (s Script) importMetasearchAreaCategoryImages() error {
 			}
 			return errors.Wrap(err, "failed to find area_category")
 		}
-		copyReq := s.copyObject(config.ImportMetasearchAreaImages.MetasearchBucket+"/"+*metasearchID.Key, config.ImportMetasearchAreaImages.MediaBucket, subAreaBucketPrefix+"/"+strconv.Itoa(category.ID)+"/"+s.getFileName(*metasearchID.Key))
+		copyReq := s.copyObject(config.ImportMetasearchAreaImages.MetasearchBucket+"/"+*metasearchID.Key, config.ImportMetasearchAreaImages.MediaBucket, subAreaBucketPrefix+"/"+category.Slug+"/"+s.getFileName(*metasearchID.Key))
 		_, err = svc.CopyObject(copyReq)
 		if err != nil {
 			return errors.Wrap(err, "failed to copy s3 object")
@@ -104,7 +108,7 @@ func (s Script) importMetasearchAreaCategoryImages() error {
 	}
 
 	// sub_sub_areaに対して
-	for _, metasearchID := range os {
+	for _, metasearchID := range so.Contents {
 		var category entity.AreaCategory
 		key := s.trimKey(*metasearchID.Key)
 		if key == "" {
@@ -116,7 +120,7 @@ func (s Script) importMetasearchAreaCategoryImages() error {
 			}
 			return errors.Wrap(err, "failed to find area_category")
 		}
-		copyReq := s.copyObject(config.ImportMetasearchAreaImages.MetasearchBucket+"/"+*metasearchID.Key, config.ImportMetasearchAreaImages.MediaBucket, subSubAreaBucketPrefix+"/"+strconv.Itoa(category.ID)+"/"+s.getFileName(*metasearchID.Key))
+		copyReq := s.copyObject(config.ImportMetasearchAreaImages.MetasearchBucket+"/"+*metasearchID.Key, config.ImportMetasearchAreaImages.MediaBucket, subSubAreaBucketPrefix+"/"+category.Slug+"/"+s.getFileName(*metasearchID.Key))
 		_, err = svc.CopyObject(copyReq)
 		if err != nil {
 			return errors.Wrap(err, "failed to copy s3 object")
