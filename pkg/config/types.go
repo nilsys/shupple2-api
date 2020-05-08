@@ -99,6 +99,10 @@ func (c Config) IsDev() bool {
 	return c.Development != nil
 }
 
+func (u *URL) Byte() []byte {
+	return []byte(u.String())
+}
+
 func (u *URL) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	var str string
 	if err := unmarshal(&str); err != nil {

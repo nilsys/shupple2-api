@@ -200,7 +200,7 @@ func (s Script) uploadMedia(reviewID int, mediaIDStr string) ([]*command.CreateR
 		MimeType: wpMedia.MimeType,
 	}
 
-	mediaBody, err := s.WordpressRepo.DownloadAvatar(wpMedia.SourceURL) // HTTP Get しているだけなので使いまわしてしまう
+	mediaBody, err := s.WordpressRepo.FetchResource(wpMedia.SourceURL) // HTTP Get しているだけなので使いまわしてしまう
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

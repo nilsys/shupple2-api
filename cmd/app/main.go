@@ -43,6 +43,7 @@ type App struct {
 	UserCommandController           api.UserCommandController
 	HealthCheckController           api.HealthCheckController
 	WordpressCallbackController     api.WordpressCallbackController
+	SitemapController               api.SitemapController
 	S3CommandController             api.S3CommandController
 	TouristSpotQueryController      api.TouristSpotQueryController
 	InteresetQueryController        api.InterestQueryController
@@ -220,6 +221,9 @@ func setRoutes(app *App) {
 		app.WordpressCallbackController.Import,
 		staywayMiddleware.KeyAuth(app.Config.Wordpress.CallbackKey),
 	)
+
+	app.Echo.GET("/tourism/sitemap*", app.SitemapController.Show)
+	app.Echo.GET("/tourism/wp-content/plugins/google-sitemap-generator/sitemap.xsl", app.SitemapController.Show)
 
 	app.Echo.GET("/healthcheck", app.HealthCheckController.HealthCheck)
 }
