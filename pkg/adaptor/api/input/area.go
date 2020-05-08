@@ -23,6 +23,7 @@ type (
 	// SubAreaのList取得の際のParams
 	ListSubAreaParams struct {
 		AreaID    int   `query:"areaId" validate:"required"`
+		ThemeID   int   `query:"themeId"`
 		PerPage   int   `query:"perPage"`
 		ExcludeID []int `query:"excludeId"`
 		Page      int   `query:"page"`
@@ -31,6 +32,7 @@ type (
 	// SubSubAreaのList取得の際のParams
 	ListSubSubAreaParams struct {
 		SubAreaID int   `query:"subAreaId" validate:"required"`
+		ThemeID   int   `query:"themeId"`
 		PerPage   int   `query:"perPage"`
 		ExcludeID []int `query:"excludeId"`
 		Page      int   `query:"page"`

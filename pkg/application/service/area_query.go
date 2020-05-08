@@ -11,8 +11,8 @@ import (
 type (
 	AreaQueryService interface {
 		ListAreaByParams(areaGroupID model.AreaGroup, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
-		ListSubAreaByParams(areaID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
-		ListSubSubAreaByParams(subAreaID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
+		ListSubAreaByParams(areaID, themeID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
+		ListSubSubAreaByParams(subAreaID, themeID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
 
 		ShowAreaByID(id int) (*entity.AreaCategoryDetail, error)
 		ShowSubAreaByID(id int) (*entity.AreaCategoryDetail, error)
@@ -37,16 +37,16 @@ func (r *AreaQueryServiceImpl) ListAreaByParams(areaGroup model.AreaGroup, limit
 	return areaCategories, nil
 }
 
-func (r *AreaQueryServiceImpl) ListSubAreaByParams(areaID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
-	areaCategories, err := r.Repository.FindSubAreaListHavingPostByAreaID(areaID, limit, excludeID)
+func (r *AreaQueryServiceImpl) ListSubAreaByParams(areaID, themeID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
+	areaCategories, err := r.Repository.FindSubAreaListHavingPostByAreaIDAndThemeID(areaID, themeID, limit, excludeID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to list sub area")
 	}
 	return areaCategories, nil
 }
 
-func (r *AreaQueryServiceImpl) ListSubSubAreaByParams(subAreaID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
-	areaCategories, err := r.Repository.FindSubSubAreaListHavingPostBySubAreaID(subAreaID, limit, excludeID)
+func (r *AreaQueryServiceImpl) ListSubSubAreaByParams(subAreaID, themeID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error) {
+	areaCategories, err := r.Repository.FindSubSubAreaListHavingPostBySubAreaIDAndThemeID(subAreaID, themeID, limit, excludeID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to list sub sub area")
 	}

@@ -21,8 +21,8 @@ type (
 		FindByIDs(ids []int) ([]*entity.AreaCategory, error)
 
 		FindAreaListHavingPostByAreaGroup(areaGroup model.AreaGroup, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
-		FindSubAreaListHavingPostByAreaID(areaID, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
-		FindSubSubAreaListHavingPostBySubAreaID(subAreaID, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
+		FindSubAreaListHavingPostByAreaIDAndThemeID(areaID, themeID, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
+		FindSubSubAreaListHavingPostBySubAreaIDAndThemeID(subAreaID, themeID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
 
 		// FindByTouristSpotID(touristSpotID int) ([]*entity.AreaCategory, error)
 		// FindByMetaSearchID(innAreaTypeIDs *entity.InnAreaTypeIDs) ([]*entity.AreaCategory, error)

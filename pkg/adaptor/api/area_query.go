@@ -59,7 +59,7 @@ func (c *AreaQueryController) ListSubArea(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to BindAndValidate AreaCategoryParam")
 	}
 
-	areaCategories, err := c.AreaQueryService.ListSubAreaByParams(p.AreaID, p.PerPage, p.ExcludeID)
+	areaCategories, err := c.AreaQueryService.ListSubAreaByParams(p.AreaID, p.ThemeID, p.PerPage, p.ExcludeID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get areaCategories")
 	}
@@ -89,7 +89,7 @@ func (c *AreaQueryController) ListSubSubArea(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to BindAndValidate AreaCategoryParam")
 	}
 
-	areaCategories, err := c.AreaQueryService.ListSubSubAreaByParams(p.SubAreaID, p.PerPage, p.ExcludeID)
+	areaCategories, err := c.AreaQueryService.ListSubSubAreaByParams(p.SubAreaID, p.ThemeID, p.PerPage, p.ExcludeID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get areaCategories")
 	}

@@ -1650,6 +1650,12 @@ paths:
           schema:
             type: integer
         - in: query
+          name: themeId
+          description: |
+            テーマID
+          schema:
+            type: integer
+        - in: query
           name: excludeId
           description: |
             除外するID
@@ -1700,6 +1706,12 @@ paths:
           required: true
           description: |
             親カテゴリID
+          schema:
+            type: integer
+        - in: query
+          name: themeId
+          description: |
+            テーマID
           schema:
             type: integer
         - in: query
