@@ -91,7 +91,7 @@ func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByUID(uid string) (*ent
 	if err := r.DB.Select("*").Where("user.id = ?", dto.ID).
 		Joins("LEFT JOIN (SELECT COUNT(id) as review_count, MAX(user_id) as user_id FROM review WHERE user_id = ?) AS r ON user.id = r.user_id", dto.ID).
 		Joins("LEFT JOIN (SELECT COUNT(id) as post_count, MAX(user_id) as user_id FROM post WHERE user_id = ?) AS p ON user.id = p.user_id", dto.ID).
-		Joins("LEFT JOIN (SELECT COUNT(id) as vlog_count, MAX(user_id) as user_id FROM vlog WHERE user_id = ?) AS v ON user.id = p.user_id", dto.ID).
+		Joins("LEFT JOIN (SELECT COUNT(id) as vlog_count, MAX(user_id) as user_id FROM vlog WHERE user_id = ?) AS v ON user.id = v.user_id", dto.ID).
 		Joins("LEFT JOIN (SELECT COUNT(target_id) as following_count, MAX(user_id) as user_id FROM user_following WHERE user_id = ?) AS ufi ON user.id = ufi.user_id", dto.ID).
 		Joins("LEFT JOIN (SELECT COUNT(user_id) as followed_count, MAX(target_id) as target_id FROM user_followed WHERE target_id = ?) AS ufe ON user.id = ufe.target_id", dto.ID).
 		First(&row).Error; err != nil {
