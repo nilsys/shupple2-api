@@ -132,11 +132,22 @@ func (b *Batch) importViews(c *cli.Context) error {
 		gaEnd = gaEndDate
 	}
 
-	gares, err := gasvc.Data.Ga.Get("ga:"+strconv.Itoa(b.Config.GoogleAnalytics.ViewID), gaStart, gaEnd, gaMetrics).Dimensions(gaDimensions).Sort(gaSort).MaxResults(gaMaxResult).SamplingLevel(gaSamplingLevel).Do()
-	if err != nil {
-		return errors.Wrap(err, "failed to get analytics data")
+	totalResults := 1
+	currentTotal := 0
+	var results []*analytics.GaData
+
+	for currentTotal < totalResults {
+		gares, err := gasvc.Data.Ga.Get("ga:"+strconv.Itoa(b.Config.GoogleAnalytics.ViewID), gaStart, gaEnd, gaMetrics).Dimensions(gaDimensions).Sort(gaSort).StartIndex(int64(currentTotal + 1)).MaxResults(gaMaxResult).SamplingLevel(gaSamplingLevel).Do()
+		if err != nil {
+			return errors.Wrap(err, "failed to get analytics data")
+		}
+
+		totalResults = int(gares.TotalResults)
+		results = append(results, gares)
+		currentTotal += len(gares.Rows)
 	}
-	return b.aggregate(mediaType, gares)
+
+	return b.aggregate(mediaType, results, int64(totalResults))
 }
 
 // TODO: 一旦2の固定値
@@ -191,7 +202,7 @@ func aggregateReview(review *entity.Review, rows []Row) *Row {
 	for _, row := range rows {
 		reviewPath := possibilityReviewPath(review)
 		// TODO: 一致条件見直し
-		if strings.Contains(row.Path, reviewPath) {
+		if strings.HasSuffix(row.Path, reviewPath) {
 			availableRows = append(availableRows, row)
 		}
 	}
@@ -233,8 +244,11 @@ func (r *Row) AddViews(views int) {
 	r.Views += views
 }
 
-func (b *Batch) aggregate(mediaType string, gares *analytics.GaData) error {
-	rows := analyticsDataToRows(gares)
+func (b *Batch) aggregate(mediaType string, garesResults []*analytics.GaData, totalResults int64) error {
+	rows := make([]Row, totalResults)
+	for _, gares := range garesResults {
+		rows = append(rows, analyticsDataToRows(gares)...)
+	}
 
 	switch mediaType {
 	case postTable:
