@@ -26,12 +26,11 @@ import (
 var Version = "unknown"
 
 const (
-	Region                = "ap-northeast-1"
-	StgSsmKey             = "sw-stg-media-api-config"
-	PrdSsmKey             = "sw-prd-media-api-config"
-	StgContainerName      = "sw-stg-media-api"
-	PrdContainerName      = "sw-prd-media-api"
-	DefaultConfigFilePath = "config.yaml"
+	Region                 = "ap-northeast-1"
+	StgSsmKey              = "sw-stg-media-api-config"
+	PrdSsmKey              = "sw-prd-media-api-config"
+	PrdContainerNamePrefix = "sw-prd"
+	DefaultConfigFilePath  = "config.yaml"
 )
 
 func GetConfig(filename FilePath) (*Config, error) {
@@ -151,7 +150,7 @@ type MetaData struct {
 
 // SSMKEYを環境で切り替え
 func (m *MetaData) GetSSMKEY() string {
-	if m.Name == PrdContainerName {
+	if strings.HasPrefix(m.Name, PrdContainerNamePrefix) {
 		return PrdSsmKey
 	}
 	return StgSsmKey
