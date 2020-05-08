@@ -132,9 +132,11 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubAreaListHavingPostByAreaIDAndTh
 
 			SELECT area_category.*, post_count FROM `area_category` JOIN(
 				SELECT ac.sub_area_id, count(ac.id) AS post_count FROM area_category ac JOIN (
-					SELECT pac.* FROM post_theme_category ptc
-					JOIN post_area_category pac ON pac.post_id = ptc.post_id
-					WHERE ptc.theme_category_id = '1'
+					SELECT pac.* FROM theme_category tc
+					JOIN post_theme_category ptc ON tc.id = ptc.theme_category_id
+					JOIN post_area_category pac ON ptc.post_id = pac.post_id
+					WHERE tc.theme_id = '1'
+					GROUP BY pac.post_id, pac.area_category_id
 				) a ON ac.id = a.area_category_id
 				WHERE (ac.type = 'SubArea' OR ac.type = 'SubSubArea')
 				GROUP BY ac.sub_area_id
@@ -147,9 +149,11 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubAreaListHavingPostByAreaIDAndTh
 			Select("area_category.*, post_count").
 			Joins(`JOIN(
 				SELECT ac.sub_area_id, count(ac.id) AS post_count FROM area_category ac JOIN (
-					SELECT pac.* FROM post_theme_category ptc
-					JOIN post_area_category pac ON pac.post_id = ptc.post_id
-					WHERE ptc.theme_category_id = ?
+					SELECT pac.* FROM theme_category tc
+					JOIN post_theme_category ptc ON tc.id = ptc.theme_category_id
+					JOIN post_area_category pac ON ptc.post_id = pac.post_id
+					WHERE tc.theme_id = ?
+					GROUP BY pac.post_id, pac.area_category_id
 				) a ON ac.id = a.area_category_id
 				WHERE (ac.type = ? OR ac.type = ?)
 				GROUP BY ac.sub_area_id)b ON area_category.id = b.sub_area_id`, themeID, model.AreaCategoryTypeSubArea, model.AreaCategoryTypeSubSubArea).
@@ -204,9 +208,11 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubSubAreaListHavingPostBySubAreaI
 			post_theme_category AS ptc
 
 			SELECT area_category.*, count(area_category.id) AS post_count FROM `area_category` JOIN(
-				SELECT pac.* FROM post_theme_category ptc
+				SELECT pac.* FROM theme_category tc
+				JOIN post_theme_category ptc ON tc.id = ptc.theme_category_id
 				JOIN post_area_category pac ON pac.post_id = ptc.post_id
-				WHERE ptc.theme_category_id = '1'
+				WHERE tc.theme_id = '1'
+				GROUP BY pac.post_id, pac.area_category_id;
 			)a ON area_category.sub_sub_area_id = a.area_category_id
 			WHERE (sub_area_id = '10' AND type = 'SubSubArea')
 			GROUP BY area_category.id
@@ -216,9 +222,11 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubSubAreaListHavingPostBySubAreaI
 		if err := q.
 			Select("area_category.*, count(area_category.id) AS post_count").
 			Joins(`JOIN(
-					SELECT pac.* FROM post_theme_category ptc
+					SELECT pac.* FROM theme_category tc
+					JOIN post_theme_category ptc ON tc.id = ptc.theme_category_id
 					JOIN post_area_category pac ON pac.post_id = ptc.post_id
-					WHERE ptc.theme_category_id = ?
+					WHERE tc.theme_id = ?
+					GROUP BY pac.post_id, pac.area_category_id
 				)a ON area_category.sub_sub_area_id = a.area_category_id`, themeID).
 			Where("sub_area_id = ? AND type = ?", subAreaID, model.AreaCategoryTypeSubSubArea).
 			Group("area_category.id").
