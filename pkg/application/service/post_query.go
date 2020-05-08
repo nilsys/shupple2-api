@@ -1,6 +1,8 @@
 package service
 
 import (
+	"sort"
+
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -107,9 +109,13 @@ func (s *PostQueryServiceImpl) ListFavoritePost(ouser entity.OptionalUser, targe
 }
 
 // id: AreaCategoryのマップを返す
-// idsとareaCategoriesはidの昇順になっている事が前提
+// idsは昇順になっている事が前提
 func (s *PostQueryServiceImpl) newAreaCategoryIDMap(ids []int, areaCategories []*entity.AreaCategory) map[int]*entity.AreaCategory {
 	areaCategoriesMap := make(map[int]*entity.AreaCategory, len(areaCategories))
+	sort.Slice(areaCategories, func(i, j int) bool {
+		return areaCategories[i].ID < areaCategories[j].ID
+	})
+
 	for i, areaCategory := range areaCategories {
 		areaCategoriesMap[ids[i]] = areaCategory
 	}
