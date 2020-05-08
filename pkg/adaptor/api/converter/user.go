@@ -157,7 +157,7 @@ func (c Converters) ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWi
 		TwitterURL:     user.TwitterURL,
 		URL:            user.URL,
 		LivingArea:     user.LivingArea,
-		PostCount:      user.PostCount + user.ReviewCount,
+		PostCount:      user.PostCount + user.ReviewCount + user.VlogCount,
 		FollowingCount: user.FollowingCount,
 		FollowedCount:  user.FollowerCount,
 		Interests:      interests,
