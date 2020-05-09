@@ -147,7 +147,7 @@ func (b *Batch) importViews(c *cli.Context) error {
 		currentTotal += len(gares.Rows)
 	}
 
-	return b.aggregate(mediaType, results, int64(totalResults))
+	return b.aggregate(mediaType, results)
 }
 
 // TODO: 一旦2の固定値
@@ -176,9 +176,9 @@ func possibilityReviewPath(review *entity.Review) string {
 // 対象となるパスのみ抽出
 // MEMO: ここでパスから/tourism削除しても良いかも？
 func analyticsDataToRows(data *analytics.GaData) []Row {
-	rows := make([]Row, len(data.Rows))
+	rows := make([]Row, 0)
 
-	for i, row := range data.Rows {
+	for _, row := range data.Rows {
 
 		// 2ページ目以降のパスは含めない
 		page := pageRe.FindAllStringSubmatch(row[0], 1)
@@ -188,10 +188,10 @@ func analyticsDataToRows(data *analytics.GaData) []Row {
 
 		views, _ := strconv.Atoi(row[1])
 
-		rows[i] = Row{
+		rows = append(rows, Row{
 			Path:  row[0],
 			Views: views,
-		}
+		})
 	}
 	return rows
 }
@@ -244,8 +244,8 @@ func (r *Row) AddViews(views int) {
 	r.Views += views
 }
 
-func (b *Batch) aggregate(mediaType string, garesResults []*analytics.GaData, totalResults int64) error {
-	rows := make([]Row, totalResults)
+func (b *Batch) aggregate(mediaType string, garesResults []*analytics.GaData) error {
+	rows := make([]Row, 0)
 	for _, gares := range garesResults {
 		rows = append(rows, analyticsDataToRows(gares)...)
 	}
