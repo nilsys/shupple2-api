@@ -69,27 +69,22 @@ func (r *TouristSpotQueryRepositoryImpl) FindRecommendListByParams(query *query.
 	var rows entity.TouristSpotList
 
 	q := r.buildFindRecommendListQuery(query)
-
-	if query.ID != 0 {
-		if err := q.
-			Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
-			Limit(query.Limit).
-			Offset(query.OffSet).
-			Order("vendor_rate desc").
-			Find(&rows.TouristSpots).Select("count(6371 * acos(cos(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* cos(radians(lat))* cos(radians(lng) - radians((SELECT lng FROM tourist_spot WHERE id = ?)))+ sin(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* sin(radians(lat)))) AS distance", query.ID, query.ID, query.ID).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
-			return nil, errors.Wrap(err, "failed get recommend tourist_spots by params")
-		}
-		return &rows, nil
-	}
+	cq := r.buildCountRecommendListQuery(query)
 
 	if err := q.
 		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
 		Limit(query.Limit).
 		Offset(query.OffSet).
 		Order("vendor_rate desc").
-		Find(&rows.TouristSpots).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		Find(&rows.TouristSpots).Error; err != nil {
 		return nil, errors.Wrap(err, "failed get recommend tourist_spots by params")
 	}
+
+	if err := cq.
+		Count(&rows.TotalNumber).Error; err != nil {
+		return nil, errors.Wrap(err, "failed get recommend tourist_spots.count by params")
+	}
+
 	return &rows, nil
 }
 
@@ -111,6 +106,22 @@ func (r *TouristSpotQueryRepositoryImpl) buildFindRecommendListQuery(query *quer
 
 	if query.ID != 0 {
 		q = q.Select("*, (6371 * acos(cos(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* cos(radians(lat))* cos(radians(lng) - radians((SELECT lng FROM tourist_spot WHERE id = ?)))+ sin(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* sin(radians(lat)))) AS distance", query.ID, query.ID, query.ID).Not("id = ?", query.ID).Having("distance <= ?", defaultRangeSearchKm).Order("distance")
+	}
+	if query.TouristSpotCategoryID != 0 {
+		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_spot_category WHERE spot_category_id = ?)", query.TouristSpotCategoryID)
+	}
+
+	return q
+}
+
+func (r *TouristSpotQueryRepositoryImpl) buildCountRecommendListQuery(query *query.FindRecommendTouristSpotListQuery) *gorm.DB {
+	q := r.DB
+
+	q = q.Table("tourist_spot").
+		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id")
+
+	if query.ID != 0 {
+		q = q.Not("id = ?", query.ID).Where("6371 * acos(cos(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* cos(radians(lat))* cos(radians(lng) - radians((SELECT lng FROM tourist_spot WHERE id = ?)))+ sin(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* sin(radians(lat))) <= ?", query.ID, query.ID, query.ID, defaultRangeSearchKm)
 	}
 	if query.TouristSpotCategoryID != 0 {
 		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_spot_category WHERE spot_category_id = ?)", query.TouristSpotCategoryID)
