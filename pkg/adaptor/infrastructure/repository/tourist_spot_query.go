@@ -76,7 +76,7 @@ func (r *TouristSpotQueryRepositoryImpl) FindRecommendListByParams(query *query.
 			Limit(query.Limit).
 			Offset(query.OffSet).
 			Order("vendor_rate desc").
-			Find(&rows.TouristSpots).Offset(0).Select("count((6371 * acos(cos(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* cos(radians(lat))* cos(radians(lng) - radians((SELECT lng FROM tourist_spot WHERE id = ?)))+ sin(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* sin(radians(lat))))) AS distance", query.ID, query.ID, query.ID).Count(&rows.TotalNumber).Error; err != nil {
+			Find(&rows.TouristSpots).Select("count((6371 * acos(cos(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* cos(radians(lat))* cos(radians(lng) - radians((SELECT lng FROM tourist_spot WHERE id = ?)))+ sin(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* sin(radians(lat))))) AS distance", query.ID, query.ID, query.ID).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 			return nil, errors.Wrap(err, "failed get recommend tourist_spots by params")
 		}
 		return &rows, nil
