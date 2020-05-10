@@ -48,6 +48,8 @@ type (
 		StoreReviewCommentFavorite(c context.Context, favorite *entity.UserFavoriteReviewComment) error
 		DeleteReviewCommentFavoriteByID(c context.Context, userID, reviewCommentID int) error
 		UpdateViewsByID(id, views int) error
+		UpdateMonthlyViewsByID(id, views int) error
+		UpdateWeeklyViewsByID(id, views int) error
 		DeleteReviewByID(c context.Context, id int) error
 		DeleteReviewCommentByID(c context.Context, id int) error
 		DeleteReviewCommentReplyByID(c context.Context, id int) error

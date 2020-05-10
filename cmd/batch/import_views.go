@@ -41,6 +41,8 @@ const (
 	reviewTable     = "review"
 	vlogTable       = "vlog"
 	featureTable    = "feature"
+	spanWeekly      = "weekly"
+	spanMonthly     = "monthly"
 )
 
 type (
@@ -121,10 +123,10 @@ func (b *Batch) importViews(c *cli.Context) error {
 	var gaEnd string
 
 	switch span {
-	case "weekly":
+	case spanWeekly:
 		gaStart = time.Now().Add(-168 * time.Hour).Format(gaDateFmt)
 		gaEnd = gaToday
-	case "monthly":
+	case spanMonthly:
 		gaStart = time.Now().Add(-720 * time.Hour).Format(gaDateFmt)
 		gaEnd = gaToday
 	default:
@@ -147,7 +149,7 @@ func (b *Batch) importViews(c *cli.Context) error {
 		currentTotal += len(gares.Rows)
 	}
 
-	return b.aggregate(mediaType, results)
+	return b.aggregate(mediaType, span, results)
 }
 
 // TODO: 一旦2の固定値
@@ -244,7 +246,7 @@ func (r *Row) AddViews(views int) {
 	r.Views += views
 }
 
-func (b *Batch) aggregate(mediaType string, garesResults []*analytics.GaData) error {
+func (b *Batch) aggregate(mediaType, span string, garesResults []*analytics.GaData) error {
 	rows := make([]Row, 0)
 	for _, gares := range garesResults {
 		rows = append(rows, analyticsDataToRows(gares)...)
@@ -252,41 +254,40 @@ func (b *Batch) aggregate(mediaType string, garesResults []*analytics.GaData) er
 
 	switch mediaType {
 	case postTable:
-		entries, err := b.postAggregate(rows)
+		entries, err := b.postAggregate(rows, span)
 		if err != nil {
 			return errors.Wrap(err, "failed post aggregate")
 		}
-		return b.adjustmentViews(entries)
+		return b.adjustmentViews(entries, span)
 	case reviewTable:
-		return b.reviewAggregate(rows)
+		return b.reviewAggregate(rows, span)
 	case vlogTable:
-		entries, err := b.vlogAggregate(rows)
+		entries, err := b.vlogAggregate(rows, span)
 		if err != nil {
 			return errors.Wrap(err, "failed vlog aggregate")
 		}
-		return b.adjustmentViews(entries)
+		return b.adjustmentViews(entries, span)
 	case featureTable:
-		entries, err := b.featureAggregate(rows)
+		entries, err := b.featureAggregate(rows, span)
 		if err != nil {
 			return errors.Wrap(err, "failed feature aggregate")
 		}
-		return b.adjustmentViews(entries)
+		return b.adjustmentViews(entries, span)
 	default:
 		entries := make([]Entry, len(rows))
-
-		postEntries, err := b.postAggregate(rows)
+		postEntries, err := b.postAggregate(rows, span)
 		if err != nil {
 			return errors.Wrap(err, "failed post aggregate")
 		}
-		err = b.reviewAggregate(rows)
+		err = b.reviewAggregate(rows, span)
 		if err != nil {
 			return errors.Wrap(err, "failed post aggregate")
 		}
-		vlogEntries, err := b.vlogAggregate(rows)
+		vlogEntries, err := b.vlogAggregate(rows, span)
 		if err != nil {
 			return errors.Wrap(err, "failed vlog aggregate")
 		}
-		featureEntries, err := b.featureAggregate(rows)
+		featureEntries, err := b.featureAggregate(rows, span)
 		if err != nil {
 			return errors.Wrap(err, "failed feature aggregate")
 		}
@@ -295,11 +296,11 @@ func (b *Batch) aggregate(mediaType string, garesResults []*analytics.GaData) er
 		entries = append(entries, vlogEntries...)
 		entries = append(entries, featureEntries...)
 
-		return b.adjustmentViews(entries)
+		return b.adjustmentViews(entries, span)
 	}
 }
 
-func (b *Batch) adjustmentViews(entries []Entry) error {
+func (b *Batch) adjustmentViews(entries []Entry, span string) error {
 	sort.Slice(entries, func(i, j int) bool {
 		return utf8.RuneCountInString(entries[i].Slug) > utf8.RuneCountInString(entries[j].Slug)
 	})
@@ -311,29 +312,71 @@ func (b *Batch) adjustmentViews(entries []Entry) error {
 			}
 		}
 		entry.Score -= slugScore
-		switch entry.Table {
-		case "post":
-			if err := b.ReviewCommandRepository.UpdateViewsByID(entry.ID, entry.Score); err != nil {
-				return errors.Wrap(err, "failed to update review.views")
+
+		switch span {
+		case spanWeekly:
+			switch entry.Table {
+			case postTable:
+				if err := b.PostCommandRepository.UpdateWeeklyViewsByID(entry.ID, entry.Score); err != nil {
+					return errors.Wrap(err, "failed to update review.weekly_views")
+				}
+			case reviewTable:
+				if err := b.ReviewCommandRepository.UpdateWeeklyViewsByID(entry.ID, entry.Score); err != nil {
+					return errors.Wrap(err, "failed to update review.weekly_views")
+				}
+			case vlogTable:
+				if err := b.VlogCommandRepository.UpdateWeeklyViewsByID(entry.ID, entry.Score); err != nil {
+					return errors.Wrap(err, "failed to update vlog.weekly_views")
+				}
+			case featureTable:
+				if err := b.FeatureCommandRepository.UpdateWeeklyViewsByID(entry.ID, entry.Score); err != nil {
+					return errors.Wrap(err, "failed to update feature.weekly_views")
+				}
 			}
-		case "review":
-			if err := b.ReviewCommandRepository.UpdateViewsByID(entry.ID, entry.Score); err != nil {
-				return errors.Wrap(err, "failed to update review.views")
+		case spanMonthly:
+			switch entry.Table {
+			case postTable:
+				if err := b.PostCommandRepository.UpdateMonthlyViewsByID(entry.ID, entry.Score); err != nil {
+					return errors.Wrap(err, "failed to update review.monthly_views")
+				}
+			case reviewTable:
+				if err := b.ReviewCommandRepository.UpdateMonthlyViewsByID(entry.ID, entry.Score); err != nil {
+					return errors.Wrap(err, "failed to update review.monthly_views")
+				}
+			case vlogTable:
+				if err := b.VlogCommandRepository.UpdateMonthlyViewsByID(entry.ID, entry.Score); err != nil {
+					return errors.Wrap(err, "failed to update vlog.monthly_views")
+				}
+			case featureTable:
+				if err := b.FeatureCommandRepository.UpdateMonthlyViewsByID(entry.ID, entry.Score); err != nil {
+					return errors.Wrap(err, "failed to update feature.monthly_views")
+				}
 			}
-		case "vlog":
-			if err := b.VlogCommandRepository.UpdateViewsByID(entry.ID, entry.Score); err != nil {
-				return errors.Wrap(err, "failed to update vlog.views")
-			}
-		case "feature":
-			if err := b.FeatureCommandRepository.UpdateViewsByID(entry.ID, entry.Score); err != nil {
-				return errors.Wrap(err, "failed to update feature.views")
+		default:
+			switch entry.Table {
+			case postTable:
+				if err := b.PostCommandRepository.UpdateViewsByID(entry.ID, entry.Score); err != nil {
+					return errors.Wrap(err, "failed to update review.views")
+				}
+			case reviewTable:
+				if err := b.ReviewCommandRepository.UpdateViewsByID(entry.ID, entry.Score); err != nil {
+					return errors.Wrap(err, "failed to update review.views")
+				}
+			case vlogTable:
+				if err := b.VlogCommandRepository.UpdateViewsByID(entry.ID, entry.Score); err != nil {
+					return errors.Wrap(err, "failed to update vlog.views")
+				}
+			case featureTable:
+				if err := b.FeatureCommandRepository.UpdateViewsByID(entry.ID, entry.Score); err != nil {
+					return errors.Wrap(err, "failed to update feature.views")
+				}
 			}
 		}
 	}
 	return nil
 }
 
-func (b *Batch) postAggregate(rows []Row) ([]Entry, error) {
+func (b *Batch) postAggregate(rows []Row, span string) ([]Entry, error) {
 	entries := make([]Entry, 0)
 	lastID := 0
 	for {
@@ -349,8 +392,19 @@ func (b *Batch) postAggregate(rows []Row) ([]Entry, error) {
 			if row == nil {
 				continue
 			}
-			if err := b.PostCommandRepository.UpdateViewsByID(post.ID, row.Views); err != nil {
-				return nil, errors.Wrap(err, "failed to update views")
+			switch span {
+			case spanWeekly:
+				if err := b.PostCommandRepository.UpdateWeeklyViewsByID(post.ID, row.Views); err != nil {
+					return nil, errors.Wrap(err, "failed to update weekly_views")
+				}
+			case spanMonthly:
+				if err := b.PostCommandRepository.UpdateMonthlyViewsByID(post.ID, row.Views); err != nil {
+					return nil, errors.Wrap(err, "failed to update monthly_views")
+				}
+			default:
+				if err := b.PostCommandRepository.UpdateViewsByID(post.ID, row.Views); err != nil {
+					return nil, errors.Wrap(err, "failed to update views")
+				}
 			}
 			entries = append(entries, Entry{
 				ID:    post.ID,
@@ -364,7 +418,7 @@ func (b *Batch) postAggregate(rows []Row) ([]Entry, error) {
 	return entries, nil
 }
 
-func (b *Batch) reviewAggregate(rows []Row) error {
+func (b *Batch) reviewAggregate(rows []Row, span string) error {
 	// TODO: lastID対応
 	reviews, err := b.ReviewQueryRepository.FindAll()
 	if err != nil {
@@ -375,14 +429,25 @@ func (b *Batch) reviewAggregate(rows []Row) error {
 		if row == nil {
 			continue
 		}
-		if err := b.ReviewCommandRepository.UpdateViewsByID(review.ID, row.Views); err != nil {
-			return errors.Wrap(err, "failed to update review.views")
+		switch span {
+		case spanWeekly:
+			if err := b.ReviewCommandRepository.UpdateWeeklyViewsByID(review.ID, row.Views); err != nil {
+				return errors.Wrap(err, "failed to update review.weekly_views")
+			}
+		case spanMonthly:
+			if err := b.ReviewCommandRepository.UpdateMonthlyViewsByID(review.ID, row.Views); err != nil {
+				return errors.Wrap(err, "failed to update review.monthly_views")
+			}
+		default:
+			if err := b.ReviewCommandRepository.UpdateViewsByID(review.ID, row.Views); err != nil {
+				return errors.Wrap(err, "failed to update review.views")
+			}
 		}
 	}
 	return nil
 }
 
-func (b *Batch) vlogAggregate(rows []Row) ([]Entry, error) {
+func (b *Batch) vlogAggregate(rows []Row, span string) ([]Entry, error) {
 	// TODO: lastID対応
 	entries := make([]Entry, 0)
 	vlogs, err := b.VlogQueryRepository.FindAll()
@@ -394,8 +459,19 @@ func (b *Batch) vlogAggregate(rows []Row) ([]Entry, error) {
 		if row == nil {
 			continue
 		}
-		if err := b.VlogCommandRepository.UpdateViewsByID(vlog.ID, row.Views); err != nil {
-			return nil, errors.Wrap(err, "failed to update vlog.views")
+		switch span {
+		case spanWeekly:
+			if err := b.VlogCommandRepository.UpdateWeeklyViewsByID(vlog.ID, row.Views); err != nil {
+				return nil, errors.Wrap(err, "failed to update vlog.weekly_views")
+			}
+		case spanMonthly:
+			if err := b.VlogCommandRepository.UpdateMonthlyViewsByID(vlog.ID, row.Views); err != nil {
+				return nil, errors.Wrap(err, "failed to update vlog.monthly_views")
+			}
+		default:
+			if err := b.VlogCommandRepository.UpdateViewsByID(vlog.ID, row.Views); err != nil {
+				return nil, errors.Wrap(err, "failed to update vlog.views")
+			}
 		}
 		entries = append(entries, Entry{
 			ID:    vlog.ID,
@@ -407,7 +483,7 @@ func (b *Batch) vlogAggregate(rows []Row) ([]Entry, error) {
 	return entries, nil
 }
 
-func (b *Batch) featureAggregate(rows []Row) ([]Entry, error) {
+func (b *Batch) featureAggregate(rows []Row, span string) ([]Entry, error) {
 	// TODO: lastID対応
 	entries := make([]Entry, 0)
 	features, err := b.FeatureQueryRepository.FindAll()
@@ -419,8 +495,19 @@ func (b *Batch) featureAggregate(rows []Row) ([]Entry, error) {
 		if row == nil {
 			continue
 		}
-		if err := b.FeatureCommandRepository.UpdateViewsByID(feature.ID, row.Views); err != nil {
-			return nil, errors.Wrap(err, "failed to update feature.views")
+		switch span {
+		case spanWeekly:
+			if err := b.FeatureCommandRepository.UpdateWeeklyViewsByID(feature.ID, row.Views); err != nil {
+				return nil, errors.Wrap(err, "failed to update feature.weekly_views")
+			}
+		case spanMonthly:
+			if err := b.FeatureCommandRepository.UpdateMonthlyViewsByID(feature.ID, row.Views); err != nil {
+				return nil, errors.Wrap(err, "failed to update feature.monthly_views")
+			}
+		default:
+			if err := b.FeatureCommandRepository.UpdateViewsByID(feature.ID, row.Views); err != nil {
+				return nil, errors.Wrap(err, "failed to update feature.views")
+			}
 		}
 		entries = append(entries, Entry{
 			ID:    feature.ID,

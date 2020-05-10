@@ -157,6 +157,20 @@ func (r *ReviewCommandRepositoryImpl) UpdateViewsByID(id, views int) error {
 	return nil
 }
 
+func (r *ReviewCommandRepositoryImpl) UpdateMonthlyViewsByID(id, views int) error {
+	if err := r.DB(context.TODO()).Exec("UPDATE review SET monthly_views = ? WHERE id = ?", views, id).Error; err != nil {
+		return errors.Wrap(err, "failed to update review.monthly_views")
+	}
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) UpdateWeeklyViewsByID(id, views int) error {
+	if err := r.DB(context.TODO()).Exec("UPDATE review SET weekly_views = ? WHERE id = ?", views, id).Error; err != nil {
+		return errors.Wrap(err, "failed to update review.weekly_views")
+	}
+	return nil
+}
+
 func (r *ReviewCommandRepositoryImpl) DeleteReviewByID(c context.Context, id int) error {
 	if err := r.DB(c).Where("id = ?", id).Delete(entity.Review{}).Error; err != nil {
 		return errors.Wrap(err, "failed to update review.deleted_at")

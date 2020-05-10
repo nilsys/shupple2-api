@@ -42,3 +42,17 @@ func (r *FeatureCommandRepositoryImpl) UpdateViewsByID(id, views int) error {
 	}
 	return nil
 }
+
+func (r *FeatureCommandRepositoryImpl) UpdateMonthlyViewsByID(id, views int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE feature SET monthly_views = ? WHERE id = ?", views, id).Error; err != nil {
+		return errors.Wrap(err, "failed to update feature.monthly_views")
+	}
+	return nil
+}
+
+func (r *FeatureCommandRepositoryImpl) UpdateWeeklyViewsByID(id, views int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE feature SET weekly_views = ? WHERE id = ?", views, id).Error; err != nil {
+		return errors.Wrap(err, "failed to update feature.weekly_views")
+	}
+	return nil
+}

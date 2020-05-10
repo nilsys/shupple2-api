@@ -13,6 +13,8 @@ type (
 		Store(c context.Context, vlog *entity.Vlog) error
 		DeleteByID(id int) error
 		UpdateViewsByID(id, views int) error
+		UpdateMonthlyViewsByID(id, views int) error
+		UpdateWeeklyViewsByID(id, views int) error
 	}
 
 	VlogQueryRepository interface {
