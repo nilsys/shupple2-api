@@ -291,13 +291,16 @@ const (
 	MediaSortByNEW MediaSortBy = iota + 1
 	// MediaSortByRANKING is a MediaSortBy of type RANKING
 	MediaSortByRANKING
+	// MediaSortByRECOMMEND is a MediaSortBy of type RECOMMEND
+	MediaSortByRECOMMEND
 )
 
-const _MediaSortByName = "NEWRANKING"
+const _MediaSortByName = "NEWRANKINGRECOMMEND"
 
 var _MediaSortByMap = map[MediaSortBy]string{
 	1: _MediaSortByName[0:3],
 	2: _MediaSortByName[3:10],
+	3: _MediaSortByName[10:19],
 }
 
 // String implements the Stringer interface.
@@ -309,8 +312,9 @@ func (x MediaSortBy) String() string {
 }
 
 var _MediaSortByValue = map[string]MediaSortBy{
-	_MediaSortByName[0:3]:  1,
-	_MediaSortByName[3:10]: 2,
+	_MediaSortByName[0:3]:   1,
+	_MediaSortByName[3:10]:  2,
+	_MediaSortByName[10:19]: 3,
 }
 
 // ParseMediaSortBy attempts to convert a string to a MediaSortBy

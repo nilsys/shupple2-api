@@ -1,13 +1,10 @@
 package repository
 
 import (
-	"time"
-
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -212,10 +209,6 @@ func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowRe
 
 	if len(query.InnIDs) > 0 {
 		q = q.Where("inn_id IN (?)", query.InnIDs)
-	}
-
-	if query.SortBy == model.ReviewSortByRECOMMEND {
-		q = q.Where("updated_at BETWEEN ? AND ?", time.Date(time.Now().Year(), time.Now().Month()-recommendMonthPeriod, time.Now().Day(), 0, 0, 0, 0, time.Local), time.Now())
 	}
 
 	if query.Keyword != "" {

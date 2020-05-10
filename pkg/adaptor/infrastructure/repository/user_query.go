@@ -230,19 +230,20 @@ func (r *UserQueryRepositoryImpl) buildFindUserRankingListQuery(query *query.Fin
 			Order("user_favorite_count.favorite_count DESC")
 	}
 
+	// 以下RECOMMENDの時
 	if query.AreaID != 0 {
-		return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(monthly_views) AS views_count FROM (SELECT user_id, monthly_views FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?)) UNION ALL SELECT user_id, monthly_views FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?))) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id", query.AreaID, query.AreaID).
+		return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(weekly_views) AS views_count FROM (SELECT user_id, weekly_views FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?)) UNION ALL SELECT user_id, weekly_views FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?))) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id", query.AreaID, query.AreaID).
 			Order("user_views_count.views_count DESC")
 	}
 	if query.SubAreaID != 0 {
-		return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(monthly_views) AS views_count FROM (SELECT user_id, monthly_views FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?)) UNION ALL SELECT user_id, monthly_views FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?))) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id", query.SubAreaID, query.SubAreaID).
+		return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(weekly_views) AS views_count FROM (SELECT user_id, weekly_views FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?)) UNION ALL SELECT user_id, weekly_views FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?))) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id", query.SubAreaID, query.SubAreaID).
 			Order("user_views_count.views_count DESC")
 	}
 	if query.SubSubAreaID != 0 {
-		return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(monthly_views) AS views_count FROM (SELECT user_id, monthly_views FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?)) UNION ALL SELECT user_id, monthly_views FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id", query.SubSubAreaID, query.SubSubAreaID).
+		return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(weekly_views) AS views_count FROM (SELECT user_id, weekly_views FROM review WHERE tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?)) UNION ALL SELECT user_id, weekly_views FROM post WHERE id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id", query.SubSubAreaID, query.SubSubAreaID).
 			Order("user_views_count.views_count DESC")
 	}
 
-	return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(monthly_views) AS views_count FROM (SELECT user_id, monthly_views FROM review UNION ALL SELECT user_id, monthly_views FROM post) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id").
+	return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(weekly_views) AS views_count FROM (SELECT user_id, weekly_views FROM review UNION ALL SELECT user_id, weekly_views FROM post) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id").
 		Order("user_views_count.views_count DESC")
 }

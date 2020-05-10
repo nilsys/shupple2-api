@@ -1897,8 +1897,9 @@ components:
       in: query
       description: |
         ソート:
-          * RANKING - 人気順
+          * RANKING - 直近7日間のいいねランキング
           * NEW - 新着順順
+          * RECOMMEND - 直近7日間のPVランキング(現状postのみで使用可)
       schema:
         type: string
         enum:
@@ -1910,7 +1911,7 @@ components:
       in: query
       description: |
         ソート:
-          * RECOMMEND - おすすめ順
+          * RECOMMEND - 直近7日間のPVランキング
           * NEW - 新着順順
       schema:
         type: string
@@ -1923,8 +1924,8 @@ components:
       in: query
       description: |
         ソート:
-          * RANKING - 人気順
-          * RECOMMEND - お勧め順
+          * RANKING - 直近7日間で、記事いいね＋投稿写真（Review)のいいね数が多いトラベラー
+          * RECOMMEND - 直近7日間で、記事PV＋投稿写真のPV数が多いトラベラー
       schema:
         type: string
         enum:

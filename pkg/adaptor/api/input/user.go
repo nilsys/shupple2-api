@@ -15,8 +15,8 @@ type (
 		SubAreaID    int              `query:"subAreaId"`
 		SubSubAreaID int              `query:"subSubAreaID"`
 		SortBy       model.UserSortBy `query:"sortBy"`
-		FromDate     string           `query:"fromDate" validate:"required"`
-		ToDate       string           `query:"toDate" validate:"required"`
+		FromDate     string           `query:"fromDate"`
+		ToDate       string           `query:"toDate"`
 		PerPage      int              `query:"perPage"`
 		Page         int              `query:"page"`
 	}
@@ -79,6 +79,15 @@ func (param *ListUserRanking) Validate() error {
 	// いずれのクエリも飛んで来ない場合
 	if param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.SortBy == 0 {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid show user ranking list input")
+	}
+
+	// RECOMMENDの時はdateの指定が必要無い
+	if param.SortBy == model.UserSortByRECOMMEND {
+		// AreaID,SubAreaID,SubSubAreaIDのいずれか2つ以上指定されている場合
+		if (param.AreaID != 0 && param.SubAreaID != 0) || (param.AreaID != 0 && param.SubSubAreaID != 0) || (param.SubAreaID != 0 && param.SubSubAreaID != 0) {
+			return serror.New(nil, serror.CodeInvalidParam, "Invalid show user ranking list search target input")
+		}
+		return nil
 	}
 
 	// AreaID,SubAreaID,SubSubAreaIDのいずれか2つ以上指定されている場合

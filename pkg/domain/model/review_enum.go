@@ -7,7 +7,7 @@ func (sortBy ReviewSortBy) GetReviewOrderQuery() string {
 	case ReviewSortByNEW:
 		return "created_at DESC"
 	case ReviewSortByRECOMMEND:
-		return "views DESC"
+		return "weekly_views DESC"
 	default:
 		return "created_at DESC"
 	}
@@ -19,7 +19,7 @@ func (sortBy ReviewSortBy) GetReviewOrderQueryForJoin() string {
 	case ReviewSortByNEW:
 		return "review.created_at DESC"
 	case ReviewSortByRECOMMEND:
-		return "review.views DESC"
+		return "review.weekly_views DESC"
 	default:
 		return "review.created_at DESC"
 	}

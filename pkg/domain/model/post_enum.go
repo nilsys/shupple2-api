@@ -8,6 +8,8 @@ func (sortBy MediaSortBy) GetPostOrderQuery() string {
 		return "favorite_count desc"
 	case MediaSortByNEW:
 		return "created_at desc"
+	case MediaSortByRECOMMEND:
+		return "weekly_views desc"
 	default:
 		return "created_at desc"
 	}

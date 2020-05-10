@@ -8,7 +8,7 @@ ENUM(Male = 1, Female)
 type Gender int
 
 /*
-ENUM(NEW = 1, RANKING)
+ENUM(NEW = 1, RANKING, RECOMMEND)
 */
 type MediaSortBy int
 
