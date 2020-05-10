@@ -199,22 +199,16 @@ func analyticsDataToRows(data *analytics.GaData) []Row {
 }
 
 func aggregateReview(review *entity.Review, rows []Row) *Row {
-	availableRows := make([]Row, 0, len(rows))
+	result := &Row{}
 
 	for _, row := range rows {
 		reviewPath := possibilityReviewPath(review)
-		// TODO: 一致条件見直し
 		if strings.HasSuffix(row.Path, reviewPath) {
-			availableRows = append(availableRows, row)
+			if result.Path == "" {
+				result.Path = row.Path
+			}
+			result.AddViews(row.Views)
 		}
-	}
-
-	result := &Row{}
-	for i, availableRow := range availableRows {
-		if i == 0 {
-			result.Path = availableRow.Path
-		}
-		result.AddViews(availableRow.Views)
 	}
 
 	if len(result.Path) > 0 {
