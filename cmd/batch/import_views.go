@@ -200,9 +200,9 @@ func analyticsDataToRows(data *analytics.GaData) []Row {
 
 func aggregateReview(review *entity.Review, rows []Row) *Row {
 	result := &Row{}
+	reviewPath := possibilityReviewPath(review)
 
 	for _, row := range rows {
-		reviewPath := possibilityReviewPath(review)
 		if strings.HasSuffix(row.Path, reviewPath) {
 			if result.Path == "" {
 				result.Path = row.Path
@@ -211,7 +211,7 @@ func aggregateReview(review *entity.Review, rows []Row) *Row {
 		}
 	}
 
-	if len(result.Path) > 0 {
+	if len(result.Path) == 0 {
 		return nil
 	}
 
