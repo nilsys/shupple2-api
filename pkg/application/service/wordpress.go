@@ -376,12 +376,12 @@ func (s *WordpressServiceImpl) extractTOC(wpPost *wordpress.Post) (string, error
 }
 
 func (s *WordpressServiceImpl) getThumbnail(mediaID int) (string, error) {
-	media, err := s.WordpressQueryRepository.FindMediaByIDs([]int{mediaID})
-	if err != nil || len(media) == 0 {
-		return "", serror.NewResourcesNotFoundError(err, "thumbnail(id=%d)", mediaID)
+	media, err := s.WordpressQueryRepository.FindMediaByID(mediaID)
+	if err != nil {
+		return "", errors.Wrapf(err, "failed to get thumbnail(id=%d)", mediaID)
 	}
 
-	thumbnail := media[0].SourceURL
+	thumbnail := media.SourceURL
 	if strings.HasPrefix(thumbnail, thumbnailS3Prefix) {
 		thumbnail = "https://" + thumbnail[len(thumbnailS3Prefix):]
 	}

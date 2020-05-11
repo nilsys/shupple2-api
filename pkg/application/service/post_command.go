@@ -32,12 +32,12 @@ var PostCommandServiceSet = wire.NewSet(
 )
 
 func (r *PostCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Post, error) {
-	wpPosts, err := r.WordpressQueryRepository.FindPostsByIDs([]int{id})
-	if err != nil || len(wpPosts) == 0 {
-		return nil, serror.NewResourcesNotFoundError(err, "wordpress post(id=%d)", id)
+	wpPost, err := r.WordpressQueryRepository.FindPostByID(id)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get wordpress post(id=%d)", id)
 	}
 
-	if wpPosts[0].Status != wordpress.StatusPublish {
+	if wpPost.Status != wordpress.StatusPublish {
 		if err := r.PostCommandRepository.DeleteByID(context.TODO(), id); err != nil {
 			return nil, errors.Wrapf(err, "failed to delete post(id=%d)", id)
 		}
@@ -55,7 +55,7 @@ func (r *PostCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Post, 
 			post = &entity.Post{}
 		}
 
-		if err := r.WordpressService.PatchPost(post, wpPosts[0]); err != nil {
+		if err := r.WordpressService.PatchPost(post, wpPost); err != nil {
 			return errors.Wrap(err, "failed  to patch post")
 		}
 

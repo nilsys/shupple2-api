@@ -30,12 +30,12 @@ var FeatureCommandServiceSet = wire.NewSet(
 )
 
 func (r *FeatureCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Feature, error) {
-	wpFeatures, err := r.WordpressQueryRepository.FindFeaturesByIDs([]int{id})
-	if err != nil || len(wpFeatures) == 0 {
-		return nil, serror.NewResourcesNotFoundError(err, "wordpress feature(id=%d)", id)
+	wpFeature, err := r.WordpressQueryRepository.FindFeatureByID(id)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get wordpress feature(id=%d)", id)
 	}
 
-	if wpFeatures[0].Status != wordpress.StatusPublish {
+	if wpFeature.Status != wordpress.StatusPublish {
 		if err := r.FeatureCommandRepository.DeleteByID(id); err != nil {
 			return nil, errors.Wrapf(err, "failed to delete feature(id=%d)", id)
 		}
@@ -53,7 +53,7 @@ func (r *FeatureCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Fea
 			feature = &entity.Feature{}
 		}
 
-		if err := r.WordpressService.PatchFeature(feature, wpFeatures[0]); err != nil {
+		if err := r.WordpressService.PatchFeature(feature, wpFeature); err != nil {
 			return errors.Wrap(err, "failed  to patch feature")
 		}
 

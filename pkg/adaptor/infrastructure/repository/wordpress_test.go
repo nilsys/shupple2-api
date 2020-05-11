@@ -33,27 +33,26 @@ var _ = Describe("WordpressRepositoryImpl", func() {
 
 	Describe("FindPostsByIDs", func() {
 		var (
-			postIDs = []int{135485, 134737, 135005}
-			posts   []*wordpress.Post
-			err     error
+			postID = 135485
+			post   *wordpress.Post
+			err    error
 		)
 
 		JustBeforeEach(func() {
-			posts, err = query.FindPostsByIDs(postIDs)
+			post, err = query.FindPostByID(postID)
 		})
 
 		Describe("正常系", func() {
 			BeforeEach(func() {
 				httpMock.EXPECT().RoundTrip(gomock.Any()).DoAndReturn(func(req *http.Request) (*http.Response, error) {
-					params := req.URL.Query()
-					Expect(params).To(HaveKeyWithValue("include", []string{"135485,134737,135005"}))
-					return responseTestdata("posts.json")
+					Expect(req.URL.Path).To(Equal("/tourism/wp-json/wp/v2/posts/135485"))
+					Expect(req.URL.RawQuery).To(Equal("cache_busting"))
+					return responseTestdata("post.json")
 				})
 			})
 
 			It("指定したデータがドメインが置換された状態で正常に取得できる", func() {
-				Expect(posts).To(HaveLen(len(postIDs)))
-				Expect(posts[0]).To(Equal(&wordpress.Post{
+				Expect(post).To(Equal(&wordpress.Post{
 					ID:      135485,
 					Date:    wordpress.Time(time.Date(2020, 3, 5, 21, 57, 6, 0, util.JSTLoc)),
 					DateGmt: wordpress.Time(time.Date(2020, 3, 5, 12, 57, 6, 0, util.JSTLoc)),

@@ -30,12 +30,12 @@ var VlogCommandServiceSet = wire.NewSet(
 )
 
 func (r *VlogCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Vlog, error) {
-	wpVlogs, err := r.WordpressQueryRepository.FindVlogsByIDs([]int{id})
-	if err != nil || len(wpVlogs) == 0 {
-		return nil, serror.NewResourcesNotFoundError(err, "wordpress vlog(id=%d)", id)
+	wpVlog, err := r.WordpressQueryRepository.FindVlogByID(id)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get wordpress vlog(id=%d)", id)
 	}
 
-	if wpVlogs[0].Status != wordpress.StatusPublish {
+	if wpVlog.Status != wordpress.StatusPublish {
 		if err := r.VlogCommandRepository.DeleteByID(id); err != nil {
 			return nil, errors.Wrapf(err, "failed to delete vlog(id=%d)", id)
 		}
@@ -53,7 +53,7 @@ func (r *VlogCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Vlog, 
 			vlog = &entity.Vlog{}
 		}
 
-		if err := r.WordpressService.PatchVlog(vlog, wpVlogs[0]); err != nil {
+		if err := r.WordpressService.PatchVlog(vlog, wpVlog); err != nil {
 			return errors.Wrap(err, "failed  to patch vlog")
 		}
 

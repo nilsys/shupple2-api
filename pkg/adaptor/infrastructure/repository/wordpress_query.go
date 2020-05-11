@@ -7,6 +7,7 @@ import (
 	"path"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/google/wire"
@@ -22,16 +23,16 @@ import (
 )
 
 const (
-	listUsersPath              = "/wp-json/wp/v2/users/"
-	listPostsPath              = "/wp-json/wp/v2/posts/"
-	listLocationsPath          = "/wp-json/wp/v2/locations/"
-	listPostTagsPath           = "/wp-json/wp/v2/tags/"
-	listCategoriesPath         = "/wp-json/wp/v2/categories/"
-	listLocationCategoriesPath = "/wp-json/wp/v2/location__cat/"
-	listComicPath              = "/wp-json/wp/v2/comic/"
-	listFeaturePath            = "/wp-json/wp/v2/features/"
-	listVlogPath               = "/wp-json/wp/v2/vlog/"
-	listMediaPath              = "/wp-json/wp/v2/media/"
+	usersPath              = "/wp-json/wp/v2/users/"
+	postsPath              = "/wp-json/wp/v2/posts/"
+	locationsPath          = "/wp-json/wp/v2/locations/"
+	postTagsPath           = "/wp-json/wp/v2/tags/"
+	categoriesPath         = "/wp-json/wp/v2/categories/"
+	locationCategoriesPath = "/wp-json/wp/v2/location__cat/"
+	comicPath              = "/wp-json/wp/v2/comic/"
+	featurePath            = "/wp-json/wp/v2/features/"
+	vlogPath               = "/wp-json/wp/v2/vlog/"
+	mediaPath              = "/wp-json/wp/v2/media/"
 
 	maxPerPage = 100
 )
@@ -65,72 +66,67 @@ func NewWordpressQueryRepositoryImpl(config config.Wordpress, mediaConfig config
 	}
 }
 
-func (r *WordpressQueryRepositoryImpl) FindUsersByIDs(ids []int) ([]*wordpress.User, error) {
-	var res []*wordpress.User
-	return res, r.gets(listUsersPath, ids, &res)
+func (r *WordpressQueryRepositoryImpl) FindUserByID(id int) (*wordpress.User, error) {
+	var res wordpress.User
+	return &res, r.getSingleResource(usersPath, id, &res)
 }
 
-func (r *WordpressQueryRepositoryImpl) FindPostsByIDs(ids []int) ([]*wordpress.Post, error) {
-	var res []*wordpress.Post
-	return res, r.gets(listPostsPath, ids, &res)
+func (r *WordpressQueryRepositoryImpl) FindPostByID(id int) (*wordpress.Post, error) {
+	var res wordpress.Post
+	return &res, r.getSingleResource(postsPath, id, &res)
 }
 
-func (r *WordpressQueryRepositoryImpl) FindLocationsByIDs(ids []int) ([]*wordpress.Location, error) {
-	var res []*wordpress.Location
-	return res, r.gets(listLocationsPath, ids, &res)
+func (r *WordpressQueryRepositoryImpl) FindLocationByID(id int) (*wordpress.Location, error) {
+	var res wordpress.Location
+	return &res, r.getSingleResource(locationsPath, id, &res)
 }
 
 func (r *WordpressQueryRepositoryImpl) FindPostTagsByIDs(ids []int) ([]*wordpress.PostTag, error) {
 	var res []*wordpress.PostTag
-	return res, r.gets(listPostTagsPath, ids, &res)
+
+	return res, r.getList(postTagsPath, ids, &res)
 }
 
-func (r *WordpressQueryRepositoryImpl) FindCategoriesByIDs(ids []int) ([]*wordpress.Category, error) {
-
-	var resp dto.WordpressCategories
-	if err := r.gets(listCategoriesPath, ids, &resp); err != nil {
+func (r *WordpressQueryRepositoryImpl) FindCategoryByID(id int) (*wordpress.Category, error) {
+	var resp dto.WordpressCategory
+	if err := r.getSingleResource(categoriesPath, id, &resp); err != nil {
 		return nil, errors.Wrap(err, "failed to get wordpress category")
 	}
 
-	result, err := resp.ToEntities()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to convert wordpress category dto")
-	}
-	return result, nil
+	return resp.ToEntity()
 }
 
-func (r *WordpressQueryRepositoryImpl) FindLocationCategoriesByIDs(ids []int) ([]*wordpress.LocationCategory, error) {
-	var res []*wordpress.LocationCategory
-	return res, r.gets(listLocationCategoriesPath, ids, &res)
+func (r *WordpressQueryRepositoryImpl) FindLocationCategoryByID(id int) (*wordpress.LocationCategory, error) {
+	var res wordpress.LocationCategory
+	return &res, r.getSingleResource(locationCategoriesPath, id, &res)
 }
 
-func (r *WordpressQueryRepositoryImpl) FindComicsByIDs(ids []int) ([]*wordpress.Comic, error) {
-	var res []*wordpress.Comic
-	return res, r.gets(listComicPath, ids, &res)
+func (r *WordpressQueryRepositoryImpl) FindComicByID(id int) (*wordpress.Comic, error) {
+	var res wordpress.Comic
+	return &res, r.getSingleResource(comicPath, id, &res)
 }
 
-func (r *WordpressQueryRepositoryImpl) FindFeaturesByIDs(ids []int) ([]*wordpress.Feature, error) {
-	var res []*wordpress.Feature
-	return res, r.gets(listFeaturePath, ids, &res)
+func (r *WordpressQueryRepositoryImpl) FindFeatureByID(id int) (*wordpress.Feature, error) {
+	var res wordpress.Feature
+	return &res, r.getSingleResource(featurePath, id, &res)
 }
 
-func (r *WordpressQueryRepositoryImpl) FindVlogsByIDs(ids []int) ([]*wordpress.Vlog, error) {
-	var res []*wordpress.Vlog
-	return res, r.gets(listVlogPath, ids, &res)
+func (r *WordpressQueryRepositoryImpl) FindVlogByID(id int) (*wordpress.Vlog, error) {
+	var res wordpress.Vlog
+	return &res, r.getSingleResource(vlogPath, id, &res)
 }
 
-func (r *WordpressQueryRepositoryImpl) FindMediaByIDs(ids []int) ([]*wordpress.Media, error) {
-	var res []*wordpress.Media
-	return res, r.gets(listMediaPath, ids, &res)
+func (r *WordpressQueryRepositoryImpl) FindMediaByID(id int) (*wordpress.Media, error) {
+	var res wordpress.Media
+	return &res, r.getSingleResource(mediaPath, id, &res)
 }
 
 func (r *WordpressQueryRepositoryImpl) FetchMediaBodyByID(id int) (*wordpress.MediaBody, error) {
-	mediaList, err := r.FindMediaByIDs([]int{id})
-	if err != nil || len(mediaList) == 0 {
-		return nil, serror.NewResourcesNotFoundError(err, "media body(id=%d)", id)
+	media, err := r.FindMediaByID(id)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get media body(id=%d)", id)
 	}
 
-	media := mediaList[0]
 	return r.FetchResource(media.SourceURL)
 }
 
@@ -147,7 +143,7 @@ func (r *WordpressQueryRepositoryImpl) FetchResource(avatarURL string) (*wordpre
 	}, nil
 }
 
-func (r *WordpressQueryRepositoryImpl) gets(wPath string, ids []int, result interface{}) error {
+func (r *WordpressQueryRepositoryImpl) getList(wPath string, ids []int, result interface{}) error {
 	if len(ids) == 0 {
 		return nil
 	}
@@ -164,7 +160,14 @@ func (r *WordpressQueryRepositoryImpl) gets(wPath string, ids []int, result inte
 	q.Set("per_page", fmt.Sprint(len(ids)))
 	wURL.RawQuery = q.Encode()
 
-	return r.GetJSON(wURL.String(), result)
+	return errors.Wrapf(r.GetJSON(wURL.String(), result), "failed to get %s", wURL.Path)
+}
+
+func (r *WordpressQueryRepositoryImpl) getSingleResource(wPath string, id int, result interface{}) error {
+	wURL := r.BaseURL
+	wURL.Path = path.Join(wURL.Path, wPath, strconv.Itoa(id))
+
+	return errors.Wrapf(r.GetJSON(wURL.String(), result), "failed to get %s", wURL.Path)
 }
 
 func (r *WordpressQueryRepositoryImpl) GetJSON(url string, result interface{}) error {
@@ -188,6 +191,9 @@ func (r *WordpressQueryRepositoryImpl) GetJSON(url string, result interface{}) e
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusNotFound {
+			return serror.New(nil, serror.CodeNotFound, "not found")
+		}
 		return errors.Wrapf(err, "wordpress returns %d", resp.StatusCode)
 	}
 

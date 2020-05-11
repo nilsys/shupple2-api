@@ -1,0 +1,332 @@
+{
+  "id": 135485,
+  "date": "2020-03-05T21:57:06",
+  "date_gmt": "2020-03-05T12:57:06",
+  "guid": {
+    "rendered": "https://stg-admin.stayway.jp/tourism/?p=135485"
+  },
+  "modified": "2020-03-05T22:00:56",
+  "modified_gmt": "2020-03-05T13:00:56",
+  "slug": "%e3%83%86%e3%82%b9%e3%83%88",
+  "status": "publish",
+  "type": "post",
+  "link": "https://stg-admin.stayway.jp/tourism/%e3%83%86%e3%82%b9%e3%83%88/",
+  "title": {
+    "rendered": "テスト"
+  },
+  "content": {
+    "rendered": "<p><strong>本文</strong></p>\nhttps://stg-admin.stayway.jp/tourism/posts/135485\n<img src='https://stg-admin.stayway.jp/tourism/wp-content/uploads/2020/07/dummy-hoge.jpg'>",
+    "protected": false
+  },
+  "excerpt": {
+    "rendered": "<p>本文</p>\n",
+    "protected": false
+  },
+  "author": 260,
+  "featured_media": 135463,
+  "comment_status": "open",
+  "ping_status": "open",
+  "sticky": false,
+  "template": "",
+  "format": "standard",
+  "meta": {
+    "seo_title": "SEOタイトル"
+  },
+  "categories": [
+    1
+  ],
+  "tags": [],
+  "acf": [],
+  "_links": {
+    "self": [
+      {
+        "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/posts/135485"
+      }
+    ],
+    "collection": [
+      {
+        "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/posts"
+      }
+    ],
+    "about": [
+      {
+        "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/types/post"
+      }
+    ],
+    "author": [
+      {
+        "embeddable": true,
+        "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/users/260"
+      }
+    ],
+    "replies": [
+      {
+        "embeddable": true,
+        "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/comments?post=135485"
+      }
+    ],
+    "version-history": [
+      {
+        "count": 2,
+        "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/posts/135485/revisions"
+      }
+    ],
+    "predecessor-version": [
+      {
+        "id": 135487,
+        "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/posts/135485/revisions/135487"
+      }
+    ],
+    "wp:featuredmedia": [
+      {
+        "embeddable": true,
+        "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/media/135463"
+      }
+    ],
+    "wp:attachment": [
+      {
+        "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/media?parent=135485"
+      }
+    ],
+    "wp:term": [
+      {
+        "taxonomy": "category",
+        "embeddable": true,
+        "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/categories?post=135485"
+      },
+      {
+        "taxonomy": "post_tag",
+        "embeddable": true,
+        "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/tags?post=135485"
+      }
+    ],
+    "curies": [
+      {
+        "name": "wp",
+        "href": "https://api.w.org/{rel}",
+        "templated": true
+      }
+    ]
+  },
+  "_embedded": {
+    "author": [
+      {
+        "id": 260,
+        "name": "kobayashi",
+        "url": "",
+        "description": "",
+        "link": "https://stg-admin.stayway.jp/tourism/author/kobayashi/",
+        "slug": "kobayashi",
+        "avatar_urls": {
+          "24": "https://secure.gravatar.com/avatar/bf795a366a062a871818dc8bcfda58cd?s=24&d=mm&r=g",
+          "48": "https://secure.gravatar.com/avatar/bf795a366a062a871818dc8bcfda58cd?s=48&d=mm&r=g",
+          "96": "https://secure.gravatar.com/avatar/bf795a366a062a871818dc8bcfda58cd?s=96&d=mm&r=g"
+        },
+        "acf": [],
+        "_links": {
+          "self": [
+            {
+              "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/users/260"
+            }
+          ],
+          "collection": [
+            {
+              "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/users"
+            }
+          ]
+        }
+      }
+    ],
+    "wp:featuredmedia": [
+      {
+        "id": 135463,
+        "date": "2019-12-27T15:00:52",
+        "slug": "wehoteltoya_1",
+        "type": "attachment",
+        "link": "https://stg-admin.stayway.jp/tourism/?attachment_id=135463",
+        "title": {
+          "rendered": "WEHOTELTOYA_1"
+        },
+        "author": 44,
+        "acf": [],
+        "caption": {
+          "rendered": "<p>Photo by Booking.com</p>\n"
+        },
+        "alt_text": "",
+        "media_type": "image",
+        "mime_type": "image/jpeg",
+        "media_details": {
+          "width": 800,
+          "height": 608,
+          "file": "2019/12/WEHOTELTOYA_1.jpg",
+          "sizes": {
+            "thumbnail": {
+              "file": "WEHOTELTOYA_1-500x500.jpg",
+              "width": "500",
+              "height": "500",
+              "mime_type": "image/jpeg",
+              "source_url": "https://s3-ap-northeast-1.amazonaws.com/stg-files.stayway.jp/wp-content/uploads/2019/12/WEHOTELTOYA_1-500x500.jpg"
+            },
+            "medium": {
+              "file": "WEHOTELTOYA_1-700x532.jpg",
+              "width": "700",
+              "height": "532",
+              "mime_type": "image/jpeg",
+              "source_url": "https://s3-ap-northeast-1.amazonaws.com/stg-files.stayway.jp/wp-content/uploads/2019/12/WEHOTELTOYA_1-700x532.jpg"
+            },
+            "medium_large": {
+              "file": "WEHOTELTOYA_1-768x583.jpg",
+              "width": "768",
+              "height": "583",
+              "mime_type": "image/jpeg",
+              "source_url": "https://s3-ap-northeast-1.amazonaws.com/stg-files.stayway.jp/wp-content/uploads/2019/12/WEHOTELTOYA_1-768x583.jpg"
+            },
+            "va_social_buzz_thumbnail": {
+              "file": "WEHOTELTOYA_1-980x744.jpg",
+              "width": "980",
+              "height": "744",
+              "mime_type": "image/jpeg",
+              "source_url": "https://s3-ap-northeast-1.amazonaws.com/stg-files.stayway.jp/wp-content/uploads/2019/12/WEHOTELTOYA_1-980x744.jpg"
+            },
+            "thumb100": {
+              "file": "WEHOTELTOYA_1-100x100.jpg",
+              "width": "100",
+              "height": "100",
+              "mime_type": "image/jpeg",
+              "source_url": "https://s3-ap-northeast-1.amazonaws.com/stg-files.stayway.jp/wp-content/uploads/2019/12/WEHOTELTOYA_1-100x100.jpg"
+            },
+            "thumb150": {
+              "file": "WEHOTELTOYA_1-150x150.jpg",
+              "width": "150",
+              "height": "150",
+              "mime_type": "image/jpeg",
+              "source_url": "https://s3-ap-northeast-1.amazonaws.com/stg-files.stayway.jp/wp-content/uploads/2019/12/WEHOTELTOYA_1-150x150.jpg"
+            },
+            "thumb320": {
+              "file": "WEHOTELTOYA_1-320x180.jpg",
+              "width": "320",
+              "height": "180",
+              "mime_type": "image/jpeg",
+              "source_url": "https://s3-ap-northeast-1.amazonaws.com/stg-files.stayway.jp/wp-content/uploads/2019/12/WEHOTELTOYA_1-320x180.jpg"
+            },
+            "thumb320_raw": {
+              "file": "WEHOTELTOYA_1-320x243.jpg",
+              "width": "320",
+              "height": "243",
+              "mime_type": "image/jpeg",
+              "source_url": "https://s3-ap-northeast-1.amazonaws.com/stg-files.stayway.jp/wp-content/uploads/2019/12/WEHOTELTOYA_1-320x243.jpg"
+            },
+            "full": {
+              "file": "WEHOTELTOYA_1.jpg",
+              "width": 800,
+              "height": 608,
+              "mime_type": "image/jpeg",
+              "source_url": "https://s3-ap-northeast-1.amazonaws.com/stg-files.stayway.jp/wp-content/uploads/2019/12/WEHOTELTOYA_1.jpg"
+            }
+          },
+          "image_meta": {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "0"
+          }
+        },
+        "source_url": "https://s3-ap-northeast-1.amazonaws.com/stg-files.stayway.jp/wp-content/uploads/2019/12/WEHOTELTOYA_1.jpg",
+        "_links": {
+          "self": [
+            {
+              "attributes": [],
+              "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/media/135463"
+            }
+          ],
+          "collection": [
+            {
+              "attributes": [],
+              "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/media"
+            }
+          ],
+          "about": [
+            {
+              "attributes": [],
+              "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/types/attachment"
+            }
+          ],
+          "author": [
+            {
+              "attributes": {
+                "embeddable": true
+              },
+              "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/users/44"
+            }
+          ],
+          "replies": [
+            {
+              "attributes": {
+                "embeddable": true
+              },
+              "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/comments?post=135463"
+            }
+          ]
+        }
+      }
+    ],
+    "wp:term": [
+      [
+        {
+          "id": 1,
+          "link": "https://stg-admin.stayway.jp/tourism/%e6%9c%aa%e5%88%86%e9%a1%9e/",
+          "name": "未分類",
+          "slug": "%e6%9c%aa%e5%88%86%e9%a1%9e",
+          "taxonomy": "category",
+          "acf": [],
+          "_links": {
+            "self": [
+              {
+                "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/categories/1"
+              }
+            ],
+            "collection": [
+              {
+                "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/categories"
+              }
+            ],
+            "about": [
+              {
+                "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/taxonomies/category"
+              }
+            ],
+            "wp:post_type": [
+              {
+                "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/posts?categories=1"
+              },
+              {
+                "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/locations?categories=1"
+              },
+              {
+                "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/press?categories=1"
+              },
+              {
+                "href": "https://stg-admin.stayway.jp/tourism/wp-json/wp/v2/vlog?categories=1"
+              }
+            ],
+            "curies": [
+              {
+                "name": "wp",
+                "href": "https://api.w.org/{rel}",
+                "templated": true
+              }
+            ]
+          }
+        }
+      ],
+      []
+    ]
+  }
+}

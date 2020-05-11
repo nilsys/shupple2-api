@@ -30,12 +30,12 @@ var ComicCommandServiceSet = wire.NewSet(
 )
 
 func (r *ComicCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Comic, error) {
-	wpComics, err := r.WordpressQueryRepository.FindComicsByIDs([]int{id})
-	if err != nil || len(wpComics) == 0 {
-		return nil, serror.NewResourcesNotFoundError(err, "wordpress comic(id=%d)", id)
+	wpComic, err := r.WordpressQueryRepository.FindComicByID(id)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get wordpress comic(id=%d)", id)
 	}
 
-	if wpComics[0].Status != wordpress.StatusPublish {
+	if wpComic.Status != wordpress.StatusPublish {
 		if err := r.ComicCommandRepository.DeleteByID(id); err != nil {
 			return nil, errors.Wrapf(err, "failed to delete comic(id=%d)", id)
 		}
@@ -53,7 +53,7 @@ func (r *ComicCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Comic
 			comic = &entity.Comic{}
 		}
 
-		if err := r.WordpressService.PatchComic(comic, wpComics[0]); err != nil {
+		if err := r.WordpressService.PatchComic(comic, wpComic); err != nil {
 			return errors.Wrap(err, "failed  to patch comic")
 		}
 

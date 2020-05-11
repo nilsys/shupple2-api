@@ -17,8 +17,6 @@ type (
 	WordpressCategoryAttributes struct {
 		CategoryType string `json:"category_type"`
 	}
-
-	WordpressCategories []*WordpressCategory
 )
 
 func (wc WordpressCategory) ToEntity() (*wordpress.Category, error) {
@@ -46,17 +44,4 @@ func (wc WordpressCategory) ToEntity() (*wordpress.Category, error) {
 
 	wc.Type = typeValue
 	return &wc.Category, nil
-}
-
-func (wcs WordpressCategories) ToEntities() ([]*wordpress.Category, error) {
-	res := make([]*wordpress.Category, len(wcs))
-	var err error
-	for i, wc := range wcs {
-		res[i], err = wc.ToEntity()
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-	}
-
-	return res, nil
 }

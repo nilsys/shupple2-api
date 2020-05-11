@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	debug   = false
+	debug   = true
 	perPage = 100
 )
 
@@ -34,7 +34,6 @@ type IDContainer struct {
 type PostEntry struct {
 	TargetTable   string
 	WordpressName string
-	Getter        interface{}
 	Importer      interface{}
 }
 
@@ -90,11 +89,11 @@ func run() error {
 
 func (s Script) PostEntries() []PostEntry {
 	return []PostEntry{
-		PostEntry{"post", "post", s.WordpressRepo.FindPostsByIDs, s.PostService.ImportFromWordpressByID},
-		PostEntry{"feature", "feature", s.WordpressRepo.FindFeaturesByIDs, s.FeatureService.ImportFromWordpressByID},
-		PostEntry{"tourist_spot", "location", s.WordpressRepo.FindLocationsByIDs, s.TouristSpotService.ImportFromWordpressByID},
-		PostEntry{"vlog", "movie", s.WordpressRepo.FindVlogsByIDs, s.VlogService.ImportFromWordpressByID},
-		PostEntry{"comic", "comic", s.WordpressRepo.FindComicsByIDs, s.ComicService.ImportFromWordpressByID},
+		PostEntry{"post", "post", s.PostService.ImportFromWordpressByID},
+		PostEntry{"feature", "feature", s.FeatureService.ImportFromWordpressByID},
+		PostEntry{"tourist_spot", "location", s.TouristSpotService.ImportFromWordpressByID},
+		PostEntry{"vlog", "movie", s.VlogService.ImportFromWordpressByID},
+		PostEntry{"comic", "comic", s.ComicService.ImportFromWordpressByID},
 	}
 }
 

@@ -75,11 +75,10 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 
 // TODO: エラー時はslackに通知飛ばしたほうが良さそう
 func (s *UserCommandServiceImpl) ImportFromWordpressByID(wordpressUserID int) error {
-	wpUsers, err := s.WordpressQueryRepository.FindUsersByIDs([]int{wordpressUserID})
-	if err != nil || len(wpUsers) == 0 {
-		return serror.NewResourcesNotFoundError(err, "wordpress user(id=%d)", wordpressUserID)
+	wpUser, err := s.WordpressQueryRepository.FindUserByID(wordpressUserID)
+	if err != nil {
+		return errors.Wrapf(err, "failed to get wordpress user(id=%d)", wordpressUserID)
 	}
-	wpUser := wpUsers[0]
 
 	user, err := s.UserQueryRepository.FindByWordpressID(wordpressUserID)
 	if err != nil {

@@ -186,14 +186,10 @@ func (s Script) uploadMedia(reviewID int, mediaIDStr string) ([]*command.CreateR
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	wpMediaList, err := s.WordpressRepo.FindMediaByIDs([]int{mediaID})
+	wpMedia, err := s.WordpressRepo.FindMediaByID(mediaID)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	if len(wpMediaList) == 0 {
-		return nil, errors.New("wordpress media not found")
-	}
-	wpMedia := wpMediaList[0]
 
 	media := &command.CreateReviewMedia{
 		UUID:     uuid.NewV4().String(),

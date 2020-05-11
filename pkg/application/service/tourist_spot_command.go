@@ -30,12 +30,12 @@ var TouristSpotCommandServiceSet = wire.NewSet(
 )
 
 func (r *TouristSpotCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.TouristSpot, error) {
-	wpTouristSpots, err := r.WordpressQueryRepository.FindLocationsByIDs([]int{id})
-	if err != nil || len(wpTouristSpots) == 0 {
-		return nil, serror.NewResourcesNotFoundError(err, "wordpress touristSpot(id=%d)", id)
+	wpTouristSpot, err := r.WordpressQueryRepository.FindLocationByID(id)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get wordpress touristSpot(id=%d)", id)
 	}
 
-	if wpTouristSpots[0].Status != wordpress.StatusPublish {
+	if wpTouristSpot.Status != wordpress.StatusPublish {
 		if err := r.TouristSpotCommandRepository.DeleteByID(id); err != nil {
 			return nil, errors.Wrapf(err, "failed to delete touristSpot(id=%d)", id)
 		}
@@ -53,7 +53,7 @@ func (r *TouristSpotCommandServiceImpl) ImportFromWordpressByID(id int) (*entity
 			touristSpot = &entity.TouristSpot{}
 		}
 
-		if err := r.WordpressService.PatchTouristSpot(touristSpot, wpTouristSpots[0]); err != nil {
+		if err := r.WordpressService.PatchTouristSpot(touristSpot, wpTouristSpot); err != nil {
 			return errors.Wrap(err, "failed  to patch touristSpot")
 		}
 

@@ -29,9 +29,9 @@ var SpotCategoryCommandServiceSet = wire.NewSet(
 )
 
 func (r *SpotCategoryCommandServiceImpl) ImportFromWordpressByID(id int) error {
-	wpSpotCategories, err := r.WordpressQueryRepository.FindLocationCategoriesByIDs([]int{id})
-	if err != nil || len(wpSpotCategories) == 0 {
-		return serror.NewResourcesNotFoundError(err, "wordpress spotCategory(id=%d)", id)
+	wpSpotCategory, err := r.WordpressQueryRepository.FindLocationCategoryByID(id)
+	if err != nil {
+		return errors.Wrapf(err, "failed to get wordpress spotCategory(id=%d)", id)
 	}
 
 	var spotCategory *entity.SpotCategory
@@ -44,7 +44,7 @@ func (r *SpotCategoryCommandServiceImpl) ImportFromWordpressByID(id int) error {
 			spotCategory = &entity.SpotCategory{}
 		}
 
-		if err := r.WordpressService.PatchSpotCategory(spotCategory, wpSpotCategories[0]); err != nil {
+		if err := r.WordpressService.PatchSpotCategory(spotCategory, wpSpotCategory); err != nil {
 			return errors.Wrap(err, "failed  to patch spotCategory")
 		}
 

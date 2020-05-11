@@ -26,18 +26,18 @@ var CategoryCommandServiceSet = wire.NewSet(
 )
 
 func (r *CategoryCommandServiceImpl) ImportFromWordpressByID(id int) error {
-	wpCategories, err := r.WordpressQueryRepository.FindCategoriesByIDs([]int{id})
-	if err != nil || len(wpCategories) == 0 {
-		return serror.NewResourcesNotFoundError(err, "wordpress category(id=%d)", id)
+	wpCategory, err := r.WordpressQueryRepository.FindCategoryByID(id)
+	if err != nil {
+		return errors.Wrapf(err, "failed to get wordpress category(id=%d)", id)
 	}
 
-	_, err = r.AreaCategoryCommandService.ImportFromWordpress(wpCategories[0])
+	_, err = r.AreaCategoryCommandService.ImportFromWordpress(wpCategory)
 	if err != nil {
 		if !serror.IsErrorCode(err, serror.CodeInvalidCategoryType) {
 			return errors.Wrap(err, "failed to import category as area category")
 		}
 
-		_, err := r.ThemeCategoryCommandService.ImportFromWordpress(wpCategories[0])
+		_, err := r.ThemeCategoryCommandService.ImportFromWordpress(wpCategory)
 		return errors.Wrap(err, "failed to import category as theme category")
 	}
 
