@@ -15,7 +15,6 @@ import (
 )
 
 const (
-	flagNameID    = "id"
 	flagNameMedia = "media"
 	flagNameSpan  = "span"
 )
@@ -57,7 +56,7 @@ func (b *Batch) Run(args []string) error {
 	app.Version = b.Config.Version
 
 	app.Commands = []cli.Command{
-		b.cliImportWordpressPost(),
+		b.cliImportWordpress(),
 		b.cliImportViews(),
 	}
 

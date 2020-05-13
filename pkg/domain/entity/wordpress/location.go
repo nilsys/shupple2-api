@@ -38,26 +38,36 @@ type LocationAttributes struct {
 	Inn          string          `json:"inn"`
 }
 
-type LocationMap struct {
+type LocationMapString struct {
 	Lat string `json:"lat"`
 	Lng string `json:"lng"`
 }
 
+type LocationMapFloat struct {
+	Lat float64 `json:"lat"`
+	Lng float64 `json:"lng"`
+}
+
 func (attrs LocationAttributes) LatLang() (lat float64, lng float64, err error) {
-	var locationMap LocationMap
-	if err := json.Unmarshal([]byte(attrs.Map), &locationMap); err != nil {
-		return 0, 0, errors.Wrap(err, "failed to parse json as LocationMap")
+	var locationMapFloat LocationMapFloat
+	if err := json.Unmarshal([]byte(attrs.Map), &locationMapFloat); err == nil {
+		return locationMapFloat.Lat, locationMapFloat.Lng, nil
 	}
 
-	lat, err = strconv.ParseFloat(locationMap.Lat, 64)
-	if err != nil {
-		return 0, 0, errors.Wrap(err, "failed to parse lat")
+	var locationMapString LocationMapString
+	if err := json.Unmarshal([]byte(attrs.Map), &locationMapString); err == nil {
+		lat, err = strconv.ParseFloat(locationMapString.Lat, 64)
+		if err != nil {
+			return 0, 0, errors.Wrap(err, "failed to parse locationMap lat")
+		}
+
+		lng, err = strconv.ParseFloat(locationMapString.Lng, 64)
+		if err != nil {
+			return 0, 0, errors.Wrap(err, "failed to parse locationMap lng")
+		}
+
+		return lat, lng, nil
 	}
 
-	lng, err = strconv.ParseFloat(locationMap.Lng, 64)
-	if err != nil {
-		return 0, 0, errors.Wrap(err, "failed to parse lng")
-	}
-
-	return lat, lng, nil
+	return 0, 0, errors.New("failed to parse json as LocationMap")
 }
