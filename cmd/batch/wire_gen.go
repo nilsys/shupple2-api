@@ -42,10 +42,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
 		DB: db,
 	}
-	wordpress := configConfig.Wordpress
-	stayway := configConfig.Stayway
-	staywayMedia := stayway.Media
-	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
+	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(configConfig)
 	authService, err := service.ProvideAuthService(configConfig)
 	if err != nil {
 		return nil, err

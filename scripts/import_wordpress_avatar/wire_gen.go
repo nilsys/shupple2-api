@@ -31,10 +31,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	}
 	uploader := repository.ProvideS3Uploader(session)
 	aws := configConfig.AWS
-	wordpress := configConfig.Wordpress
-	stayway := configConfig.Stayway
-	staywayMedia := stayway.Media
-	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
+	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(configConfig)
 	dao := repository.DAO{
 		UnderlyingDB: db,
 	}

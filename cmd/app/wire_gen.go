@@ -266,9 +266,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		AWSConfig:     aws,
 		AWSSession:    session,
 	}
-	wordpress := configConfig.Wordpress
-	staywayMedia := stayway.Media
-	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
+	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(configConfig)
 	userCommandServiceImpl := &service.UserCommandServiceImpl{
 		UserCommandRepository:    userCommandRepositoryImpl,
 		UserQueryRepository:      userQueryRepositoryImpl,
@@ -386,6 +384,8 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		Converters:               converters,
 		WordpressCallbackService: wordpressCallbackServiceImpl,
 	}
+	wordpress := configConfig.Wordpress
+	staywayMedia := stayway.Media
 	sitemapServiceImpl := &service.SitemapServiceImpl{
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressConfig:          wordpress,

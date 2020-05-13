@@ -63,10 +63,15 @@ type (
 		FilesURL URL `validate:"required" yaml:"files_url"`
 	}
 
+	Auth struct {
+		Username string `validate:"required" yaml:"username"`
+		Password string `validate:"required" yaml:"password"`
+	}
+
 	Wordpress struct {
 		BaseURL     URL    `validate:"required" yaml:"base_url"`
-		User        string `validate:"required" yaml:"user"`
-		Password    string `validate:"required" yaml:"password"`
+		BasicAuth   Auth   `validate:"required" yaml:"basic_auth"`
+		APIAuth     Auth   `validate:"required" yaml:"api_auth"`
 		CallbackKey string `validate:"required" yaml:"callback_key"`
 	}
 

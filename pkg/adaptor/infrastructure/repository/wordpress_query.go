@@ -1,9 +1,11 @@
 package repository
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/http/httputil"
 	"path"
 	"reflect"
 	"regexp"
@@ -15,11 +17,13 @@ import (
 	"github.com/mitchellh/reflectwalk"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/dto"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
+	"go.uber.org/zap"
 )
 
 const (
@@ -35,16 +39,17 @@ const (
 	mediaPath              = "/wp-json/wp/v2/media/"
 
 	maxPerPage = 100
-)
 
-const (
 	wpContentPrefix = "/wp-content"
+
+	wpAuthorizationHeader = "WP-Authorization"
 )
 
 type (
 	WordpressQueryRepositoryImpl struct {
 		config.Wordpress
-		Client           http.Client
+		client           http.Client
+		isDev            bool
 		wordpressBaseURL string
 		mediaBaseURL     string
 		filesBaseURL     string
@@ -56,13 +61,14 @@ var WordpressQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.WordpressQueryRepository), new(*WordpressQueryRepositoryImpl)),
 )
 
-func NewWordpressQueryRepositoryImpl(config config.Wordpress, mediaConfig config.StaywayMedia) *WordpressQueryRepositoryImpl {
+func NewWordpressQueryRepositoryImpl(config *config.Config) *WordpressQueryRepositoryImpl {
 	return &WordpressQueryRepositoryImpl{
-		config,
+		config.Wordpress,
 		http.Client{},
-		config.BaseURL.String(),
-		mediaConfig.BaseURL.String(),
-		mediaConfig.FilesURL.String(),
+		config.IsDev(),
+		config.Wordpress.BaseURL.String(),
+		config.Stayway.Media.BaseURL.String(),
+		config.Stayway.Media.FilesURL.String(),
 	}
 }
 
@@ -132,7 +138,7 @@ func (r *WordpressQueryRepositoryImpl) FetchMediaBodyByID(id int) (*wordpress.Me
 
 // http通信するだけなのでどこにでも置けるが、便宜的にココに置く
 func (r *WordpressQueryRepositoryImpl) FetchResource(avatarURL string) (*wordpress.MediaBody, error) {
-	resp, err := r.Client.Get(avatarURL)
+	resp, err := r.httpGet(avatarURL, false)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get avatar")
 	}
@@ -178,13 +184,7 @@ func (r *WordpressQueryRepositoryImpl) GetJSON(url string, result interface{}) e
 		url += "?cache_busting"
 	}
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to create request")
-	}
-	req.SetBasicAuth(r.User, r.Password)
-
-	resp, err := r.Client.Do(req)
+	resp, err := r.httpGet(url, true)
 	if err != nil {
 		return errors.Wrap(err, "failed to get wordpress resource")
 	}
@@ -194,7 +194,7 @@ func (r *WordpressQueryRepositoryImpl) GetJSON(url string, result interface{}) e
 		if resp.StatusCode == http.StatusNotFound {
 			return serror.New(nil, serror.CodeNotFound, "not found")
 		}
-		return errors.Wrapf(err, "wordpress returns %d", resp.StatusCode)
+		return serror.New(nil, serror.CodeUndefined, "wordpress returns %d", resp.StatusCode)
 	}
 
 	if err := json.NewDecoder(resp.Body).Decode(result); err != nil {
@@ -206,6 +206,41 @@ func (r *WordpressQueryRepositoryImpl) GetJSON(url string, result interface{}) e
 	}
 
 	return nil
+}
+
+func (r *WordpressQueryRepositoryImpl) httpGet(url string, apiAuth bool) (*http.Response, error) {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create request")
+	}
+
+	if strings.HasPrefix(url, r.wordpressBaseURL) {
+		req.SetBasicAuth(r.BasicAuth.Username, r.BasicAuth.Password)
+	}
+
+	if apiAuth {
+		/* NOTE:
+		WPにはアクセス制限のためのBasic認証とAPIのユーザー認証がある
+		これらは同じヘッダAuthorizationを使用するため、conflictしてしまう。
+		そこで、ユーザー認証のためのAuthorizationヘッダはWP-Authorizationヘッダとして送り、nginxでBasic認証後にAuthorizationヘッダに乗せるという処理をしている
+		*/
+		apiAuthValue := base64.StdEncoding.EncodeToString([]byte(fmt.Sprint(r.APIAuth.Username, ":", r.APIAuth.Password)))
+		req.Header.Set(wpAuthorizationHeader, "Basic "+apiAuthValue)
+	}
+
+	if r.isDev {
+		dump, _ := httputil.DumpRequest(req, false)
+		logger.Debug("httpn response", zap.String("req", string(dump)))
+	}
+
+	resp, err := r.client.Do(req)
+
+	if r.isDev && err == nil {
+		dump, _ := httputil.DumpResponse(resp, false)
+		logger.Debug("http response", zap.String("res", string(dump)))
+	}
+
+	return resp, err
 }
 
 // Wordpressが/を\/にエスケープして返すせいでjsonパース後にしかURLを置換できない

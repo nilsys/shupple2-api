@@ -32,10 +32,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	}
 	uploader := repository.ProvideS3Uploader(session)
 	aws := configConfig.AWS
-	wordpress := configConfig.Wordpress
-	stayway := configConfig.Stayway
-	staywayMedia := stayway.Media
-	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
+	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(configConfig)
 	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
 		DB: db,
 	}
@@ -184,6 +181,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	reviewQueryRepositoryImpl := &repository.ReviewQueryRepositoryImpl{
 		DB: db,
 	}
+	stayway := configConfig.Stayway
 	staywayMetasearch := stayway.Metasearch
 	clientConfig := _wireConfigValue
 	clientClient := client.NewClient(clientConfig)

@@ -59,14 +59,10 @@ func (s Script) Run() error {
 			continue
 		}
 
-		wpUsers, err := s.WordpressRepo.FindUsersByIDs([]int{int(user.WordpressID.Int64)})
+		wpUser, err := s.WordpressRepo.FindUserByID(int(user.WordpressID.Int64))
 		if err != nil {
 			return errors.WithStack(err)
 		}
-		if len(wpUsers) == 0 {
-			return errors.New("wp user not found")
-		}
-		wpUser := wpUsers[0]
 
 		if err := s.storeWithAvatar(user, wpUser); err != nil {
 			return errors.WithStack(err)

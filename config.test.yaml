@@ -1,0 +1,35 @@
+database: "root:@tcp(mysql:3306)/stayway_test?charset=utf8&parseTime=True&loc=Local&clientFoundRows=1"
+logger:
+  json: false
+  level: debug
+wordpress:
+  base_url: "https://stg-admin.stayway.jp/tourism"
+  basic_auth:
+    username: wpuser
+    password: wppass
+  api_auth:
+    username: wpapiuser
+    password: wpapipass
+  callback_key: wpcallback
+aws:
+  region: ap-northeast-1
+  endpoint: http://localstack:4572
+  files_bucket: hoge
+  upload_expire: 15m
+  user_pool_id: ap-northeast-1_fFTdgpwP4
+  client_id: 4ebecsu6tpndo160ee95inerki
+stayway:
+  metasearch:
+    base_url: https://stg.stayway.jp
+  media:
+    base_url: https://stg.stayway.jp/tourism
+    files_url: https://stg-files.stayway.jp
+google_analytics:
+  view_id: 10
+slack:
+  token: changeme
+  callback_key: changeme
+  report_channel: changeme
+
+
+# vim: set ft=yaml:

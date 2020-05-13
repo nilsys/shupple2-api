@@ -46,8 +46,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	wire.Build(
 		wire.Struct(new(Batch), "*"),
 		config.GetConfig,
-		wire.FieldsOf(new(*config.Config), "Wordpress", "Stayway", "AWS"),
-		wire.FieldsOf(new(config.Stayway), "Media"),
+		wire.FieldsOf(new(*config.Config), "AWS"),
 		serviceSet,
 		domainServiceSet,
 		repository.RepositoriesSet,

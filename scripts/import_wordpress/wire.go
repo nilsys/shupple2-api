@@ -38,10 +38,10 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	wire.Build(
 		wire.Struct(new(Script), "*"),
 		config.GetConfig,
-		wire.FieldsOf(new(*config.Config), "Wordpress", "AWS", "Stayway"),
+		wire.FieldsOf(new(*config.Config), "AWS", "Stayway"),
 		client.NewClient,
 		wire.Value(&client.Config{}),
-		wire.FieldsOf(new(config.Stayway), "Media", "Metasearch"),
+		wire.FieldsOf(new(config.Stayway), "Metasearch"),
 		serviceSet,
 		repository.RepositoriesSet,
 		repository.ProvideS3Uploader,

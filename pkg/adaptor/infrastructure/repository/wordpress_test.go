@@ -24,7 +24,7 @@ var _ = Describe("WordpressRepositoryImpl", func() {
 
 		mockCtrl = gomock.NewController(GinkgoT())
 		httpMock = mock.NewMockRoundTripper(mockCtrl)
-		query.Client.Transport = httpMock
+		query.client.Transport = httpMock
 	})
 
 	AfterEach(func() {

@@ -8,10 +8,8 @@ package repository
 import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
-	"net/url"
 )
 
 import (
@@ -104,9 +102,7 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 	reviewQueryRepositoryImpl := &ReviewQueryRepositoryImpl{
 		DB: db,
 	}
-	wordpress := _wireWordpressValue
-	staywayMedia := _wireStaywayMediaValue
-	wordpressQueryRepositoryImpl := NewWordpressQueryRepositoryImpl(wordpress, staywayMedia)
+	wordpressQueryRepositoryImpl := NewWordpressQueryRepositoryImpl(configConfig)
 	test := &Test{
 		Config:                             configConfig,
 		DB:                                 db,
@@ -137,33 +133,6 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 	return test, nil
 }
 
-var (
-	_wireWordpressValue = config.Wordpress{
-		BaseURL: config.URL{
-			URL: url.URL{
-				Scheme: "https",
-				Host:   "stg-admin.stayway.jp",
-				Path:   "/tourism",
-			},
-		},
-	}
-	_wireStaywayMediaValue = config.StaywayMedia{
-		BaseURL: config.URL{
-			URL: url.URL{
-				Scheme: "https",
-				Host:   "stg.stayway.jp",
-				Path:   "/tourism",
-			},
-		},
-		FilesURL: config.URL{
-			URL: url.URL{
-				Scheme: "https",
-				Host:   "stg-files.stayway.jp",
-			},
-		},
-	}
-)
-
 // wire.go:
 
 type Test struct {
@@ -193,28 +162,3 @@ type Test struct {
 	*ReviewQueryRepositoryImpl
 	*WordpressQueryRepositoryImpl
 }
-
-var configValuesSet = wire.NewSet(wire.Value(config.Wordpress{
-	BaseURL: config.URL{
-		URL: url.URL{
-			Scheme: "https",
-			Host:   "stg-admin.stayway.jp",
-			Path:   "/tourism",
-		},
-	},
-}), wire.Value(config.StaywayMedia{
-	BaseURL: config.URL{
-		URL: url.URL{
-			Scheme: "https",
-			Host:   "stg.stayway.jp",
-			Path:   "/tourism",
-		},
-	},
-	FilesURL: config.URL{
-		URL: url.URL{
-			Scheme: "https",
-			Host:   "stg-files.stayway.jp",
-		},
-	},
-}),
-)
