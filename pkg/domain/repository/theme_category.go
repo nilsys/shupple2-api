@@ -20,10 +20,7 @@ type (
 		// name部分一致検索
 		SearchByName(name string) ([]*entity.ThemeCategory, error)
 
-		FindAll(excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error)
-		FindThemesByAreaCategoryID(excludeIDs []int, categoryID int) ([]*entity.ThemeCategoryWithPostCount, error)
-
-		FindAllSubThemes(themeID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error)
-		FindSubThemesByAreaCategoryIDAndParentThemeID(categoryID, parentID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error)
+		FindThemesByAreaCategoryID(areaID, subAreaID, subSubAreaID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error)
+		FindSubThemesByAreaCategoryIDAndParentThemeID(parentThemeID, areaID, subAreaID, subSubAreaID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error)
 	}
 )

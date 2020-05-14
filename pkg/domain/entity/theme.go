@@ -27,3 +27,7 @@ type (
 func (tc ThemeCategory) CategoryType() string {
 	return tc.Type.String()
 }
+
+func (t *ThemeCategoryWithPostCount) TableName() string {
+	return "theme_category"
+}

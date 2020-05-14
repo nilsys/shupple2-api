@@ -54,8 +54,146 @@ func (r *ThemeCategoryQueryRepositoryImpl) SearchByName(name string) ([]*entity.
 	return rows, nil
 }
 
-func (r *ThemeCategoryQueryRepositoryImpl) FindAll(excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error) {
+func (r *ThemeCategoryQueryRepositoryImpl) FindThemesByAreaCategoryID(areaID, subAreaID, subSubAreaID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error) {
 	var rows []*entity.ThemeCategoryWithPostCount
+
+	if err := r.buildFindThemesByAreaCategoryIDQuery(areaID, subAreaID, subSubAreaID, excludeIDs).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find theme list")
+	}
+
+	return rows, nil
+}
+
+func (r *ThemeCategoryQueryRepositoryImpl) FindSubThemesByAreaCategoryIDAndParentThemeID(parentThemeID, areaID, subAreaID, subSubAreaID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error) {
+	var rows []*entity.ThemeCategoryWithPostCount
+
+	if err := r.buildFindSubThemesByAreaCategoryIDAndParentThemeIDQuery(parentThemeID, areaID, subAreaID, subSubAreaID, excludeIDs).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find subTheme list")
+	}
+
+	return rows, nil
+}
+
+func (r *ThemeCategoryQueryRepositoryImpl) buildQueryByExcludeIDs(excludeIDs []int) *gorm.DB {
+	if len(excludeIDs) > 0 {
+		return r.DB.Not("id", excludeIDs)
+	}
+	return r.DB
+}
+
+func (r *ThemeCategoryQueryRepositoryImpl) buildFindThemesByAreaCategoryIDQuery(areaID, subAreaID, subSubAreaID int, excludeIDs []int) *gorm.DB {
+	q := r.buildQueryByExcludeIDs(excludeIDs).Limit(defaultAcquisitionNumber)
+
+	if areaID != 0 {
+		/*
+				theme_category AS theme_category, tc
+				area_category AS ac
+				post_area_category AS pac
+				post_theme_category AS ptc
+
+			SELECT theme_category.*, post_count FROM `theme_category` JOIN (
+				SELECT tc.theme_id, count(tc.theme_id) AS post_count FROM theme_category tc JOIN(
+					SELECT ptc.theme_category_id FROM post_theme_category ptc JOIN(
+						SELECT pac.post_id FROM post_area_category pac
+						JOIN area_category ac ON ac.id = pac.area_category_id
+						WHERE ac.area_id = '1'
+						GROUP BY pac.post_id
+					)a ON a.post_id = ptc.post_id
+				)b ON b.theme_category_id = tc.id
+				GROUP BY tc.theme_id
+			)c ON c.theme_id = theme_category.id
+			ORDER BY post_count DESC
+			LIMIT 1000
+		*/
+		return q.
+			Select("theme_category.*, post_count").
+			Joins(`JOIN (
+				SELECT tc.theme_id, count(tc.theme_id) AS post_count FROM theme_category tc JOIN(
+					SELECT ptc.theme_category_id FROM post_theme_category ptc JOIN(
+						SELECT pac.post_id FROM post_area_category pac
+						JOIN area_category ac ON ac.id = pac.area_category_id
+						WHERE ac.area_id = ?
+						GROUP BY pac.post_id
+					)a ON a.post_id = ptc.post_id
+				)b ON b.theme_category_id = tc.id
+				GROUP BY tc.theme_id
+			)c ON c.theme_id = theme_category.id`, areaID).
+			Order("post_count DESC")
+	}
+
+	if subAreaID != 0 {
+		/*
+			theme_category AS theme_category, tc
+			area_category AS ac
+			post_area_category AS pac
+			post_theme_category AS ptc
+
+			SELECT theme_category.*, post_count FROM theme_category JOIN (
+				SELECT tc.theme_id, count(tc.theme_id) AS post_count FROM theme_category tc JOIN(
+					SELECT ptc.theme_category_id FROM post_theme_category ptc JOIN(
+						SELECT pac.post_id FROM post_area_category pac
+						JOIN area_category ac ON ac.id = pac.area_category_id
+						WHERE ac.sub_area_id = '10'
+						GROUP BY pac.post_id
+					)a ON a.post_id = ptc.post_id
+				)b ON b.theme_category_id = tc.id
+				GROUP BY tc.theme_id
+			)c ON c.theme_id = theme_category.id
+			ORDER BY post_count DESC
+			LIMIT 1000
+		*/
+		return q.
+			Select("theme_category.*, post_count").
+			Joins(`JOIN (
+					SELECT tc.theme_id, count(tc.theme_id) AS post_count FROM theme_category tc JOIN(
+						SELECT ptc.theme_category_id FROM post_theme_category ptc JOIN(
+							SELECT pac.post_id FROM post_area_category pac
+							JOIN area_category ac ON ac.id = pac.area_category_id
+							WHERE ac.sub_area_id = ?
+							GROUP BY pac.post_id
+						)a ON a.post_id = ptc.post_id
+					)b ON b.theme_category_id = tc.id
+					GROUP BY tc.theme_id
+				)c ON c.theme_id = theme_category.id`, subAreaID).
+			Order("post_count DESC")
+	}
+
+	if subSubAreaID != 0 {
+		/*
+			theme_category AS theme_category, tc
+			area_category AS ac
+			post_area_category AS pac
+			post_theme_category AS ptc
+
+			SELECT theme_category.*, post_count FROM theme_category JOIN (
+				SELECT tc.theme_id, count(tc.theme_id) AS post_count FROM theme_category tc JOIN(
+					SELECT ptc.theme_category_id FROM post_theme_category ptc JOIN(
+						SELECT pac.post_id FROM post_area_category pac
+						JOIN area_category ac ON ac.id = pac.area_category_id
+						WHERE ac.sub_sub_area_id = '12'
+						GROUP BY pac.post_id
+					)a ON a.post_id = ptc.post_id
+				)b ON b.theme_category_id = tc.id
+				GROUP BY tc.theme_id
+			)c ON c.theme_id = theme_category.id
+			ORDER BY post_count DESC
+			LIMIT 1000
+		*/
+		return q.
+			Select("theme_category.*, post_count").
+			Joins(`JOIN (
+					SELECT tc.theme_id, count(tc.theme_id) AS post_count FROM theme_category tc JOIN(
+						SELECT ptc.theme_category_id FROM post_theme_category ptc JOIN(
+							SELECT pac.post_id FROM post_area_category pac
+							JOIN area_category ac ON ac.id = pac.area_category_id
+							WHERE ac.sub_sub_area_id = ?
+							GROUP BY pac.post_id
+						)a ON a.post_id = ptc.post_id
+					)b ON b.theme_category_id = tc.id
+					GROUP BY tc.theme_id
+				)c ON c.theme_id = theme_category.id`, subSubAreaID).
+			Order("post_count DESC")
+	}
 
 	/*
 		theme_category AS theme_category,tc
@@ -67,134 +205,159 @@ func (r *ThemeCategoryQueryRepositoryImpl) FindAll(excludeIDs []int) ([]*entity.
 			JOIN post_theme_category ptc ON tc.id = ptc.theme_category_id
 			GROUP BY tc.theme_id
 		) tid ON theme_category.id = tid.id
-		WHERE (theme_category.type = 'Theme')
 		ORDER BY post_count DESC
 		LIMIT 1000
 	*/
-	if err := r.buildQueryByExcludeIDs(excludeIDs).Limit(defaultAcquisitionNumber).
-		Table("theme_category").
+	return q.
 		Select("theme_category.*, post_count").
 		Joins(`JOIN (
-			SELECT tc.theme_id AS id, count(tc.theme_id) AS post_count 
-			FROM theme_category tc 
-			JOIN post_theme_category ptc ON tc.id = ptc.theme_category_id 
-			GROUP BY tc.theme_id
+				SELECT tc.theme_id AS id, count(tc.theme_id) AS post_count 
+				FROM theme_category tc 
+				JOIN post_theme_category ptc ON tc.id = ptc.theme_category_id 
+				GROUP BY tc.theme_id
 			) tid ON theme_category.id = tid.id`).
-		Where("theme_category.type = ?", model.ThemeCategoryTypeTheme).
-		Order("post_count DESC").
-		Find(&rows).Error; err != nil {
-		return nil, errors.Wrap(err, "failed to find theme_category")
-	}
-
-	return rows, nil
+		Order("post_count DESC")
 }
 
-func (r *ThemeCategoryQueryRepositoryImpl) FindThemesByAreaCategoryID(excludeIDs []int, categoryID int) ([]*entity.ThemeCategoryWithPostCount, error) {
-	var rows []*entity.ThemeCategoryWithPostCount
+func (r *ThemeCategoryQueryRepositoryImpl) buildFindSubThemesByAreaCategoryIDAndParentThemeIDQuery(parentThemeID, areaID, subAreaID, subSubAreaID int, excludeIDs []int) *gorm.DB {
+	q := r.buildQueryByExcludeIDs(excludeIDs).Limit(defaultAcquisitionNumber)
 
-	/*
-		theme_category AS theme_category, tc
-		post_area_category AS pac
-		post_theme_category AS ptc
-
-		SELECT theme_category.*, post_count FROM `theme_category` JOIN (
-			SELECT tc.theme_id as id, count(tc.id) AS post_count FROM post_theme_category ptc
-			JOIN post_area_category pac ON ptc.post_id = pac.post_id
-			JOIN theme_category tc ON ptc.theme_category_id = tc.id
-			WHERE pac.area_category_id = '3'
-			GROUP BY tc.theme_id
-		) t ON theme_category.id = t.id
-		WHERE (theme_category.type = 'Theme')
-		ORDER BY post_count DESC
-		LIMIT 1000
-	*/
-	if err := r.buildQueryByExcludeIDs(excludeIDs).Limit(defaultAcquisitionNumber).
-		Table("theme_category").
-		Select("theme_category.*, post_count").
-		Joins(`JOIN (
-			SELECT tc.theme_id as id, count(tc.id) AS post_count FROM post_theme_category ptc 
-			JOIN post_area_category pac ON ptc.post_id = pac.post_id 
-			JOIN theme_category tc ON ptc.theme_category_id = tc.id 
-			WHERE pac.area_category_id = ? 
-			GROUP BY tc.theme_id
-			) t ON theme_category.id = t.id`, categoryID).
-		Where("theme_category.type = ?", model.ThemeCategoryTypeTheme).
-		Order("post_count DESC").
-		Find(&rows).Error; err != nil {
-		return nil, errors.Wrap(err, "failed to find theme_category")
-	}
-
-	return rows, nil
-}
-
-func (r *ThemeCategoryQueryRepositoryImpl) FindAllSubThemes(themeID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error) {
-	var rows []*entity.ThemeCategoryWithPostCount
-
-	/*
-			theme_category AS theme_category
+	if areaID != 0 {
+		/*
+			theme_category AS theme_category, tc
+			area_category AS ac
+			post_area_category AS pac
 			post_theme_category AS ptc
 
-			SELECT `theme_category`.*, post_count FROM `theme_category` JOIN (
-		        SELECT ptc.theme_category_id AS id, count(ptc.theme_category_id) AS post_count
-		        FROM post_theme_category ptc
-		        GROUP BY ptc.theme_category_id
-			) tid ON theme_category.id = tid.id
-			WHERE (theme_category.type = 'SubTheme' AND theme_category.theme_id = '1')
-			ORDER BY post_count DESC LIMIT 1000
+			SELECT theme_category.*, post_count FROM `theme_category` JOIN (
+				SELECT tc.sub_theme_id, count(tc.sub_theme_id) AS post_count FROM theme_category tc JOIN(
+					SELECT ptc.theme_category_id FROM post_theme_category ptc JOIN(
+						SELECT pac.post_id FROM post_area_category pac
+						JOIN area_category ac ON ac.id = pac.area_category_id
+						WHERE ac.area_id = '1'
+						GROUP BY pac.post_id
+					)a ON a.post_id = ptc.post_id
+				)b ON b.theme_category_id = tc.id
+				GROUP BY tc.sub_theme_id
+			)c ON c.sub_theme_id = theme_category.id
+			WHERE (theme_category.theme_id = '1')
+			ORDER BY post_count DESC
+			LIMIT 1000
+		*/
+		return q.
+			Select("theme_category.*, post_count").
+			Joins(`JOIN (
+					SELECT tc.sub_theme_id, count(tc.sub_theme_id) AS post_count FROM theme_category tc JOIN(
+						SELECT ptc.theme_category_id FROM post_theme_category ptc JOIN(
+							SELECT pac.post_id FROM post_area_category pac
+							JOIN area_category ac ON ac.id = pac.area_category_id
+							WHERE ac.area_id = ?
+							GROUP BY pac.post_id
+						)a ON a.post_id = ptc.post_id
+					)b ON b.theme_category_id = tc.id
+					GROUP BY tc.sub_theme_id
+				)c ON c.sub_theme_id = theme_category.id`, areaID).
+			Where("theme_category.theme_id = ?", parentThemeID).
+			Order("post_count DESC")
+	}
+
+	if subAreaID != 0 {
+		/*
+			theme_category AS theme_category, tc
+			area_category AS ac
+			post_area_category AS pac
+			post_theme_category AS ptc
+
+			SELECT theme_category.*, post_count FROM theme_category JOIN (
+				SELECT tc.sub_theme_id, count(tc.sub_theme_id) AS post_count FROM theme_category tc JOIN(
+					SELECT ptc.theme_category_id FROM post_theme_category ptc JOIN(
+						SELECT pac.post_id FROM post_area_category pac
+						JOIN area_category ac ON ac.id = pac.area_category_id
+						WHERE ac.sub_area_id = '10'
+						GROUP BY pac.post_id
+					)a ON a.post_id = ptc.post_id
+				)b ON b.theme_category_id = tc.id
+				GROUP BY tc.sub_theme_id
+			)c ON c.sub_theme_id = theme_category.id
+			WHERE theme_category.theme_id = '1'
+			ORDER BY post_count DESC
+			LIMIT 1000
+		*/
+		return q.
+			Select("theme_category.*, post_count").
+			Joins(`JOIN (
+					SELECT tc.sub_theme_id, count(tc.sub_theme_id) AS post_count FROM theme_category tc JOIN(
+						SELECT ptc.theme_category_id FROM post_theme_category ptc JOIN(
+							SELECT pac.post_id FROM post_area_category pac
+							JOIN area_category ac ON ac.id = pac.area_category_id
+							WHERE ac.sub_area_id = ?
+							GROUP BY pac.post_id
+						)a ON a.post_id = ptc.post_id
+					)b ON b.theme_category_id = tc.id
+					GROUP BY tc.sub_theme_id
+				)c ON c.sub_theme_id = theme_category.id`, subAreaID).
+			Where("theme_category.theme_id = ?", parentThemeID).
+			Order("post_count DESC")
+	}
+
+	if subSubAreaID != 0 {
+		/*
+			theme_category AS theme_category, tc
+			area_category AS ac
+			post_area_category AS pac
+			post_theme_category AS ptc
+
+			SELECT theme_category.*, post_count FROM theme_category JOIN (
+				SELECT tc.sub_theme_id, count(tc.sub_theme_id) AS post_count FROM theme_category tc JOIN(
+					SELECT ptc.theme_category_id FROM post_theme_category ptc JOIN(
+						SELECT pac.post_id FROM post_area_category pac
+						JOIN area_category ac ON ac.id = pac.area_category_id
+						WHERE ac.sub_sub_area_id = '12'
+						GROUP BY pac.post_id
+					)a ON a.post_id = ptc.post_id
+				)b ON b.theme_category_id = tc.id
+				GROUP BY tc.sub_theme_id
+			)c ON c.sub_theme_id = theme_category.id
+			WHERE theme_category.theme_id = '1'
+			ORDER BY post_count DESC
+			LIMIT 1000
+		*/
+		return q.
+			Select("theme_category.*, post_count").
+			Joins(`JOIN (
+					SELECT tc.sub_theme_id, count(tc.sub_theme_id) AS post_count FROM theme_category tc JOIN(
+						SELECT ptc.theme_category_id FROM post_theme_category ptc JOIN(
+							SELECT pac.post_id FROM post_area_category pac
+							JOIN area_category ac ON ac.id = pac.area_category_id
+							WHERE ac.sub_sub_area_id = ?
+							GROUP BY pac.post_id
+						)a ON a.post_id = ptc.post_id
+					)b ON b.theme_category_id = tc.id
+					GROUP BY tc.sub_theme_id
+				)c ON c.sub_theme_id = theme_category.id`, subSubAreaID).
+			Where("theme_category.theme_id = ?", parentThemeID).
+			Order("post_count DESC")
+	}
+
+	/*
+		theme_category AS theme_category
+		post_theme_category AS ptc
+
+		SELECT `theme_category`.*, post_count FROM `theme_category` JOIN (
+		       SELECT ptc.theme_category_id AS id, count(ptc.theme_category_id) AS post_count FROM post_theme_category ptc
+		       GROUP BY ptc.theme_category_id
+		) tid ON theme_category.id = tid.id
+		WHERE (theme_category.type = 'SubTheme' AND theme_category.theme_id = '1')
+		ORDER BY post_count DESC LIMIT 1000
 	*/
 	// TODO:パフォーマンス調べる
-	if err := r.buildQueryByExcludeIDs(excludeIDs).Limit(defaultAcquisitionNumber).
-		Table("theme_category").
+	return q.
 		Select("theme_category.*, post_count").
 		Joins(`JOIN (
 			SELECT ptc.theme_category_id AS id, count(ptc.theme_category_id) AS post_count 
 			FROM post_theme_category ptc 
 			GROUP BY ptc.theme_category_id
 			) tid ON theme_category.id = tid.id`).
-		Where("theme_category.type = ? AND theme_category.theme_id = ?", model.ThemeCategoryTypeSubTheme, themeID).
-		Order("post_count DESC").
-		Find(&rows).Error; err != nil {
-		return nil, errors.Wrap(err, "failed to find all subTheme list")
-	}
-
-	return rows, nil
-}
-
-func (r *ThemeCategoryQueryRepositoryImpl) FindSubThemesByAreaCategoryIDAndParentThemeID(areaCategoryID, themeID int, excludeIDs []int) ([]*entity.ThemeCategoryWithPostCount, error) {
-	var rows []*entity.ThemeCategoryWithPostCount
-
-	/*
-		theme_category AS theme_category, tc
-		post_area_category AS pac
-		post_theme_category AS ptc
-
-
-			SELECT `theme_category`.*, count(`theme_category`.id) AS post_count
-			FROM `theme_category`
-			JOIN post_theme_category ptc ON ptc.theme_category_id = theme_category.id
-			JOIN post_area_category pac ON pac.post_id = ptc.post_id
-			WHERE (theme_category.theme_id = '1' AND pac.area_category_id = '2' AND theme_category.type = 'SubTheme')
-			GROUP BY theme_category.id
-			ORDER BY count(theme_category.id) DESC LIMIT 1000
-	*/
-	// TODO:パフォーマンス調べる
-	if err := r.buildQueryByExcludeIDs(excludeIDs).Limit(defaultAcquisitionNumber).
-		Table("theme_category").
-		Select("theme_category.*, count(theme_category.id) AS post_count").
-		Joins("JOIN post_theme_category ptc ON ptc.theme_category_id = theme_category.id").
-		Joins("JOIN post_area_category pac ON pac.post_id = ptc.post_id").
-		Where("theme_category.theme_id = ? AND pac.area_category_id = ? AND theme_category.type = ?", themeID, areaCategoryID, model.ThemeCategoryTypeSubTheme).
-		Group("theme_category.id").Order("count(theme_category.id) DESC").
-		Find(&rows).Error; err != nil {
-		return nil, errors.Wrap(err, "failed to find subTheme list by areaCategoryID and parentThemeID")
-	}
-
-	return rows, nil
-}
-
-func (r *ThemeCategoryQueryRepositoryImpl) buildQueryByExcludeIDs(excludeIDs []int) *gorm.DB {
-	if len(excludeIDs) > 0 {
-		return r.DB.Not("id", excludeIDs)
-	}
-	return r.DB
+		Where("theme_category.type = ? AND theme_category.theme_id = ?", model.ThemeCategoryTypeSubTheme, parentThemeID).
+		Order("post_count DESC")
 }

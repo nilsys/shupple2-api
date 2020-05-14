@@ -28,7 +28,7 @@ func (c *ThemeQueryController) List(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to validate params")
 	}
 
-	categories, err := c.ThemeCategoryQueryService.ListThemeByParams(q.GetAreaCategoryID(), q.ExcludeID)
+	categories, err := c.ThemeCategoryQueryService.ListThemeByParams(q.AreaID, q.SubAreaID, q.SubSubAreaID, q.ExcludeID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get list of themes")
 	}
@@ -42,7 +42,7 @@ func (c *ThemeQueryController) ListSubThemeByParentID(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to validate params")
 	}
 
-	categories, err := c.ThemeCategoryQueryService.ListSubThemeByParams(q.GetAreaCategoryID(), q.ThemeID, q.ExcludeID)
+	categories, err := c.ThemeCategoryQueryService.ListSubThemeByParams(q.ThemeID, q.AreaID, q.SubAreaID, q.SubSubAreaID, q.ExcludeID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get subTheme list")
 	}
