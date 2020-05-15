@@ -151,6 +151,18 @@ func (u *User) HeaderURL(filesURL config.URL) string {
 	return filesURL.String()
 }
 
+func (u *UserTable) AvatarURL(filesURL config.URL) string {
+	if u.HeaderUUID == "" {
+		return ""
+	}
+	filesURL.Path = u.S3AvatarPath()
+	return filesURL.String()
+}
+
+func (u *UserTable) S3AvatarPath() string {
+	return fmt.Sprintf("user/%s", u.AvatarUUID)
+}
+
 func (u *User) S3AvatarPath() string {
 	return fmt.Sprintf("user/%s", u.AvatarUUID)
 }

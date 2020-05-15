@@ -21,6 +21,10 @@ type (
 		Page         int              `query:"page"`
 	}
 
+	ListRecommendFollowUser struct {
+		InterestIDs []int `query:"interestId" validate:"required"`
+	}
+
 	ListFollowUser struct {
 		ID      int `param:"id" validate:"required"`
 		PerPage int `query:"perPage"`

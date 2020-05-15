@@ -79,6 +79,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+  /users/recommend/follow:
+    get:
+      tags:
+        - user
+      summary: フォローおすすめユーザー一覧
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: query
+          name: interestId
+          required: true
+          description: |
+            interestId
+            複数指定可能
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserSummaryList"
   /users/ranking:
     get:
       tags:

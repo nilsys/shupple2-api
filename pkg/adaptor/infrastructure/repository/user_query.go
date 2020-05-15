@@ -80,6 +80,21 @@ func (r *UserQueryRepositoryImpl) FindUserRankingListByParams(query *query.FindU
 	return rows, nil
 }
 
+func (r *UserQueryRepositoryImpl) FindRecommendFollowUserList(interestIDs []int) ([]*entity.UserTable, error) {
+	var rows []*entity.UserTable
+
+	if err := r.DB.
+		Joins("INNER JOIN (SELECT user_id, SUM(weekly_views) AS views_count FROM (SELECT user_id, weekly_views FROM review UNION ALL SELECT user_id, weekly_views FROM post) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id").
+		Order("user_views_count.views_count DESC").
+		Where("id IN (SELECT user_id FROM user_interest WHERE interest_id IN (?))", interestIDs).
+		Limit(defaultFollowRecommendUserLimit).
+		Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find follow recommend user list")
+	}
+
+	return rows, nil
+}
+
 func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByUID(uid string) (*entity.UserDetailWithMediaCount, error) {
 	var dto entity.UserTable
 	var row entity.UserDetailWithMediaCount

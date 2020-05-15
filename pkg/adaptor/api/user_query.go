@@ -61,6 +61,20 @@ func (c *UserQueryController) ShowUserRanking(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, c.ConvertUserRankingToOutput(users))
 }
 
+func (c *UserQueryController) ListRecommendFollowUser(ctx echo.Context) error {
+	p := &input.ListRecommendFollowUser{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "validation list recommend follow user")
+	}
+
+	users, err := c.UserQueryService.ListRecommendFollowUser(p.InterestIDs)
+	if err != nil {
+		return errors.Wrap(err, "failed find list recommend follow user")
+	}
+
+	return ctx.JSON(http.StatusOK, c.ConvertUserTableListToOutput(users))
+}
+
 func (c *UserQueryController) ListFollowingUsers(ctx echo.Context) error {
 	p := &input.ListFollowUser{}
 	if err := BindAndValidate(ctx, p); err != nil {

@@ -92,6 +92,16 @@ func (c Converters) ConvertListFavoriteMediaUserToQuery(param *input.ListFavorit
 /*
  * i -> o
  */
+
+func (c Converters) ConvertUserTableListToOutput(users []*entity.UserTable) []*output.UserSummary {
+	res := make([]*output.UserSummary, len(users))
+
+	for i, user := range users {
+		res[i] = c.convertUserTableToOutput(user)
+	}
+
+	return res
+}
 func (c Converters) ConvertUserRankingToOutput(users []*entity.UserDetail) []*output.RankinUser {
 	userRanking := make([]*output.RankinUser, len(users))
 
@@ -111,6 +121,15 @@ func (c Converters) ConvertUsersToUserSummaryList(users []*entity.User) []*outpu
 }
 
 func (c Converters) convertUserToUserSummary(user *entity.User) *output.UserSummary {
+	return &output.UserSummary{
+		ID:      user.ID,
+		UID:     user.UID,
+		Name:    user.Name,
+		IconURL: user.AvatarURL(c.filesURL()),
+	}
+}
+
+func (c Converters) convertUserTableToOutput(user *entity.UserTable) *output.UserSummary {
 	return &output.UserSummary{
 		ID:      user.ID,
 		UID:     user.UID,

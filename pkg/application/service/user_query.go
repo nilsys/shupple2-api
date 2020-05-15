@@ -11,6 +11,7 @@ type (
 	UserQueryService interface {
 		Show(uid string) (*entity.UserDetailWithMediaCount, error)
 		ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error)
+		ListRecommendFollowUser(interestIDs []int) ([]*entity.UserTable, error)
 		ListFollowing(query *query.FindFollowUser) ([]*entity.User, error)
 		ListFollowed(query *query.FindFollowUser) ([]*entity.User, error)
 		ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.User, error)
@@ -33,6 +34,10 @@ func (s *UserQueryServiceImpl) Show(uid string) (*entity.UserDetailWithMediaCoun
 
 func (s *UserQueryServiceImpl) ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error) {
 	return s.UserQueryRepository.FindUserRankingListByParams(query)
+}
+
+func (s *UserQueryServiceImpl) ListRecommendFollowUser(interestIDs []int) ([]*entity.UserTable, error) {
+	return s.UserQueryRepository.FindRecommendFollowUserList(interestIDs)
 }
 
 func (s *UserQueryServiceImpl) ListFollowing(query *query.FindFollowUser) ([]*entity.User, error) {
