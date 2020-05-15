@@ -34,6 +34,7 @@ type App struct {
 	ReviewQueryController           api.ReviewQueryController
 	ReviewCommandController         api.ReviewCommandController
 	ReviewFavoriteCommandController api.ReviewFavoriteCommandController
+	RssController                   api.RSSController
 	HashtagQueryController          api.HashtagQueryController
 	HashtagCommandController        api.HashtagCommandController
 	SearchQueryController           api.SearchQueryController
@@ -223,6 +224,7 @@ func setRoutes(app *App) {
 	)
 
 	app.Echo.GET("/tourism/sitemap*", app.SitemapController.Show)
+	app.Echo.GET("/tourism/smartnews", app.RssController.Show)
 	app.Echo.GET("/tourism/wp-content/plugins/google-sitemap-generator/sitemap.xsl", app.SitemapController.Show)
 
 	app.Echo.GET("/healthcheck", app.HealthCheckController.HealthCheck)
