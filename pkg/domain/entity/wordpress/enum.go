@@ -8,11 +8,11 @@ ENUM(undefined, japan, world, theme)
 type CategoryType int
 
 /*
-ENUM(user = 1, post, location, movie, comic, feature, category, location__cat)
+ENUM(user = 1, post, location, movie, comic, feature, category, location__cat, revision)
 */
 type EntityType int
 
 /*
-ENUM(publish = 1, future, draft, pending, private)
+ENUM(publish = 1, future, draft, pending, private, trash)
 */
 type Status int

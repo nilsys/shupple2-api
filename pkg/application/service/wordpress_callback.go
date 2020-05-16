@@ -49,6 +49,8 @@ func (s *WordpressCallbackServiceImpl) Import(entityType wordpress.EntityType, i
 		err = s.CategoryCommandService.ImportFromWordpressByID(id)
 	case wordpress.EntityTypeLocationCat:
 		err = s.SpotCategoryCommandService.ImportFromWordpressByID(id)
+	case wordpress.EntityTypeRevision:
+		// nop
 	default:
 		err = serror.New(nil, serror.CodeInvalidParam, "unknown wordpress entity type; %s", entityType)
 	}

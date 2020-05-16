@@ -83,9 +83,11 @@ const (
 	EntityTypeCategory
 	// EntityTypeLocationCat is a EntityType of type Location__cat
 	EntityTypeLocationCat
+	// EntityTypeRevision is a EntityType of type Revision
+	EntityTypeRevision
 )
 
-const _EntityTypeName = "userpostlocationmoviecomicfeaturecategorylocation__cat"
+const _EntityTypeName = "userpostlocationmoviecomicfeaturecategorylocation__catrevision"
 
 var _EntityTypeMap = map[EntityType]string{
 	1: _EntityTypeName[0:4],
@@ -96,6 +98,7 @@ var _EntityTypeMap = map[EntityType]string{
 	6: _EntityTypeName[26:33],
 	7: _EntityTypeName[33:41],
 	8: _EntityTypeName[41:54],
+	9: _EntityTypeName[54:62],
 }
 
 // String implements the Stringer interface.
@@ -115,6 +118,7 @@ var _EntityTypeValue = map[string]EntityType{
 	_EntityTypeName[26:33]: 6,
 	_EntityTypeName[33:41]: 7,
 	_EntityTypeName[41:54]: 8,
+	_EntityTypeName[54:62]: 9,
 }
 
 // ParseEntityType attempts to convert a string to a EntityType
@@ -152,9 +156,11 @@ const (
 	StatusPending
 	// StatusPrivate is a Status of type Private
 	StatusPrivate
+	// StatusTrash is a Status of type Trash
+	StatusTrash
 )
 
-const _StatusName = "publishfuturedraftpendingprivate"
+const _StatusName = "publishfuturedraftpendingprivatetrash"
 
 var _StatusMap = map[Status]string{
 	1: _StatusName[0:7],
@@ -162,6 +168,7 @@ var _StatusMap = map[Status]string{
 	3: _StatusName[13:18],
 	4: _StatusName[18:25],
 	5: _StatusName[25:32],
+	6: _StatusName[32:37],
 }
 
 // String implements the Stringer interface.
@@ -178,6 +185,7 @@ var _StatusValue = map[string]Status{
 	_StatusName[13:18]: 3,
 	_StatusName[18:25]: 4,
 	_StatusName[25:32]: 5,
+	_StatusName[32:37]: 6,
 }
 
 // ParseStatus attempts to convert a string to a Status
