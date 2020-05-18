@@ -45,21 +45,21 @@ func (r *PostCommandRepositoryImpl) DecrementFavoriteCount(c context.Context, po
 }
 
 func (r *PostCommandRepositoryImpl) UpdateViewsByID(id, views int) error {
-	if err := r.DB(context.Background()).Exec("UPDATE post SET views = ? WHERE id = ?", views, id).Error; err != nil {
+	if err := r.DB(context.Background()).Exec("UPDATE post SET views = ?, updated_at = updated_at WHERE id = ?", views, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update post.views")
 	}
 	return nil
 }
 
 func (r *PostCommandRepositoryImpl) UpdateMonthlyViewsByID(id, views int) error {
-	if err := r.DB(context.Background()).Exec("UPDATE post SET monthly_views = ? WHERE id = ?", views, id).Error; err != nil {
+	if err := r.DB(context.Background()).Exec("UPDATE post SET monthly_views = ?, updated_at = updated_at WHERE id = ?", views, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update post.monthly_views")
 	}
 	return nil
 }
 
 func (r *PostCommandRepositoryImpl) UpdateWeeklyViewsByID(id, views int) error {
-	if err := r.DB(context.Background()).Exec("UPDATE post SET weekly_views = ? WHERE id = ?", views, id).Error; err != nil {
+	if err := r.DB(context.Background()).Exec("UPDATE post SET weekly_views = ?, updated_at = updated_at WHERE id = ?", views, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update post.weekly_views")
 	}
 	return nil

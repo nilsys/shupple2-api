@@ -37,21 +37,21 @@ func (r *VlogCommandRepositoryImpl) DeleteByID(id int) error {
 }
 
 func (r *VlogCommandRepositoryImpl) UpdateViewsByID(id, views int) error {
-	if err := r.DB(context.Background()).Exec("UPDATE vlog SET views = ? WHERE id = ?", views, id).Error; err != nil {
+	if err := r.DB(context.Background()).Exec("UPDATE vlog SET views = ?, updated_at = updated_at WHERE id = ?", views, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update vlog.views")
 	}
 	return nil
 }
 
 func (r *VlogCommandRepositoryImpl) UpdateMonthlyViewsByID(id, views int) error {
-	if err := r.DB(context.Background()).Exec("UPDATE vlog SET monthly_views = ? WHERE id = ?", views, id).Error; err != nil {
+	if err := r.DB(context.Background()).Exec("UPDATE vlog SET monthly_views = ?, updated_at = updated_at WHERE id = ?", views, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update vlog.monthly_views")
 	}
 	return nil
 }
 
 func (r *VlogCommandRepositoryImpl) UpdateWeeklyViewsByID(id, views int) error {
-	if err := r.DB(context.Background()).Exec("UPDATE vlog SET weekly_views = ? WHERE id = ?", views, id).Error; err != nil {
+	if err := r.DB(context.Background()).Exec("UPDATE vlog SET weekly_views = ?, updated_at = updated_at WHERE id = ?", views, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update vlog.weekly_views")
 	}
 	return nil

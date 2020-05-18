@@ -151,21 +151,21 @@ func (r *ReviewCommandRepositoryImpl) DeleteReviewCommentFavoriteByID(c context.
 }
 
 func (r *ReviewCommandRepositoryImpl) UpdateViewsByID(id, views int) error {
-	if err := r.DB(context.TODO()).Exec("UPDATE review SET views = ? WHERE id = ?", views, id).Error; err != nil {
+	if err := r.DB(context.TODO()).Exec("UPDATE review SET views = ?, updated_at = updated_at WHERE id = ?", views, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update review.views")
 	}
 	return nil
 }
 
 func (r *ReviewCommandRepositoryImpl) UpdateMonthlyViewsByID(id, views int) error {
-	if err := r.DB(context.TODO()).Exec("UPDATE review SET monthly_views = ? WHERE id = ?", views, id).Error; err != nil {
+	if err := r.DB(context.TODO()).Exec("UPDATE review SET monthly_views = ?, updated_at = updated_at WHERE id = ?", views, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update review.monthly_views")
 	}
 	return nil
 }
 
 func (r *ReviewCommandRepositoryImpl) UpdateWeeklyViewsByID(id, views int) error {
-	if err := r.DB(context.TODO()).Exec("UPDATE review SET weekly_views = ? WHERE id = ?", views, id).Error; err != nil {
+	if err := r.DB(context.TODO()).Exec("UPDATE review SET weekly_views = ?, updated_at = updated_at WHERE id = ?", views, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update review.weekly_views")
 	}
 	return nil
