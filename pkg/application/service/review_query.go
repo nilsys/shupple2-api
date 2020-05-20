@@ -48,25 +48,25 @@ func (s *ReviewQueryServiceImpl) ShowReviewListByParams(query *query.ShowReviewL
 			return nil, errors.Wrap(err, "failed to find area_category")
 		}
 		metasearchAreaID = area.MetasearchAreaID
-		metasearchSubAreaID = area.MetasearchAreaID
-		metasearchSubSubAreaID = area.MetasearchAreaID
+		metasearchSubAreaID = area.MetasearchSubAreaID
+		metasearchSubSubAreaID = area.MetasearchSubSubAreaID
 	}
 	if query.SubAreaID != 0 {
 		subArea, err := s.AreaCategoryQueryRepository.FindByID(query.SubAreaID)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to find area_category")
 		}
-		metasearchAreaID = subArea.MetasearchSubAreaID
+		metasearchAreaID = subArea.MetasearchAreaID
 		metasearchSubAreaID = subArea.MetasearchSubAreaID
-		metasearchSubSubAreaID = subArea.MetasearchSubAreaID
+		metasearchSubSubAreaID = subArea.MetasearchSubSubAreaID
 	}
 	if query.SubSubAreaID != 0 {
 		subSubArea, err := s.AreaCategoryQueryRepository.FindByID(query.SubSubAreaID)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to find area_category")
 		}
-		metasearchAreaID = subSubArea.MetasearchSubSubAreaID
-		metasearchSubAreaID = subSubArea.MetasearchSubSubAreaID
+		metasearchAreaID = subSubArea.MetasearchAreaID
+		metasearchSubAreaID = subSubArea.MetasearchSubAreaID
 		metasearchSubSubAreaID = subSubArea.MetasearchSubSubAreaID
 	}
 
