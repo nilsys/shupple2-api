@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
@@ -12,13 +14,12 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
-	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
 type (
 	PostQueryController struct {
 		converter.Converters
-		PostService service.PostQueryService
+		PostQueryScenario scenario.PostQueryScenario
 	}
 )
 
@@ -32,26 +33,26 @@ func (c *PostQueryController) Show(ctx echo.Context, ouser entity.OptionalUser) 
 		return errors.Wrapf(err, "validation get post parameter")
 	}
 
-	post, err := c.PostService.ShowQueryByID(p.ID, ouser)
+	post, areaCategoriesMap, themeCategoriesMap, err := c.PostQueryScenario.ShowQueryByID(p.ID, ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to get post")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post))
+	return ctx.JSON(http.StatusOK, c.ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post, areaCategoriesMap, themeCategoriesMap))
 }
 
-func (c *PostQueryController) ShowBySlug(ctx echo.Context) error {
+func (c *PostQueryController) ShowBySlug(ctx echo.Context, ouser entity.OptionalUser) error {
 	p := &input.ShowPostBySlug{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation get post by slug parameter")
 	}
 
-	post, err := c.PostService.ShowQueryBySlug(p.Slug)
+	post, areaCategorieMap, themeCategoriesMap, err := c.PostQueryScenario.ShowQueryBySlug(p.Slug, ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to get post by slug")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertPostDetailWithHashtagToOutput(post))
+	return ctx.JSON(http.StatusOK, c.ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post, areaCategorieMap, themeCategoriesMap))
 }
 
 func (c *PostQueryController) ListPost(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -62,12 +63,12 @@ func (c *PostQueryController) ListPost(ctx echo.Context, ouser entity.OptionalUs
 
 	query := c.ConvertFindPostListParamToQuery(p)
 
-	posts, areaCategoriesMap, err := c.PostService.ListByParams(query, ouser)
+	posts, areaCategoriesMap, themeCategoriesMap, err := c.PostQueryScenario.ListByParams(query, ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to find post list")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertPostListTinyWithAreaCategoryForListToOutput(posts, areaCategoriesMap))
+	return ctx.JSON(http.StatusOK, c.ConvertPostListTinyWithCategoryDetailForListToOutput(posts, areaCategoriesMap, themeCategoriesMap))
 }
 
 func (c *PostQueryController) ListFeedPost(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -78,7 +79,7 @@ func (c *PostQueryController) ListFeedPost(ctx echo.Context, ouser entity.Option
 
 	q := c.ConvertListFeedPostParamToQuery(p)
 
-	posts, err := c.PostService.ListFeed(ouser, p.UserID, q)
+	posts, err := c.PostQueryScenario.ListFeed(p.UserID, q, ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to show feed posts")
 	}
@@ -94,7 +95,7 @@ func (c *PostQueryController) ListFavoritePost(ctx echo.Context, ouser entity.Op
 
 	q := c.ConvertListFeedPostParamToQuery(p)
 
-	posts, err := c.PostService.ListFavoritePost(ouser, p.UserID, q)
+	posts, err := c.PostQueryScenario.LitFavorite(p.UserID, q, ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed list favorite post")
 	}

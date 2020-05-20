@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
 type (
@@ -68,11 +70,47 @@ func (fd FeatureDetail) TableName() string {
 	return "feature"
 }
 
-func (fdp *FeatureDetailWithPosts) SetPosts(posts []*PostListTiny) {
-	fdp.Posts = posts
+func (f *FeatureDetailWithPosts) SetPosts(posts []*PostListTiny) {
+	f.Posts = posts
 }
 
-func (fdp *FeatureDetailWithPosts) SetFeature(feature FeatureDetail) {
-	fdp.FeatureTiny = feature.FeatureTiny
-	fdp.User = feature.User
+func (f *FeatureDetailWithPosts) SetFeature(feature FeatureDetail) {
+	f.FeatureTiny = feature.FeatureTiny
+	f.User = feature.User
+}
+
+func (f *FeatureDetailWithPosts) AreaCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, post := range f.Posts {
+		for _, area := range post.AreaCategories {
+			ids = append(ids, area.AreaID)
+
+			if area.SubAreaID.Valid {
+				ids = append(ids, int(area.SubAreaID.Int64))
+			}
+
+			if area.SubSubAreaID.Valid {
+				ids = append(ids, int(area.SubSubAreaID.Int64))
+			}
+		}
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
+}
+
+func (f *FeatureDetailWithPosts) ThemeCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, post := range f.Posts {
+		for _, theme := range post.ThemeCategories {
+			ids = append(ids, theme.ThemeID)
+
+			if theme.SubThemeID.Valid {
+				ids = append(ids, int(theme.SubThemeID.Int64))
+			}
+		}
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
 }

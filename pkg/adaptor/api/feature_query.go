@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
+
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
@@ -13,7 +15,9 @@ import (
 
 type FeatureQueryController struct {
 	converter.Converters
-	FeatureQueryService service.FeatureQueryService
+	// 処理が複雑な物はシナリオクラスを挟み、serviceにアクセスしている
+	FeatureQueryScenario scenario.FeatureQueryScenario
+	FeatureQueryService  service.FeatureQueryService
 }
 
 var FeatureQueryControllerSet = wire.NewSet(
@@ -26,12 +30,12 @@ func (c *FeatureQueryController) ShowQuery(ctx echo.Context) error {
 		return errors.Wrap(err, "validation show feature")
 	}
 
-	queryFeature, err := c.FeatureQueryService.ShowQuery(p.ID)
+	queryFeature, areaCategories, themeCategories, err := c.FeatureQueryScenario.Show(p.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed show query feature")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertFeatureDetailPostsToOutput(queryFeature))
+	return ctx.JSON(http.StatusOK, c.ConvertFeatureDetailPostsToOutput(queryFeature, areaCategories, themeCategories))
 }
 
 func (c *FeatureQueryController) ListFeature(ctx echo.Context) error {
@@ -42,7 +46,7 @@ func (c *FeatureQueryController) ListFeature(ctx echo.Context) error {
 
 	q := c.ConvertShowFeatureListParamToQuery(p)
 
-	features, err := c.FeatureQueryService.ShowList(q)
+	features, err := c.FeatureQueryService.List(q)
 	if err != nil {
 		return errors.Wrap(err, "failed show feature list")
 	}

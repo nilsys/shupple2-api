@@ -23,11 +23,11 @@ func (c Converters) ConvertListVlogParamToQuery(param *input.ListVlogParam) *que
 	}
 }
 
-func (c Converters) ConvertVlogListToOutput(queryVlogs *entity.VlogList) output.VlogList {
+func (c Converters) ConvertVlogListToOutput(queryVlogs *entity.VlogList, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) output.VlogList {
 	responseVlogs := make([]*output.Vlog, len(queryVlogs.Vlogs))
 
 	for i, queryVlog := range queryVlogs.Vlogs {
-		responseVlogs[i] = c.convertVlogToOutput(queryVlog)
+		responseVlogs[i] = c.convertVlogToOutput(queryVlog, areaCategories, themeCategories)
 	}
 
 	return output.VlogList{
@@ -36,7 +36,7 @@ func (c Converters) ConvertVlogListToOutput(queryVlogs *entity.VlogList) output.
 	}
 }
 
-func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail) *output.VlogDetail {
+func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.VlogDetail {
 	touristSpots := make([]*output.TouristSpot, len(vlog.TouristSpots))
 	for i, touristSpot := range vlog.TouristSpots {
 		touristSpots[i] = output.NewTouristSpots(touristSpot.ID, touristSpot.Name, touristSpot.Thumbnail)
@@ -46,6 +46,16 @@ func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail) *output.VlogDetai
 	for i, editor := range vlog.Editors {
 		e := c.NewCreatorFromUser(editor)
 		editors[i] = &e
+	}
+
+	areaCategoriesRes := make([]*output.AreaCategoryDetail, len(vlog.AreaCategories))
+	for i, areaCate := range vlog.AreaCategories {
+		areaCategoriesRes[i] = c.ConvertAreaCategoryDetailFromAreaCategory(areaCate, areaCategories)
+	}
+
+	themeCategoriesRes := make([]*output.ThemeCategoryDetail, len(vlog.ThemeCategories))
+	for i, themeCate := range vlog.ThemeCategories {
+		themeCategoriesRes[i] = c.ConvertThemeCategoryDetailFromThemeCategory(themeCate, themeCategories)
 	}
 
 	return &output.VlogDetail{
@@ -63,20 +73,30 @@ func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail) *output.VlogDetai
 		TwitterCount:    vlog.TwitterCount,
 		Creator:         c.NewCreatorFromUser(vlog.User),
 		Editors:         editors,
-		AreaCategories:  c.ConvertAreaCategoriesToOutput(vlog.AreaCategories),
-		ThemeCategories: c.ConvertThemeCategoriesToOutput(vlog.ThemeCategories),
+		AreaCategories:  areaCategoriesRes,
+		ThemeCategories: themeCategoriesRes,
 		TouristSpot:     touristSpots,
 		CreatedAt:       model.TimeResponse(vlog.CreatedAt),
 		UpdatedAt:       model.TimeResponse(vlog.UpdatedAt),
 	}
 }
 
-func (c Converters) convertVlogToOutput(queryVlog *entity.VlogForList) *output.Vlog {
+func (c Converters) convertVlogToOutput(vlog *entity.VlogForList, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.Vlog {
+	areaCategoriesRes := make([]*output.AreaCategoryDetail, len(vlog.AreaCategories))
+	for i, areaCate := range vlog.AreaCategories {
+		areaCategoriesRes[i] = c.ConvertAreaCategoryDetailFromAreaCategory(areaCate, areaCategories)
+	}
+
+	themeCategoriesRes := make([]*output.ThemeCategoryDetail, len(vlog.ThemeCategories))
+	for i, themeCate := range vlog.ThemeCategories {
+		themeCategoriesRes[i] = c.ConvertThemeCategoryDetailFromThemeCategory(themeCate, themeCategories)
+	}
+
 	return &output.Vlog{
-		ID:              queryVlog.ID,
-		Thumbnail:       queryVlog.Thumbnail,
-		AreaCategories:  c.ConvertAreaCategoriesToOutput(queryVlog.AreaCategories),
-		ThemeCategories: c.ConvertThemeCategoriesToOutput(queryVlog.ThemeCategories),
-		Title:           queryVlog.VlogTiny.Title,
+		ID:              vlog.ID,
+		Thumbnail:       vlog.Thumbnail,
+		AreaCategories:  areaCategoriesRes,
+		ThemeCategories: themeCategoriesRes,
+		Title:           vlog.VlogTiny.Title,
 	}
 }

@@ -103,3 +103,41 @@ func (c Converters) ConvertAreaCategoriesWithPostCountToOutput(areaCategories []
 
 	return resp
 }
+
+func (c Converters) ConvertAreaCategoryDetailFromAreaCategory(areaCate *entity.AreaCategory, areaCategories map[int]*entity.AreaCategory) *output.AreaCategoryDetail {
+	var subArea *output.AreaCategory
+	var subSubArea *output.AreaCategory
+	if areaCate.SubAreaID.Valid {
+		subArea = c.ConvertAreaCategoryToOutput(areaCategories[int(areaCate.SubAreaID.Int64)])
+	}
+	if areaCate.SubSubAreaID.Valid {
+		subSubArea = c.ConvertAreaCategoryToOutput(areaCategories[int(areaCate.SubSubAreaID.Int64)])
+	}
+
+	return &output.AreaCategoryDetail{
+		ID:         areaCate.ID,
+		Name:       areaCate.Name,
+		Slug:       areaCate.Slug,
+		Type:       areaCate.Type,
+		AreaGroup:  areaCate.AreaGroup,
+		Area:       c.ConvertAreaCategoryToOutput(areaCate),
+		SubArea:    subArea,
+		SubSubArea: subSubArea,
+	}
+}
+
+func (c Converters) ConvertThemeCategoryDetailFromThemeCategory(themeCate *entity.ThemeCategory, themeCategories map[int]*entity.ThemeCategory) *output.ThemeCategoryDetail {
+	var subTheme *output.ThemeCategory
+	if themeCate.SubThemeID.Valid {
+		subTheme = c.ConvertThemeCategoryToOutput(themeCategories[int(themeCate.SubThemeID.Int64)])
+	}
+
+	return &output.ThemeCategoryDetail{
+		ID:       themeCate.ID,
+		Name:     themeCate.Name,
+		Slug:     themeCate.Slug,
+		Type:     themeCate.Type,
+		Theme:    c.ConvertThemeCategoryToOutput(themeCate),
+		SubTheme: subTheme,
+	}
+}

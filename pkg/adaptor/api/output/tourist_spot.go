@@ -8,52 +8,36 @@ import (
 
 type (
 	TouristSpot struct {
-		ID          int        `json:"id"`
-		Name        string     `json:"name"`
-		Thumbnail   string     `json:"thumbnail"`
-		URL         string     `json:"url"`
-		Address     string     `json:"address"`
-		Latitude    null.Float `json:"latitude"`
-		Longitude   null.Float `json:"longitude"`
-		AccessCar   string     `json:"accessCar"`
-		AccessTrain string     `json:"accessTrain"`
-		AccessBus   string     `json:"accessBus"`
-		Rate        float64    `json:"rate"`
-		VendorRate  float64    `json:"vendorRate"`
-		ReviewCount int        `json:"reviewCount"`
+		ID              int                    `json:"id"`
+		Slug            string                 `json:"slug"`
+		Name            string                 `json:"name"`
+		Thumbnail       string                 `json:"thumbnail"`
+		URL             string                 `json:"url"`
+		City            string                 `json:"city"`
+		Address         string                 `json:"address"`
+		Latitude        null.Float             `json:"latitude"`
+		Longitude       null.Float             `json:"longitude"`
+		AccessCar       string                 `json:"accessCar"`
+		AccessTrain     string                 `json:"accessTrain"`
+		AccessBus       string                 `json:"accessBus"`
+		Tel             string                 `json:"tel"`
+		Price           string                 `json:"price"`
+		InstagramURL    string                 `json:"instagramUrl"`
+		SearchInnURL    string                 `json:"searchInnUrl"`
+		OpeningHours    string                 `json:"openingHours"`
+		Rate            float64                `json:"rate"`
+		VendorRate      float64                `json:"vendorRate"`
+		ReviewCount     int                    `json:"reviewCount"`
+		AreaCategories  []*AreaCategoryDetail  `json:"areaCategories"`
+		ThemeCategories []*ThemeCategoryDetail `json:"themeCategories"`
+		SpotCategories  []*SpotCategory        `json:"spotCategories"`
+		CreatedAt       model.TimeResponse     `json:"createdAt"`
+		UpdatedAt       model.TimeResponse     `json:"updatedAt"`
 	}
 
 	TouristSpotList struct {
 		TotalNumber  int            `json:"totalNumber"`
 		TouristSpots []*TouristSpot `json:"touristSpots"`
-	}
-
-	ShowTouristSpot struct {
-		ID              int                `json:"id"`
-		Slug            string             `json:"slug"`
-		Name            string             `json:"name"`
-		Thumbnail       string             `json:"thumbnail"`
-		WebsiteURL      string             `json:"websiteUrl"`
-		City            string             `json:"city"`
-		Address         string             `json:"address"`
-		Latitude        null.Float         `json:"latitude"`
-		Longitude       null.Float         `json:"longitude"`
-		AccessCar       string             `json:"accessCar"`
-		AccessTrain     string             `json:"accessTrain"`
-		AccessBus       string             `json:"accessBus"`
-		OpeningHours    string             `json:"openingHours"`
-		Tel             string             `json:"tel"`
-		Price           string             `json:"price"`
-		InstagramURL    string             `json:"instagramUrl,omitempty"`
-		SearchInnURL    string             `json:"searchInnUrl,omitempty"`
-		Rate            float64            `json:"rate"`
-		VendorRate      float64            `json:"vendorRate"`
-		ReviewCount     int                `json:"reviewCount"`
-		AreaCategories  []*AreaCategory    `json:"areaCategories"`
-		ThemeCategories []*ThemeCategory   `json:"themeCategories"`
-		SpotCategories  []*SpotCategory    `json:"spotCategories"`
-		CreatedAt       model.TimeResponse `json:"createdAt"`
-		UpdatedAt       model.TimeResponse `json:"updatedAt"`
 	}
 )
 

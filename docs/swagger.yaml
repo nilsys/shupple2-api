@@ -979,7 +979,7 @@ paths:
                     description: 検索総件数
                     example: 120
                   posts:
-                    $ref: "#/components/schemas/PostWithAreaCategorySummaryList"
+                    $ref: "#/components/schemas/PostWithCategoryDetailList"
   /posts/:id:
     get:
       tags:
@@ -1456,7 +1456,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TouristSpotShow"
+                $ref: "#/components/schemas/TouristSpot"
   /tourist_spots/recommend:
     get:
       tags:
@@ -1657,7 +1657,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AreaCategorySummary"
+                $ref: "#/components/schemas/AreaCategoryDetail"
   /sub_areas:
     get:
       tags:
@@ -1716,7 +1716,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AreaCategorySummary"
+                $ref: "#/components/schemas/AreaCategoryDetail"
   /sub_sub_areas:
     get:
       tags:
@@ -1775,7 +1775,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AreaCategorySummary"
+                $ref: "#/components/schemas/AreaCategoryDetail"
   /interests:
     get:
       tags:
@@ -2456,11 +2456,11 @@ components:
         createdAt:
           type: string
           format: date-time
-    PostWithAreaCategorySummaryList:
+    PostWithCategoryDetailList:
       type: array
       items:
-        $ref: "#/components/schemas/PostWithAreaCategorySummary"
-    PostWithAreaCategorySummary:
+        $ref: "#/components/schemas/PostWithCategoryDetail"
+    PostWithCategoryDetail:
       type: object
       properties:
         id:
@@ -2478,11 +2478,11 @@ components:
         areaCategories:
           type: array
           items:
-            $ref: "#/components/schemas/AreaCategorySummary"
+            $ref: "#/components/schemas/AreaCategoryDetail"
         themeCategories:
           type: array
           items:
-            $ref: "#/components/schemas/Category"
+            $ref: "#/components/schemas/ThemeCategoryDetail"
         title:
           type: string
           description: 記事タイトル
@@ -2594,11 +2594,11 @@ components:
         areaCategories:
           type: array
           items:
-            $ref: "#/components/schemas/AreaCategory"
+            $ref: "#/components/schemas/AreaCategoryDetail"
         themeCategories:
           type: array
           items:
-            $ref: "#/components/schemas/ThemeCategory"
+            $ref: "#/components/schemas/ThemeCategoryDetail"
         hashtags:
           $ref: "#/components/schemas/HashtagList"
         title:
@@ -2714,7 +2714,7 @@ components:
           description: 最終更新日時, ISO 8601形式
           example: 2020-01-01T13:16+09:00
         relationPosts:
-          $ref: "#/components/schemas/PostList"
+          $ref: "#/components/schemas/PostWithCategoryDetailList"
 
     VlogList:
       type: array
@@ -2733,14 +2733,12 @@ components:
           example: http://example.com/img/1
         areaCategories:
           type: array
-          description: エリアカテゴリ
           items:
-            $ref: "#/components/schemas/Category"
+            $ref: "#/components/schemas/AreaCategoryDetail"
         themeCategories:
           type: array
-          description: テーマカテゴリ
           items:
-            $ref: "#/components/schemas/Category"
+            $ref: "#/components/schemas/ThemeCategoryDetail"
         title:
           type: string
           description: 動画タイトル
@@ -2817,14 +2815,12 @@ components:
             $ref: "#/components/schemas/Creator"
         areaCategories:
           type: array
-          description: エリアカテゴリ
           items:
-            $ref: "#/components/schemas/Category"
+            $ref: "#/components/schemas/AreaCategoryDetail"
         themeCategories:
           type: array
-          description: テーマカテゴリ
           items:
-            $ref: "#/components/schemas/Category"
+            $ref: "#/components/schemas/ThemeCategoryDetail"
         touristSpots:
           type: array
           items:
@@ -2834,57 +2830,6 @@ components:
       items:
         $ref: "#/components/schemas/TouristSpot"
     TouristSpot:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: スポットID
-          example: 1
-        name:
-          type: string
-          description: 観光スポット名
-          example: 絶景
-        thumbnail:
-          type: string
-          description: サムネイルURL
-          example: http://example.com/img/1
-        address:
-          type: string
-          description: 住所
-          example: 東京都渋谷区道玄坂１丁目１０−１０番８号 １F・2F 渋谷道玄坂東急ビル
-        latitude:
-          type: number
-          format: double
-          description: 緯度
-          example: 35.65695
-        longitude:
-          type: number
-          format: double
-          description: 経度
-          example: 139.698556
-        accessCar:
-          type: string
-          description: 車でのアクセス
-        accessTrain:
-          type: string
-          description: 電車でのアクセス
-        accessBus:
-          type: string
-          description: バスでのアクセス
-        rate:
-          type: number
-          format: double
-          description: 評価
-          example: 3.5
-        vendorRate:
-          type: number
-          format: double
-          description: 外部評価
-          example: 2.5
-        reviewCount:
-          type: number
-          description: レビュー件数
-    TouristSpotShow:
       type: object
       required:
         - id
@@ -2915,7 +2860,7 @@ components:
           type: string
           description: サムネイルURL
           example: https://files.stayway.jp/example/img/1
-        websiteUrl:
+        url:
           type: string
           description: 公式ホームページ
           example: http://zekkei.com
@@ -2980,11 +2925,11 @@ components:
         areaCategories:
           type: array
           items:
-            $ref: "#/components/schemas/Category"
+            $ref: "#/components/schemas/AreaCategoryDetail"
         themeCategories:
           type: array
           items:
-            $ref: "#/components/schemas/Category"
+            $ref: "#/components/schemas/ThemeCategoryDetail"
         spotCategories:
           type: array
           description: 観光スポットカテゴリー
@@ -3229,7 +3174,7 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/AreaCategoryWithPostCount"
-    AreaCategorySummary:
+    AreaCategoryDetail:
       type: object
       required:
         - id
@@ -3355,6 +3300,36 @@ components:
           type: integer
           description: 記事数
           example: 3
+    ThemeCategoryDetail:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - theme
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        name:
+          type: string
+          description: カテゴリ名
+          example: 初めての民泊
+        slug:
+          type: string
+          description: slug
+          example: スラッグ
+        type:
+          type: string
+          enum:
+            - Undefined
+            - Theme
+            - SubTheme
+        theme:
+          $ref: "#/components/schemas/ThemeCategory"
+        subTheme:
+          $ref: "#/components/schemas/ThemeCategory"
     ThemeCategory:
       type: object
       required:

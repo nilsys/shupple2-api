@@ -3,17 +3,18 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
+
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
-	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
 type VlogQueryController struct {
 	converter.Converters
-	service.VlogQueryService
+	scenario.VlogQueryScenario
 }
 
 var VlogQueryControllerSet = wire.NewSet(
@@ -26,12 +27,12 @@ func (c *VlogQueryController) Show(ctx echo.Context) error {
 		return errors.Wrap(err, "required vlog id")
 	}
 
-	vlog, err := c.VlogQueryService.Show(p.ID)
+	vlog, areaCategoriesMap, themeCategoriesMap, err := c.VlogQueryScenario.Show(p.ID)
 	if err != nil {
 		return errors.Wrapf(err, "failed show vlog id=%d", p.ID)
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertVlogDetail(vlog))
+	return ctx.JSON(http.StatusOK, c.ConvertVlogDetail(vlog, areaCategoriesMap, themeCategoriesMap))
 }
 func (c *VlogQueryController) ListVlog(ctx echo.Context) error {
 	param := &input.ListVlogParam{}
@@ -39,10 +40,10 @@ func (c *VlogQueryController) ListVlog(ctx echo.Context) error {
 		return errors.Wrap(err, "invalid show vlogs input")
 	}
 
-	vlogs, err := c.VlogQueryService.ShowListByParams(c.ConvertListVlogParamToQuery(param))
+	vlogs, areaCategoriesMap, themeCategoriesMap, err := c.VlogQueryScenario.ListByParams(c.ConvertListVlogParamToQuery(param))
 	if err != nil {
 		return errors.Wrap(err, "failed show vlog list")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertVlogListToOutput(vlogs))
+	return ctx.JSON(http.StatusOK, c.ConvertVlogListToOutput(vlogs, areaCategoriesMap, themeCategoriesMap))
 }

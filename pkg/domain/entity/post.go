@@ -1,8 +1,9 @@
 package entity
 
 import (
-	"sort"
 	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
 type (
@@ -88,16 +89,6 @@ type (
 		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
 	}
 
-	// 参照用Post詳細
-	PostDetailWithHashtag struct {
-		PostTiny
-		Bodies          []*PostBody      `gorm:"foreignkey:PostID"`
-		User            *User            `gorm:"foreignkey:UserID"`
-		AreaCategories  []*AreaCategory  `gorm:"many2many:post_area_category;jointable_foreignkey:post_id;"`
-		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
-		Hashtag         []*Hashtag       `gorm:"many2many:post_hashtag;jointable_foreignkey:post_id;"`
-	}
-
 	PostDetailWithHashtagAndIsFavorite struct {
 		PostTiny
 		Bodies          []*PostBody `gorm:"foreignkey:PostID"`
@@ -110,10 +101,6 @@ type (
 )
 
 func (post *PostDetail) TableName() string {
-	return "post"
-}
-
-func (post *PostDetailWithHashtag) TableName() string {
 	return "post"
 }
 
@@ -192,32 +179,62 @@ func (p *PostList) AreaCategoryIDs() []int {
 			ids = append(ids, area.AreaID)
 
 			if area.SubAreaID.Valid {
-				// MEMO: int64->intに変換しているので値が溢れる可能性がある
 				ids = append(ids, int(area.SubAreaID.Int64))
 			}
 
 			if area.SubSubAreaID.Valid {
-				// MEMO: int64->intに変換しているので値が溢れる可能性がある
 				ids = append(ids, int(area.SubSubAreaID.Int64))
 			}
 		}
 	}
 
-	// 昇順
-	sort.Slice(ids, func(i, j int) bool {
-		return ids[i] < ids[j]
-	})
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
+}
 
-	results := make([]int, 0)
+func (p *PostList) ThemeCategoryIDs() []int {
+	ids := make([]int, 0)
 
-	// 重複,0削除
-	encountered := map[int]bool{}
-	for i := 0; i < len(ids); i++ {
-		if !encountered[ids[i]] && ids[i] != 0 {
-			encountered[ids[i]] = true
-			results = append(results, ids[i])
+	for _, post := range p.Posts {
+		for _, theme := range post.ThemeCategories {
+			ids = append(ids, theme.ThemeID)
+
+			if theme.SubThemeID.Valid {
+				ids = append(ids, int(theme.SubThemeID.Int64))
+			}
 		}
 	}
 
-	return results
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
+}
+
+func (p *PostDetailWithHashtagAndIsFavorite) AreaCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, area := range p.AreaCategories {
+		ids = append(ids, area.AreaID)
+
+		if area.SubAreaID.Valid {
+			ids = append(ids, int(area.SubAreaID.Int64))
+		}
+
+		if area.SubSubAreaID.Valid {
+			ids = append(ids, int(area.SubSubAreaID.Int64))
+		}
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
+}
+
+func (p *PostDetailWithHashtagAndIsFavorite) ThemeCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, theme := range p.ThemeCategories {
+		ids = append(ids, theme.ThemeID)
+
+		if theme.SubThemeID.Valid {
+			ids = append(ids, int(theme.SubThemeID.Int64))
+		}
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
 }

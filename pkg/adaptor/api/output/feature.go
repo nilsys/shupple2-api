@@ -26,8 +26,8 @@ type (
 		TwitterCount  int    `json:"twitterCount"`
 		Views         int    `json:"views"`
 		Creator       `json:"creator"`
-		CreatedAt     model.TimeResponse `json:"createdAt"`
-		UpdatedAt     model.TimeResponse `json:"updatedAt"`
-		RelationPosts []*Post            `json:"relationPosts"`
+		CreatedAt     model.TimeResponse        `json:"createdAt"`
+		UpdatedAt     model.TimeResponse        `json:"updatedAt"`
+		RelationPosts []*PostWithCategoryDetail `json:"relationPosts"`
 	}
 )

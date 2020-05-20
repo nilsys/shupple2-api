@@ -50,19 +50,29 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	converters := converter.Converters{
 		Config: configConfig,
 	}
-	postQueryRepositoryImpl := &repository.PostQueryRepositoryImpl{
-		DB: db,
-	}
 	areaCategoryQueryRepositoryImpl := &repository.AreaCategoryQueryRepositoryImpl{
 		DB: db,
 	}
+	themeCategoryQueryRepositoryImpl := &repository.ThemeCategoryQueryRepositoryImpl{
+		DB: db,
+	}
+	categoryIDMapFactory := factory.CategoryIDMapFactory{
+		AreaCategoryQueryRepository:  areaCategoryQueryRepositoryImpl,
+		ThemeCategoryQueryRepository: themeCategoryQueryRepositoryImpl,
+	}
+	postQueryRepositoryImpl := &repository.PostQueryRepositoryImpl{
+		DB: db,
+	}
 	postQueryServiceImpl := &service.PostQueryServiceImpl{
-		PostQueryRepository:         postQueryRepositoryImpl,
-		AreaCategoryQueryRepository: areaCategoryQueryRepositoryImpl,
+		PostQueryRepository: postQueryRepositoryImpl,
+	}
+	postQueryScenarioImpl := &scenario.PostQueryScenarioImpl{
+		CategoryIDMapFactory: categoryIDMapFactory,
+		PostQueryService:     postQueryServiceImpl,
 	}
 	postQueryController := api.PostQueryController{
-		Converters:  converters,
-		PostService: postQueryServiceImpl,
+		Converters:        converters,
+		PostQueryScenario: postQueryScenarioImpl,
 	}
 	dao := repository.DAO{
 		UnderlyingDB: db,
@@ -100,9 +110,6 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	postFavoriteCommandController := api.PostFavoriteCommandController{
 		Converters:                 converters,
 		PostFavoriteCommandService: postFavoriteCommandServiceImpl,
-	}
-	themeCategoryQueryRepositoryImpl := &repository.ThemeCategoryQueryRepositoryImpl{
-		DB: db,
 	}
 	spotCategoryQueryRepositoryImpl := &repository.SpotCategoryQueryRepositoryImpl{
 		DB: db,
@@ -248,20 +255,31 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	}
 	featureQueryServiceImpl := &service.FeatureQueryServiceImpl{
 		FeatureQueryRepository: featureQueryRepositoryImpl,
+		CategoryIDMapFactory:   categoryIDMapFactory,
+	}
+	featureQueryScenarioImpl := &scenario.FeatureQueryScenarioImpl{
+		CategoryIDMapFactory: categoryIDMapFactory,
+		FeatureQueryService:  featureQueryServiceImpl,
 	}
 	featureQueryController := api.FeatureQueryController{
-		Converters:          converters,
-		FeatureQueryService: featureQueryServiceImpl,
+		Converters:           converters,
+		FeatureQueryScenario: featureQueryScenarioImpl,
+		FeatureQueryService:  featureQueryServiceImpl,
 	}
 	vlogQueryRepositoryImpl := &repository.VlogQueryRepositoryImpl{
 		DB: db,
 	}
 	vlogQueryServiceImpl := &service.VlogQueryServiceImpl{
-		VlogQueryRepository: vlogQueryRepositoryImpl,
+		VlogQueryRepository:  vlogQueryRepositoryImpl,
+		CategoryIDMapFactory: categoryIDMapFactory,
+	}
+	vlogQueryScenarioImpl := &scenario.VlogQueryScenarioImpl{
+		VlogQueryService:     vlogQueryServiceImpl,
+		CategoryIDMapFactory: categoryIDMapFactory,
 	}
 	vlogQueryController := api.VlogQueryController{
-		Converters:       converters,
-		VlogQueryService: vlogQueryServiceImpl,
+		Converters:        converters,
+		VlogQueryScenario: vlogQueryScenarioImpl,
 	}
 	userQueryServiceImpl := &service.UserQueryServiceImpl{
 		UserQueryRepository: userQueryRepositoryImpl,
@@ -416,10 +434,15 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	}
 	touristSpotQueryServiceImpl := &service.TouristSpotQueryServiceImpl{
 		TouristSpotQueryRepository: touristSpotQueryRepositoryImpl,
+		CategoryIDMapFactory:       categoryIDMapFactory,
+	}
+	touristSpotQueryScenarioImpl := &scenario.TouristSpotQueryScenarioImpl{
+		CategoryIDMapFactory:    categoryIDMapFactory,
+		TouristSpotQueryService: touristSpotQueryServiceImpl,
 	}
 	touristSpotQueryController := api.TouristSpotQueryController{
-		Converters:              converters,
-		TouristSpotQueryService: touristSpotQueryServiceImpl,
+		Converters:               converters,
+		TouristSpotQueryScenario: touristSpotQueryScenarioImpl,
 	}
 	interestQueryRepositoryImpl := &repository.InterestQueryRepositoryImpl{
 		DB: db,
@@ -536,10 +559,10 @@ var (
 
 var controllerSet = wire.NewSet(converter.ConvertersSet, api.PostQueryControllerSet, api.PostFavoriteCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.RSSControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.ThemeQueryControllerSet, api.WordpressCallbackControllerSet, api.SitemapControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet, api.AreaQueryControllerSet, api.InnQueryControllerSet, api.NoticeQueryControllerSet, api.ReportCommandControllerSet)
 
-var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet)
+var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.PostQueryScenarioSet, scenario.FeatureQueryScenarioSet, scenario.VlogQueryScenarioSet, scenario.TouristSpotQueryScenarioSet)
 
 var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
 
 var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryQueryServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.RssServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.SpotCategoryCommandServiceSet, service.SitemapServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet, service.NoticeQueryServiceSet, service.ReportCommandServiceSet)
 
-var factorySet = wire.NewSet(factory.S3SignatureFactorySet)
+var factorySet = wire.NewSet(factory.S3SignatureFactorySet, factory.CategoryIDMapFactorySet)

@@ -3,17 +3,18 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
+
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
-	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
 type TouristSpotQueryController struct {
 	converter.Converters
-	service.TouristSpotQueryService
+	scenario.TouristSpotQueryScenario
 }
 
 var TouristSpotQeuryControllerSet = wire.NewSet(
@@ -26,12 +27,12 @@ func (c *TouristSpotQueryController) Show(ctx echo.Context) error {
 		return errors.Wrap(err, "validation show post parameter")
 	}
 
-	touristSpot, err := c.TouristSpotQueryService.Show(p.ID)
+	touristSpot, areaCategoriesMap, themeCategoriesMap, err := c.TouristSpotQueryScenario.Show(p.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get tourist_spot")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertQueryTouristSpotToOutput(touristSpot))
+	return ctx.JSON(http.StatusOK, c.ConvertTouristSpotToOutput(touristSpot, areaCategoriesMap, themeCategoriesMap))
 }
 
 func (c *TouristSpotQueryController) ListTouristSpot(ctx echo.Context) error {
@@ -42,12 +43,12 @@ func (c *TouristSpotQueryController) ListTouristSpot(ctx echo.Context) error {
 
 	q := c.ConvertTouristSpotListParamToQuery(p)
 
-	touristSpots, err := c.TouristSpotQueryService.List(q)
+	touristSpots, areaCategoriesMap, themeCategoriesMap, err := c.TouristSpotQueryScenario.List(q)
 	if err != nil {
 		return errors.Wrap(err, "failed to get tourist_spot list")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertTouristSpotToOutput(touristSpots))
+	return ctx.JSON(http.StatusOK, c.ConvertTouristSpotListToOutput(touristSpots, areaCategoriesMap, themeCategoriesMap))
 }
 
 func (c *TouristSpotQueryController) ListRecommendTouristSpot(ctx echo.Context) error {
@@ -58,10 +59,10 @@ func (c *TouristSpotQueryController) ListRecommendTouristSpot(ctx echo.Context) 
 
 	q := c.ConvertRecommendTouristSpotListParamToQuery(p)
 
-	touristSpots, err := c.TouristSpotQueryService.ListRecommend(q)
+	touristSpots, areaCategoriesMap, themeCategoriesMap, err := c.TouristSpotQueryScenario.ListRecommend(q)
 	if err != nil {
 		return errors.Wrap(err, "failed to get recommend tourist_spot list")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertTouristSpotToOutput(touristSpots))
+	return ctx.JSON(http.StatusOK, c.ConvertTouristSpotListToOutput(touristSpots, areaCategoriesMap, themeCategoriesMap))
 }

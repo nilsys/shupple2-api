@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
 type (
@@ -126,4 +128,72 @@ func (vlog *Vlog) SetEditors(editors []int) {
 
 func (queryVlog *VlogTiny) TableName() string {
 	return "vlog"
+}
+
+func (v *VlogList) AreaCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, vlog := range v.Vlogs {
+		for _, area := range vlog.AreaCategories {
+			ids = append(ids, area.AreaID)
+
+			if area.SubAreaID.Valid {
+				ids = append(ids, int(area.SubAreaID.Int64))
+			}
+
+			if area.SubSubAreaID.Valid {
+				ids = append(ids, int(area.SubSubAreaID.Int64))
+			}
+		}
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
+}
+
+func (v *VlogList) ThemeCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, vlog := range v.Vlogs {
+		for _, theme := range vlog.ThemeCategories {
+			ids = append(ids, theme.ThemeID)
+
+			if theme.SubThemeID.Valid {
+				ids = append(ids, int(theme.SubThemeID.Int64))
+			}
+		}
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
+}
+
+func (v *VlogDetail) AreaCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, area := range v.AreaCategories {
+		ids = append(ids, area.AreaID)
+
+		if area.SubAreaID.Valid {
+			ids = append(ids, int(area.SubAreaID.Int64))
+		}
+
+		if area.SubSubAreaID.Valid {
+			ids = append(ids, int(area.SubSubAreaID.Int64))
+		}
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
+}
+
+func (v *VlogDetail) ThemeCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, theme := range v.ThemeCategories {
+		ids = append(ids, theme.ThemeID)
+
+		if theme.SubThemeID.Valid {
+			ids = append(ids, int(theme.SubThemeID.Int64))
+		}
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
 }

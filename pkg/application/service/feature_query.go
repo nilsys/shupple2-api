@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/google/wire"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -10,11 +11,12 @@ import (
 type (
 	FeatureQueryService interface {
 		ShowQuery(id int) (*entity.FeatureDetailWithPosts, error)
-		ShowList(query *query.FindListPaginationQuery) (*entity.FeatureList, error)
+		List(query *query.FindListPaginationQuery) (*entity.FeatureList, error)
 	}
 
 	FeatureQueryServiceImpl struct {
 		FeatureQueryRepository repository.FeatureQueryRepository
+		CategoryIDMapFactory   factory.CategoryIDMapFactory
 	}
 )
 
@@ -29,6 +31,6 @@ func (s *FeatureQueryServiceImpl) ShowQuery(id int) (*entity.FeatureDetailWithPo
 }
 
 // Feature一覧取得
-func (s *FeatureQueryServiceImpl) ShowList(query *query.FindListPaginationQuery) (*entity.FeatureList, error) {
+func (s *FeatureQueryServiceImpl) List(query *query.FindListPaginationQuery) (*entity.FeatureList, error) {
 	return s.FeatureQueryRepository.FindList(query)
 }

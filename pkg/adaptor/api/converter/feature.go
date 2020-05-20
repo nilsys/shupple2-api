@@ -28,8 +28,13 @@ func (c Converters) ConvertFeatureListToOutput(features *entity.FeatureList) *ou
 	}
 }
 
-func (c Converters) ConvertFeatureDetailPostsToOutput(feature *entity.FeatureDetailWithPosts) *output.ShowFeature {
-	relationPosts := c.ConvertPostListTiniesToOutput(feature.Posts)
+func (c Converters) ConvertFeatureDetailPostsToOutput(feature *entity.FeatureDetailWithPosts, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.ShowFeature {
+
+	relationPosts := make([]*output.PostWithCategoryDetail, len(feature.Posts))
+
+	for i, post := range feature.Posts {
+		relationPosts[i] = c.ConvertPostListTinyWithCategoryDetailToOutput(post, areaCategories, themeCategories)
+	}
 
 	return &output.ShowFeature{
 		ID:            feature.ID,

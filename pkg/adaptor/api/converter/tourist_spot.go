@@ -21,11 +21,11 @@ func (c Converters) ConvertTouristSpotListParamToQuery(param *input.ListTouristS
 	}
 }
 
-func (c Converters) ConvertTouristSpotToOutput(touristSpots *entity.TouristSpotList) *output.TouristSpotList {
+func (c Converters) ConvertTouristSpotListToOutput(touristSpots *entity.TouristSpotList, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.TouristSpotList {
 	responseTouristSpots := make([]*output.TouristSpot, len(touristSpots.TouristSpots))
 
 	for i, touristSpot := range touristSpots.TouristSpots {
-		responseTouristSpots[i] = c.convertTouristSpotToOutput(touristSpot)
+		responseTouristSpots[i] = c.ConvertTouristSpotToOutput(touristSpot, areaCategories, themeCategories)
 	}
 
 	return &output.TouristSpotList{
@@ -34,58 +34,48 @@ func (c Converters) ConvertTouristSpotToOutput(touristSpots *entity.TouristSpotL
 	}
 }
 
-// outputの構造体へconvert
-func (c Converters) convertTouristSpotToOutput(touristSpot *entity.TouristSpotListTiny) *output.TouristSpot {
-	return &output.TouristSpot{
-		ID:          touristSpot.ID,
-		Name:        touristSpot.Name,
-		Thumbnail:   touristSpot.Thumbnail,
-		URL:         touristSpot.WebsiteURL,
-		Address:     touristSpot.Address,
-		Latitude:    touristSpot.Lat,
-		Longitude:   touristSpot.Lng,
-		AccessCar:   touristSpot.AccessCar,
-		AccessTrain: touristSpot.AccessTrain,
-		AccessBus:   touristSpot.AccessBus,
-		Rate:        touristSpot.Rate,
-		VendorRate:  touristSpot.VendorRate,
-		ReviewCount: touristSpot.ReviewCount,
+func (c Converters) ConvertTouristSpotToOutput(touristSpot *entity.TouristSpotDetail, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.TouristSpot {
+	areaCategoriesRes := make([]*output.AreaCategoryDetail, len(touristSpot.AreaCategories))
+	for i, areaCate := range touristSpot.AreaCategories {
+		areaCategoriesRes[i] = c.ConvertAreaCategoryDetailFromAreaCategory(areaCate, areaCategories)
 	}
-}
 
-func (c Converters) ConvertQueryTouristSpotToOutput(queryTouristSpot *entity.TouristSpotDetail) *output.ShowTouristSpot {
-	spotCategories := make([]*output.SpotCategory, len(queryTouristSpot.SpotCategories))
+	themeCategoriesRes := make([]*output.ThemeCategoryDetail, len(touristSpot.ThemeCategories))
+	for i, themeCate := range touristSpot.ThemeCategories {
+		themeCategoriesRes[i] = c.ConvertThemeCategoryDetailFromThemeCategory(themeCate, themeCategories)
+	}
 
-	for i, spotCategory := range queryTouristSpot.SpotCategories {
+	spotCategories := make([]*output.SpotCategory, len(touristSpot.SpotCategories))
+	for i, spotCategory := range touristSpot.SpotCategories {
 		spotCategories[i] = output.NewSpotCategory(spotCategory.ID, spotCategory.Name, spotCategory.Slug)
 	}
 
-	return &output.ShowTouristSpot{
-		ID:              queryTouristSpot.ID,
-		Slug:            queryTouristSpot.Slug,
-		Name:            queryTouristSpot.Name,
-		Thumbnail:       queryTouristSpot.Thumbnail,
-		WebsiteURL:      queryTouristSpot.WebsiteURL,
-		City:            queryTouristSpot.City,
-		Address:         queryTouristSpot.Address,
-		Latitude:        queryTouristSpot.Lat,
-		Longitude:       queryTouristSpot.Lng,
-		AccessCar:       queryTouristSpot.AccessCar,
-		AccessTrain:     queryTouristSpot.AccessTrain,
-		AccessBus:       queryTouristSpot.AccessBus,
-		OpeningHours:    queryTouristSpot.OpeningHours,
-		Tel:             queryTouristSpot.TEL,
-		Price:           queryTouristSpot.Price,
-		InstagramURL:    queryTouristSpot.InstagramURL,
-		SearchInnURL:    queryTouristSpot.SearchInnURL,
-		Rate:            queryTouristSpot.Rate,
-		VendorRate:      queryTouristSpot.VendorRate,
-		ReviewCount:     queryTouristSpot.ReviewCount,
-		AreaCategories:  c.ConvertAreaCategoriesToOutput(queryTouristSpot.AreaCategories),
-		ThemeCategories: c.ConvertThemeCategoriesToOutput(queryTouristSpot.ThemeCategories),
+	return &output.TouristSpot{
+		ID:              touristSpot.ID,
+		Slug:            touristSpot.Slug,
+		Name:            touristSpot.Name,
+		Thumbnail:       touristSpot.Thumbnail,
+		URL:             touristSpot.WebsiteURL,
+		City:            touristSpot.City,
+		Address:         touristSpot.Address,
+		Latitude:        touristSpot.Lat,
+		Longitude:       touristSpot.Lng,
+		AccessCar:       touristSpot.AccessCar,
+		AccessTrain:     touristSpot.AccessTrain,
+		AccessBus:       touristSpot.AccessBus,
+		OpeningHours:    touristSpot.OpeningHours,
+		Tel:             touristSpot.TEL,
+		Price:           touristSpot.Price,
+		InstagramURL:    touristSpot.InstagramURL,
+		SearchInnURL:    touristSpot.SearchInnURL,
+		Rate:            touristSpot.Rate,
+		VendorRate:      touristSpot.VendorRate,
+		ReviewCount:     touristSpot.ReviewCount,
+		AreaCategories:  areaCategoriesRes,
+		ThemeCategories: themeCategoriesRes,
 		SpotCategories:  spotCategories,
-		CreatedAt:       model.TimeResponse(queryTouristSpot.CreatedAt),
-		UpdatedAt:       model.TimeResponse(queryTouristSpot.UpdatedAt),
+		CreatedAt:       model.TimeResponse(touristSpot.CreatedAt),
+		UpdatedAt:       model.TimeResponse(touristSpot.UpdatedAt),
 	}
 }
 

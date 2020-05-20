@@ -1,8 +1,6 @@
 package service
 
 import (
-	"sort"
-
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -14,17 +12,21 @@ type (
 	// Post参照系サービス
 	PostQueryService interface {
 		ShowByID(id int) (*entity.Post, error)
-		ShowQueryByID(id int, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, error)
-		ShowQueryBySlug(slug string) (*entity.PostDetailWithHashtag, error)
-		ListByParams(query *query.FindPostListQuery, ouser entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, error)
-		ListFeed(ouser entity.OptionalUser, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error)
-		ListFavoritePost(ouser entity.OptionalUser, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error)
+		ShowQueryByID(id int) (*entity.PostDetailWithHashtagAndIsFavorite, error)
+		ShowQueryByIDForAuth(id, userID int) (*entity.PostDetailWithHashtagAndIsFavorite, error)
+		ShowQueryBySlug(slug string) (*entity.PostDetailWithHashtagAndIsFavorite, error)
+		ShowQueryBySlugForAuth(slug string, userID int) (*entity.PostDetailWithHashtagAndIsFavorite, error)
+		ListByParams(query *query.FindPostListQuery) (*entity.PostList, error)
+		ListByParamsForAuth(query *query.FindPostListQuery, userID int) (*entity.PostList, error)
+		ListFeed(targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error)
+		ListFeedForAuth(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error)
+		ListFavoritePost(targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error)
+		ListFavoritePostForAuth(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error)
 	}
 
 	// Post参照系サービス実装
 	PostQueryServiceImpl struct {
-		PostQueryRepository         repository.PostQueryRepository
-		AreaCategoryQueryRepository repository.AreaCategoryQueryRepository
+		PostQueryRepository repository.PostQueryRepository
 	}
 )
 
@@ -42,83 +44,74 @@ func (s *PostQueryServiceImpl) ShowByID(id int) (*entity.Post, error) {
 	return post, nil
 }
 
-func (s *PostQueryServiceImpl) ShowQueryByID(id int, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, error) {
-	if ouser.Authenticated {
-		return s.PostQueryRepository.FindPostDetailWithHashtagAndIsFavoriteByID(id, ouser.ID)
+func (s *PostQueryServiceImpl) ShowQueryByID(id int) (*entity.PostDetailWithHashtagAndIsFavorite, error) {
+	post, err := s.PostQueryRepository.FindPostDetailWithHashtagByID(id)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed find post by id")
 	}
-	return s.PostQueryRepository.FindPostDetailWithHashtagByID(id)
+
+	return post, nil
 }
 
-func (s *PostQueryServiceImpl) ShowQueryBySlug(slug string) (*entity.PostDetailWithHashtag, error) {
-	return s.PostQueryRepository.FindPostDetailWithHashtagBySlug(slug)
+func (s *PostQueryServiceImpl) ShowQueryByIDForAuth(id, userID int) (*entity.PostDetailWithHashtagAndIsFavorite, error) {
+	post, err := s.PostQueryRepository.FindPostDetailWithHashtagAndIsFavoriteByID(id, userID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed find post by id")
+	}
+
+	return post, nil
+}
+
+func (s *PostQueryServiceImpl) ShowQueryBySlug(slug string) (*entity.PostDetailWithHashtagAndIsFavorite, error) {
+	post, err := s.PostQueryRepository.FindPostDetailWithHashtagBySlug(slug)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed find post by id")
+	}
+
+	return post, nil
+}
+
+func (s *PostQueryServiceImpl) ShowQueryBySlugForAuth(slug string, userID int) (*entity.PostDetailWithHashtagAndIsFavorite, error) {
+	post, err := s.PostQueryRepository.FindPostDetailWithHashtagAndIsFavoriteBySlug(slug, userID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed find post by id")
+	}
+
+	return post, nil
 }
 
 // 記事一覧参照
-func (s *PostQueryServiceImpl) ListByParams(query *query.FindPostListQuery, ouser entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, error) {
-	var posts *entity.PostList
-
-	if ouser.Authenticated {
-		posts, err := s.PostQueryRepository.FindListWithIsFavoriteByParams(query, ouser.ID)
-		if err != nil {
-			return nil, nil, errors.Wrap(err, "failed find post with is_favorite by params")
-		}
-
-		ids := posts.AreaCategoryIDs()
-
-		areaCategories, err := s.AreaCategoryQueryRepository.FindByIDs(ids)
-		if err != nil {
-			return nil, nil, errors.Wrap(err, "failed find area_category by ids")
-		}
-
-		areaCategoriesMap := s.newAreaCategoryIDMap(ids, areaCategories)
-
-		return posts, areaCategoriesMap, nil
-	}
-
+func (s *PostQueryServiceImpl) ListByParams(query *query.FindPostListQuery) (*entity.PostList, error) {
 	posts, err := s.PostQueryRepository.FindListByParams(query)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "failed find post by params")
+		return nil, errors.Wrap(err, "failed find post by params")
 	}
+	return posts, nil
+}
 
-	ids := posts.AreaCategoryIDs()
-
-	areaCategories, err := s.AreaCategoryQueryRepository.FindByIDs(ids)
+func (s *PostQueryServiceImpl) ListByParamsForAuth(query *query.FindPostListQuery, userID int) (*entity.PostList, error) {
+	posts, err := s.PostQueryRepository.FindListWithIsFavoriteByParams(query, userID)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "failed find area_category by ids")
+		return nil, errors.Wrap(err, "failed find post with is_favorite by params")
 	}
 
-	areaCategoriesMap := s.newAreaCategoryIDMap(ids, areaCategories)
-
-	return posts, areaCategoriesMap, nil
+	return posts, nil
 }
 
 // ユーザーがフォローしたユーザー or ハッシュタグの記事一覧参照
-func (s *PostQueryServiceImpl) ListFeed(ouser entity.OptionalUser, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
-	if ouser.Authenticated {
-		return s.PostQueryRepository.FindFeedListWithIsFavoriteByUserID(ouser.ID, targetUserID, query)
-	}
+func (s *PostQueryServiceImpl) ListFeed(targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
 	return s.PostQueryRepository.FindFeedListByUserID(targetUserID, query)
 }
 
+func (s *PostQueryServiceImpl) ListFeedForAuth(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
+	return s.PostQueryRepository.FindFeedListWithIsFavoriteByUserID(userID, targetUserID, query)
+}
+
 // ユーザーがいいねした記事一覧参照
-func (s *PostQueryServiceImpl) ListFavoritePost(ouser entity.OptionalUser, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
-	if ouser.Authenticated {
-		return s.PostQueryRepository.FindFavoriteListWithIsFavoriteByUserID(ouser.ID, targetUserID, query)
-	}
+func (s *PostQueryServiceImpl) ListFavoritePost(targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
 	return s.PostQueryRepository.FindFavoriteListByUserID(targetUserID, query)
 }
 
-// id: AreaCategoryのマップを返す
-// idsは昇順になっている事が前提
-func (s *PostQueryServiceImpl) newAreaCategoryIDMap(ids []int, areaCategories []*entity.AreaCategory) map[int]*entity.AreaCategory {
-	areaCategoriesMap := make(map[int]*entity.AreaCategory, len(areaCategories))
-	sort.Slice(areaCategories, func(i, j int) bool {
-		return areaCategories[i].ID < areaCategories[j].ID
-	})
-
-	for i, areaCategory := range areaCategories {
-		areaCategoriesMap[ids[i]] = areaCategory
-	}
-
-	return areaCategoriesMap
+func (s *PostQueryServiceImpl) ListFavoritePostForAuth(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
+	return s.PostQueryRepository.FindFavoriteListWithIsFavoriteByUserID(userID, targetUserID, query)
 }

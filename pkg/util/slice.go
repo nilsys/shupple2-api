@@ -30,3 +30,18 @@ func RemoveDuplicatesFromStringSlice(ss []string) []string {
 
 	return result
 }
+
+func RemoveDuplicatesAndZeroFromIntSlice(val []int) []int {
+	results := make([]int, 0, len(val))
+
+	// 重複,0削除
+	encountered := map[int]bool{}
+	for i := 0; i < len(val); i++ {
+		if !encountered[val[i]] && val[i] != 0 {
+			encountered[val[i]] = true
+			results = append(results, val[i])
+		}
+	}
+
+	return results
+}

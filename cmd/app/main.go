@@ -85,7 +85,7 @@ func setRoutes(app *App) {
 		posts := api.Group("/posts")
 		posts.GET("", auth.Optional(app.PostQueryController.ListPost))
 		posts.GET("/:id", auth.Optional(app.PostQueryController.Show))
-		posts.GET("/:slug/slug", app.PostQueryController.ShowBySlug)
+		posts.GET("/:slug/slug", auth.Optional(app.PostQueryController.ShowBySlug))
 		posts.PUT("/:id/favorite", auth.Require(app.PostFavoriteCommandController.Store))
 		posts.DELETE("/:id/favorite", auth.Require(app.PostFavoriteCommandController.Delete))
 	}

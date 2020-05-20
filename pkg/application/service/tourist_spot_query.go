@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/google/wire"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -18,6 +19,7 @@ type (
 	// TouristSpot参照系サービス実装
 	TouristSpotQueryServiceImpl struct {
 		repository.TouristSpotQueryRepository
+		factory.CategoryIDMapFactory
 	}
 )
 

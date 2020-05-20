@@ -2,8 +2,8 @@ package service
 
 import (
 	"github.com/google/wire"
-	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -11,11 +11,12 @@ import (
 type (
 	VlogQueryService interface {
 		Show(id int) (*entity.VlogDetail, error)
-		ShowListByParams(query *query.FindVlogListQuery) (*entity.VlogList, error)
+		ListByParams(query *query.FindVlogListQuery) (*entity.VlogList, error)
 	}
 
 	VlogQueryServiceImpl struct {
-		VlogQueryRepository repository.VlogQueryRepository
+		VlogQueryRepository  repository.VlogQueryRepository
+		CategoryIDMapFactory factory.CategoryIDMapFactory
 	}
 )
 
@@ -28,11 +29,6 @@ func (s *VlogQueryServiceImpl) Show(id int) (*entity.VlogDetail, error) {
 	return s.VlogQueryRepository.FindDetailByID(id)
 }
 
-func (s *VlogQueryServiceImpl) ShowListByParams(query *query.FindVlogListQuery) (*entity.VlogList, error) {
-	vlogs, err := s.VlogQueryRepository.FindListByParams(query)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to find vlogs")
-	}
-
-	return vlogs, nil
+func (s *VlogQueryServiceImpl) ListByParams(query *query.FindVlogListQuery) (*entity.VlogList, error) {
+	return s.VlogQueryRepository.FindListByParams(query)
 }

@@ -71,7 +71,7 @@ func (c Converters) ConvertQueryPostToOutput(queryPost *entity.PostDetail) *outp
 	}
 }
 
-func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite) *output.PostShow {
+func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.PostShow {
 	var hashtags = make([]*output.Hashtag, len(post.Hashtag))
 	var bodies = make([]*output.PostBody, len(post.Bodies))
 
@@ -80,6 +80,16 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 	}
 	for i, body := range post.Bodies {
 		bodies[i] = output.NewPostBody(body.Page, body.Body)
+	}
+
+	areaCategoriesRes := make([]*output.AreaCategoryDetail, len(post.AreaCategories))
+	for i, areaCate := range post.AreaCategories {
+		areaCategoriesRes[i] = c.ConvertAreaCategoryDetailFromAreaCategory(areaCate, areaCategories)
+	}
+
+	themeCategoriesRes := make([]*output.ThemeCategoryDetail, len(post.ThemeCategories))
+	for i, themeCate := range post.ThemeCategories {
+		themeCategoriesRes[i] = c.ConvertThemeCategoryDetailFromThemeCategory(themeCate, themeCategories)
 	}
 
 	return &output.PostShow{
@@ -98,42 +108,8 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 		HideAds:         post.HideAds,
 		IsFavorited:     post.IsFavorite,
 		Creator:         c.NewCreatorFromUser(post.User),
-		AreaCategories:  c.ConvertAreaCategoriesToOutput(post.AreaCategories),
-		ThemeCategories: c.ConvertThemeCategoriesToOutput(post.ThemeCategories),
-		Hashtags:        hashtags,
-		CreatedAt:       model.TimeFmtToFrontStr(post.CreatedAt),
-		UpdatedAt:       model.TimeFmtToFrontStr(post.UpdatedAt),
-	}
-}
-
-func (c Converters) ConvertPostDetailWithHashtagToOutput(post *entity.PostDetailWithHashtag) *output.PostShow {
-	var hashtags = make([]*output.Hashtag, len(post.Hashtag))
-	var bodies = make([]*output.PostBody, len(post.Bodies))
-
-	for i, hashtag := range post.Hashtag {
-		hashtags[i] = output.NewHashtag(hashtag.ID, hashtag.Name)
-	}
-	for i, body := range post.Bodies {
-		bodies[i] = output.NewPostBody(body.Page, body.Body)
-	}
-
-	return &output.PostShow{
-		ID:              post.ID,
-		Thumbnail:       post.PostTiny.Thumbnail,
-		Title:           post.Title,
-		Slug:            post.Slug,
-		Body:            bodies,
-		TOC:             post.TOC,
-		FavoriteCount:   post.FavoriteCount,
-		FacebookCount:   post.FacebookCount,
-		TwitterCount:    post.TwitterCount,
-		Views:           post.Views,
-		SEOTitle:        post.SEOTitle,
-		SEODescription:  post.SEODescription,
-		HideAds:         post.HideAds,
-		Creator:         c.NewCreatorFromUser(post.User),
-		AreaCategories:  c.ConvertAreaCategoriesToOutput(post.AreaCategories),
-		ThemeCategories: c.ConvertThemeCategoriesToOutput(post.ThemeCategories),
+		AreaCategories:  areaCategoriesRes,
+		ThemeCategories: themeCategoriesRes,
 		Hashtags:        hashtags,
 		CreatedAt:       model.TimeFmtToFrontStr(post.CreatedAt),
 		UpdatedAt:       model.TimeFmtToFrontStr(post.UpdatedAt),
@@ -177,48 +153,35 @@ func (c Converters) ConvertPostListTinyToOutput(post *entity.PostListTiny) *outp
 	}
 }
 
-func (c Converters) ConvertPostListTinyWithAreaCategoryForListToOutput(posts *entity.PostList, areaCategories map[int]*entity.AreaCategory) *output.PostWthAreaCategoryDetailList {
-	postsRes := make([]*output.PostWithAreaCategoryDetail, len(posts.Posts))
+func (c Converters) ConvertPostListTinyWithCategoryDetailForListToOutput(posts *entity.PostList, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.PostWithCategoryDetailList {
+	postsRes := make([]*output.PostWithCategoryDetail, len(posts.Posts))
 
 	for i, post := range posts.Posts {
-		postsRes[i] = c.ConvertPostListTinyWithAreaCategoryToOutput(post, areaCategories)
+		postsRes[i] = c.ConvertPostListTinyWithCategoryDetailToOutput(post, areaCategories, themeCategories)
 	}
 
-	return &output.PostWthAreaCategoryDetailList{
+	return &output.PostWithCategoryDetailList{
 		TotalNumber: posts.TotalNumber,
 		Posts:       postsRes,
 	}
 }
 
-func (c Converters) ConvertPostListTinyWithAreaCategoryToOutput(post *entity.PostListTiny, areaCategories map[int]*entity.AreaCategory) *output.PostWithAreaCategoryDetail {
-	areaCategoriesRes := make([]*output.AreaCategoryDetail, 0)
-	for _, areaCate := range post.AreaCategories {
-		var subArea *output.AreaCategory
-		var subSubArea *output.AreaCategory
-		if areaCate.SubAreaID.Valid {
-			subArea = c.ConvertAreaCategoryToOutput(areaCategories[int(areaCate.SubAreaID.Int64)])
-		}
-		if areaCate.SubSubAreaID.Valid {
-			subSubArea = c.ConvertAreaCategoryToOutput(areaCategories[int(areaCate.SubSubAreaID.Int64)])
-		}
-
-		areaCategoriesRes = append(areaCategoriesRes, &output.AreaCategoryDetail{
-			ID:         areaCate.ID,
-			Name:       areaCate.Name,
-			Slug:       areaCate.Slug,
-			Type:       areaCate.Type,
-			AreaGroup:  areaCate.AreaGroup,
-			Area:       c.ConvertAreaCategoryToOutput(areaCategories[areaCate.AreaID]),
-			SubArea:    subArea,
-			SubSubArea: subSubArea,
-		})
+func (c Converters) ConvertPostListTinyWithCategoryDetailToOutput(post *entity.PostListTiny, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.PostWithCategoryDetail {
+	areaCategoriesRes := make([]*output.AreaCategoryDetail, len(post.AreaCategories))
+	for i, areaCate := range post.AreaCategories {
+		areaCategoriesRes[i] = c.ConvertAreaCategoryDetailFromAreaCategory(areaCate, areaCategories)
 	}
 
-	return &output.PostWithAreaCategoryDetail{
+	themeCategoriesRes := make([]*output.ThemeCategoryDetail, len(post.ThemeCategories))
+	for i, themeCate := range post.ThemeCategories {
+		themeCategoriesRes[i] = c.ConvertThemeCategoryDetailFromThemeCategory(themeCate, themeCategories)
+	}
+
+	return &output.PostWithCategoryDetail{
 		ID:              post.ID,
 		Thumbnail:       post.Thumbnail,
 		AreaCategories:  areaCategoriesRes,
-		ThemeCategories: c.ConvertThemeCategoriesToOutput(post.ThemeCategories),
+		ThemeCategories: themeCategoriesRes,
 		Title:           post.Title,
 		Slug:            post.Slug,
 		Creator:         c.NewCreatorFromUser(post.User),

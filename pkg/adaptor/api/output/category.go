@@ -1,6 +1,8 @@
 package output
 
-import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+import (
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+)
 
 type (
 	Category struct {
@@ -28,6 +30,15 @@ type (
 	ThemeCategoryWithPostCount struct {
 		ThemeCategory
 		PostCount int `json:"postCount"`
+	}
+
+	ThemeCategoryDetail struct {
+		ID       int                     `json:"id"`
+		Name     string                  `json:"name"`
+		Slug     string                  `json:"slug"`
+		Type     model.ThemeCategoryType `json:"type"`
+		Theme    *ThemeCategory          `json:"theme"`
+		SubTheme *ThemeCategory          `json:"subTheme,omitempty"`
 	}
 
 	SpotCategory struct {

@@ -3,6 +3,8 @@ package entity
 import (
 	"time"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
+
 	"gopkg.in/guregu/null.v3"
 )
 
@@ -34,12 +36,7 @@ type (
 
 	TouristSpotList struct {
 		TotalNumber  int
-		TouristSpots []*TouristSpotListTiny
-	}
-
-	TouristSpotListTiny struct {
-		TouristSpotTiny
-		ReviewCount int
+		TouristSpots []*TouristSpotDetail
 	}
 
 	TouristSpot struct {
@@ -110,14 +107,77 @@ func (ts *TouristSpot) SetSpotCategories(spotCategoryIDs []int) {
 			SpotCategoryID: c,
 		}
 	}
-
 }
 
 // テーブル名
-func (queryTouristSpot *TouristSpotDetail) TableName() string {
+func (t *TouristSpotDetail) TableName() string {
 	return "tourist_spot"
 }
 
-func (t *TouristSpotListTiny) TableName() string {
-	return "tourist_spot"
+func (t *TouristSpotList) AreaCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, touristSpot := range t.TouristSpots {
+		for _, area := range touristSpot.AreaCategories {
+			ids = append(ids, area.AreaID)
+
+			if area.SubAreaID.Valid {
+				ids = append(ids, int(area.SubAreaID.Int64))
+			}
+
+			if area.SubSubAreaID.Valid {
+				ids = append(ids, int(area.SubSubAreaID.Int64))
+			}
+		}
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
+}
+
+func (t *TouristSpotList) ThemeCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, touristSpot := range t.TouristSpots {
+		for _, theme := range touristSpot.ThemeCategories {
+			ids = append(ids, theme.ThemeID)
+
+			if theme.SubThemeID.Valid {
+				ids = append(ids, int(theme.SubThemeID.Int64))
+			}
+		}
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
+}
+
+func (t *TouristSpotDetail) AreaCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, area := range t.AreaCategories {
+		ids = append(ids, area.AreaID)
+
+		if area.SubAreaID.Valid {
+			ids = append(ids, int(area.SubAreaID.Int64))
+		}
+
+		if area.SubSubAreaID.Valid {
+			ids = append(ids, int(area.SubSubAreaID.Int64))
+		}
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
+}
+
+func (t *TouristSpotDetail) ThemeCategoryIDs() []int {
+	ids := make([]int, 0)
+
+	for _, theme := range t.ThemeCategories {
+		ids = append(ids, theme.ThemeID)
+
+		if theme.SubThemeID.Valid {
+			ids = append(ids, int(theme.SubThemeID.Int64))
+		}
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
 }

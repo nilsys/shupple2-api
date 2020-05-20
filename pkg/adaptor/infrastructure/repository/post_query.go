@@ -62,10 +62,23 @@ func (r *PostQueryRepositoryImpl) FindPostDetailWithHashtagAndIsFavoriteByID(id,
 	return &row, nil
 }
 
-func (r *PostQueryRepositoryImpl) FindPostDetailWithHashtagBySlug(slug string) (*entity.PostDetailWithHashtag, error) {
-	var row entity.PostDetailWithHashtag
+func (r *PostQueryRepositoryImpl) FindPostDetailWithHashtagBySlug(slug string) (*entity.PostDetailWithHashtagAndIsFavorite, error) {
+	var row entity.PostDetailWithHashtagAndIsFavorite
 
-	if err := r.DB.Where("slug = ?", slug).First(&row).Error; err != nil {
+	if err := r.DB.
+		Where("slug = ?", slug).First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "post(slug=%s)", slug)
+	}
+
+	return &row, nil
+}
+func (r *PostQueryRepositoryImpl) FindPostDetailWithHashtagAndIsFavoriteBySlug(slug string, userID int) (*entity.PostDetailWithHashtagAndIsFavorite, error) {
+	var row entity.PostDetailWithHashtagAndIsFavorite
+
+	if err := r.DB.
+		Select("post.*, CASE WHEN user_favorite_post.post_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Joins("LEFT JOIN user_favorite_post ON post.id = user_favorite_post.post_id AND user_favorite_post.user_id = ?", userID).
+		Where("slug = ?", slug).First(&row).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "post(slug=%s)", slug)
 	}
 

@@ -49,6 +49,10 @@ var controllerSet = wire.NewSet(
 
 var scenarioSet = wire.NewSet(
 	scenario.ReviewCommandScenarioSet,
+	scenario.PostQueryScenarioSet,
+	scenario.FeatureQueryScenarioSet,
+	scenario.VlogQueryScenarioSet,
+	scenario.TouristSpotQueryScenarioSet,
 )
 
 var domainServiceSet = wire.NewSet(
@@ -97,6 +101,7 @@ var serviceSet = wire.NewSet(
 
 var factorySet = wire.NewSet(
 	factory.S3SignatureFactorySet,
+	factory.CategoryIDMapFactorySet,
 )
 
 func InitializeApp(configFilePath config.FilePath) (*App, error) {
