@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"io/ioutil"
 	"net/url"
+	"regexp"
+	"strings"
 
 	"github.com/google/wire"
 	"github.com/pkg/errors"
@@ -33,6 +35,10 @@ const (
 	feedQuery     = "?feed=smartnews"
 )
 
+var (
+	encodeRe = regexp.MustCompile(`<media:thumbnail url="https://(.*).jp/wp-content/uploads/(.*)\.(png|jpeg|jpg)" />`)
+)
+
 func (s *RSSServiceImpl) Show() ([]byte, string, error) {
 	// /tourism?feed=smartnews
 	originURL := s.WordpressConfig.BaseURL
@@ -59,5 +65,17 @@ func (s *RSSServiceImpl) Show() ([]byte, string, error) {
 	body = bytes.ReplaceAll(body, []byte(feedQuery), []byte("/smartnews"))
 	//https://admin.stayway.jp/tourism -> https://stayway.jp/tourism
 	body = bytes.ReplaceAll(body, s.WordpressConfig.BaseURL.Byte(), s.MediaConfig.BaseURL.Byte())
+
+	result := encodeRe.FindAllString(string(body), -1)
+	for _, str := range result {
+		tmpa := url.PathEscape(str)
+		tmpb := strings.Replace(tmpa, "%2F", "/", -1)
+		tmpc := strings.ReplaceAll(tmpb, "%3C", "<")
+		tmpd := strings.ReplaceAll(tmpc, "%3E", ">")
+		tmpe := strings.ReplaceAll(tmpd, "%20", " ")
+		tmpf := strings.ReplaceAll(tmpe, "%22", "\"")
+		body = bytes.ReplaceAll(body, []byte(str), []byte(tmpf))
+	}
+
 	return body, file.ContentType, nil
 }
