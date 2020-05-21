@@ -74,6 +74,11 @@ type (
 		User            *User            `gorm:"foreignkey:UserID"`
 		Editors         []*User          `gorm:"many2many:vlog_editor;jointable_foreignkey:vlog_id;"`
 	}
+
+	UserFavoriteVlog struct {
+		UserID int
+		VlogID int
+	}
 )
 
 func NewVlog(tiny VlogTiny, areaCategoryIDs, themeCategoryIDs, touristSpotIDs, editors []int) Vlog {
@@ -128,6 +133,13 @@ func (vlog *Vlog) SetEditors(editors []int) {
 
 func (queryVlog *VlogTiny) TableName() string {
 	return "vlog"
+}
+
+func NewUserFavoriteVlog(userID, vlogID int) *UserFavoriteVlog {
+	return &UserFavoriteVlog{
+		UserID: userID,
+		VlogID: vlogID,
+	}
 }
 
 func (v *VlogList) AreaCategoryIDs() []int {

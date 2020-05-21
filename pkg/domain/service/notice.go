@@ -17,6 +17,7 @@ type (
 		FavoritePost(c context.Context, favoritePost *entity.UserFavoritePost, post *entity.Post) error
 		FavoriteReview(c context.Context, favoriteReview *entity.UserFavoriteReview, review *entity.Review) error
 		FavoriteReviewComment(c context.Context, favoriteReviewComment *entity.UserFavoriteReviewComment, reviewComment *entity.ReviewComment) error
+		FavoriteVlog(c context.Context, favoriteVlog *entity.UserFavoriteVlog, vlog *entity.Vlog) error
 		FollowUser(c context.Context, following *entity.UserFollowing) error
 		// TODO: enhancement
 		//FavoriteVlog()
@@ -79,6 +80,18 @@ func (s *NoticeDomainServiceImpl) FavoriteReviewComment(c context.Context, favor
 		model.NoticeActionTypeFAVORITE,
 		model.NoticeActionTargetTypeCOMMENT,
 		reviewComment.ID,
+	)
+
+	return s.send(c, notice)
+}
+
+func (s *NoticeDomainServiceImpl) FavoriteVlog(c context.Context, favoriteVlog *entity.UserFavoriteVlog, vlog *entity.Vlog) error {
+	notice := entity.NewNotice(
+		vlog.UserID,
+		favoriteVlog.UserID,
+		model.NoticeActionTypeFAVORITE,
+		model.NoticeActionTargetTypeVLOG,
+		vlog.ID,
 	)
 
 	return s.send(c, notice)

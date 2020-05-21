@@ -1314,6 +1314,49 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/VlogShow"
+  /vlogs/{id}/favorite:
+    put:
+      tags:
+        - vlog
+      summary: 動画に対するいいねAPI
+      description: |
+        idに対応する動画に対するいいねAPI
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: vlogID
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: "成功"
+        "404":
+          description: 存在しないVlog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - vlog
+      summary: 動画に対するいいね削除API
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: vlogID
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: "成功"
+        "404":
+          description: 存在しないVlog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /comics:
     get:
       tags:

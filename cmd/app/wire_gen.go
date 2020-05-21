@@ -516,6 +516,23 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		Converters:           converters,
 		ReportCommandService: reportCommandServiceImpl,
 	}
+	vlogFavoriteCommandRepositoryImpl := &repository.VlogFavoriteCommandRepositoryImpl{
+		DAO: dao,
+	}
+	vlogFavoriteQueryRepositoryImpl := &repository.VlogFavoriteQueryRepositoryImpl{
+		DB: db,
+	}
+	vlogFavoriteCommandServiceImpl := &service.VlogFavoriteCommandServiceImpl{
+		VlogFavoriteCommandRepository: vlogFavoriteCommandRepositoryImpl,
+		VlogFavoriteQueryRepository:   vlogFavoriteQueryRepositoryImpl,
+		VlogQueryRepository:           vlogQueryRepositoryImpl,
+		VlogCommandRepository:         vlogCommandRepositoryImpl,
+		NoticeDomainService:           noticeDomainServiceImpl,
+		TransactionService:            transactionServiceImpl,
+	}
+	vlogFavoriteCommandController := api.VlogFavoriteCommandController{
+		VlogFavoriteCommandService: vlogFavoriteCommandServiceImpl,
+	}
 	app := &App{
 		Config:                          configConfig,
 		DB:                              db,
@@ -547,6 +564,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		InnQueryController:              innQueryController,
 		NoticeQueryController:           noticeQueryController,
 		ReportCommandController:         reportCommandController,
+		VlogFavoriteCommandController:   vlogFavoriteCommandController,
 	}
 	return app, nil
 }
@@ -557,12 +575,12 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(converter.ConvertersSet, api.PostQueryControllerSet, api.PostFavoriteCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.RSSControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.ThemeQueryControllerSet, api.WordpressCallbackControllerSet, api.SitemapControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet, api.AreaQueryControllerSet, api.InnQueryControllerSet, api.NoticeQueryControllerSet, api.ReportCommandControllerSet)
+var controllerSet = wire.NewSet(converter.ConvertersSet, api.PostQueryControllerSet, api.PostFavoriteCommandControllerSet, api.CategoryQueryControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.RSSControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.ThemeQueryControllerSet, api.WordpressCallbackControllerSet, api.SitemapControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet, api.AreaQueryControllerSet, api.InnQueryControllerSet, api.NoticeQueryControllerSet, api.ReportCommandControllerSet, api.VlogFavoriteCommandControllerSet)
 
 var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.PostQueryScenarioSet, scenario.FeatureQueryScenarioSet, scenario.VlogQueryScenarioSet, scenario.TouristSpotQueryScenarioSet)
 
 var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryQueryServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.RssServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.SpotCategoryCommandServiceSet, service.SitemapServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet, service.NoticeQueryServiceSet, service.ReportCommandServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryQueryServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.RssServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.SpotCategoryCommandServiceSet, service.SitemapServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet, service.NoticeQueryServiceSet, service.ReportCommandServiceSet, service.VlogFavoriteCommandServiceSet)
 
 var factorySet = wire.NewSet(factory.S3SignatureFactorySet, factory.CategoryIDMapFactorySet)

@@ -53,6 +53,7 @@ type App struct {
 	InnQueryController              api.InnQueryController
 	NoticeQueryController           api.NoticeQueryController
 	ReportCommandController         api.ReportCommandController
+	VlogFavoriteCommandController   api.VlogFavoriteCommandController
 }
 
 func run() error {
@@ -176,6 +177,8 @@ func setRoutes(app *App) {
 		vlogs := api.Group("/vlogs")
 		vlogs.GET("", app.VlogQueryController.ListVlog)
 		vlogs.GET("/:id", app.VlogQueryController.Show)
+		vlogs.PUT("/:id/favorite", auth.Require(app.VlogFavoriteCommandController.Store))
+		vlogs.DELETE("/:id/favorite", auth.Require(app.VlogFavoriteCommandController.Delete))
 	}
 
 	{

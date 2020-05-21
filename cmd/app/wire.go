@@ -45,6 +45,7 @@ var controllerSet = wire.NewSet(
 	api.InnQueryControllerSet,
 	api.NoticeQueryControllerSet,
 	api.ReportCommandControllerSet,
+	api.VlogFavoriteCommandControllerSet,
 )
 
 var scenarioSet = wire.NewSet(
@@ -97,6 +98,7 @@ var serviceSet = wire.NewSet(
 	service.InnQueryServiceSet,
 	service.NoticeQueryServiceSet,
 	service.ReportCommandServiceSet,
+	service.VlogFavoriteCommandServiceSet,
 )
 
 var factorySet = wire.NewSet(

@@ -22,6 +22,14 @@ type (
 		Page          int               `query:"page"`
 		PerPage       int               `query:"perPage"`
 	}
+
+	StoreFavoriteVlogParam struct {
+		VlogID int `param:"id" validate:"required"`
+	}
+
+	DeleteFavoriteVlogParam struct {
+		VlogID int `param:"id" validate:"required"`
+	}
 )
 
 const listVlogDefaultPerPage = 10

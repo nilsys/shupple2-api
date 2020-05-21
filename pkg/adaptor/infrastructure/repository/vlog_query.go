@@ -106,3 +106,11 @@ func (r *VlogQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindVlogLi
 
 	return q
 }
+
+func (r *VlogQueryRepositoryImpl) IsExist(id int) (bool, error) {
+	var row entity.Vlog
+
+	err := r.DB.First(&row, id).Error
+
+	return ErrorToIsExist(err, "vlog(id=%d)", id)
+}

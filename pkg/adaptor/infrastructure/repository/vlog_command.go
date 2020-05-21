@@ -43,6 +43,14 @@ func (r *VlogCommandRepositoryImpl) UpdateViewsByID(id, views int) error {
 	return nil
 }
 
+func (r *VlogCommandRepositoryImpl) IncrementFavoriteCount(c context.Context, vlogID int) error {
+	return errors.Wrap(r.DB(c).Exec("UPDATE vlog SET favorite_count = favorite_count + 1 WHERE id = ?", vlogID).Error, "failed to update")
+}
+
+func (r *VlogCommandRepositoryImpl) DecrementFavoriteCount(c context.Context, vlogID int) error {
+	return errors.Wrap(r.DB(c).Exec("UPDATE vlog SET favorite_count = favorite_count - 1 WHERE id = ?", vlogID).Error, "failed to update")
+}
+
 func (r *VlogCommandRepositoryImpl) UpdateMonthlyViewsByID(id, views int) error {
 	if err := r.DB(context.Background()).Exec("UPDATE vlog SET monthly_views = ?, updated_at = updated_at WHERE id = ?", views, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update vlog.monthly_views")
