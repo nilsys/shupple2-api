@@ -125,7 +125,7 @@ func (r *UserCommandRepositoryImpl) persistImage(svc *s3.S3, uuid, dest string) 
 
 	headReq := &s3.HeadObjectInput{
 		Bucket: aws.String(r.AWSConfig.FilesBucket),
-		Key:    aws.String(from),
+		Key:    aws.String(model.UploadedS3Path(uuid)),
 	}
 
 	o, err := svc.HeadObject(headReq)
