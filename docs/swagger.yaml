@@ -57,7 +57,7 @@ paths:
                 $ref: "#/components/schemas/User"
       security:
         - iDPCognito: []
-  /users/{uid}:
+  /users/uid/{uid}:
     get:
       tags:
         - user
@@ -72,6 +72,28 @@ paths:
             uid
           schema:
             type: string
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /users/id/{id}:
+    get:
+      tags:
+        - user
+      summary: プロフィール取得
+      description: |
+        ユーザープロフィール取得
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: |
+            id
+          schema:
+            type: integer
       responses:
         "200":
           description: ok

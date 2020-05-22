@@ -54,6 +54,7 @@ type (
 		FollowingCount int          `json:"followingCount"`
 		FollowedCount  int          `json:"followedCount"`
 		Interests      []string     `json:"interests"`
+		IsFollow       bool         `json:"isFollow"`
 	}
 )
 

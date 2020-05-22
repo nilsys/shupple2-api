@@ -80,6 +80,16 @@ func (r *UserQueryRepositoryImpl) FindUserRankingListByParams(query *query.FindU
 	return rows, nil
 }
 
+func (r *UserQueryRepositoryImpl) FindByUID(uid string) (*entity.UserTable, error) {
+	var row entity.UserTable
+
+	if err := r.DB.Where("uid = ?", uid).First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "user(uid=%s)", uid)
+	}
+
+	return &row, nil
+}
+
 func (r *UserQueryRepositoryImpl) FindRecommendFollowUserList(interestIDs []int) ([]*entity.UserTable, error) {
 	var rows []*entity.UserTable
 
@@ -95,22 +105,33 @@ func (r *UserQueryRepositoryImpl) FindRecommendFollowUserList(interestIDs []int)
 	return rows, nil
 }
 
-func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByUID(uid string) (*entity.UserDetailWithMediaCount, error) {
-	var dto entity.UserTable
-	var row entity.UserDetailWithMediaCount
-
-	if err := r.DB.Where("uid = ?", uid).First(&dto).Error; err != nil {
-		return nil, ErrorToFindSingleRecord(err, "user(uid=%s)", uid)
+func (r *UserQueryRepositoryImpl) IsFollow(targetID int, userID int) (bool, error) {
+	var isFollow struct {
+		IsFollow bool
 	}
 
-	if err := r.DB.Select("*").Where("user.id = ?", dto.ID).
-		Joins("LEFT JOIN (SELECT COUNT(id) as review_count, MAX(user_id) as user_id FROM review WHERE user_id = ?) AS r ON user.id = r.user_id", dto.ID).
-		Joins("LEFT JOIN (SELECT COUNT(id) as post_count, MAX(user_id) as user_id FROM post WHERE user_id = ?) AS p ON user.id = p.user_id", dto.ID).
-		Joins("LEFT JOIN (SELECT COUNT(id) as vlog_count, MAX(user_id) as user_id FROM vlog WHERE user_id = ?) AS v ON user.id = v.user_id", dto.ID).
-		Joins("LEFT JOIN (SELECT COUNT(target_id) as following_count, MAX(user_id) as user_id FROM user_following WHERE user_id = ?) AS ufi ON user.id = ufi.user_id", dto.ID).
-		Joins("LEFT JOIN (SELECT COUNT(user_id) as followed_count, MAX(target_id) as target_id FROM user_followed WHERE target_id = ?) AS ufe ON user.id = ufe.target_id", dto.ID).
+	if err := r.DB.
+		Table("user_following").
+		Select("CASE WHEN target_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_follow").
+		Where("user_id = ? AND target_id = ?", userID, targetID).
+		First(&isFollow).Error; err != nil {
+		return false, ErrorToFindSingleRecord(err, "user(targetID=%d)", targetID)
+	}
+
+	return isFollow.IsFollow, nil
+}
+
+func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error) {
+	var row entity.UserDetailWithMediaCount
+
+	if err := r.DB.Select("*").Where("user.id = ?", id).
+		Joins("LEFT JOIN (SELECT COUNT(id) as review_count, MAX(user_id) as user_id FROM review WHERE user_id = ?) AS r ON user.id = r.user_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(id) as post_count, MAX(user_id) as user_id FROM post WHERE user_id = ?) AS p ON user.id = p.user_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(id) as vlog_count, MAX(user_id) as user_id FROM vlog WHERE user_id = ?) AS v ON user.id = v.user_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(target_id) as following_count, MAX(user_id) as user_id FROM user_following WHERE user_id = ?) AS ufi ON user.id = ufi.user_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(user_id) as followed_count, MAX(target_id) as target_id FROM user_followed WHERE target_id = ?) AS ufe ON user.id = ufe.target_id", id).
 		First(&row).Error; err != nil {
-		return nil, ErrorToFindSingleRecord(err, "user(id=%d)", dto.ID)
+		return nil, ErrorToFindSingleRecord(err, "user(id=%d)", id)
 	}
 
 	return &row, nil

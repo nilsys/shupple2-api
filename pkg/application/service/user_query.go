@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/google/wire"
+	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
@@ -9,7 +10,8 @@ import (
 
 type (
 	UserQueryService interface {
-		Show(uid string) (*entity.UserDetailWithMediaCount, error)
+		ShowByUID(uid string, ouser entity.OptionalUser) (*entity.UserDetailWithMediaCount, error)
+		ShowByID(id int) (*entity.UserDetailWithMediaCount, error)
 		ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error)
 		ListRecommendFollowUser(interestIDs []int) ([]*entity.UserTable, error)
 		ListFollowing(query *query.FindFollowUser) ([]*entity.User, error)
@@ -28,8 +30,30 @@ var UserQueryServiceSet = wire.NewSet(
 	wire.Bind(new(UserQueryService), new(*UserQueryServiceImpl)),
 )
 
-func (s *UserQueryServiceImpl) Show(uid string) (*entity.UserDetailWithMediaCount, error) {
-	return s.UserQueryRepository.FindUserDetailWithCountByUID(uid)
+func (s *UserQueryServiceImpl) ShowByUID(uid string, ouser entity.OptionalUser) (*entity.UserDetailWithMediaCount, error) {
+	userTable, err := s.UserQueryRepository.FindByUID(uid)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed find user by uid")
+	}
+
+	if ouser.Authenticated {
+		user, err := s.UserQueryRepository.FindUserDetailWithCountByID(userTable.ID)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed find user by id")
+		}
+		user.IsFollow, err = s.UserQueryRepository.IsFollow(userTable.ID, ouser.ID)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed find user is_foolow")
+		}
+
+		return user, nil
+	}
+
+	return s.UserQueryRepository.FindUserDetailWithCountByID(userTable.ID)
+}
+
+func (s *UserQueryServiceImpl) ShowByID(id int) (*entity.UserDetailWithMediaCount, error) {
+	return s.UserQueryRepository.FindUserDetailWithCountByID(id)
 }
 
 func (s *UserQueryServiceImpl) ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error) {

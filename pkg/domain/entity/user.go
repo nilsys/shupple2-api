@@ -73,6 +73,7 @@ type (
 		PostCount      int
 		ReviewCount    int
 		VlogCount      int
+		IsFollow       bool
 	}
 
 	UserDetail struct {

@@ -23,7 +23,7 @@ var UserQueryControllerSet = wire.NewSet(
 )
 
 func (c *UserQueryController) MyPage(ctx echo.Context, user entity.User) error {
-	myPageUser, err := c.UserQueryService.Show(user.UID)
+	myPageUser, err := c.UserQueryService.ShowByID(user.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed to show user")
 	}
@@ -31,13 +31,27 @@ func (c *UserQueryController) MyPage(ctx echo.Context, user entity.User) error {
 	return ctx.JSON(http.StatusOK, c.ConvertUserDetailWithCountToOutPut(myPageUser))
 }
 
-func (c *UserQueryController) Show(ctx echo.Context) error {
-	p := &input.ShowParam{}
+func (c *UserQueryController) ShowByUID(ctx echo.Context, ouser entity.OptionalUser) error {
+	p := &input.ShowByUIDParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation show user parameters")
 	}
 
-	user, err := c.UserQueryService.Show(p.UID)
+	user, err := c.UserQueryService.ShowByUID(p.UID, ouser)
+	if err != nil {
+		return errors.Wrap(err, "failed to show user")
+	}
+
+	return ctx.JSON(http.StatusOK, c.ConvertUserDetailWithCountToOutPut(user))
+}
+
+func (c *UserQueryController) ShowByID(ctx echo.Context) error {
+	p := &input.ShowByIDParam{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "validation show user parameters")
+	}
+
+	user, err := c.UserQueryService.ShowByID(p.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed to show user")
 	}

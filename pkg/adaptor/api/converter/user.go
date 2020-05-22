@@ -180,6 +180,7 @@ func (c Converters) ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWi
 		FollowingCount: user.FollowingCount,
 		FollowedCount:  user.FollowerCount,
 		Interests:      interests,
+		IsFollow:       user.IsFollow,
 	}
 }
 

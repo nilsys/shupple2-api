@@ -6,8 +6,12 @@ import (
 )
 
 type (
-	ShowParam struct {
+	ShowByUIDParam struct {
 		UID string `param:"uid" validate:"required"`
+	}
+
+	ShowByIDParam struct {
+		ID int `param:"id" validate:"required"`
 	}
 
 	ListUserRanking struct {

@@ -26,8 +26,10 @@ type (
 		FindByWordpressID(id int) (*entity.User, error)
 		FindByMigrationCode(code string) (*entity.User, error)
 		FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error)
+		FindByUID(uid string) (*entity.UserTable, error)
+		FindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error)
+		IsFollow(targetID, userID int) (bool, error)
 		FindRecommendFollowUserList(interestIDs []int) ([]*entity.UserTable, error)
-		FindUserDetailWithCountByUID(uid string) (*entity.UserDetailWithMediaCount, error)
 		IsExistByUID(uid string) (bool, error)
 		// name部分一致検索
 		SearchByName(name string) ([]*entity.User, error)
