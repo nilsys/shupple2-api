@@ -208,7 +208,7 @@ func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowRe
 	}
 
 	if len(query.InnIDs) > 0 {
-		q = q.Where("inn_id IN (?)", query.InnIDs)
+		q = q.Or("inn_id IN (?)", query.InnIDs)
 	}
 
 	if query.Keyword != "" {
