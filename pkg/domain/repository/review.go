@@ -24,6 +24,7 @@ type (
 		FindQueryReviewWithIsFavoriteByID(id, userID int) (*entity.ReviewDetailWithIsFavorite, error)
 		IsExist(id int) (bool, error)
 		IsExistReviewComment(id int) (bool, error)
+		IsExistReviewCommentReply(id int) (bool, error)
 		IsExistReviewCommentFavorite(userID, reviewCommentID int) (bool, error)
 		FindReviewCommentByID(id int) (*entity.ReviewComment, error)
 		FindReviewCommentReplyByID(id int) (*entity.ReviewCommentReply, error)
@@ -47,6 +48,8 @@ type (
 		DecrementReviewCommentFavoriteCount(c context.Context, reviewCommentID int) error
 		StoreReviewCommentFavorite(c context.Context, favorite *entity.UserFavoriteReviewComment) error
 		DeleteReviewCommentFavoriteByID(c context.Context, userID, reviewCommentID int) error
+		IncrementReviewCommentReplyFavoriteCount(c context.Context, reviewCommentReplyID int) error
+		DecrementReviewCommentReplyFavoriteCount(c context.Context, reviewCommentReplyID int) error
 		UpdateViewsByID(id, views int) error
 		UpdateMonthlyViewsByID(id, views int) error
 		UpdateWeeklyViewsByID(id, views int) error
@@ -58,9 +61,12 @@ type (
 	ReviewFavoriteCommandRepository interface {
 		Store(c context.Context, favorite *entity.UserFavoriteReview) error
 		Delete(c context.Context, unfavorite *entity.UserFavoriteReview) error
+		StoreReviewCommentReply(c context.Context, favorite *entity.UserFavoriteReviewCommentReply) error
+		DeleteReviewCommentReply(c context.Context, favorite *entity.UserFavoriteReviewCommentReply) error
 	}
 
 	ReviewFavoriteQueryRepository interface {
 		IsExist(userID, reviewID int) (bool, error)
+		IsExistReviewCommentReply(userID, reviewCommentReplyID int) (bool, error)
 	}
 )

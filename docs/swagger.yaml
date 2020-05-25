@@ -686,6 +686,51 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ReviewCommentReply"
+  /reviews/comment/reply/:id/favorite:
+    put:
+      tags:
+        - review
+      summary: レビューのコメントに対するリプライ投稿のいいねAPI
+      description: |
+        idに対応するリプライをいいねするAPI
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: リプライID
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: "成功"
+        "404":
+          description: 存在しないリプライ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - review
+      summary: レビューのコメントに対するリプライ投稿のいいねAPI
+      description: |
+        idに対応するリプライをいいねするAPI
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: リプライID
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: "成功"
+        "404":
+          description: 存在しないリプライ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
   /reviews/:id/favorite:
     put:

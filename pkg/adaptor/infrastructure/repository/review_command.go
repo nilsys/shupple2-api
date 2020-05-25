@@ -191,3 +191,17 @@ func (r *ReviewCommandRepositoryImpl) DeleteReviewCommentReplyByID(c context.Con
 	}
 	return nil
 }
+
+func (r *ReviewCommandRepositoryImpl) IncrementReviewCommentReplyFavoriteCount(c context.Context, reviewCommentReplyID int) error {
+	if err := r.DB(c).Exec("UPDATE review_comment_reply SET favorite_count=favorite_count+1 WHERE id = ?", reviewCommentReplyID).Error; err != nil {
+		return errors.Wrap(err, "failed to increment review_comment_reply.favorite_count")
+	}
+	return nil
+}
+
+func (r *ReviewCommandRepositoryImpl) DecrementReviewCommentReplyFavoriteCount(c context.Context, reviewCommentReplyID int) error {
+	if err := r.DB(c).Exec("UPDATE review_comment_reply SET favorite_count=favorite_count-1 WHERE id = ?", reviewCommentReplyID).Error; err != nil {
+		return errors.Wrap(err, "failed to decrement review_comment_reply.favorite_count")
+	}
+	return nil
+}

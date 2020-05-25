@@ -23,3 +23,11 @@ func (r *ReviewFavoriteQueryRepositoryImpl) IsExist(userID, reviewID int) (bool,
 
 	return ErrorToIsExist(err, "user_favorite_post(user_id=%d,review_id=%d)", userID, reviewID)
 }
+
+func (r *ReviewFavoriteQueryRepositoryImpl) IsExistReviewCommentReply(userID, reviewCommentReplyID int) (bool, error) {
+	var row entity.UserFavoriteReviewCommentReply
+
+	err := r.DB.Where("user_id = ? AND review_comment_reply_id = ?", userID, reviewCommentReplyID).First(&row).Error
+
+	return ErrorToIsExist(err, "user_favorite_review_comment_reply(user_id=%d,review_comment_reply_id=%d)", userID, reviewCommentReplyID)
+}

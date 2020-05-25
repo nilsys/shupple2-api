@@ -17,6 +17,8 @@ type (
 	ReviewFavoriteCommandService interface {
 		Store(user *entity.User, reviewID int) error
 		Delete(user *entity.User, reviewID int) error
+		FavoriteReviewCommentReply(user *entity.User, reviewCommentReplyID int) error
+		UnFavoriteReviewCommentReply(user *entity.User, reviewCommentReplyID int) error
 	}
 
 	ReviewFavoriteCommandServiceImpl struct {
@@ -35,19 +37,19 @@ var ReviewFavoriteCommandServiceSet = wire.NewSet(
 )
 
 func (s *ReviewFavoriteCommandServiceImpl) Store(user *entity.User, reviewID int) error {
-	existReview, err := s.ReviewQueryRepository.IsExist(reviewID)
+	isExistReview, err := s.ReviewQueryRepository.IsExist(reviewID)
 	if err != nil {
 		return errors.Wrap(err, "failed to IsExist")
 	}
-	if !existReview {
+	if !isExistReview {
 		return serror.New(nil, serror.CodeNotFound, "Not found")
 	}
 
-	existFavorite, err := s.ReviewFavoriteQueryRepository.IsExist(user.ID, reviewID)
+	isExistFavorite, err := s.ReviewFavoriteQueryRepository.IsExist(user.ID, reviewID)
 	if err != nil {
 		return errors.Wrap(err, "failed to IsExist")
 	}
-	if existFavorite {
+	if isExistFavorite {
 		return serror.New(nil, serror.CodeInvalidParam, "already set in table")
 	}
 
@@ -72,19 +74,19 @@ func (s *ReviewFavoriteCommandServiceImpl) Store(user *entity.User, reviewID int
 }
 
 func (s *ReviewFavoriteCommandServiceImpl) Delete(user *entity.User, reviewID int) error {
-	existReview, err := s.ReviewQueryRepository.IsExist(reviewID)
+	isExistReview, err := s.ReviewQueryRepository.IsExist(reviewID)
 	if err != nil {
 		return errors.Wrap(err, "failed to IsExist")
 	}
-	if !existReview {
+	if !isExistReview {
 		return serror.New(nil, serror.CodeNotFound, "Not found")
 	}
 
-	existFavorite, err := s.ReviewFavoriteQueryRepository.IsExist(user.ID, reviewID)
+	isExistFavorite, err := s.ReviewFavoriteQueryRepository.IsExist(user.ID, reviewID)
 	if err != nil {
 		return errors.Wrap(err, "failed to IsExist")
 	}
-	if !existFavorite {
+	if !isExistFavorite {
 		return serror.New(nil, serror.CodeInvalidParam, "not set in table yet")
 	}
 
@@ -97,6 +99,75 @@ func (s *ReviewFavoriteCommandServiceImpl) Delete(user *entity.User, reviewID in
 		}
 
 		if err := s.ReviewCommandRepository.DecrementFavoriteCount(c, reviewID); err != nil {
+			return errors.Wrap(err, "failed to update post")
+		}
+
+		return nil
+	})
+}
+
+func (s *ReviewFavoriteCommandServiceImpl) FavoriteReviewCommentReply(user *entity.User, reviewCommentReplyID int) error {
+	isExistReply, err := s.ReviewQueryRepository.IsExistReviewCommentReply(reviewCommentReplyID)
+	if err != nil {
+		return errors.Wrap(err, "failed to IsExist")
+	}
+	if !isExistReply {
+		return serror.New(nil, serror.CodeNotFound, "Not found")
+	}
+
+	isExistFavorite, err := s.ReviewFavoriteQueryRepository.IsExistReviewCommentReply(user.ID, reviewCommentReplyID)
+	if err != nil {
+		return errors.Wrap(err, "failed to IsExist")
+	}
+	if isExistFavorite {
+		return serror.New(nil, serror.CodeInvalidParam, "already set in the table")
+	}
+
+	favorite := entity.NewUserFavoriteReviewCommentReply(user.ID, reviewCommentReplyID)
+
+	return s.TransactionService.Do(func(c context.Context) error {
+		if err := s.ReviewFavoriteCommandRepository.StoreReviewCommentReply(c, favorite); err != nil {
+			return errors.Wrap(err, "failed to store")
+		}
+
+		if err := s.ReviewCommandRepository.IncrementReviewCommentReplyFavoriteCount(c, reviewCommentReplyID); err != nil {
+			return errors.Wrap(err, "failed to update post")
+		}
+
+		reviewCommentReply, err := s.ReviewQueryRepository.FindReviewCommentReplyByID(reviewCommentReplyID)
+		if err != nil {
+			return errors.Wrap(err, "failed to find review by id")
+		}
+
+		return s.NoticeDomainService.FavoriteReviewCommentReply(c, favorite, reviewCommentReply)
+	})
+}
+
+func (s *ReviewFavoriteCommandServiceImpl) UnFavoriteReviewCommentReply(user *entity.User, reviewCommentReplyID int) error {
+	isExistReply, err := s.ReviewQueryRepository.IsExistReviewCommentReply(reviewCommentReplyID)
+	if err != nil {
+		return errors.Wrap(err, "failed to IsExist")
+	}
+	if !isExistReply {
+		return serror.New(nil, serror.CodeNotFound, "Not found")
+	}
+
+	isExistFavorite, err := s.ReviewFavoriteQueryRepository.IsExistReviewCommentReply(user.ID, reviewCommentReplyID)
+	if err != nil {
+		return errors.Wrap(err, "failed to IsExist")
+	}
+	if !isExistFavorite {
+		return serror.New(nil, serror.CodeInvalidParam, "not set in the table yet")
+	}
+
+	unfavorite := entity.NewUserFavoriteReviewCommentReply(user.ID, reviewCommentReplyID)
+
+	return s.TransactionService.Do(func(c context.Context) error {
+		if err := s.ReviewFavoriteCommandRepository.DeleteReviewCommentReply(c, unfavorite); err != nil {
+			return errors.Wrap(err, "failed to delete")
+		}
+
+		if err := s.ReviewCommandRepository.DecrementReviewCommentReplyFavoriteCount(c, reviewCommentReplyID); err != nil {
 			return errors.Wrap(err, "failed to update post")
 		}
 

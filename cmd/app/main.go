@@ -125,6 +125,8 @@ func setRoutes(app *App) {
 		reviews.POST("/:id/comment", auth.Require(app.ReviewCommandController.StoreReviewComment))
 		reviews.GET("/comment/:id/reply", app.ReviewQueryController.ListReviewCommentReply)
 		reviews.POST("/comment/:id/reply", auth.Require(app.ReviewCommandController.StoreReviewCommentReply))
+		reviews.PUT("/comment/:id/reply/:replyId/favorite", auth.Require(app.ReviewFavoriteCommandController.FavoriteReviewCommentReply))
+		reviews.DELETE("/comment/:id/reply/:replyId/favorite", auth.Require(app.ReviewFavoriteCommandController.UnFavoriteReviewCommentReply))
 		reviews.PUT("/comment/:id/favorite", auth.Require(app.ReviewCommandController.FavoriteReviewComment))
 		reviews.DELETE("/comment/:id/favorite", auth.Require(app.ReviewCommandController.UnfavoriteReviewComment))
 		reviews.PUT("/:id/favorite", auth.Require(app.ReviewFavoriteCommandController.Store))

@@ -334,3 +334,11 @@ func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyByID(id int) (*entity.
 
 	return &row, nil
 }
+
+func (r *ReviewQueryRepositoryImpl) IsExistReviewCommentReply(id int) (bool, error) {
+	var row entity.ReviewCommentReply
+
+	err := r.DB.Find(&row, id).Error
+
+	return ErrorToIsExist(err, "review_comment_reply(id=%d)", id)
+}

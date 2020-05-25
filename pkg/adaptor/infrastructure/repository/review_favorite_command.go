@@ -23,5 +23,13 @@ func (r *ReviewFavoriteCommandRepositoryImpl) Store(c context.Context, favorite 
 }
 
 func (r *ReviewFavoriteCommandRepositoryImpl) Delete(c context.Context, unfavorite *entity.UserFavoriteReview) error {
-	return errors.Wrapf(r.DB(c).Where("user_id = ? AND review_id = ?", unfavorite.UserID, unfavorite.ReviewID).Delete(&unfavorite).Error, "failed to delete")
+	return errors.Wrap(r.DB(c).Where("user_id = ? AND review_id = ?", unfavorite.UserID, unfavorite.ReviewID).Delete(&unfavorite).Error, "failed to delete")
+}
+
+func (r *ReviewFavoriteCommandRepositoryImpl) StoreReviewCommentReply(c context.Context, favorite *entity.UserFavoriteReviewCommentReply) error {
+	return errors.Wrap(r.DB(c).Save(favorite).Error, "failed to save favorite")
+}
+
+func (r *ReviewFavoriteCommandRepositoryImpl) DeleteReviewCommentReply(c context.Context, unfavorite *entity.UserFavoriteReviewCommentReply) error {
+	return errors.Wrap(r.DB(c).Where("user_id = ? AND review_comment_reply_id = ?", unfavorite.UserID, unfavorite.ReviewCommentReplyID).Delete(&unfavorite).Error, "failed to delete")
 }

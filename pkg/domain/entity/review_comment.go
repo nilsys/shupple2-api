@@ -47,6 +47,11 @@ type (
 		UserID          int `gorm:"primary_key"`
 		ReviewCommentID int `gorm:"primary_key"`
 	}
+
+	UserFavoriteReviewCommentReply struct {
+		UserID               int
+		ReviewCommentReplyID int
+	}
 )
 
 func NewReviewComment(userID, reviewID int, body string) *ReviewComment {
@@ -62,6 +67,13 @@ func NewUserFavoriteReviewComment(userID, reviewCommentID int) *UserFavoriteRevi
 	return &UserFavoriteReviewComment{
 		UserID:          userID,
 		ReviewCommentID: reviewCommentID,
+	}
+}
+
+func NewUserFavoriteReviewCommentReply(userID, reviewCommentReplyID int) *UserFavoriteReviewCommentReply {
+	return &UserFavoriteReviewCommentReply{
+		UserID:               userID,
+		ReviewCommentReplyID: reviewCommentReplyID,
 	}
 }
 
