@@ -76,30 +76,26 @@ func (r *UserCommandRepositoryImpl) UpdateWordpressID(userID, wordpressUserID in
 }
 
 func (r *UserCommandRepositoryImpl) StoreFollow(c context.Context, following *entity.UserFollowing, followed *entity.UserFollowed) error {
-	return Transaction(r.DB(c), func(tx *gorm.DB) error {
-		if err := tx.Save(followed).Error; err != nil {
-			return errors.Wrap(err, "failed to save user_followed")
-		}
+	if err := r.DB(c).Save(followed).Error; err != nil {
+		return errors.Wrap(err, "failed to save user_followed")
+	}
 
-		if err := tx.Save(following).Error; err != nil {
-			return errors.Wrap(err, "failed to save user_following")
-		}
-		return nil
-	})
+	if err := r.DB(c).Save(following).Error; err != nil {
+		return errors.Wrap(err, "failed to save user_following")
+	}
+	return nil
 }
 
 func (r *UserCommandRepositoryImpl) DeleteFollow(userID, targetID int) error {
-	return Transaction(r.DB(context.TODO()), func(tx *gorm.DB) error {
-		if err := tx.Where("user_id = ? AND target_id = ?", userID, targetID).Delete(entity.UserFollowing{}).Error; err != nil {
-			return errors.Wrap(err, "failed to delete user_following")
-		}
+	if err := r.DB(context.Background()).Where("user_id = ? AND target_id = ?", userID, targetID).Delete(entity.UserFollowing{}).Error; err != nil {
+		return errors.Wrap(err, "failed to delete user_following")
+	}
 
-		if err := tx.Where("user_id = ? AND target_id = ?", targetID, userID).Delete(entity.UserFollowed{}).Error; err != nil {
-			return errors.Wrap(err, "failed to delete user_followed")
-		}
+	if err := r.DB(context.Background()).Where("user_id = ? AND target_id = ?", targetID, userID).Delete(entity.UserFollowed{}).Error; err != nil {
+		return errors.Wrap(err, "failed to delete user_followed")
+	}
 
-		return nil
-	})
+	return nil
 }
 
 func (r *UserCommandRepositoryImpl) PersistUserImage(user *entity.User) error {
