@@ -181,3 +181,7 @@ func (t *TouristSpotDetail) ThemeCategoryIDs() []int {
 
 	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
 }
+
+func (t *TouristSpotTiny) TableName() string {
+	return "tourist_spot"
+}
