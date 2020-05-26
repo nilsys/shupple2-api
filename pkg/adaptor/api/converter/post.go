@@ -111,8 +111,8 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
 		Hashtags:        hashtags,
-		CreatedAt:       model.TimeFmtToFrontStr(post.CreatedAt),
-		UpdatedAt:       model.TimeFmtToFrontStr(post.UpdatedAt),
+		CreatedAt:       model.TimeResponse(post.CreatedAt),
+		UpdatedAt:       model.TimeResponse(post.UpdatedAt),
 	}
 }
 

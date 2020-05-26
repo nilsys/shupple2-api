@@ -2,8 +2,8 @@ package wordpress
 
 type Feature struct {
 	ID            int               `json:"id"`
-	Date          Time              `json:"date"`
-	Modified      Time              `json:"modified"`
+	Date          JSTTime           `json:"date"`
+	Modified      UTCTime           `json:"modified"`
 	Slug          string            `json:"slug"`
 	Status        Status            `json:"status"`
 	Title         Text              `json:"title"`

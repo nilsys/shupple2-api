@@ -19,8 +19,8 @@ type (
 		SubAreaID    int              `query:"subAreaId"`
 		SubSubAreaID int              `query:"subSubAreaID"`
 		SortBy       model.UserSortBy `query:"sortBy"`
-		FromDate     string           `query:"fromDate"`
-		ToDate       string           `query:"toDate"`
+		FromDate     model.Date       `query:"fromDate"`
+		ToDate       model.Date       `query:"toDate"`
 		PerPage      int              `query:"perPage"`
 		Page         int              `query:"page"`
 	}
@@ -101,13 +101,6 @@ func (param *ListUserRanking) Validate() error {
 	// AreaID,SubAreaID,SubSubAreaIDのいずれか2つ以上指定されている場合
 	if (param.AreaID != 0 && param.SubAreaID != 0) || (param.AreaID != 0 && param.SubSubAreaID != 0) || (param.SubAreaID != 0 && param.SubSubAreaID != 0) {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid show user ranking list search target input")
-	}
-
-	if _, err := model.ParseTimeFromFrontStr(param.FromDate); err != nil {
-		return serror.New(nil, serror.CodeInvalidParam, "Invalid show user rankin list date format")
-	}
-	if _, err := model.ParseTimeFromFrontStr(param.ToDate); err != nil {
-		return serror.New(nil, serror.CodeInvalidParam, "Invalid show user rankin list date format")
 	}
 
 	return nil

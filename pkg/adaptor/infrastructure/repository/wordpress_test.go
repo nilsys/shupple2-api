@@ -54,13 +54,13 @@ var _ = Describe("WordpressRepositoryImpl", func() {
 			It("指定したデータがドメインが置換された状態で正常に取得できる", func() {
 				Expect(post).To(Equal(&wordpress.Post{
 					ID:      135485,
-					Date:    wordpress.Time(time.Date(2020, 3, 5, 21, 57, 6, 0, util.JSTLoc)),
-					DateGmt: wordpress.Time(time.Date(2020, 3, 5, 12, 57, 6, 0, util.JSTLoc)),
+					Date:    wordpress.JSTTime(time.Date(2020, 3, 5, 21, 57, 6, 0, util.JSTLoc)),
+					DateGmt: wordpress.UTCTime(time.Date(2020, 3, 5, 12, 57, 6, 0, time.UTC)),
 					GUID: wordpress.Text{
 						Rendered: "https://stg.stayway.jp/tourism/?p=135485",
 					},
-					Modified:    wordpress.Time(time.Date(2020, 3, 5, 22, 0, 56, 0, util.JSTLoc)),
-					ModifiedGmt: wordpress.Time(time.Date(2020, 3, 5, 13, 0, 56, 0, util.JSTLoc)),
+					Modified:    wordpress.JSTTime(time.Date(2020, 3, 5, 22, 0, 56, 0, util.JSTLoc)),
+					ModifiedGmt: wordpress.UTCTime(time.Date(2020, 3, 5, 13, 0, 56, 0, time.UTC)),
 					Slug:        "%e3%83%86%e3%82%b9%e3%83%88",
 					Status:      wordpress.StatusPublish,
 					Type:        "post",

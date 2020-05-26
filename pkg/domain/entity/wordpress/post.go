@@ -9,11 +9,11 @@ import (
 
 type Post struct {
 	ID            int             `json:"id"`
-	Date          Time            `json:"date"`
-	DateGmt       Time            `json:"date_gmt"`
+	Date          JSTTime         `json:"date"`
+	DateGmt       UTCTime         `json:"date_gmt"`
 	GUID          Text            `json:"guid"`
-	Modified      Time            `json:"modified"`
-	ModifiedGmt   Time            `json:"modified_gmt"`
+	Modified      JSTTime         `json:"modified"`
+	ModifiedGmt   UTCTime         `json:"modified_gmt"`
 	Slug          string          `json:"slug"`
 	Status        Status          `json:"status"`
 	Type          string          `json:"type"`

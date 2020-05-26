@@ -33,11 +33,18 @@ type (
 		Href string `json:"href"`
 	}
 
-	Time time.Time
+	JSTTime time.Time
+	UTCTime time.Time
 )
 
-func (t *Time) UnmarshalJSON(data []byte) error {
+func (t *JSTTime) UnmarshalJSON(data []byte) error {
 	parsed, err := time.ParseInLocation(timeJSONFormat, string(data), util.JSTLoc)
-	*t = Time(parsed)
+	*t = JSTTime(parsed)
+	return err
+}
+
+func (t *UTCTime) UnmarshalJSON(data []byte) error {
+	parsed, err := time.ParseInLocation(timeJSONFormat, string(data), time.UTC)
+	*t = UTCTime(parsed)
 	return err
 }

@@ -66,8 +66,8 @@ type (
 		AreaCategories  []*AreaCategoryDetail  `json:"areaCategories"`
 		ThemeCategories []*ThemeCategoryDetail `json:"themeCategories"`
 		Hashtags        []*Hashtag             `json:"hashtags"`
-		UpdatedAt       string                 `json:"updatedAt"`
-		CreatedAt       string                 `json:"createdAt"`
+		UpdatedAt       model.TimeResponse     `json:"updatedAt"`
+		CreatedAt       model.TimeResponse     `json:"createdAt"`
 	}
 
 	PostBody struct {

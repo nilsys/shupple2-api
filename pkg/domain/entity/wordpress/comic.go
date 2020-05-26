@@ -2,8 +2,8 @@ package wordpress
 
 type Comic struct {
 	ID            int             `json:"id"`
-	Date          Time            `json:"date"`
-	Modified      Time            `json:"modified"`
+	Date          JSTTime         `json:"date"`
+	Modified      UTCTime         `json:"modified"`
 	Slug          string          `json:"slug"`
 	Status        Status          `json:"status"`
 	Type          string          `json:"type"`

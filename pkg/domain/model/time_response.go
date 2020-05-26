@@ -3,30 +3,29 @@ package model
 import (
 	"encoding/json"
 	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
 type TimeResponse time.Time
 
-const dateTimeFmt = `"2006-01-02T15:04+09:00"`
-const dateTimeStrFmt = "2006-01-02T15:04+09:00"
-
-func (tr TimeResponse) MarshalJSON() ([]byte, error) {
-	return json.Marshal(time.Time(tr).Format(dateTimeStrFmt))
-}
-
-func (tr TimeResponse) UnmarshalJSON(data []byte) error {
+func (tr *TimeResponse) UnmarshalJSON(data []byte) error {
 	if string(data) == "null" {
 		return nil
 	}
-	err := tr.parseData(data)
-	return err
-}
+	var str string
+	if err := json.Unmarshal(data, &str); err != nil {
+		return err
+	}
 
-func (tr *TimeResponse) parseData(data []byte) error {
-	tm, err := time.Parse(dateTimeFmt, string(data))
+	tm, err := time.Parse(time.RFC3339, str)
 	if err != nil {
 		return err
 	}
-	*tr = TimeResponse(tm)
+	*tr = TimeResponse(tm.In(time.UTC))
 	return nil
+}
+
+func (tr TimeResponse) MarshalJSON() ([]byte, error) {
+	return json.Marshal(time.Time(tr).In(util.JSTLoc).Format(time.RFC3339))
 }

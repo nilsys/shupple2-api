@@ -16,16 +16,13 @@ import (
  * o -> i
  */
 func (c Converters) ConvertListRankinUserParamToQuery(param *input.ListUserRanking) *query.FindUserRankingListQuery {
-	fromDate, _ := model.ParseTimeFromFrontStr(param.FromDate)
-	toDate, _ := model.ParseTimeFromFrontStr(param.ToDate)
-
 	return &query.FindUserRankingListQuery{
 		AreaID:       param.AreaID,
 		SubAreaID:    param.SubAreaID,
 		SubSubAreaID: param.SubSubAreaID,
 		SortBy:       param.SortBy,
-		FromDate:     fromDate,
-		ToDate:       toDate,
+		FromDate:     time.Time(param.FromDate),
+		ToDate:       time.Time(param.ToDate),
 		Limit:        param.GetLimit(),
 		Offset:       param.GetOffset(),
 	}
