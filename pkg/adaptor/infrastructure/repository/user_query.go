@@ -106,19 +106,11 @@ func (r *UserQueryRepositoryImpl) FindRecommendFollowUserList(interestIDs []int)
 }
 
 func (r *UserQueryRepositoryImpl) IsFollow(targetID int, userID int) (bool, error) {
-	var isFollow struct {
-		IsFollow bool
-	}
+	var row entity.UserFollowing
 
-	if err := r.DB.
-		Table("user_following").
-		Select("CASE WHEN target_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_follow").
-		Where("user_id = ? AND target_id = ?", userID, targetID).
-		First(&isFollow).Error; err != nil {
-		return false, ErrorToFindSingleRecord(err, "user(targetID=%d)", targetID)
-	}
+	err := r.DB.Where("user_id = ? AND target_id = ?", userID, targetID).First(&row).Error
 
-	return isFollow.IsFollow, nil
+	return ErrorToIsExist(err, "user_following(user_id=%s, target_id=%s)", userID, targetID)
 }
 
 func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error) {
