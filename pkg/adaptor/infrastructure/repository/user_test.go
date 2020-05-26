@@ -29,7 +29,7 @@ var _ = Describe("UserRepositoryImpl", func() {
 
 		truncate(db)
 
-		Expect(prepareBucket(tests.AWS, tests.Config.AWS.FilesBucket)).To(Succeed())
+		Expect(clearBucket(tests.AWS, tests.Config.AWS.FilesBucket)).To(Succeed())
 	})
 
 	DescribeTable("Storeは引数のuserを作成するか、その状態になるように更新する",

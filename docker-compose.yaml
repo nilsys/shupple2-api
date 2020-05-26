@@ -33,7 +33,7 @@ services:
       - ./.data/aws:/root/.aws/credentials
     depends_on:
       - mysql
-      - localstack
+      - minio
     command: make wait-mysql start-dev
   swagger:
     image: swaggerapi/swagger-ui
@@ -43,14 +43,14 @@ services:
       - SWAGGER_JSON=/docs/swagger.yaml
     ports:
       - 5010:8080
-  localstack: # TODO: create-bucketを手動でやらないといけない
-    image: localstack/localstack
+  minio:
+    image: minio/minio
     ports:
-      - "4567-4599:4567-4599"
-      - 8080:8080
+      - 5100:9000
     environment:
-      - SERVICES=s3
-      - DATA_DIR=.data/localstack
-      - DEBUG=1 
+      - MINIO_ACCESS_KEY=staywaydummy
+      - MINIO_SECRET_KEY=staywaydummy
     volumes:
-      - /tmp/localstack:/tmp/localstack
+      - .data/minio:/data
+    entrypoint: sh
+    command: -c 'mkdir -p /data/dev-files.stayway.jp && /usr/bin/minio server /data'

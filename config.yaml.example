@@ -14,7 +14,7 @@ stayway:
     files_url: https://stg-files.stayway.jp
 aws:
   region: ap-northeast-1
-  endpoint: http://localstack:4572
+  endpoint: http://minio:9000
   files_bucket: hoge
   upload_expire: 15m
   user_pool_id: changeme

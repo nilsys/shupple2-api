@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
@@ -77,27 +76,12 @@ func truncate(db *gorm.DB) {
 	Expect(db.Exec("SET FOREIGN_KEY_CHECKS=1").Error).To(Succeed())
 }
 
-func prepareBucket(sess *session.Session, bucket string) error {
+func clearBucket(sess *session.Session, bucket string) error {
 	s3c := s3.New(sess)
-
-	_, err := s3c.CreateBucket(&s3.CreateBucketInput{
-		Bucket: &bucket,
-	})
-
-	if err == nil {
-		return nil
-	}
-
-	awsErr, ok := err.(awserr.Error)
-	if !(ok && awsErr.Code() == s3.ErrCodeBucketAlreadyExists) {
-		return err
-	}
-
-	// Bucketが既に存在している場合
 
 	var errDelete error
 	listInput := &s3.ListObjectsV2Input{Bucket: &bucket}
-	err = s3c.ListObjectsV2Pages(listInput, func(page *s3.ListObjectsV2Output, lastPage bool) bool {
+	err := s3c.ListObjectsV2Pages(listInput, func(page *s3.ListObjectsV2Output, lastPage bool) bool {
 		for _, obj := range page.Contents {
 			_, err := s3c.DeleteObject(&s3.DeleteObjectInput{
 				Bucket: &bucket,

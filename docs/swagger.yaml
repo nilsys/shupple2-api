@@ -2022,7 +2022,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/ThemeCategoryList"
 servers:
-  - url: http://localhost:3000/api/v1/tourism
+  - url: http://localhost:5000/api/v1/tourism
+  - url: https://stg-api.stayway.jp/api/v1/tourism
 components:
   parameters:
     SortBy:

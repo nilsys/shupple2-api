@@ -26,7 +26,7 @@ import (
 const (
 	defaultAcquisitionNumber        = 1000
 	defaultRangeSearchKm            = 5
-	dummyCredential                 = "dummy"
+	dummyCredential                 = "staywaydummy"
 	defaultSearchSuggestionsNumber  = 10
 	defaultFollowRecommendUserLimit = 20
 )
@@ -128,7 +128,7 @@ func ProvideAWSSession(config *config.Config) (*session.Session, error) {
 		cfgs = cfgs.
 			WithEndpoint(config.AWS.Endpoint).
 			WithS3ForcePathStyle(true).
-			WithCredentials(credentials.NewStaticCredentials(dummyCredential, dummyCredential, dummyCredential))
+			WithCredentials(credentials.NewStaticCredentials(dummyCredential, dummyCredential, ""))
 	}
 
 	if config.IsDev() {

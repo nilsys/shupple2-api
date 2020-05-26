@@ -12,10 +12,13 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: stayway_test
 
-      - image: localstack/localstack
+      - image: minio/minio
         environment:
-          SERVICES: s3
-        name: localstack
+          MINIO_ACCESS_KEY: staywaydummy
+          MINIO_SECRET_KEY: staywaydummy
+        name: minio
+        entrypoint: sh
+        command: -c 'mkdir -p /data/hoge && /usr/bin/minio server /data'
 
     steps:
       - checkout
