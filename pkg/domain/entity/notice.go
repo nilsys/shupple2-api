@@ -16,8 +16,8 @@ type (
 		ActionTargetType model.NoticeActionTargetType
 		ActionTargetID   int
 		IsRead           bool
-		CreatedAt        time.Time `gorm:"default:current_timestamp"`
-		UpdatedAt        time.Time `gorm:"default:current_timestamp"`
+		CreatedAt        time.Time `gorm:"-;default:current_timestamp"`
+		UpdatedAt        time.Time `gorm:"-;default:current_timestamp"`
 	}
 )
 
