@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -50,6 +51,11 @@ var _ = Describe("PostRepositoryImpl", func() {
 			actual, err := query.FindByID(saved.ID)
 			Expect(err).To(Succeed())
 
+			Expect(actual.CreatedAt).NotTo(BeZero())
+			Expect(actual.UpdatedAt).NotTo(BeZero())
+			actual.CreatedAt = time.Time{}
+			actual.UpdatedAt = time.Time{}
+
 			Expect(actual).To(Equal(saved))
 		},
 		Entry("新規作成", nil, base),
@@ -71,8 +77,6 @@ func newPost(id int, bodies []string, areaCategoryIDs []int, themeCategoryIDs []
 		UserID:        userID,
 		FavoriteCount: id,
 		FacebookCount: id,
-		CreatedAt:     sampleTime,
-		UpdatedAt:     sampleTime,
 	}
 	util.FillDummyString(&post, id)
 	p := entity.NewPost(post, bodies, areaCategoryIDs, themeCategoryIDs, hashtagIDs)

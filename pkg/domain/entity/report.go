@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
 
@@ -14,7 +12,7 @@ type (
 		TargetType model.ReportTargetType
 		Reason     model.ReportReasonType
 		IsDone     bool
-		CreatedAt  time.Time `gorm:"default:current_timestamp"`
+		Times
 	}
 )
 

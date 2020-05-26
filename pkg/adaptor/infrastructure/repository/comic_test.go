@@ -46,6 +46,11 @@ var _ = Describe("ComicRepositoryImpl", func() {
 			Expect(actual.User.UpdatedAt).NotTo(BeZero())
 			actual.User.CreatedAt = time.Time{}
 			actual.User.UpdatedAt = time.Time{}
+
+			Expect(actual.CreatedAt).NotTo(BeZero())
+			Expect(actual.UpdatedAt).NotTo(BeZero())
+			actual.CreatedAt = time.Time{}
+			actual.UpdatedAt = time.Time{}
 			Expect(actual).To(Equal(querySaved))
 		},
 		Entry("新規作成", nil, &base, baseQuery),
@@ -55,10 +60,8 @@ var _ = Describe("ComicRepositoryImpl", func() {
 
 func newComic(id int) entity.Comic {
 	comic := entity.Comic{
-		ID:        id,
-		UserID:    userID,
-		CreatedAt: sampleTime,
-		UpdatedAt: sampleTime,
+		ID:     id,
+		UserID: userID,
 	}
 	util.FillDummyString(&comic, id)
 

@@ -27,9 +27,7 @@ type (
 		Accompanying  model.AccompanyingType
 		Medias        ReviewMediaList  `gorm:"foreignkey:ReviewID"`
 		HashtagIDs    []*ReviewHashtag `gorm:"foreignkey:ReviewID"`
-		CreatedAt     time.Time        `gorm:"-;default:current_timestamp"`
-		UpdatedAt     time.Time        `gorm:"-;default:current_timestamp"`
-		DeletedAt     *time.Time
+		Times
 	}
 
 	// table: review_media

@@ -1,7 +1,5 @@
 package repository
 
-import "time"
-
 const (
 	userID          = 101
 	postID          = 111
@@ -41,6 +39,4 @@ var (
 
 	userIDs     = []int{2101, 2102}
 	addedUserID = 2103
-
-	sampleTime = time.Date(2020, 7, 7, 10, 0, 0, 0, time.Local)
 )

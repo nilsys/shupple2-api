@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -50,6 +51,11 @@ var _ = Describe("VlogRepositoryImpl", func() {
 			actual, err := query.FindByID(saved.ID)
 			Expect(err).To(Succeed())
 
+			Expect(actual.CreatedAt).NotTo(BeZero())
+			Expect(actual.UpdatedAt).NotTo(BeZero())
+			actual.CreatedAt = time.Time{}
+			actual.UpdatedAt = time.Time{}
+
 			Expect(actual).To(Equal(saved))
 		},
 		Entry("新規作成", nil, base),
@@ -73,6 +79,8 @@ var _ = Describe("VlogRepositoryImpl", func() {
 
 			Expect(actual.CreatedAt).NotTo(BeZero())
 			Expect(actual.UpdatedAt).NotTo(BeZero())
+			actual.CreatedAt = time.Time{}
+			actual.UpdatedAt = time.Time{}
 
 			Expect(actual.VlogTiny).To(Equal(base.VlogTiny))
 
@@ -105,10 +113,8 @@ var _ = Describe("VlogRepositoryImpl", func() {
 
 func newVlog(id int, areaCategoryIDs, themeCategoryIDs, touristSpotIDs, editors []int) *entity.Vlog {
 	vlog := entity.VlogTiny{
-		ID:        id,
-		UserID:    userID,
-		CreatedAt: sampleTime,
-		UpdatedAt: sampleTime,
+		ID:     id,
+		UserID: userID,
 	}
 	util.FillDummyString(&vlog, id)
 

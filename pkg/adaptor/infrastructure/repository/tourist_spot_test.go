@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -50,6 +51,8 @@ var _ = Describe("TouristSpotRepositoryImpl", func() {
 
 			Expect(actual.CreatedAt).NotTo(BeZero())
 			Expect(actual.UpdatedAt).NotTo(BeZero())
+			actual.CreatedAt = time.Time{}
+			actual.UpdatedAt = time.Time{}
 			Expect(actual).To(Equal(saved))
 		},
 		Entry("新規作成", nil, base),
@@ -71,6 +74,8 @@ var _ = Describe("TouristSpotRepositoryImpl", func() {
 
 			Expect(actual.CreatedAt).NotTo(BeZero())
 			Expect(actual.UpdatedAt).NotTo(BeZero())
+			actual.CreatedAt = time.Time{}
+			actual.UpdatedAt = time.Time{}
 
 			Expect(actual.TouristSpotTiny).To(Equal(base.TouristSpotTiny))
 
@@ -97,11 +102,9 @@ var _ = Describe("TouristSpotRepositoryImpl", func() {
 
 func newTouristSpot(id int, areaCategoryIDs, themeCategoryIDs, spotCategoryIDs []int) *entity.TouristSpot {
 	touristSpot := entity.TouristSpotTiny{
-		ID:        id,
-		Lat:       null.FloatFrom(float64(id)),
-		Lng:       null.FloatFrom(float64(id * 10)),
-		CreatedAt: sampleTime,
-		UpdatedAt: sampleTime,
+		ID:  id,
+		Lat: null.FloatFrom(float64(id)),
+		Lng: null.FloatFrom(float64(id * 10)),
 	}
 	util.FillDummyString(&touristSpot, id)
 

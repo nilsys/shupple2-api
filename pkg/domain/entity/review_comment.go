@@ -2,7 +2,6 @@ package entity
 
 import (
 	"strconv"
-	"time"
 )
 
 type (
@@ -14,9 +13,7 @@ type (
 		Body          string
 		ReplyCount    int
 		FavoriteCount int
-		CreatedAt     time.Time `gorm:"default:current_timestamp"`
-		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
-		DeletedAt     *time.Time
+		Times
 	}
 
 	ReviewCommentWithIsFavorite struct {
@@ -28,9 +25,7 @@ type (
 		ReplyCount    int
 		FavoriteCount int
 		IsFavorited   bool
-		CreatedAt     time.Time `gorm:"default:current_timestamp"`
-		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
-		DeletedAt     *time.Time
+		Times
 	}
 
 	ReviewCommentReply struct {
@@ -39,8 +34,7 @@ type (
 		ReviewCommentID int
 		User            *User `gorm:"foreignkey:UserID"`
 		Body            string
-		CreatedAt       time.Time `gorm:"-;default:current_timestamp"`
-		UpdatedAt       time.Time `gorm:"-;default:current_timestamp"`
+		Times
 	}
 
 	UserFavoriteReviewComment struct {

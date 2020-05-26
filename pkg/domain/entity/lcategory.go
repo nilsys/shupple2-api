@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"gopkg.in/guregu/null.v3"
 )
@@ -13,8 +11,7 @@ type (
 		Type              model.SpotCategoryType
 		SpotCategoryID    int
 		SubSpotCategoryID null.Int
-		CreatedAt         time.Time `gorm:"-"`
-		UpdatedAt         time.Time `gorm:"-"`
+		TimesWithoutDeletedAt
 	}
 )
 

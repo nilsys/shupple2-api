@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
@@ -22,9 +20,7 @@ type (
 		Views          int
 		SEOTitle       string
 		SEODescription string
-		CreatedAt      time.Time `gorm:"default:current_timestamp"`
-		UpdatedAt      time.Time `gorm:"default:current_timestamp"`
-		DeletedAt      *time.Time
+		Times
 	}
 
 	Post struct {

@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
 
@@ -16,8 +14,7 @@ type (
 		ActionTargetType model.NoticeActionTargetType
 		ActionTargetID   int
 		IsRead           bool
-		CreatedAt        time.Time `gorm:"-;default:current_timestamp"`
-		UpdatedAt        time.Time `gorm:"-;default:current_timestamp"`
+		Times
 	}
 )
 

@@ -1,7 +1,5 @@
 package entity
 
-import "time"
-
 type (
 	Comic struct {
 		ID        int `gorm:"primary_key"`
@@ -10,9 +8,7 @@ type (
 		Thumbnail string
 		Title     string
 		Body      string
-		CreatedAt time.Time `gorm:"default:current_timestamp"`
-		UpdatedAt time.Time `gorm:"default:current_timestamp"`
-		DeletedAt *time.Time
+		Times
 	}
 
 	ComicList struct {

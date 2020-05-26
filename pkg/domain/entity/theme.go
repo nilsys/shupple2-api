@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	null "gopkg.in/guregu/null.v3"
 )
@@ -13,8 +11,7 @@ type (
 		Type       model.ThemeCategoryType
 		ThemeID    int
 		SubThemeID null.Int
-		CreatedAt  time.Time `gorm:"-;default:current_timestamp"`
-		UpdatedAt  time.Time `gorm:"-;default:current_timestamp"`
+		TimesWithoutDeletedAt
 	}
 
 	ThemeCategoryWithPostCount struct {

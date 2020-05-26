@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
@@ -22,9 +20,7 @@ type (
 		FacebookCount int
 		TwitterCount  int
 		Views         int
-		CreatedAt     time.Time `gorm:"default:current_timestamp"`
-		UpdatedAt     time.Time `gorm:"default:current_timestamp"`
-		DeletedAt     *time.Time
+		Times
 	}
 
 	Vlog struct {

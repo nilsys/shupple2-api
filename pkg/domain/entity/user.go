@@ -32,9 +32,7 @@ type (
 		YoutubeURL    string
 		LivingArea    string
 		Interests     []*UserInterest `gorm:"foreignkey:UserID"`
-		CreatedAt     time.Time       `gorm:"-;default:current_timestamp"`
-		UpdatedAt     time.Time       `gorm:"-;default:current_timestamp"`
-		DeletedAt     *time.Time
+		Times
 	}
 
 	UserTable struct {
@@ -56,9 +54,7 @@ type (
 		TwitterURL    string
 		YoutubeURL    string
 		LivingArea    string
-		CreatedAt     time.Time `gorm:"-;default:current_timestamp"`
-		UpdatedAt     time.Time `gorm:"-;default:current_timestamp"`
-		DeletedAt     *time.Time
+		Times
 	}
 
 	OptionalUser struct {

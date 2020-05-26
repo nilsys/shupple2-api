@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 
 	"gopkg.in/guregu/null.v3"
@@ -29,9 +27,7 @@ type (
 		SearchInnURL string
 		Rate         float64
 		VendorRate   float64
-		CreatedAt    time.Time  `gorm:"default:current_timestamp"`
-		UpdatedAt    time.Time  `gorm:"default:current_timestamp"`
-		DeletedAt    *time.Time `json:"-"`
+		Times
 	}
 
 	TouristSpotList struct {

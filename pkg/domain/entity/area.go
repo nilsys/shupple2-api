@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"gopkg.in/guregu/null.v3"
 )
@@ -24,8 +22,7 @@ type (
 		MetasearchAreaID       int
 		MetasearchSubAreaID    int
 		MetasearchSubSubAreaID int
-		CreatedAt              time.Time `gorm:"-;default:current_timestamp"`
-		UpdatedAt              time.Time `gorm:"-;default:current_timestamp"`
+		TimesWithoutDeletedAt
 	}
 
 	AreaCategoryDetail struct {
