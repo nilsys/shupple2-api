@@ -82,7 +82,7 @@ func (s *Script) Run() error {
 			QueryParams: map[string][]string{},
 		}
 		au := s.Config.Stayway.Metasearch.BaseURL
-		au.Path = path.Join(au.Path, "/api/inns", fmt.Sprintf("/%d/area", innIDs[0]))
+		au.Path = path.Join(au.Path, "/api", fmt.Sprintf("/%d/inn_area", innIDs[0]))
 		if err := s.Client.GetJSON(au.String(), aopts, &ares); err != nil {
 			logger.Debug("failed metasearch inns area api")
 			continue
@@ -135,7 +135,7 @@ func (s *Script) FindTouristSpotNotExcludeIDs(excludeIDs []int) ([]*entity.Touri
 }
 
 func innsGeoCodeQuery(lat, lng float64) string {
-	return strconv.FormatFloat(lng, 'f', -1, 64) + "," + strconv.FormatFloat(lat, 'f', -1, 64)
+	return strconv.FormatFloat(lat, 'f', -1, 64) + "," + strconv.FormatFloat(lng, 'f', -1, 64)
 }
 
 func innIDs(inns *dto.Inns) []int {
@@ -150,15 +150,15 @@ func innIDs(inns *dto.Inns) []int {
 func mappingMetasearchAreaID(ares *dto.InnArea) int {
 	// areaと紐づいてない場合は下とも紐づいてないのでreturn
 	// errorパターン
-	if &ares.Area == nil {
+	if ares.Area.ID == 0 {
 		return 0
 	}
 
-	if &ares.SubSubArea != nil {
+	if ares.SubSubArea.ID != 0 {
 		return ares.SubSubArea.ID
 	}
 
-	if &ares.SubArea != nil {
+	if ares.SubArea.ID != 0 {
 		return ares.SubArea.ID
 	}
 

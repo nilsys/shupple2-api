@@ -32,7 +32,6 @@ var InnQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.InnQueryRepository), new(*InnQueryRepositoryImpl)),
 )
 
-const staywayInnAPIPath = "/api/inns"
 const staywayInnNaiveAPIPath = "/api/inns/naive"
 
 // AreaID, SubAreaID, SubSubAreaIDから参照したInnのIDのスライスを返す
@@ -58,7 +57,7 @@ func (r *InnQueryRepositoryImpl) FindAreaIDsByID(id int) (*entity.InnAreaTypeIDs
 	var res dto.InnArea
 
 	u := r.MetasearchConfig.BaseURL
-	u.Path = path.Join(u.Path, staywayInnAPIPath, fmt.Sprintf("/%d/area", id))
+	u.Path = path.Join(u.Path, "/api", fmt.Sprintf("/%d/inn_area", id))
 
 	if err := r.Client.GetJSON(u.String(), nil, &res); err != nil {
 		return nil, errors.Wrapf(err, "failed to get inn area details from stayway api by innID: %d", id)
