@@ -106,7 +106,7 @@ func (param *ListUserRanking) Validate() error {
 	}
 
 	// RANKINGの時はdateの指定必須
-	if time.Time(param.ToDate).String() == "0001-01-01 00:00:00 +0000 UTC" || time.Time(param.FromDate).String() == "0001-01-01 00:00:00 +0000 UTC" {
+	if time.Time(param.ToDate).IsZero() || time.Time(param.FromDate).IsZero() {
 		return serror.New(nil, serror.CodeInvalidParam, "required from&to date when RANKING")
 	}
 
