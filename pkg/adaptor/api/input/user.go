@@ -1,6 +1,8 @@
 package input
 
 import (
+	"time"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 )
@@ -101,6 +103,11 @@ func (param *ListUserRanking) Validate() error {
 	// AreaID,SubAreaID,SubSubAreaIDのいずれか2つ以上指定されている場合
 	if (param.AreaID != 0 && param.SubAreaID != 0) || (param.AreaID != 0 && param.SubSubAreaID != 0) || (param.SubAreaID != 0 && param.SubSubAreaID != 0) {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid show user ranking list search target input")
+	}
+
+	// RANKINGの時はdateの指定必須
+	if time.Time(param.ToDate).String() == "0001-01-01 00:00:00 +0000 UTC" || time.Time(param.FromDate).String() == "0001-01-01 00:00:00 +0000 UTC" {
+		return serror.New(nil, serror.CodeInvalidParam, "required from&to date when RANKING")
 	}
 
 	return nil

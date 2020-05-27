@@ -15,7 +15,7 @@ type Validator interface {
 
 func BindAndValidate(ctx echo.Context, v interface{}) error {
 	if err := ctx.Bind(v); err != nil {
-		return errors.Wrapf(err, "failed to Bind AreaParam")
+		return errors.Wrapf(err, "failed to Bind Param")
 	}
 
 	if err := validator.Struct(v); err != nil {
