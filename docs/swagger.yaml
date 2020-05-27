@@ -1890,6 +1890,8 @@ paths:
     get:
       tags:
         - interest
+      parameters:
+        - $ref: "#/components/parameters/InterestGroup"
       summary: ユーザー興味項目検索API
       description: ユーザー興味項目検索
       responses:
@@ -2080,6 +2082,22 @@ components:
           - TouristSpot
           - Hashtag
           - User
+    InterestGroup:
+      name: interestGroup
+      in: query
+      description: |
+        興味分野グループ絞り込み
+        指定無しの場合は全て
+      schema:
+        type: string
+        enum:
+          - Undefined
+          - Style
+          - Scene
+          - Gourmet
+          - LifeStyle
+          - Activity
+          - Sport
     AreaGroup:
       name: areaGroup
       in: query
@@ -3179,6 +3197,8 @@ components:
           type: string
           description: 興味名前
           example: 東北
+        interestGroup:
+          $ref: "#/components/schemas/InterestGroup"
     Creator:
       type: object
       required:
@@ -3704,6 +3724,16 @@ components:
         - COMMENT
         - USER
         - REPLY
+    InterestGroup:
+      type: string
+      enum:
+        - Undefined
+        - Style
+        - Scene
+        - Gourmet
+        - LifeStyle
+        - Activity
+        - Sport
     Error:
       type: object
       properties:

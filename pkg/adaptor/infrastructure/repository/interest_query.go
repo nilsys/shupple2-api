@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
@@ -17,12 +18,24 @@ var InterestQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.InterestQueryRepository), new(*InterestQueryRepositoryImpl)),
 )
 
-func (r *InterestQueryRepositoryImpl) FindAll() ([]*entity.Interest, error) {
+func (r *InterestQueryRepositoryImpl) FindAllByGroup(group model.InterestGroup) ([]*entity.Interest, error) {
 	var rows []*entity.Interest
 
-	if err := r.DB.Limit(defaultAcquisitionNumber).Order("created_at desc").Find(&rows).Error; err != nil {
+	q := r.buildFindAllByGroupQuery(group)
+
+	if err := q.Limit(defaultAcquisitionNumber).Order("interest_group").Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find all interest")
 	}
 
 	return rows, nil
+}
+
+func (r *InterestQueryRepositoryImpl) buildFindAllByGroupQuery(group model.InterestGroup) *gorm.DB {
+	q := r.DB
+
+	if group != model.InterestGroupUndefined {
+		q = q.Where("interest_group = ?", group)
+	}
+
+	return q
 }

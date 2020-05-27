@@ -100,11 +100,6 @@ type (
 		// フォローされた人
 		TargetID int `gorm:"primary_key"`
 	}
-
-	Interest struct {
-		ID   int    `gorm:"primary_key" json:"id"`
-		Name string `json:"name"`
-	}
 )
 
 func NewUserByWordpressUser(wpUser *wordpress.User) *User {

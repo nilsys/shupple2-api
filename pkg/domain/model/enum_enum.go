@@ -287,6 +287,77 @@ func (x *Gender) UnmarshalText(text []byte) error {
 }
 
 const (
+	// InterestGroupUndefined is a InterestGroup of type Undefined
+	InterestGroupUndefined InterestGroup = iota
+	// InterestGroupStyle is a InterestGroup of type Style
+	InterestGroupStyle
+	// InterestGroupScene is a InterestGroup of type Scene
+	InterestGroupScene
+	// InterestGroupGourmet is a InterestGroup of type Gourmet
+	InterestGroupGourmet
+	// InterestGroupLifeStyle is a InterestGroup of type LifeStyle
+	InterestGroupLifeStyle
+	// InterestGroupActivity is a InterestGroup of type Activity
+	InterestGroupActivity
+	// InterestGroupSport is a InterestGroup of type Sport
+	InterestGroupSport
+)
+
+const _InterestGroupName = "UndefinedStyleSceneGourmetLifeStyleActivitySport"
+
+var _InterestGroupMap = map[InterestGroup]string{
+	0: _InterestGroupName[0:9],
+	1: _InterestGroupName[9:14],
+	2: _InterestGroupName[14:19],
+	3: _InterestGroupName[19:26],
+	4: _InterestGroupName[26:35],
+	5: _InterestGroupName[35:43],
+	6: _InterestGroupName[43:48],
+}
+
+// String implements the Stringer interface.
+func (x InterestGroup) String() string {
+	if str, ok := _InterestGroupMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("InterestGroup(%d)", x)
+}
+
+var _InterestGroupValue = map[string]InterestGroup{
+	_InterestGroupName[0:9]:   0,
+	_InterestGroupName[9:14]:  1,
+	_InterestGroupName[14:19]: 2,
+	_InterestGroupName[19:26]: 3,
+	_InterestGroupName[26:35]: 4,
+	_InterestGroupName[35:43]: 5,
+	_InterestGroupName[43:48]: 6,
+}
+
+// ParseInterestGroup attempts to convert a string to a InterestGroup
+func ParseInterestGroup(name string) (InterestGroup, error) {
+	if x, ok := _InterestGroupValue[name]; ok {
+		return x, nil
+	}
+	return InterestGroup(0), fmt.Errorf("%s is not a valid InterestGroup", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x InterestGroup) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *InterestGroup) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseInterestGroup(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// MediaSortByNEW is a MediaSortBy of type NEW
 	MediaSortByNEW MediaSortBy = iota + 1
 	// MediaSortByRANKING is a MediaSortBy of type RANKING

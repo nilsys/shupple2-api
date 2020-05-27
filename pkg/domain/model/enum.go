@@ -55,6 +55,11 @@ ENUM(Undefined, SpotCategory = 1, SubSpotCategory)
 type SpotCategoryType int
 
 /*
+ENUM(Undefined, Style, Scene, Gourmet, LifeStyle, Activity, Sport)
+*/
+type InterestGroup int
+
+/*
 ENUM(FAVORITE = 1, COMMENT, REPLY, FOLLOW, TAGGED)
 */
 type NoticeActionType int

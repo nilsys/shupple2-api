@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
+
 	"github.com/google/wire"
 
 	"github.com/labstack/echo/v4"
@@ -21,7 +23,11 @@ var InterestQueryControllerSet = wire.NewSet(
 )
 
 func (c *InterestQueryController) ListAll(ctx echo.Context) error {
-	interests, err := c.InterestQueryService.ListAll()
+	i := &input.ListInterest{}
+	if err := BindAndValidate(ctx, i); err != nil {
+		return errors.Wrap(err, "validation list inn params")
+	}
+	interests, err := c.InterestQueryService.ListAll(i.InterestGroup)
 	if err != nil {
 		return errors.Wrap(err, "failed list all interest")
 	}

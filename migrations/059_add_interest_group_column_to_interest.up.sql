@@ -1,0 +1,1 @@
+ALTER TABLE interest ADD interest_group TINYINT UNSIGNED NOT NULL AFTER name;
