@@ -11,6 +11,10 @@ type (
 	ShowComicParam struct {
 		ID int `param:"id" validate:"required"`
 	}
+
+	FavoriteComicParam struct {
+		ComicID int `param:"id" validate:"required"`
+	}
 )
 
 const showComicListDefaultPerPage = 4

@@ -24,7 +24,7 @@ var VlogFavoriteCommandControllerSet = wire.NewSet(
 )
 
 func (c *VlogFavoriteCommandController) Store(ctx echo.Context, user entity.User) error {
-	p := input.StoreFavoriteVlogParam{}
+	p := input.FavoriteVlogParam{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrap(err, "ID is invalid")
 	}
@@ -37,7 +37,7 @@ func (c *VlogFavoriteCommandController) Store(ctx echo.Context, user entity.User
 }
 
 func (c *VlogFavoriteCommandController) Delete(ctx echo.Context, user entity.User) error {
-	p := input.DeleteFavoriteVlogParam{}
+	p := input.FavoriteVlogParam{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrap(err, "ID is invalid")
 	}

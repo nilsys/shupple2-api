@@ -40,11 +40,7 @@ type (
 		ReviewID int `param:"id" validate:"required"`
 	}
 
-	StoreFavoriteReviewReplyParam struct {
-		ReplyID int `param:"replyId" validate:"required"`
-	}
-
-	DeleteFavoriteReviewReplyParam struct {
+	FavoriteReviewReplyParam struct {
 		ReplyID int `param:"replyId" validate:"required"`
 	}
 

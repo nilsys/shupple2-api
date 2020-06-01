@@ -425,9 +425,11 @@ const (
 	NoticeActionTargetTypeREPLY
 	// NoticeActionTargetTypeUSER is a NoticeActionTargetType of type USER
 	NoticeActionTargetTypeUSER
+	// NoticeActionTargetTypeCOMIC is a NoticeActionTargetType of type COMIC
+	NoticeActionTargetTypeCOMIC
 )
 
-const _NoticeActionTargetTypeName = "POSTVLOGREVIEWCOMMENTREPLYUSER"
+const _NoticeActionTargetTypeName = "POSTVLOGREVIEWCOMMENTREPLYUSERCOMIC"
 
 var _NoticeActionTargetTypeMap = map[NoticeActionTargetType]string{
 	1: _NoticeActionTargetTypeName[0:4],
@@ -436,6 +438,7 @@ var _NoticeActionTargetTypeMap = map[NoticeActionTargetType]string{
 	4: _NoticeActionTargetTypeName[14:21],
 	5: _NoticeActionTargetTypeName[21:26],
 	6: _NoticeActionTargetTypeName[26:30],
+	7: _NoticeActionTargetTypeName[30:35],
 }
 
 // String implements the Stringer interface.
@@ -453,6 +456,7 @@ var _NoticeActionTargetTypeValue = map[string]NoticeActionTargetType{
 	_NoticeActionTargetTypeName[14:21]: 4,
 	_NoticeActionTargetTypeName[21:26]: 5,
 	_NoticeActionTargetTypeName[26:30]: 6,
+	_NoticeActionTargetTypeName[30:35]: 7,
 }
 
 // ParseNoticeActionTargetType attempts to convert a string to a NoticeActionTargetType

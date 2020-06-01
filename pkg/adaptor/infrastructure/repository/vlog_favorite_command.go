@@ -24,5 +24,5 @@ func (r *VlogFavoriteCommandRepositoryImpl) Store(c context.Context, favorite *e
 }
 
 func (r *VlogFavoriteCommandRepositoryImpl) Delete(c context.Context, unfavorite *entity.UserFavoriteVlog) error {
-	return errors.Wrap(r.DB(c).Where("user_id = ? AND vlog_id = ?", unfavorite.UserID, unfavorite.VlogID).Delete(&unfavorite).Error, "failed to delete")
+	return errors.Wrap(r.DB(c).Where("user_id = ? AND vlog_id = ?", unfavorite.UserID, unfavorite.VlogID).Delete(unfavorite).Error, "failed to delete")
 }

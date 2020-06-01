@@ -37,3 +37,11 @@ func (r *ComicQueryRepositoryImpl) FindListOrderByCreatedAt(query *query.FindLis
 
 	return &rows, nil
 }
+
+func (r *ComicQueryRepositoryImpl) IsExist(id int) (bool, error) {
+	var row entity.Comic
+
+	err := r.DB.First(&row, id).Error
+
+	return ErrorToIsExist(err, "comic(id=%d)", id)
+}

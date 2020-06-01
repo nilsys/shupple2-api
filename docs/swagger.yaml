@@ -1485,6 +1485,51 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ComicShow"
+  /comics/{id}/favorite:
+    put:
+      tags:
+        - comic
+      summary: 漫画に対するいいねAPI
+      description: |
+        idに対応する漫画に対するいいねAPI
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: 漫画ID
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: "成功"
+        "404":
+          description: 存在しない漫画
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - comic
+      summary: 漫画に対するいいね削除API
+      description: |
+        idに対応する漫画に対するいいね削除API
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: 漫画ID
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: "成功"
+        "404":
+          description: 存在しない漫画
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /tourist_spots:
     get:
       tags:

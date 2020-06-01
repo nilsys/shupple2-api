@@ -31,5 +31,5 @@ func (r *ReviewFavoriteCommandRepositoryImpl) StoreReviewCommentReply(c context.
 }
 
 func (r *ReviewFavoriteCommandRepositoryImpl) DeleteReviewCommentReply(c context.Context, unfavorite *entity.UserFavoriteReviewCommentReply) error {
-	return errors.Wrap(r.DB(c).Where("user_id = ? AND review_comment_reply_id = ?", unfavorite.UserID, unfavorite.ReviewCommentReplyID).Delete(&unfavorite).Error, "failed to delete")
+	return errors.Wrap(r.DB(c).Where("user_id = ? AND review_comment_reply_id = ?", unfavorite.UserID, unfavorite.ReviewCommentReplyID).Delete(unfavorite).Error, "failed to delete")
 }

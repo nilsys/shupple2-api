@@ -23,11 +23,7 @@ type (
 		PerPage       int               `query:"perPage"`
 	}
 
-	StoreFavoriteVlogParam struct {
-		VlogID int `param:"id" validate:"required"`
-	}
-
-	DeleteFavoriteVlogParam struct {
+	FavoriteVlogParam struct {
 		VlogID int `param:"id" validate:"required"`
 	}
 )

@@ -66,6 +66,8 @@ var RepositoriesSet = wire.NewSet(
 	ThemeCategoryQueryRepositorySet,
 	ComicCommandRepositorySet,
 	ComicQueryRepositorySet,
+	ComicFavoriteCommandRepositorySet,
+	ComicFavoriteQueryRepositorySet,
 	FeatureCommandRepositorySet,
 	FeatureQueryRepositorySet,
 	SpotCategoryCommandRepositorySet,

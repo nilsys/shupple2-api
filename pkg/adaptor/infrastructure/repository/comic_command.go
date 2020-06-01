@@ -33,3 +33,11 @@ func (r *ComicCommandRepositoryImpl) Store(c context.Context, comic *entity.Comi
 func (r *ComicCommandRepositoryImpl) DeleteByID(id int) error {
 	return errors.Wrapf(r.DB(context.Background()).Delete(&entity.Comic{ID: id}).Error, "failed to delete comic(id=%d)", id)
 }
+
+func (r *ComicCommandRepositoryImpl) IncrementFavoriteCount(c context.Context, id int) error {
+	return errors.Wrapf(r.DB(c).Exec("UPDATE comic SET favorite_count = favorite_count + 1 WHERE id = ?", id).Error, "failed to update comic(id=%d)", id)
+}
+
+func (r *ComicCommandRepositoryImpl) DecrementFavoriteCount(c context.Context, id int) error {
+	return errors.Wrapf(r.DB(c).Exec("UPDATE comic SET favorite_count = favorite_count - 1 WHERE id = ?", id).Error, "failed to update comic(id=%d)", id)
+}

@@ -53,6 +53,7 @@ type App struct {
 	InnQueryController              api.InnQueryController
 	NoticeQueryController           api.NoticeQueryController
 	ReportCommandController         api.ReportCommandController
+	ComicFavoriteCommandController  api.ComicFavoriteCommandController
 	VlogFavoriteCommandController   api.VlogFavoriteCommandController
 }
 
@@ -137,6 +138,8 @@ func setRoutes(app *App) {
 		comics := api.Group("/comics")
 		comics.GET("", app.ComicQueryController.ListComic)
 		comics.GET("/:id", app.ComicQueryController.Show)
+		comics.PUT("/:id/favorite", auth.Require(app.ComicFavoriteCommandController.Store))
+		comics.DELETE("/:id/favorite", auth.Require(app.ComicFavoriteCommandController.Delete))
 	}
 
 	{

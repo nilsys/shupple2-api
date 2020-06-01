@@ -51,7 +51,7 @@ func (c *ReviewFavoriteCommandController) Delete(ctx echo.Context, user entity.U
 }
 
 func (c *ReviewFavoriteCommandController) FavoriteReviewCommentReply(ctx echo.Context, user entity.User) error {
-	p := input.StoreFavoriteReviewReplyParam{}
+	p := input.FavoriteReviewReplyParam{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrap(err, "ID is invalid")
 	}
@@ -64,7 +64,7 @@ func (c *ReviewFavoriteCommandController) FavoriteReviewCommentReply(ctx echo.Co
 }
 
 func (c *ReviewFavoriteCommandController) UnFavoriteReviewCommentReply(ctx echo.Context, user entity.User) error {
-	p := input.DeleteFavoriteReviewReplyParam{}
+	p := input.FavoriteReviewReplyParam{}
 	if err := BindAndValidate(ctx, &p); err != nil {
 		return errors.Wrap(err, "ID is invalid")
 	}

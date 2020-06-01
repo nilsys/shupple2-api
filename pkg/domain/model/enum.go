@@ -65,7 +65,7 @@ ENUM(FAVORITE = 1, COMMENT, REPLY, FOLLOW, TAGGED)
 type NoticeActionType int
 
 /*
-ENUM(POST = 1, VLOG, REVIEW, COMMENT, REPLY, USER)
+ENUM(POST = 1, VLOG, REVIEW, COMMENT, REPLY, USER, COMIC)
 */
 type NoticeActionTargetType int
 

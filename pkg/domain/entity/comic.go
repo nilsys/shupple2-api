@@ -20,9 +20,21 @@ type (
 		Comic
 		User *User `gorm:"foreignkey:UserID"`
 	}
+
+	UserFavoriteComic struct {
+		UserID  int
+		ComicID int
+	}
 )
 
 // テーブル名
 func (queryComic *QueryComic) TableName() string {
 	return "comic"
+}
+
+func NewUserFavoriteComic(userID, comicID int) *UserFavoriteComic {
+	return &UserFavoriteComic{
+		UserID:  userID,
+		ComicID: comicID,
+	}
 }
