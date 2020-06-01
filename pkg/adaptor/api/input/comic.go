@@ -3,8 +3,9 @@ package input
 // 漫画一覧取得APIパラメータ
 type (
 	ShowComicListParam struct {
-		Page    int `query:"page"`
-		PerPage int `query:"perPage"`
+		Page      int `query:"page"`
+		PerPage   int `query:"perPage"`
+		ExcludeID int `query:"excludeId"`
 	}
 
 	ShowComicParam struct {

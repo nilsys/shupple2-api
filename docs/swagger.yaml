@@ -1445,6 +1445,12 @@ paths:
           schema:
             type: integer
             default: 10
+        - in: query
+          name: excludeId
+          description: |
+            除外するID
+          schema:
+            type: integer
       responses:
         "200":
           description: OK

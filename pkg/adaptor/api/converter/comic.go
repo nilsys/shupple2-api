@@ -11,8 +11,9 @@ import (
 // i/oの構造体からレポジトリで使用するクエリ構造体へconvert
 func (c Converters) ConvertShowComicListParamToQuery(param *input.ShowComicListParam) *query.FindListPaginationQuery {
 	return &query.FindListPaginationQuery{
-		Limit:  param.GetLimit(),
-		Offset: param.GetOffSet(),
+		Limit:     param.GetLimit(),
+		Offset:    param.GetOffSet(),
+		ExcludeID: param.ExcludeID,
 	}
 }
 

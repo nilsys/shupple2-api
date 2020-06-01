@@ -30,7 +30,8 @@ func (r *ComicQueryRepositoryImpl) FindByID(id int) (*entity.QueryComic, error) 
 func (r *ComicQueryRepositoryImpl) FindListOrderByCreatedAt(query *query.FindListPaginationQuery) (*entity.ComicList, error) {
 	var rows entity.ComicList
 
-	if err := r.DB.Order("created_at desc").Limit(query.Limit).Offset(query.Offset).Find(&rows.Comics).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+	// query.ExcludeIDのdefaultは0
+	if err := r.DB.Order("created_at desc").Offset(query.Offset).Limit(query.Limit).Not("id", query.ExcludeID).Find(&rows.Comics).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed find comics")
 	}
 

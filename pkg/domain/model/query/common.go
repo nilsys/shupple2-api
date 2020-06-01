@@ -4,7 +4,8 @@ package query
 type (
 	// 一覧検索でlimit, offsetの指定のみある場合
 	FindListPaginationQuery struct {
-		Limit  int
-		Offset int
+		Limit     int
+		Offset    int
+		ExcludeID int
 	}
 )
