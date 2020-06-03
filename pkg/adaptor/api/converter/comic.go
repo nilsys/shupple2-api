@@ -31,24 +31,28 @@ func (c Converters) ConvertComicListToOutput(comics *entity.ComicList) output.Co
 	}
 }
 
-func (c Converters) ConvertQueryComicOutput(queryComic *entity.QueryComic) *output.ShowComic {
+func (c Converters) ConvertQueryComicOutput(comic *entity.ComicDetail) *output.ShowComic {
 	return &output.ShowComic{
-		ID:        queryComic.Comic.ID,
-		Slug:      queryComic.Comic.Slug,
-		Title:     queryComic.Comic.Title,
-		Thumbnail: queryComic.Comic.Thumbnail,
-		Body:      queryComic.Comic.Body,
-		CreatedAt: model.TimeResponse(queryComic.Comic.CreatedAt),
-		Creator:   c.NewCreatorFromUser(queryComic.User),
+		ID:            comic.Comic.ID,
+		Slug:          comic.Comic.Slug,
+		Title:         comic.Comic.Title,
+		Thumbnail:     comic.Comic.Thumbnail,
+		Body:          comic.Comic.Body,
+		FavoriteCount: comic.FavoriteCount,
+		IsFavorite:    comic.IsFavorite,
+		CreatedAt:     model.TimeResponse(comic.Comic.CreatedAt),
+		Creator:       c.NewCreatorFromUser(comic.User),
 	}
 }
 
 // outputの構造体へconvert
-func (c Converters) convertComicToOutput(comic *entity.Comic) *output.Comic {
+func (c Converters) convertComicToOutput(comic *entity.ComicWithIsFavorite) *output.Comic {
 	return &output.Comic{
-		ID:        comic.ID,
-		Slug:      comic.Slug,
-		Title:     comic.Title,
-		Thumbnail: comic.Thumbnail,
+		ID:            comic.ID,
+		Slug:          comic.Slug,
+		Title:         comic.Title,
+		Thumbnail:     comic.Thumbnail,
+		FavoriteCount: comic.FavoriteCount,
+		IsFavorite:    comic.IsFavorite,
 	}
 }

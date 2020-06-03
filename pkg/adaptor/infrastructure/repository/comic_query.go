@@ -18,9 +18,20 @@ var ComicQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.ComicQueryRepository), new(*ComicQueryRepositoryImpl)),
 )
 
-func (r *ComicQueryRepositoryImpl) FindByID(id int) (*entity.QueryComic, error) {
-	var row entity.QueryComic
+func (r *ComicQueryRepositoryImpl) FindByID(id int) (*entity.ComicDetail, error) {
+	var row entity.ComicDetail
 	if err := r.DB.First(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "comic(id=%d)", id)
+	}
+	return &row, nil
+}
+
+func (r *ComicQueryRepositoryImpl) FindWithIsFavoriteByID(id, userID int) (*entity.ComicDetail, error) {
+	var row entity.ComicDetail
+	if err := r.DB.
+		Select("comic.*, CASE WHEN user_favorite_comic.comic_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Joins("LEFT JOIN user_favorite_comic ON comic.id = user_favorite_comic.comic_id AND user_favorite_comic.user_id = ?", userID).
+		First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "comic(id=%d)", id)
 	}
 	return &row, nil
@@ -31,7 +42,23 @@ func (r *ComicQueryRepositoryImpl) FindListOrderByCreatedAt(query *query.FindLis
 	var rows entity.ComicList
 
 	// query.ExcludeIDのdefaultは0
-	if err := r.DB.Order("created_at desc").Offset(query.Offset).Limit(query.Limit).Not("id", query.ExcludeID).Find(&rows.Comics).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+	if err := r.DB.
+		Order("created_at desc").Offset(query.Offset).Limit(query.Limit).Not("id", query.ExcludeID).Find(&rows.Comics).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		return nil, errors.Wrapf(err, "Failed find comics")
+	}
+
+	return &rows, nil
+}
+
+// 作成日時降順に指定されたlimit, offsetで一覧取得
+func (r *ComicQueryRepositoryImpl) FindWithIsFavoriteListOrderByCreatedAt(query *query.FindListPaginationQuery, userID int) (*entity.ComicList, error) {
+	var rows entity.ComicList
+
+	// query.ExcludeIDのdefaultは0
+	if err := r.DB.
+		Select("comic.*, CASE WHEN user_favorite_comic.comic_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Joins("LEFT JOIN user_favorite_comic ON comic.id = user_favorite_comic.comic_id AND user_favorite_comic.user_id = ?", userID).
+		Order("created_at desc").Offset(query.Offset).Limit(query.Limit).Not("id", query.ExcludeID).Find(&rows.Comics).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed find comics")
 	}
 

@@ -2,22 +2,28 @@ package entity
 
 type (
 	Comic struct {
-		ID        int `gorm:"primary_key"`
-		UserID    int
-		Slug      string
-		Thumbnail string
-		Title     string
-		Body      string
+		ID            int `gorm:"primary_key"`
+		UserID        int
+		Slug          string
+		Thumbnail     string
+		Title         string
+		Body          string
+		FavoriteCount int
 		Times
+	}
+
+	ComicWithIsFavorite struct {
+		Comic
+		IsFavorite bool
 	}
 
 	ComicList struct {
 		TotalNumber int
-		Comics      []*Comic
+		Comics      []*ComicWithIsFavorite
 	}
 
-	QueryComic struct {
-		Comic
+	ComicDetail struct {
+		ComicWithIsFavorite
 		User *User `gorm:"foreignkey:UserID"`
 	}
 
@@ -28,7 +34,7 @@ type (
 )
 
 // テーブル名
-func (queryComic *QueryComic) TableName() string {
+func (queryComic *ComicDetail) TableName() string {
 	return "comic"
 }
 
@@ -37,4 +43,8 @@ func NewUserFavoriteComic(userID, comicID int) *UserFavoriteComic {
 		UserID:  userID,
 		ComicID: comicID,
 	}
+}
+
+func (c *ComicWithIsFavorite) TableName() string {
+	return "comic"
 }

@@ -271,7 +271,7 @@ func (r *ReviewQueryRepositoryImpl) FindReviewCommentWithIsFavoriteListByReviewI
 	var comments []*entity.ReviewCommentWithIsFavorite
 
 	err := r.DB.
-		Select("review_comment.*, CASE WHEN user_favorite_review_comment.review_comment_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorited").
+		Select("review_comment.*, CASE WHEN user_favorite_review_comment.review_comment_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
 		Joins("LEFT JOIN user_favorite_review_comment ON review_comment.id = user_favorite_review_comment.review_comment_id AND user_favorite_review_comment.user_id = ?", userID).
 		Where("review_id = ?", reviewID).
 		Order("created_at DESC").
@@ -286,10 +286,26 @@ func (r *ReviewQueryRepositoryImpl) FindReviewCommentWithIsFavoriteListByReviewI
 	return comments, nil
 }
 
-func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyListByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error) {
-	var rows []*entity.ReviewCommentReply
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyListByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReplyWithIsFavorite, error) {
+	var rows []*entity.ReviewCommentReplyWithIsFavorite
 
 	if err := r.DB.Where("review_comment_id = ?", reviewCommentID).
+		Order("created_at DESC").
+		Limit(defaultAcquisitionNumber).
+		Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed to find review comment replies")
+	}
+
+	return rows, nil
+}
+
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyWithIsFavoriteListByReviewCommentID(reviewCommentID int, userID int) ([]*entity.ReviewCommentReplyWithIsFavorite, error) {
+	var rows []*entity.ReviewCommentReplyWithIsFavorite
+
+	if err := r.DB.
+		Select("review_comment_reply.*, CASE WHEN user_favorite_review_comment_reply.review_comment_reply_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Joins("LEFT JOIN user_favorite_review_comment_reply ON review_comment_reply.id = user_favorite_review_comment_reply.review_comment_reply_id AND user_favorite_review_comment_reply.user_id = ?", userID).
+		Where("review_comment_id = ?", reviewCommentID).
 		Order("created_at DESC").
 		Limit(defaultAcquisitionNumber).
 		Find(&rows).Error; err != nil {

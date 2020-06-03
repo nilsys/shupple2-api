@@ -8,6 +8,7 @@ type (
 		Thumbnail       string                 `json:"thumbnail"`
 		Title           string                 `json:"title"`
 		IsFavorite      bool                   `json:"isFavorite"`
+		FavoriteCount   int                    `json:"favoriteCount"`
 		AreaCategories  []*AreaCategoryDetail  `json:"areaCategories"`
 		ThemeCategories []*ThemeCategoryDetail `json:"themeCategories"`
 	}
@@ -30,7 +31,8 @@ type (
 		Timeline        string                 `json:"timeline"`
 		FacebookCount   int                    `json:"facebookCount"`
 		TwitterCount    int                    `json:"twitterCount"`
-		IsFavorited     bool                   `json:"isFavorited"`
+		FavoriteCount   int                    `json:"favoriteCount"`
+		IsFavorite      bool                   `json:"isFavorite"`
 		Creator         Creator                `json:"creator"`
 		Editors         []*Creator             `json:"editors"`
 		AreaCategories  []*AreaCategoryDetail  `json:"areaCategories"`

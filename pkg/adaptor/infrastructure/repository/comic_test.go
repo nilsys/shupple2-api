@@ -33,7 +33,7 @@ var _ = Describe("ComicRepositoryImpl", func() {
 	baseQueryChanged.Title = "changed"
 
 	DescribeTable("Saveは引数のcomicを作成するか、その状態になるように更新する",
-		func(before *entity.Comic, saved *entity.Comic, querySaved *entity.QueryComic) {
+		func(before *entity.Comic, saved *entity.Comic, querySaved *entity.ComicDetail) {
 			if before != nil {
 				Expect(command.Store(context.Background(), before)).To(Succeed())
 			}
@@ -68,9 +68,18 @@ func newComic(id int) entity.Comic {
 	return comic
 }
 
-func newQueryComic(id int) *entity.QueryComic {
-	return &entity.QueryComic{
-		Comic: newComic(id),
-		User:  newUser(userID),
+func newComicWithIsFavorite(id int) entity.ComicWithIsFavorite {
+	comic := entity.ComicWithIsFavorite{
+		Comic:      newComic(id),
+		IsFavorite: false,
+	}
+	util.FillDummyString(&comic, id)
+	return comic
+}
+
+func newQueryComic(id int) *entity.ComicDetail {
+	return &entity.ComicDetail{
+		ComicWithIsFavorite: newComicWithIsFavorite(id),
+		User:                newUser(userID),
 	}
 }

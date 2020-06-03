@@ -101,13 +101,13 @@ func (c *ReviewQueryController) ListFavoriteReview(ctx echo.Context, ouser entit
 	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews))
 }
 
-func (c *ReviewQueryController) ListReviewCommentReply(ctx echo.Context) error {
+func (c *ReviewQueryController) ListReviewCommentReply(ctx echo.Context, ouser entity.OptionalUser) error {
 	p := &input.ListReviewCommentReply{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list review comment reply")
 	}
 
-	replies, err := c.ReviewQueryService.ListReviewCommentReplyByReviewCommentID(p.ReviewCommentID)
+	replies, err := c.ReviewQueryService.ListReviewCommentReplyByReviewCommentID(p.ReviewCommentID, &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed list review comment reply")
 	}

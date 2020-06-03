@@ -23,7 +23,9 @@ type (
 		FindAll() ([]*entity.Vlog, error)
 		FindByID(id int) (*entity.Vlog, error)
 		FindListByParams(query *query.FindVlogListQuery) (*entity.VlogList, error)
+		FindWithIsFavoriteListByParams(query *query.FindVlogListQuery, userID int) (*entity.VlogList, error)
 		FindDetailByID(id int) (*entity.VlogDetail, error)
+		FindDetailWithIsFavoriteByID(id, userID int) (*entity.VlogDetail, error)
 		IsExist(id int) (bool, error)
 	}
 

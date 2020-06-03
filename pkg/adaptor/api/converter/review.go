@@ -67,7 +67,7 @@ func (c Converters) ConvertReviewCommentWithIsFavoriteToOutput(reviewComment *en
 		reviewComment.ID,
 		reviewComment.ReplyCount,
 		reviewComment.FavoriteCount,
-		reviewComment.IsFavorited,
+		reviewComment.IsFavorite,
 	)
 }
 
@@ -115,7 +115,7 @@ func (c Converters) ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview *
 		Hashtag:       hashtags,
 		CommentCount:  queryReview.CommentCount,
 		Creator:       c.NewCreatorFromUser(queryReview.User),
-		IsFavorited:   queryReview.IsFavorite,
+		IsFavorite:    queryReview.IsFavorite,
 	}
 }
 

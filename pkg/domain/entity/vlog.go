@@ -19,6 +19,7 @@ type (
 		Timeline      string
 		FacebookCount int
 		TwitterCount  int
+		FavoriteCount int
 		Views         int
 		Times
 	}
@@ -53,6 +54,7 @@ type (
 
 	VlogForList struct {
 		VlogTiny
+		IsFavorite      bool
 		AreaCategories  []*AreaCategory  `gorm:"many2many:vlog_area_category;jointable_foreignkey:vlog_id;"`
 		ThemeCategories []*ThemeCategory `gorm:"many2many:vlog_theme_category;jointable_foreignkey:vlog_id;"`
 	}
@@ -69,6 +71,7 @@ type (
 		TouristSpots    []*TouristSpot   `gorm:"many2many:vlog_tourist_spot;jointable_foreignkey:vlog_id;"`
 		User            *User            `gorm:"foreignkey:UserID"`
 		Editors         []*User          `gorm:"many2many:vlog_editor;jointable_foreignkey:vlog_id;"`
+		IsFavorite      bool
 	}
 
 	UserFavoriteVlog struct {

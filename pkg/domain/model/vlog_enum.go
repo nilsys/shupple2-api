@@ -6,6 +6,6 @@ package model
 func (sortBy MediaSortBy) GetVlogOrderQuery() string {
 	switch sortBy {
 	default:
-		return "created_at desc"
+		return "vlog.created_at desc"
 	}
 }

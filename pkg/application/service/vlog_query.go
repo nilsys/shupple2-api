@@ -10,8 +10,8 @@ import (
 
 type (
 	VlogQueryService interface {
-		Show(id int) (*entity.VlogDetail, error)
-		ListByParams(query *query.FindVlogListQuery) (*entity.VlogList, error)
+		Show(id int, ouser *entity.OptionalUser) (*entity.VlogDetail, error)
+		ListByParams(query *query.FindVlogListQuery, ouser *entity.OptionalUser) (*entity.VlogList, error)
 	}
 
 	VlogQueryServiceImpl struct {
@@ -25,10 +25,16 @@ var VlogQueryServiceSet = wire.NewSet(
 	wire.Bind(new(VlogQueryService), new(*VlogQueryServiceImpl)),
 )
 
-func (s *VlogQueryServiceImpl) Show(id int) (*entity.VlogDetail, error) {
+func (s *VlogQueryServiceImpl) Show(id int, ouser *entity.OptionalUser) (*entity.VlogDetail, error) {
+	if ouser.Authenticated {
+		return s.VlogQueryRepository.FindDetailWithIsFavoriteByID(id, ouser.ID)
+	}
 	return s.VlogQueryRepository.FindDetailByID(id)
 }
 
-func (s *VlogQueryServiceImpl) ListByParams(query *query.FindVlogListQuery) (*entity.VlogList, error) {
+func (s *VlogQueryServiceImpl) ListByParams(query *query.FindVlogListQuery, ouser *entity.OptionalUser) (*entity.VlogList, error) {
+	if ouser.Authenticated {
+		return s.VlogQueryRepository.FindWithIsFavoriteListByParams(query, ouser.ID)
+	}
 	return s.VlogQueryRepository.FindListByParams(query)
 }

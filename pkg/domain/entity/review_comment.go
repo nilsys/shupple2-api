@@ -24,7 +24,7 @@ type (
 		Body          string
 		ReplyCount    int
 		FavoriteCount int
-		IsFavorited   bool
+		IsFavorite    bool
 		Times
 	}
 
@@ -34,6 +34,18 @@ type (
 		ReviewCommentID int
 		User            *User `gorm:"foreignkey:UserID"`
 		Body            string
+		FavoriteCount   int
+		Times
+	}
+
+	ReviewCommentReplyWithIsFavorite struct {
+		ID              int `gorm:"primary_key"`
+		UserID          int
+		ReviewCommentID int
+		User            *User `gorm:"foreignkey:UserID"`
+		Body            string
+		FavoriteCount   int
+		IsFavorite      bool
 		Times
 	}
 
@@ -85,4 +97,8 @@ func (r *ReviewCommentReply) WebURL() string {
 
 func (r *ReviewCommentWithIsFavorite) TableName() string {
 	return "review_comment"
+}
+
+func (r *ReviewCommentReplyWithIsFavorite) TableName() string {
+	return "review_comment_reply"
 }

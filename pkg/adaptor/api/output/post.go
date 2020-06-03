@@ -61,7 +61,7 @@ type (
 		SEOTitle        string                 `json:"seoTitle"`
 		SEODescription  string                 `json:"seoDescription"`
 		HideAds         bool                   `json:"hideAds"`
-		IsFavorited     bool                   `json:"isFavorited"`
+		IsFavorite      bool                   `json:"isFavorite"`
 		Creator         Creator                `json:"creator"`
 		AreaCategories  []*AreaCategoryDetail  `json:"areaCategories"`
 		ThemeCategories []*ThemeCategoryDetail `json:"themeCategories"`

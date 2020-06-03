@@ -11,8 +11,8 @@ import (
 
 type (
 	VlogQueryScenario interface {
-		Show(id int) (*entity.VlogDetail, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error)
-		ListByParams(query *query.FindVlogListQuery) (*entity.VlogList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error)
+		Show(id int, ouser *entity.OptionalUser) (*entity.VlogDetail, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error)
+		ListByParams(query *query.FindVlogListQuery, ouser *entity.OptionalUser) (*entity.VlogList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error)
 	}
 
 	VlogQueryScenarioImpl struct {
@@ -26,8 +26,8 @@ var VlogQueryScenarioSet = wire.NewSet(
 	wire.Bind(new(VlogQueryScenario), new(*VlogQueryScenarioImpl)),
 )
 
-func (s *VlogQueryScenarioImpl) Show(id int) (*entity.VlogDetail, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error) {
-	vlog, err := s.VlogQueryService.Show(id)
+func (s *VlogQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*entity.VlogDetail, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error) {
+	vlog, err := s.VlogQueryService.Show(id, ouser)
 	if err != nil {
 		return nil, nil, nil, errors.Wrap(err, "failed find vlog by id")
 	}
@@ -40,8 +40,8 @@ func (s *VlogQueryScenarioImpl) Show(id int) (*entity.VlogDetail, map[int]*entit
 	return vlog, areaCategoriesMap, themeCategoriesMap, nil
 }
 
-func (s *VlogQueryScenarioImpl) ListByParams(query *query.FindVlogListQuery) (*entity.VlogList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error) {
-	vlogs, err := s.VlogQueryService.ListByParams(query)
+func (s *VlogQueryScenarioImpl) ListByParams(query *query.FindVlogListQuery, ouser *entity.OptionalUser) (*entity.VlogList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error) {
+	vlogs, err := s.VlogQueryService.ListByParams(query, ouser)
 	if err != nil {
 		return nil, nil, nil, errors.Wrap(err, "failed to find vlogs")
 	}

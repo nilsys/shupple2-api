@@ -20,6 +20,8 @@ type (
 		FindFavoriteReviewWithIsFavoriteListByUserID(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error)
 		FindReviewCommentListByReviewID(reviewID int, limit int) ([]*entity.ReviewCommentWithIsFavorite, error)
 		FindReviewCommentWithIsFavoriteListByReviewID(reviewID int, limit int, userID int) ([]*entity.ReviewCommentWithIsFavorite, error)
+		FindReviewCommentReplyListByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReplyWithIsFavorite, error)
+		FindReviewCommentReplyWithIsFavoriteListByReviewCommentID(reviewCommentID int, userID int) ([]*entity.ReviewCommentReplyWithIsFavorite, error)
 		FindQueryReviewByID(id int) (*entity.ReviewDetailWithIsFavorite, error)
 		FindQueryReviewWithIsFavoriteByID(id, userID int) (*entity.ReviewDetailWithIsFavorite, error)
 		IsExist(id int) (bool, error)
@@ -28,7 +30,6 @@ type (
 		IsExistReviewCommentFavorite(userID, reviewCommentID int) (bool, error)
 		FindReviewCommentByID(id int) (*entity.ReviewComment, error)
 		FindReviewCommentReplyByID(id int) (*entity.ReviewCommentReply, error)
-		FindReviewCommentReplyListByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error)
 	}
 
 	// Review更新系レポジトリ

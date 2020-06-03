@@ -106,7 +106,7 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 		SEOTitle:        post.SEOTitle,
 		SEODescription:  post.SEODescription,
 		HideAds:         post.HideAds,
-		IsFavorited:     post.IsFavorite,
+		IsFavorite:      post.IsFavorite,
 		Creator:         c.NewCreatorFromUser(post.User),
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,

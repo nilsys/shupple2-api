@@ -124,7 +124,7 @@ func setRoutes(app *App) {
 		reviews.DELETE("/:id", auth.Require(app.ReviewCommandController.Delete))
 		reviews.GET("/:id", auth.Optional(app.ReviewQueryController.ShowReview))
 		reviews.POST("/:id/comment", auth.Require(app.ReviewCommandController.StoreReviewComment))
-		reviews.GET("/comment/:id/reply", app.ReviewQueryController.ListReviewCommentReply)
+		reviews.GET("/comment/:id/reply", auth.Optional(app.ReviewQueryController.ListReviewCommentReply))
 		reviews.POST("/comment/:id/reply", auth.Require(app.ReviewCommandController.StoreReviewCommentReply))
 		reviews.PUT("/comment/:id/reply/:replyId/favorite", auth.Require(app.ReviewFavoriteCommandController.FavoriteReviewCommentReply))
 		reviews.DELETE("/comment/:id/reply/:replyId/favorite", auth.Require(app.ReviewFavoriteCommandController.UnFavoriteReviewCommentReply))
@@ -136,8 +136,8 @@ func setRoutes(app *App) {
 
 	{
 		comics := api.Group("/comics")
-		comics.GET("", app.ComicQueryController.ListComic)
-		comics.GET("/:id", app.ComicQueryController.Show)
+		comics.GET("", auth.Optional(app.ComicQueryController.ListComic))
+		comics.GET("/:id", auth.Optional(app.ComicQueryController.Show))
 		comics.PUT("/:id/favorite", auth.Require(app.ComicFavoriteCommandController.Store))
 		comics.DELETE("/:id/favorite", auth.Require(app.ComicFavoriteCommandController.Delete))
 	}
@@ -181,8 +181,8 @@ func setRoutes(app *App) {
 
 	{
 		vlogs := api.Group("/vlogs")
-		vlogs.GET("", app.VlogQueryController.ListVlog)
-		vlogs.GET("/:id", app.VlogQueryController.Show)
+		vlogs.GET("", auth.Optional(app.VlogQueryController.ListVlog))
+		vlogs.GET("/:id", auth.Optional(app.VlogQueryController.Show))
 		vlogs.PUT("/:id/favorite", auth.Require(app.VlogFavoriteCommandController.Store))
 		vlogs.DELETE("/:id/favorite", auth.Require(app.VlogFavoriteCommandController.Delete))
 	}

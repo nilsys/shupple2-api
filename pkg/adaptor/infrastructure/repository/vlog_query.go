@@ -35,6 +35,18 @@ func (r *VlogQueryRepositoryImpl) FindDetailByID(id int) (*entity.VlogDetail, er
 	return &row, nil
 }
 
+func (r *VlogQueryRepositoryImpl) FindDetailWithIsFavoriteByID(id, userID int) (*entity.VlogDetail, error) {
+	var row entity.VlogDetail
+
+	if err := r.DB.
+		Select("*, CASE WHEN user_favorite_vlog.vlog_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
+		Joins("LEFT JOIN user_favorite_vlog ON vlog.id = user_favorite_vlog.vlog_id AND user_favorite_vlog.user_id = ?", userID).
+		First(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "vlog(id=%d)", id)
+	}
+	return &row, nil
+}
+
 func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuery) (*entity.VlogList, error) {
 	var rows entity.VlogList
 
@@ -56,6 +68,40 @@ func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuer
 	}
 
 	if err := q.
+		Order(query.SortBy.GetVlogOrderQuery()).
+		Limit(query.Limit).
+		Offset(query.OffSet).
+		Find(&rows.Vlogs).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find vlogs by params")
+	}
+
+	return &rows, nil
+}
+
+func (r *VlogQueryRepositoryImpl) FindWithIsFavoriteListByParams(query *query.FindVlogListQuery, userID int) (*entity.VlogList, error) {
+	var rows entity.VlogList
+
+	q := r.buildFindByParamsQuery(query)
+
+	// フリーワード検索の場合
+	if query.Keyword != "" {
+		if err := q.
+			Select("*, CASE WHEN title LIKE ? THEN 'TRUE' ELSE 'FALSE' END is_matched_title, CASE WHEN user_favorite_vlog.vlog_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite", query.SQLLikeKeyword()).
+			Joins("LEFT JOIN user_favorite_vlog ON vlog.id = user_favorite_vlog.vlog_id AND user_favorite_vlog.user_id = ?", userID).
+			Order("is_matched_title desc").
+			Order(query.SortBy.GetVlogOrderQuery()).
+			Limit(query.Limit).
+			Offset(query.OffSet).
+			Find(&rows.Vlogs).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+			return nil, errors.Wrap(err, "failed find vlogs by params")
+		}
+
+		return &rows, nil
+	}
+
+	if err := q.
+		Select("*, CASE WHEN title LIKE ? THEN 'TRUE' ELSE 'FALSE' END is_matched_title, CASE WHEN user_favorite_vlog.vlog_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite", query.SQLLikeKeyword()).
+		Joins("LEFT JOIN user_favorite_vlog ON vlog.id = user_favorite_vlog.vlog_id AND user_favorite_vlog.user_id = ?", userID).
 		Order(query.SortBy.GetVlogOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).

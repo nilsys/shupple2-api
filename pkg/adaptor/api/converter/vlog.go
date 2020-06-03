@@ -71,6 +71,8 @@ func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail, areaCategories ma
 		Timeline:        vlog.Timeline,
 		FacebookCount:   vlog.FacebookCount,
 		TwitterCount:    vlog.TwitterCount,
+		FavoriteCount:   vlog.FavoriteCount,
+		IsFavorite:      vlog.IsFavorite,
 		Creator:         c.NewCreatorFromUser(vlog.User),
 		Editors:         editors,
 		AreaCategories:  areaCategoriesRes,
@@ -98,5 +100,7 @@ func (c Converters) convertVlogToOutput(vlog *entity.VlogForList, areaCategories
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
 		Title:           vlog.VlogTiny.Title,
+		FavoriteCount:   vlog.FavoriteCount,
+		IsFavorite:      vlog.IsFavorite,
 	}
 }

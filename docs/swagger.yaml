@@ -1359,13 +1359,6 @@ paths:
       tags:
         - vlog
       summary: 動画取得API
-      description: |
-        パラメータで指定された条件で検索(組み合わせる事も可能)
-        フリーワード対象を取得
-        複数ワードで検索可能
-        その場合、レスポンスは全てのワードに引っ掛かる物である事
-        以下の順番で返る)
-        ・タイトルにフリーワードが含まれているもの(更新日時順)
       parameters:
         - in: path
           name: id
@@ -2555,7 +2548,7 @@ components:
           type: integer
           description: コメント数
           example: 4
-        isFavorited:
+        isFavorite:
           type: boolean
           description: |
             良いねしているかフラグ
@@ -2602,7 +2595,7 @@ components:
           type: integer
           description: コメントに対するいいね数
           example: 5
-        isFavorited:
+        isFavorite:
           type: boolean
           description: |
             良いねしているかフラグ
@@ -2628,11 +2621,14 @@ components:
           $ref: "#/components/schemas/UserSummary"
         body:
           type: string
-        isFavorited:
+        isFavorite:
           type: boolean
           description: |
             良いねしているかフラグ
             ＊認証を挟まない場合はfalse
+        favoriteCount:
+          type: integer
+          description: いいね数
         createdAt:
           type: string
           format: date-time
@@ -2677,7 +2673,7 @@ components:
           type: integer
           description: 閲覧数
           example: 6
-        isFavorited:
+        isFavorite:
           type: boolean
           description: |
             良いねしているかフラグ
@@ -2735,7 +2731,7 @@ components:
           type: integer
           description: 閲覧数
           example: 6
-        isFavorited:
+        isFavorite:
           type: boolean
           description: |
             良いねしているかフラグ
@@ -2794,7 +2790,7 @@ components:
           type: integer
           description: いいね数
           example: 3
-        isFavorited:
+        isFavorite:
           type: boolean
           description: |
             良いねしているかフラグ
@@ -2923,6 +2919,12 @@ components:
           type: string
           description: 動画タイトル
           example: 埼玉の春を満喫♪
+        favoriteCount:
+          type: integer
+          description: いいね数
+        isFavorite:
+          type: boolean
+          description: いいねフラグ
     VlogShow:
       type: object
       properties:
@@ -2946,11 +2948,14 @@ components:
           type: string
           description: シリーズ名
           example: ~シリーズ~
-        isFavorited:
+        isFavorite:
           type: boolean
           description: |
             良いねしているかフラグ
             ＊認証を挟まない場合はfalse
+        favoriteCount:
+          type: integer
+          description: いいね数
         shootingDate:
           type: string
           description: 撮影日時, ISO 8601形式
@@ -3191,6 +3196,12 @@ components:
           type: string
           description: サムネイルURL
           example: http://example.com/comic/img/1
+        favoriteCount:
+          type: integer
+          description: いいね数
+        isFavorite:
+          type: boolean
+          description: いいねフラグ
     ComicShow:
       type: object
       required:
@@ -3222,11 +3233,15 @@ components:
           type: string
           description: 本文
           example: HTML(未定)
-        isFavorited:
+        isFavorite:
           type: boolean
           description: |
             良いねしているかフラグ
             ＊認証を挟まない場合はfalse
+        favoriteCount:
+          type: integer
+          description: |
+            いいね数
         createdAt:
           type: string
           description: 公開日時, ISO 8601形式

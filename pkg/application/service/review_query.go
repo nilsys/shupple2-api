@@ -19,7 +19,7 @@ type (
 		ShowReview(id int) (*entity.Review, error)
 		ListReviewCommentByReviewID(reviewID int, limit int, ouser entity.OptionalUser) ([]*entity.ReviewCommentWithIsFavorite, error)
 		ListFavoriteReview(ouser entity.OptionalUser, userID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error)
-		ListReviewCommentReplyByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error)
+		ListReviewCommentReplyByReviewCommentID(reviewCommentID int, ouser *entity.OptionalUser) ([]*entity.ReviewCommentReplyWithIsFavorite, error)
 	}
 
 	// Review参照系サービス実装
@@ -139,6 +139,9 @@ func (s *ReviewQueryServiceImpl) ListFavoriteReview(ouser entity.OptionalUser, u
 	return s.ReviewQueryRepository.FindFavoriteReviewListByUserID(userID, query)
 }
 
-func (s *ReviewQueryServiceImpl) ListReviewCommentReplyByReviewCommentID(reviewCommentID int) ([]*entity.ReviewCommentReply, error) {
+func (s *ReviewQueryServiceImpl) ListReviewCommentReplyByReviewCommentID(reviewCommentID int, ouser *entity.OptionalUser) ([]*entity.ReviewCommentReplyWithIsFavorite, error) {
+	if ouser.Authenticated {
+		return s.ReviewQueryRepository.FindReviewCommentReplyWithIsFavoriteListByReviewCommentID(reviewCommentID, ouser.ID)
+	}
 	return s.ReviewQueryRepository.FindReviewCommentReplyListByReviewCommentID(reviewCommentID)
 }

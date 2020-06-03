@@ -20,7 +20,7 @@ type (
 		UpdatedAt     model.TimeResponse `json:"updatedAt"`
 		TravelDate    model.YearMonth    `json:"travelDate"`
 		CommentCount  int                `json:"commentCount"`
-		IsFavorited   bool               `json:"isFavorited"`
+		IsFavorite    bool               `json:"isFavorite"`
 		Hashtag       []Hashtag          `json:"hashtag"`
 		Creator       Creator            `json:"creator"`
 	}
@@ -45,16 +45,17 @@ type (
 		Body          string             `json:"body"`
 		ReplyCount    int                `json:"replyCount"`
 		FavoriteCount int                `json:"favoriteCount"`
-		IsFavorited   bool               `json:"isFavorited"`
+		IsFavorite    bool               `json:"isFavorite"`
 		CreatedAt     model.TimeResponse `json:"createdAt"`
 	}
 
 	ReviewCommentReply struct {
-		ID          int                `json:"id"`
-		UserSummary *UserSummary       `json:"user"`
-		Body        string             `json:"body"`
-		IsFavorited bool               `json:"isFavorited"`
-		CreatedAt   model.TimeResponse `json:"createdAt"`
+		ID            int                `json:"id"`
+		UserSummary   *UserSummary       `json:"user"`
+		Body          string             `json:"body"`
+		IsFavorite    bool               `json:"isFavorite"`
+		FavoriteCount int                `json:"favoriteCount"`
+		CreatedAt     model.TimeResponse `json:"createdAt"`
 	}
 
 	ReviewDetailIsFavoriteList struct {
@@ -70,7 +71,7 @@ func NewReviewComment(userSummary *UserSummary, body string, createdAt model.Tim
 		Body:          body,
 		ReplyCount:    replyCount,
 		FavoriteCount: favoriteCount,
-		IsFavorited:   isFavorite,
+		IsFavorite:    isFavorite,
 		CreatedAt:     createdAt,
 	}
 }

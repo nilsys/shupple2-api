@@ -17,8 +17,10 @@ type (
 	}
 
 	ComicQueryRepository interface {
-		FindByID(id int) (*entity.QueryComic, error)
+		FindByID(id int) (*entity.ComicDetail, error)
+		FindWithIsFavoriteByID(id, userID int) (*entity.ComicDetail, error)
 		FindListOrderByCreatedAt(query *query.FindListPaginationQuery) (*entity.ComicList, error)
+		FindWithIsFavoriteListOrderByCreatedAt(query *query.FindListPaginationQuery, userID int) (*entity.ComicList, error)
 		IsExist(id int) (bool, error)
 	}
 
