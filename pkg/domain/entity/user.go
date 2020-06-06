@@ -104,7 +104,7 @@ type (
 
 func NewUserByWordpressUser(wpUser *wordpress.User) *User {
 	return &User{
-		UID:           wpUser.Slug,
+		UID:           string(wpUser.Slug),
 		Name:          wpUser.Name,
 		MigrationCode: null.StringFrom(uuid.NewV4().String()),
 		WordpressID:   null.IntFrom(int64(wpUser.ID)),

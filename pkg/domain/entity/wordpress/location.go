@@ -14,7 +14,7 @@ type Location struct {
 	GUID          Text               `json:"guid"`
 	Modified      JSTTime            `json:"modified"`
 	ModifiedGmt   UTCTime            `json:"modified_gmt"`
-	Slug          string             `json:"slug"`
+	Slug          URLEscapedString   `json:"slug"`
 	Status        Status             `json:"status"`
 	Title         Text               `json:"title"`
 	FeaturedMedia int                `json:"featured_media"`

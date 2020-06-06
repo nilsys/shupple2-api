@@ -8,15 +8,15 @@ import (
 )
 
 type User struct {
-	ID          int            `json:"id"`
-	Name        string         `json:"name"`
-	URL         string         `json:"url"`
-	Description string         `json:"description"`
-	Link        string         `json:"link"`
-	Slug        string         `json:"slug"`
-	AvatarURLs  AvatarURLs     `json:"avatar_urls"`
-	Meta        UserMeta       `json:"meta"`
-	Attributes  UserAttributes `json:"acf"`
+	ID          int              `json:"id"`
+	Name        string           `json:"name"`
+	URL         string           `json:"url"`
+	Description string           `json:"description"`
+	Link        string           `json:"link"`
+	Slug        URLEscapedString `json:"slug"`
+	AvatarURLs  AvatarURLs       `json:"avatar_urls"`
+	Meta        UserMeta         `json:"meta"`
+	Attributes  UserAttributes   `json:"acf"`
 }
 
 type UserMeta struct {

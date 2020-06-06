@@ -8,23 +8,23 @@ import (
 )
 
 type Post struct {
-	ID            int             `json:"id"`
-	Date          JSTTime         `json:"date"`
-	DateGmt       UTCTime         `json:"date_gmt"`
-	GUID          Text            `json:"guid"`
-	Modified      JSTTime         `json:"modified"`
-	ModifiedGmt   UTCTime         `json:"modified_gmt"`
-	Slug          string          `json:"slug"`
-	Status        Status          `json:"status"`
-	Type          string          `json:"type"`
-	Title         Text            `json:"title"`
-	Content       ProtectableText `json:"content"`
-	Author        int             `json:"author"`
-	FeaturedMedia int             `json:"featured_media"`
-	Sticky        bool            `json:"sticky"`
-	Meta          PostMeta        `json:"meta"`
-	Categories    []int           `json:"categories"`
-	Tags          []int           `json:"tags"`
+	ID            int              `json:"id"`
+	Date          JSTTime          `json:"date"`
+	DateGmt       UTCTime          `json:"date_gmt"`
+	GUID          Text             `json:"guid"`
+	Modified      JSTTime          `json:"modified"`
+	ModifiedGmt   UTCTime          `json:"modified_gmt"`
+	Slug          URLEscapedString `json:"slug"`
+	Status        Status           `json:"status"`
+	Type          string           `json:"type"`
+	Title         Text             `json:"title"`
+	Content       ProtectableText  `json:"content"`
+	Author        int              `json:"author"`
+	FeaturedMedia int              `json:"featured_media"`
+	Sticky        bool             `json:"sticky"`
+	Meta          PostMeta         `json:"meta"`
+	Categories    []int            `json:"categories"`
+	Tags          []int            `json:"tags"`
 }
 
 type PostMeta struct {

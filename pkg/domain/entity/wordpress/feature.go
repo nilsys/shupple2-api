@@ -4,7 +4,7 @@ type Feature struct {
 	ID            int               `json:"id"`
 	Date          JSTTime           `json:"date"`
 	Modified      UTCTime           `json:"modified"`
-	Slug          string            `json:"slug"`
+	Slug          URLEscapedString  `json:"slug"`
 	Status        Status            `json:"status"`
 	Title         Text              `json:"title"`
 	Content       ProtectableText   `json:"content"`

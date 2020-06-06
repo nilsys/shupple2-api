@@ -61,7 +61,7 @@ var _ = Describe("WordpressRepositoryImpl", func() {
 					},
 					Modified:    wordpress.JSTTime(time.Date(2020, 3, 5, 22, 0, 56, 0, util.JSTLoc)),
 					ModifiedGmt: wordpress.UTCTime(time.Date(2020, 3, 5, 13, 0, 56, 0, time.UTC)),
-					Slug:        "%e3%83%86%e3%82%b9%e3%83%88",
+					Slug:        "テスト",
 					Status:      wordpress.StatusPublish,
 					Type:        "post",
 					Title: wordpress.Text{

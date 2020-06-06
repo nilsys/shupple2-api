@@ -1,13 +1,14 @@
 package wordpress
 
 import (
+	"net/url"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
 const (
-	timeJSONFormat = `"2006-01-02T15:04:05"`
+	timeJSONFormat = `2006-01-02T15:04:05`
 )
 
 var (
@@ -33,17 +34,28 @@ type (
 		Href string `json:"href"`
 	}
 
+	URLEscapedString string
+
 	JSTTime time.Time
 	UTCTime time.Time
 )
 
-func (t *JSTTime) UnmarshalJSON(data []byte) error {
+func (s *URLEscapedString) UnmarshalText(data []byte) error {
+	unespcaed, err := url.QueryUnescape(string(data))
+	if err != nil {
+		return err
+	}
+	*s = URLEscapedString(unespcaed)
+	return nil
+}
+
+func (t *JSTTime) UnmarshalText(data []byte) error {
 	parsed, err := time.ParseInLocation(timeJSONFormat, string(data), util.JSTLoc)
 	*t = JSTTime(parsed)
 	return err
 }
 
-func (t *UTCTime) UnmarshalJSON(data []byte) error {
+func (t *UTCTime) UnmarshalText(data []byte) error {
 	parsed, err := time.ParseInLocation(timeJSONFormat, string(data), time.UTC)
 	*t = UTCTime(parsed)
 	return err

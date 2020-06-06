@@ -91,7 +91,7 @@ func (s *WordpressServiceImpl) PatchPost(post *entity.Post, wpPost *wordpress.Po
 
 	post.ID = wpPost.ID
 	post.UserID = user.ID
-	post.Slug = wpPost.Slug
+	post.Slug = string(wpPost.Slug)
 	post.Thumbnail = thumbnail
 	post.Title = wpPost.Title.Rendered
 	post.TOC = toc
@@ -137,7 +137,7 @@ func (s *WordpressServiceImpl) PatchTouristSpot(touristSpot *entity.TouristSpot,
 
 	touristSpot.ID = wpLocation.ID
 	touristSpot.Name = wpLocation.Title.Rendered
-	touristSpot.Slug = wpLocation.Slug
+	touristSpot.Slug = string(wpLocation.Slug)
 	touristSpot.Thumbnail = thumbnail
 	touristSpot.WebsiteURL = wpLocation.Attributes.OfficialURL
 	touristSpot.City = wpLocation.Attributes.City
@@ -164,7 +164,7 @@ func (s *WordpressServiceImpl) PatchTouristSpot(touristSpot *entity.TouristSpot,
 func (s *WordpressServiceImpl) PatchAreaCategory(category *entity.AreaCategory, wpCategory *wordpress.Category) error {
 	category.ID = wpCategory.ID
 	category.Name = wpCategory.Name
-	category.Slug = wpCategory.Slug
+	category.Slug = string(wpCategory.Slug)
 
 	if wpCategory.Parent != 0 {
 		parent, err := s.AreaCategoryQueryRepository.FindByID(wpCategory.Parent)
@@ -209,7 +209,7 @@ func (s *WordpressServiceImpl) PatchAreaCategory(category *entity.AreaCategory, 
 func (s *WordpressServiceImpl) PatchThemeCategory(category *entity.ThemeCategory, wpCategory *wordpress.Category) error {
 	category.ID = wpCategory.ID
 	category.Name = wpCategory.Name
-	category.Slug = wpCategory.Slug
+	category.Slug = string(wpCategory.Slug)
 
 	if wpCategory.Parent != 0 {
 		parent, err := s.ThemeCategoryQueryRepository.FindByID(wpCategory.Parent)
@@ -241,7 +241,7 @@ func (s *WordpressServiceImpl) PatchThemeCategory(category *entity.ThemeCategory
 func (s *WordpressServiceImpl) PatchSpotCategory(spotCategory *entity.SpotCategory, wpLocationCategory *wordpress.LocationCategory) error {
 	spotCategory.ID = wpLocationCategory.ID
 	spotCategory.Name = wpLocationCategory.Name
-	spotCategory.Slug = wpLocationCategory.Slug
+	spotCategory.Slug = string(wpLocationCategory.Slug)
 
 	if wpLocationCategory.Parent != 0 {
 		parent, err := s.SpotCategoryQueryRepository.FindByID(wpLocationCategory.Parent)
@@ -297,7 +297,7 @@ func (s *WordpressServiceImpl) PatchVlog(vlog *entity.Vlog, wpVlog *wordpress.Vl
 
 	vlog.ID = wpVlog.ID
 	vlog.UserID = user.ID
-	vlog.Slug = wpVlog.Slug
+	vlog.Slug = string(wpVlog.Slug)
 	vlog.Thumbnail = thumbnail
 	vlog.Title = wpVlog.Title.Rendered
 	vlog.Body = wpVlog.Content.Rendered
@@ -333,7 +333,7 @@ func (s *WordpressServiceImpl) PatchFeature(feature *entity.Feature, wpFeature *
 
 	feature.ID = wpFeature.ID
 	feature.UserID = user.ID
-	feature.Slug = wpFeature.Slug
+	feature.Slug = string(wpFeature.Slug)
 	feature.Thumbnail = thumbnail
 	feature.Title = wpFeature.Title.Rendered
 	feature.Body = wpFeature.Content.Rendered
@@ -356,7 +356,7 @@ func (s *WordpressServiceImpl) PatchComic(comic *entity.Comic, wpComic *wordpres
 
 	comic.ID = wpComic.ID
 	comic.UserID = user.ID
-	comic.Slug = wpComic.Slug
+	comic.Slug = string(wpComic.Slug)
 	comic.Thumbnail = thumbnail
 	comic.Title = wpComic.Title.Rendered
 	comic.Body = wpComic.Content.Rendered
