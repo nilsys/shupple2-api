@@ -25,6 +25,7 @@ type (
 		CreateReviewComment(user *entity.User, reviewID int, body string) (*entity.ReviewComment, error)
 		CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) (*entity.ReviewCommentReply, error)
 		DeleteReviewComment(user *entity.User, commentID int) error
+		DeleteReviewCommentReply(user *entity.User, replyID int) error
 		FavoriteReviewComment(user *entity.User, reviewCommentID int) error
 		UnfavoriteReviewComment(user *entity.User, reviewCommentID int) error
 	}
@@ -242,7 +243,7 @@ func (s *ReviewCommandServiceImpl) DeleteReviewComment(user *entity.User, commen
 			return errors.Wrap(err, "failed to find review comment")
 		}
 		// ユーザに削除権限がなければForbidden
-		if !comment.IsOwner(user.ID) {
+		if !user.IsOwner(comment.UserID) {
 			return serror.New(nil, serror.CodeForbidden, "forbidden")
 		}
 
@@ -252,6 +253,27 @@ func (s *ReviewCommandServiceImpl) DeleteReviewComment(user *entity.User, commen
 		}
 
 		return s.ReviewCommandRepository.DeleteReviewCommentByID(c, comment.ID)
+	})
+}
+
+func (s *ReviewCommandServiceImpl) DeleteReviewCommentReply(user *entity.User, replyID int) error {
+	reply, err := s.ReviewQueryRepository.FindReviewCommentReplyByID(replyID)
+	if err != nil {
+		return errors.Wrap(err, "failed to find review comment reply")
+	}
+	// ユーザに削除権限がなければForbidden
+	if !user.IsOwner(reply.UserID) {
+		return serror.New(nil, serror.CodeForbidden, "forbidden")
+	}
+
+	return s.TransactionService.Do(func(c context.Context) error {
+
+		// コメントにひもづくリプライ数をデクリメント
+		if err := s.ReviewCommandRepository.DecrementReviewCommentReplyCount(c, reply.ReviewCommentID); err != nil {
+			return err
+		}
+
+		return s.ReviewCommandRepository.DeleteReviewCommentReplyByID(c, reply.ID)
 	})
 }
 

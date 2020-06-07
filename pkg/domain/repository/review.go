@@ -45,6 +45,7 @@ type (
 		StoreReviewComment(c context.Context, comment *entity.ReviewComment) error
 		StoreReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply) error
 		IncrementReviewCommentReplyCount(c context.Context, reviewCommentID int) error
+		DecrementReviewCommentReplyCount(c context.Context, reviewCommentID int) error
 		IncrementReviewCommentFavoriteCount(c context.Context, reviewCommentID int) error
 		DecrementReviewCommentFavoriteCount(c context.Context, reviewCommentID int) error
 		StoreReviewCommentFavorite(c context.Context, favorite *entity.UserFavoriteReviewComment) error

@@ -6,4 +6,5 @@ type Report struct {
 	TargetID   int                    `json:"targetId"`
 	TargetType model.ReportTargetType `json:"targetType"`
 	Reason     model.ReportReasonType `json:"reason"`
+	Body       string                 `json:"body"`
 }

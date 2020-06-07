@@ -553,14 +553,29 @@ const (
 	ReportReasonTypeSEXUAL
 	// ReportReasonTypeINAPPROPRIATE is a ReportReasonType of type INAPPROPRIATE
 	ReportReasonTypeINAPPROPRIATE
+	// ReportReasonTypeCOPYRIGHT is a ReportReasonType of type COPYRIGHT
+	ReportReasonTypeCOPYRIGHT
+	// ReportReasonTypeSELFHARM is a ReportReasonType of type SELFHARM
+	ReportReasonTypeSELFHARM
+	// ReportReasonTypeLIE is a ReportReasonType of type LIE
+	ReportReasonTypeLIE
+	// ReportReasonTypeUNRELATED is a ReportReasonType of type UNRELATED
+	ReportReasonTypeUNRELATED
+	// ReportReasonTypeAD is a ReportReasonType of type AD
+	ReportReasonTypeAD
 )
 
-const _ReportReasonTypeName = "UNKNOWNSEXUALINAPPROPRIATE"
+const _ReportReasonTypeName = "UNKNOWNSEXUALINAPPROPRIATECOPYRIGHTSELFHARMLIEUNRELATEDAD"
 
 var _ReportReasonTypeMap = map[ReportReasonType]string{
 	1: _ReportReasonTypeName[0:7],
 	2: _ReportReasonTypeName[7:13],
 	3: _ReportReasonTypeName[13:26],
+	4: _ReportReasonTypeName[26:35],
+	5: _ReportReasonTypeName[35:43],
+	6: _ReportReasonTypeName[43:46],
+	7: _ReportReasonTypeName[46:55],
+	8: _ReportReasonTypeName[55:57],
 }
 
 // String implements the Stringer interface.
@@ -575,6 +590,11 @@ var _ReportReasonTypeValue = map[string]ReportReasonType{
 	_ReportReasonTypeName[0:7]:   1,
 	_ReportReasonTypeName[7:13]:  2,
 	_ReportReasonTypeName[13:26]: 3,
+	_ReportReasonTypeName[26:35]: 4,
+	_ReportReasonTypeName[35:43]: 5,
+	_ReportReasonTypeName[43:46]: 6,
+	_ReportReasonTypeName[46:55]: 7,
+	_ReportReasonTypeName[55:57]: 8,
 }
 
 // ParseReportReasonType attempts to convert a string to a ReportReasonType

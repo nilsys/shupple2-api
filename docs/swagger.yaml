@@ -686,6 +686,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ReviewCommentReply"
+  /reviews/comment/{id}/reply/{replyId}:
+    delete:
+      tags:
+        - review
+      summary: レビューのコメントに対するリプライ削除API
+      description: |
+        replyIdに対応するリプライを削除
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: コメントID
+          schema:
+            type: integer
+        - in: path
+          name: replyId
+          required: true
+          description: リプライID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: "成功"
+        "404":
+          description: 存在しないリプライ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /reviews/comment/reply/:id/favorite:
     put:
       tags:
@@ -2067,6 +2096,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ThemeCategoryList"
+  /reports:
+    post:
+      tags:
+        - report
+      summary: メディア通報API
+      description: |
+        通報
+      security:
+        - iDPCognito: []
+      requestBody:
+        $ref: "#/components/requestBodies/ReportRequest"
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 servers:
   - url: http://localhost:5000/api/v1/tourism
   - url: https://stg-api.stayway.jp/api/v1/tourism
@@ -2178,6 +2227,11 @@ components:
           schema:
             $ref: "#/components/schemas/ReviewUpdateRequest"
       required: true
+    ReportRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ReportRequest"
   securitySchemes:
     iDPCognito:
       in: header
@@ -3764,6 +3818,37 @@ components:
           type: boolean
           description: 次のページがあるか
           example: true
+    ReportRequest:
+      type: object
+      properties:
+        targetId:
+          type: integer
+          description: 通報するメディアid
+          example: 1
+        targetType:
+          $ref: "#/components/schemas/ReportTargetType"
+        reason:
+          $ref: "#/components/schemas/ReportReasonType"
+        body:
+          type: string
+          description: コメント
+    ReportReasonType:
+      type: string
+      enum:
+        - UNKNOWN
+        - SEXUAL
+        - INAPPROPRIATE
+        - COPYRIGHT
+        - SELFHARM
+        - LIE
+        - UNRELATED
+        - AD
+    ReportTargetType:
+      type: string
+      enum:
+        - REVIEW
+        - COMMENT
+        - REPLY
     Accompanying:
       type: string
       enum:

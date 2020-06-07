@@ -83,10 +83,6 @@ func NewUserFavoriteReviewCommentReply(userID, reviewCommentReplyID int) *UserFa
 	}
 }
 
-func (r *ReviewComment) IsOwner(userID int) bool {
-	return r.UserID == userID
-}
-
 func (r *ReviewComment) WebURL() string {
 	return "https://stayway.jp/tourism" + strconv.Itoa(r.ID)
 }

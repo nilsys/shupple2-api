@@ -54,7 +54,7 @@ func (s *ReviewCommandScenarioImpl) UpdateReview(user *entity.User, params *comm
 	if err != nil {
 		return errors.Wrapf(err, "failed to find review id=%d", params.ID)
 	}
-	if !review.IsOwner(user.ID) {
+	if !user.IsOwner(review.UserID) {
 		return serror.New(nil, serror.CodeForbidden, "forbidden error")
 	}
 
@@ -75,7 +75,7 @@ func (s *ReviewCommandScenarioImpl) DeleteReview(id int, user *entity.User) erro
 	if err != nil {
 		return errors.Wrapf(err, "failed to find review id=%d", id)
 	}
-	if !review.IsOwner(user.ID) {
+	if !user.IsOwner(review.UserID) {
 		return serror.New(nil, serror.CodeForbidden, "forbidden error")
 	}
 

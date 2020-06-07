@@ -108,7 +108,7 @@ type (
 	}
 )
 
-func NewSlackReport(targetType model.ReportTargetType, targetURL string, targetID int, body string, reason model.ReportReasonType, reportUserID, reportedUserID int) *Report {
+func NewSlackReport(targetType model.ReportTargetType, targetURL string, targetID int, targetBody, body string, reason model.ReportReasonType, reportUserID, reportedUserID int) *Report {
 	text := Text{
 		Type: "mrkdwn",
 		Text: fmt.Sprintf("通報がありました:\n*<%s|対応して下さい>*", targetURL),
@@ -124,7 +124,7 @@ func NewSlackReport(targetType model.ReportTargetType, targetURL string, targetI
 		},
 		{
 			Type: "mrkdwn",
-			Text: fmt.Sprintf("*Body:*\n\t%s", body),
+			Text: fmt.Sprintf("*Body:*\n\t%s", targetBody),
 		},
 		{
 			Type: "mrkdwn",
@@ -132,7 +132,7 @@ func NewSlackReport(targetType model.ReportTargetType, targetURL string, targetI
 		},
 		{
 			Type: "mrkdwn",
-			Text: fmt.Sprintf("*Reason:*\n\t%s", reason),
+			Text: fmt.Sprintf("*Reason:*\n\t%s:\n\t%s", reason, body),
 		},
 		{
 			Type: "mrkdwn",

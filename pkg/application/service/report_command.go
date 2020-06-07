@@ -82,8 +82,8 @@ func (s *ReportCommandServiceImpl) Report(user *entity.User, cmd *command.Report
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid duplicate report")
 	}
 
-	report := entity.NewReport(user.ID, cmd.TargetID, cmd.TargetType, cmd.Reason)
-	slackReport := slack.NewSlackReport(cmd.TargetType, targetURL, cmd.TargetID, body, cmd.Reason, user.ID, reportedUserID)
+	report := entity.NewReport(user.ID, cmd.TargetID, cmd.TargetType, cmd.Reason, cmd.Body)
+	slackReport := slack.NewSlackReport(cmd.TargetType, targetURL, cmd.TargetID, body, cmd.Body, cmd.Reason, user.ID, reportedUserID)
 
 	return s.TransactionService.Do(func(c context.Context) error {
 		// 通報を永続化

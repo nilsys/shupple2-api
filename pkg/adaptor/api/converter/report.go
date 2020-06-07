@@ -14,6 +14,7 @@ func (c Converters) ConvertReportToCmd(p *input.Report) *command.Report {
 		TargetID:   p.TargetID,
 		TargetType: p.TargetType,
 		Reason:     p.Reason,
+		Body:       p.Body,
 	}
 }
 

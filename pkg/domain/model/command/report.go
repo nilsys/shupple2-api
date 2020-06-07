@@ -7,6 +7,7 @@ type (
 		TargetID   int
 		TargetType model.ReportTargetType
 		Reason     model.ReportReasonType
+		Body       string
 	}
 
 	MarkAsReport struct {

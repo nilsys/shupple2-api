@@ -122,6 +122,13 @@ func (r *ReviewCommandRepositoryImpl) IncrementReviewCommentReplyCount(c context
 	return nil
 }
 
+func (r *ReviewCommandRepositoryImpl) DecrementReviewCommentReplyCount(c context.Context, reviewCommentID int) error {
+	if err := r.DB(c).Exec("UPDATE review_comment SET reply_count=reply_count-1 WHERE id = ?", reviewCommentID).Error; err != nil {
+		return errors.Wrap(err, "failed to decrement review_comment.reply_count")
+	}
+	return nil
+}
+
 func (r *ReviewCommandRepositoryImpl) IncrementReviewCommentFavoriteCount(c context.Context, reviewCommentID int) error {
 	if err := r.DB(c).Exec("UPDATE review_comment SET favorite_count=favorite_count+1 WHERE id = ?", reviewCommentID).Error; err != nil {
 		return errors.Wrap(err, "failed to increment review_comment.favorite_count")

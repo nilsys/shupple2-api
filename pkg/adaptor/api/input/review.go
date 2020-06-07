@@ -40,7 +40,7 @@ type (
 		ReviewID int `param:"id" validate:"required"`
 	}
 
-	FavoriteReviewReplyParam struct {
+	ReviewReplyParam struct {
 		ReplyID int `param:"replyId" validate:"required"`
 	}
 

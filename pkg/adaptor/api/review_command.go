@@ -90,6 +90,19 @@ func (c *ReviewCommandController) StoreReviewCommentReply(ctx echo.Context, user
 	return ctx.JSON(http.StatusOK, c.ConvertReviewCommentReplyToOutput(reply))
 }
 
+func (c *ReviewCommandController) DeleteReviewCommentReply(ctx echo.Context, user entity.User) error {
+	i := &input.ReviewReplyParam{}
+	if err := BindAndValidate(ctx, i); err != nil {
+		return errors.Wrap(err, "invalid review reply param")
+	}
+
+	if err := c.ReviewCommandService.DeleteReviewCommentReply(&user, i.ReplyID); err != nil {
+		return errors.Wrap(err, "failed delete review reply")
+	}
+
+	return ctx.JSON(http.StatusOK, "ok")
+}
+
 func (c *ReviewCommandController) FavoriteReviewComment(ctx echo.Context, user entity.User) error {
 	p := &input.FavoriteReviewComment{}
 	if err := BindAndValidate(ctx, p); err != nil {

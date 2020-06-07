@@ -3,7 +3,6 @@ package entity
 import (
 	"fmt"
 	"sort"
-	"strconv"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
@@ -97,17 +96,13 @@ func (r *ReviewDetail) TableName() string {
 	return "review"
 }
 
-func (r *Review) IsOwner(userID int) bool {
-	return r.UserID == userID
-}
-
 func (r *Review) HashHashtagIDs() bool {
 	return len(r.HashtagIDs) > 0
 }
 
 // TODO: 仮置き
 func (r *Review) WebURL() string {
-	return "https://stayway.jp/tourism/" + strconv.Itoa(r.ID)
+	return fmt.Sprintf("https://stayway.jp/tourism/location/%d/review/%d", r.TouristSpotID, r.ID)
 }
 
 func (rdi ReviewDetailWithIsFavorite) TableName() string {
