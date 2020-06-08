@@ -74,6 +74,8 @@ var RepositoriesSet = wire.NewSet(
 	SpotCategoryQueryRepositorySet,
 	TouristSpotCommandRepositorySet,
 	TouristSpotQueryRepositorySet,
+	ShippingQueryRepositorySet,
+	ShippingCommandRepositorySet,
 	PostCommandRepositorySet,
 	PostQueryRepositorySet,
 	PostFavoriteCommandRepositorySet,

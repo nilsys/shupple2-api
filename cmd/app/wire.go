@@ -19,6 +19,8 @@ import (
 
 var controllerSet = wire.NewSet(
 	converter.ConvertersSet,
+	api.ShippingQueryControllerSet,
+	api.ShippingCommandControllerSet,
 	api.PostQueryControllerSet,
 	api.PostFavoriteCommandControllerSet,
 	api.CategoryQueryControllerSet,
@@ -63,6 +65,8 @@ var domainServiceSet = wire.NewSet(
 )
 
 var serviceSet = wire.NewSet(
+	service.ShippingQueryServiceSet,
+	service.ShippingCommandServiceSet,
 	service.PostQueryServiceSet,
 	service.PostCommandServiceSet,
 	service.PostFavoriteCommandServiceSet,

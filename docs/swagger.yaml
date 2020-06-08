@@ -2096,6 +2096,91 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ThemeCategoryList"
+
+  /payment/shipping:
+    post:
+      tags:
+        - payment
+      summary: 申込み情報登録
+      description: |
+        申込み情報登録は履歴を残す為に全て新規作成される。
+      security:
+        - iDPCognito: []
+      requestBody:
+        $ref: "#/components/requestBodies/ShippingAddressRequest"
+      responses:
+        "200":
+          description: 成功
+    get:
+      tags:
+        - payment
+      summary: 申込み情報取得
+      description: |
+        最新の申込み情報登録を返却
+      security:
+        - iDPCognito: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShippingAddress"
+  /payment/card:
+    post:
+      tags:
+        - payment
+      summary: カード登録
+      description: |
+        カード登録は１つのみ
+      security:
+        - iDPCognito: []
+      requestBody:
+        $ref: "#/components/requestBodies/CardRequest"
+      responses:
+        "200":
+          description: 成功
+    get:
+      tags:
+        - payment
+      summary: カード取得
+      security:
+        - iDPCognito: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Card"
+  /payment/card/{id}:
+    delete:
+      tags:
+        - payment
+      summary: カード削除
+      security:
+        - iDPCognito: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+  /payment:
+    post:
+      tags:
+        - payment
+      summary: 決済
+      security:
+        - iDPCognito: []
+      requestBody:
+        $ref: "#/components/requestBodies/PaymentRequest"
+      responses:
+        "200":
+          description: OK
   /reports:
     post:
       tags:
@@ -2107,6 +2192,7 @@ paths:
         - iDPCognito: []
       requestBody:
         $ref: "#/components/requestBodies/ReportRequest"
+
       responses:
         "200":
           description: 成功
@@ -2227,6 +2313,21 @@ components:
           schema:
             $ref: "#/components/schemas/ReviewUpdateRequest"
       required: true
+    ShippingAddressRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ShippingAddressRequest"
+    CardRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CardRequest"
+    PaymentRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PaymentListRequest"
     ReportRequest:
       content:
         application/json:
@@ -2516,6 +2617,83 @@ components:
                 type: string
                 description: 拡張子
                 example: png
+    ShippingAddressRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: |
+            姓
+          example: 山田
+        lastName:
+          type: string
+          description: |
+            名
+          example: 太郎
+        firstNameKana:
+          type: string
+          description: |
+            姓カナ
+          example: ヤマダ
+        lastNameKana:
+          type: string
+          description: |
+            名カナ
+          example: タロウ
+        phoneNumber:
+          type: string
+          description: |
+            電話番号
+            ハイフン無
+          example: 09088172831
+        postalNumber:
+          type: string
+          description: |
+            郵便番号
+            ハイフン無
+          example:
+        prefecture:
+          type: string
+          description: |
+            都道府県
+        city:
+          type: string
+          description: |
+            市区町村
+        address:
+          type: string
+          description: |
+            番地
+        building:
+          type: string
+          description: |
+            建物・部屋番号
+        email:
+          type: string
+          format: email
+    CardRequest:
+      type: object
+      properties:
+        cardToken:
+          type: string
+          description: |
+            pay.jpから送られるカードトークン
+    PaymentListRequest:
+      type: object
+      properties:
+        payments:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentRequest"
+    PaymentRequest:
+      type: object
+      properties:
+        returnId:
+          type: integer
+          description: 選択したリターンのid
+        amount:
+          type: integer
+          description: 数量
     NoticeList:
       type: object
       properties:
@@ -3818,6 +3996,76 @@ components:
           type: boolean
           description: 次のページがあるか
           example: true
+    ShippingAddressList:
+      type: array
+      items:
+        $ref: "#/components/schemas/ShippingAddress"
+    ShippingAddress:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+          description: |
+            姓
+          example: 山田
+        lastName:
+          type: string
+          description: |
+            名
+          example: 太郎
+        firstNameKana:
+          type: string
+          description: |
+            姓カナ
+          example: ヤマダ
+        lastNameKana:
+          type: string
+          description: |
+            名カナ
+          example: タロウ
+        phoneNumber:
+          type: string
+          description: |
+            電話番号
+            ハイフン無
+          example: 09088172831
+        postalNumber:
+          type: string
+          description: |
+            郵便番号
+            ハイフン無
+          example:
+        prefecture:
+          type: string
+          description: |
+            都道府県
+        city:
+          type: string
+          description: |
+            市区町村
+        address:
+          type: string
+          description: |
+            番地
+        building:
+          type: string
+          description: |
+            建物・部屋番号
+    Card:
+      type: object
+      properties:
+        id:
+          type: integer
+        last4:
+          type: string
+          description: カード番号末尾
+        expired:
+          type: string
+          description: |
+            有効期限
+          example: 04/22
     ReportRequest:
       type: object
       properties:

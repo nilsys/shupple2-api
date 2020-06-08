@@ -27,6 +27,8 @@ type Test struct {
 	*SpotCategoryQueryRepositoryImpl
 	*TouristSpotCommandRepositoryImpl
 	*TouristSpotQueryRepositoryImpl
+	*ShippingQueryRepositoryImpl
+	*ShippingCommandRepositoryImpl
 	*PostCommandRepositoryImpl
 	*PostQueryRepositoryImpl
 	*UserQueryRepositoryImpl

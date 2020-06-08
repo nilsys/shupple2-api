@@ -72,6 +72,12 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 	touristSpotQueryRepositoryImpl := &TouristSpotQueryRepositoryImpl{
 		DB: db,
 	}
+	shippingQueryRepositoryImpl := &ShippingQueryRepositoryImpl{
+		DB: db,
+	}
+	shippingCommandRepositoryImpl := &ShippingCommandRepositoryImpl{
+		DAO: dao,
+	}
 	postCommandRepositoryImpl := &PostCommandRepositoryImpl{
 		DAO: dao,
 	}
@@ -120,6 +126,8 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 		SpotCategoryQueryRepositoryImpl:    spotCategoryQueryRepositoryImpl,
 		TouristSpotCommandRepositoryImpl:   touristSpotCommandRepositoryImpl,
 		TouristSpotQueryRepositoryImpl:     touristSpotQueryRepositoryImpl,
+		ShippingQueryRepositoryImpl:        shippingQueryRepositoryImpl,
+		ShippingCommandRepositoryImpl:      shippingCommandRepositoryImpl,
 		PostCommandRepositoryImpl:          postCommandRepositoryImpl,
 		PostQueryRepositoryImpl:            postQueryRepositoryImpl,
 		UserQueryRepositoryImpl:            userQueryRepositoryImpl,
@@ -152,6 +160,8 @@ type Test struct {
 	*SpotCategoryQueryRepositoryImpl
 	*TouristSpotCommandRepositoryImpl
 	*TouristSpotQueryRepositoryImpl
+	*ShippingQueryRepositoryImpl
+	*ShippingCommandRepositoryImpl
 	*PostCommandRepositoryImpl
 	*PostQueryRepositoryImpl
 	*UserQueryRepositoryImpl

@@ -27,6 +27,8 @@ type App struct {
 	DB                              *gorm.DB
 	Echo                            *echo.Echo
 	AuthorizeWrapper                staywayMiddleware.Authorize
+	ShippingQueryController         api.ShippingQueryController
+	ShippingCommandController       api.ShippingCommandController
 	PostQueryController             api.PostQueryController
 	PostFavoriteCommandController   api.PostFavoriteCommandController
 	CategoryQueryController         api.CategoryQueryController
@@ -224,6 +226,12 @@ func setRoutes(app *App) {
 		reports := api.Group("/reports")
 		reports.POST("", auth.Require(app.ReportCommandController.Report))
 		reports.POST("/submit", app.ReportCommandController.MarkAsDone, staywayMiddleware.KeyAuth(app.Config.Slack.CallbackKey))
+	}
+
+	{
+		payment := api.Group("/payment")
+		payment.GET("/shipping", auth.Require(app.ShippingQueryController.Show))
+		payment.POST("/shipping", auth.Require(app.ShippingCommandController.StoreShippingAddress))
 	}
 
 	api.POST("/s3", auth.Require(app.S3CommandController.Post))

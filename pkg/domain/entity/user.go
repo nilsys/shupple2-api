@@ -199,7 +199,3 @@ func (q *UserDetail) TableName() string {
 func (u *OptionalUser) IsAuthorized() bool {
 	return u.Authenticated
 }
-
-func (u *User) IsOwner(id int) bool {
-	return u.ID == id
-}

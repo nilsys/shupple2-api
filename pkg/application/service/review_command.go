@@ -243,7 +243,7 @@ func (s *ReviewCommandServiceImpl) DeleteReviewComment(user *entity.User, commen
 			return errors.Wrap(err, "failed to find review comment")
 		}
 		// ユーザに削除権限がなければForbidden
-		if !user.IsOwner(comment.UserID) {
+		if !user.IsSelfID(comment.UserID) {
 			return serror.New(nil, serror.CodeForbidden, "forbidden")
 		}
 
@@ -262,7 +262,7 @@ func (s *ReviewCommandServiceImpl) DeleteReviewCommentReply(user *entity.User, r
 		return errors.Wrap(err, "failed to find review comment reply")
 	}
 	// ユーザに削除権限がなければForbidden
-	if !user.IsOwner(reply.UserID) {
+	if !user.IsSelfID(reply.UserID) {
 		return serror.New(nil, serror.CodeForbidden, "forbidden")
 	}
 

@@ -1,18 +1,19 @@
 package repository
 
 const (
-	userID          = 101
-	postID          = 111
-	touristSpotID   = 121
-	comicID         = 131
-	vlogID          = 141
-	featureID       = 151
-	areaCategoryID  = 161
-	themeCategoryID = 171
-	spotCategoryID  = 181
-	reviewID        = 191
-	hashtagID       = 201
-	innID           = 211
+	userID            = 101
+	postID            = 111
+	touristSpotID     = 121
+	comicID           = 131
+	vlogID            = 141
+	featureID         = 151
+	areaCategoryID    = 161
+	themeCategoryID   = 171
+	spotCategoryID    = 181
+	reviewID          = 191
+	hashtagID         = 201
+	innID             = 211
+	shippingAddressID = 221
 )
 
 var (
