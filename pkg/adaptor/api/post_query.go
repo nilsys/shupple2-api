@@ -47,7 +47,7 @@ func (c *PostQueryController) ShowBySlug(ctx echo.Context, ouser entity.Optional
 		return errors.Wrap(err, "validation get post by slug parameter")
 	}
 
-	post, areaCategorieMap, themeCategoriesMap, err := c.PostQueryScenario.ShowQueryBySlug(p.Slug, ouser)
+	post, areaCategorieMap, themeCategoriesMap, err := c.PostQueryScenario.ShowQueryBySlug(string(p.Slug), ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to get post by slug")
 	}

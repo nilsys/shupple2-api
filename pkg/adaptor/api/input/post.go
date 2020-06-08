@@ -11,7 +11,7 @@ type (
 	}
 
 	ShowPostBySlug struct {
-		Slug string `param:"slug" validate:"required"`
+		Slug PathString `param:"slug" validate:"required"`
 	}
 
 	// 記事一覧取得APIパラメータ
