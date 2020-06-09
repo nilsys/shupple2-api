@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	wpPageDelimiter   = "<p><!--nextpage--></p>"
+	wpPageDelimiter   = "<!--nextpage-->"
 	thumbnailS3Prefix = "https://s3-ap-northeast-1.amazonaws.com/"
 )
 
