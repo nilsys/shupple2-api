@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	// AccompanyingTypeBUISINESS is a AccompanyingType of type BUISINESS
-	AccompanyingTypeBUISINESS AccompanyingType = iota + 1
+	// AccompanyingTypeBUSINESS is a AccompanyingType of type BUSINESS
+	AccompanyingTypeBUSINESS AccompanyingType = iota + 1
 	// AccompanyingTypeCOUPLE is a AccompanyingType of type COUPLE
 	AccompanyingTypeCOUPLE
 	// AccompanyingTypeFAMILY is a AccompanyingType of type FAMILY
@@ -22,15 +22,15 @@ const (
 	AccompanyingTypeWITHCHILD
 )
 
-const _AccompanyingTypeName = "BUISINESSCOUPLEFAMILYFRIENDONLYWITHCHILD"
+const _AccompanyingTypeName = "BUSINESSCOUPLEFAMILYFRIENDONLYWITHCHILD"
 
 var _AccompanyingTypeMap = map[AccompanyingType]string{
-	1: _AccompanyingTypeName[0:9],
-	2: _AccompanyingTypeName[9:15],
-	3: _AccompanyingTypeName[15:21],
-	4: _AccompanyingTypeName[21:27],
-	5: _AccompanyingTypeName[27:31],
-	6: _AccompanyingTypeName[31:40],
+	1: _AccompanyingTypeName[0:8],
+	2: _AccompanyingTypeName[8:14],
+	3: _AccompanyingTypeName[14:20],
+	4: _AccompanyingTypeName[20:26],
+	5: _AccompanyingTypeName[26:30],
+	6: _AccompanyingTypeName[30:39],
 }
 
 // String implements the Stringer interface.
@@ -42,12 +42,12 @@ func (x AccompanyingType) String() string {
 }
 
 var _AccompanyingTypeValue = map[string]AccompanyingType{
-	_AccompanyingTypeName[0:9]:   1,
-	_AccompanyingTypeName[9:15]:  2,
-	_AccompanyingTypeName[15:21]: 3,
-	_AccompanyingTypeName[21:27]: 4,
-	_AccompanyingTypeName[27:31]: 5,
-	_AccompanyingTypeName[31:40]: 6,
+	_AccompanyingTypeName[0:8]:   1,
+	_AccompanyingTypeName[8:14]:  2,
+	_AccompanyingTypeName[14:20]: 3,
+	_AccompanyingTypeName[20:26]: 4,
+	_AccompanyingTypeName[26:30]: 5,
+	_AccompanyingTypeName[30:39]: 6,
 }
 
 // ParseAccompanyingType attempts to convert a string to a AccompanyingType

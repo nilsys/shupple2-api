@@ -28,7 +28,7 @@ ENUM(Area = 1, SubArea, SubSubArea, TouristSpot, HashTag, User)
 type SuggestionType int
 
 /*
-ENUM(BUISINESS = 1, COUPLE, FAMILY, FRIEND, ONLY, WITHCHILD)
+ENUM(BUSINESS = 1, COUPLE, FAMILY, FRIEND, ONLY, WITHCHILD)
 */
 type AccompanyingType int
 
