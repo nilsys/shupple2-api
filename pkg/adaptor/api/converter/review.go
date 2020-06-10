@@ -101,8 +101,8 @@ func (c Converters) ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview *
 
 	return &output.Review{
 		ID:            queryReview.ID,
-		InnID:         queryReview.InnID,
-		TouristSpotID: queryReview.TouristSpotID,
+		InnID:         queryReview.InnID.Int64,
+		TouristSpotID: queryReview.TouristSpotID.Int64,
 		Score:         queryReview.Score,
 		Body:          queryReview.Body,
 		FavoriteCount: queryReview.FavoriteCount,
@@ -138,8 +138,8 @@ func (c Converters) convertQueryReviewToOutput(queryReview *entity.ReviewDetail)
 
 	return &output.Review{
 		ID:            queryReview.ID,
-		InnID:         queryReview.InnID,
-		TouristSpotID: queryReview.TouristSpotID,
+		InnID:         queryReview.InnID.Int64,
+		TouristSpotID: queryReview.TouristSpotID.Int64,
 		Score:         queryReview.Score,
 		Body:          queryReview.Body,
 		FavoriteCount: queryReview.FavoriteCount,
@@ -185,6 +185,7 @@ func (c Converters) ConvertUpdateReviewParamToCommand(param *input.UpdateReviewP
 	}
 
 	return &command.UpdateReview{
+		ID:           param.ID,
 		TravelDate:   param.TravelDate,
 		Accompanying: param.Accompanying,
 		Score:        param.Score,

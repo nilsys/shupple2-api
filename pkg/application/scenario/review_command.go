@@ -8,6 +8,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
+	"gopkg.in/guregu/null.v3"
 )
 
 type (
@@ -41,7 +42,7 @@ func (s *ReviewCommandScenarioImpl) Create(user *entity.User, param *command.Cre
 	review.HashtagIDs = s.convertReviewAndHashtagToReviewHashtag(hashtags, review)
 
 	// touristSpotと紐付くレビューの場合
-	if review.TouristSpotID != 0 {
+	if review.TouristSpotID.Valid {
 		return s.ReviewCommandService.StoreTouristSpotReview(review)
 	}
 
@@ -49,25 +50,25 @@ func (s *ReviewCommandScenarioImpl) Create(user *entity.User, param *command.Cre
 	return s.ReviewCommandService.StoreInnReview(review)
 }
 
-func (s *ReviewCommandScenarioImpl) UpdateReview(user *entity.User, params *command.UpdateReview) error {
-	review, err := s.ReviewQueryService.ShowReview(params.ID)
+func (s *ReviewCommandScenarioImpl) UpdateReview(user *entity.User, cmd *command.UpdateReview) error {
+	review, err := s.ReviewQueryService.ShowReview(cmd.ID)
 	if err != nil {
-		return errors.Wrapf(err, "failed to find review id=%d", params.ID)
+		return errors.Wrapf(err, "failed to find review id=%d", cmd.ID)
 	}
 	if !user.IsSelfID(review.UserID) {
 		return serror.New(nil, serror.CodeForbidden, "forbidden error")
 	}
 
-	hashtags, err := s.HashtagCommandService.FindOrCreateHashtags(model.FindHashtags(params.Body))
+	hashtags, err := s.HashtagCommandService.FindOrCreateHashtags(model.FindHashtags(cmd.Body))
 	if err != nil {
 		return errors.Wrap(err, "failed find or create hashtags")
 	}
 
 	review.HashtagIDs = s.convertReviewAndHashtagToReviewHashtag(hashtags, review)
 
-	s.updateReview(params, review)
+	s.updateReview(cmd, review)
 
-	return s.ReviewCommandService.UpdateReview(review)
+	return s.ReviewCommandService.UpdateReview(review, cmd)
 }
 
 func (s *ReviewCommandScenarioImpl) DeleteReview(id int, user *entity.User) error {
@@ -103,7 +104,7 @@ func (s *ReviewCommandScenarioImpl) convertStoreReviewPramToEntity(param *comman
 	if param.TouristSpotID != 0 {
 		return &entity.Review{
 			UserID:        user.ID,
-			TouristSpotID: param.TouristSpotID,
+			TouristSpotID: null.IntFrom(int64(param.TouristSpotID)),
 			Score:         param.Score,
 			MediaCount:    len(param.MediaUUIDs),
 			Body:          param.Body,
@@ -115,7 +116,7 @@ func (s *ReviewCommandScenarioImpl) convertStoreReviewPramToEntity(param *comman
 
 	return &entity.Review{
 		UserID:       user.ID,
-		InnID:        param.InnID,
+		InnID:        null.IntFrom(int64(param.InnID)),
 		Score:        param.Score,
 		MediaCount:   len(param.MediaUUIDs),
 		Body:         param.Body,
@@ -126,14 +127,14 @@ func (s *ReviewCommandScenarioImpl) convertStoreReviewPramToEntity(param *comman
 }
 
 // TODO: https://github.com/stayway-corp/stayway-media-api/pull/133#discussion_r394333171
-func (s *ReviewCommandScenarioImpl) updateReview(param *command.UpdateReview, review *entity.Review) {
-	review.Body = param.Body
-	review.TravelDate = param.TravelDate.Time
-	review.Accompanying = param.Accompanying
-	review.Score = param.Score
+func (s *ReviewCommandScenarioImpl) updateReview(cmd *command.UpdateReview, review *entity.Review) {
+	review.Body = cmd.Body
+	review.TravelDate = cmd.TravelDate.Time
+	review.Accompanying = cmd.Accompanying
+	review.Score = cmd.Score
 
-	reviewMedias := make([]*entity.ReviewMedia, len(param.MediaUUIDs))
-	for i, media := range param.MediaUUIDs {
+	reviewMedias := make([]*entity.ReviewMedia, len(cmd.MediaUUIDs))
+	for i, media := range cmd.MediaUUIDs {
 		reviewMedias[i] = entity.NewReviewMedia(media.UUID, media.MimeType, i+1)
 	}
 	if len(reviewMedias) > 0 {

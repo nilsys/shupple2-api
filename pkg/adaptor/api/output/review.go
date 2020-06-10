@@ -8,8 +8,8 @@ import (
 type (
 	Review struct {
 		ID            int                `json:"id"`
-		InnID         int                `json:"innId"`
-		TouristSpotID int                `json:"touristSpotId"`
+		InnID         int64              `json:"innId"`
+		TouristSpotID int64              `json:"touristSpotId"`
 		Score         int                `json:"score"`
 		Body          string             `json:"body"`
 		FavoriteCount int                `json:"favoriteCount"`

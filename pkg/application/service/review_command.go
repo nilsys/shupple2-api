@@ -20,7 +20,7 @@ type (
 		StoreTouristSpotReview(review *entity.Review) error
 		StoreInnReview(review *entity.Review) error
 		//*************************************************
-		UpdateReview(review *entity.Review) error
+		UpdateReview(review *entity.Review, cmd *command.UpdateReview) error
 		DeleteReview(review *entity.Review) error
 		CreateReviewComment(user *entity.User, reviewID int, body string) (*entity.ReviewComment, error)
 		CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) (*entity.ReviewCommentReply, error)
@@ -60,7 +60,7 @@ func (s *ReviewCommandServiceImpl) StoreTouristSpotReview(review *entity.Review)
 		}
 
 		// 紐づくtourist_spotの平均値を更新
-		if err := s.TouristSpotCommandRepository.UpdateScoreByID(c, review.TouristSpotID); err != nil {
+		if err := s.TouristSpotCommandRepository.UpdateScoreByID(c, review.TouristSpotID.Int64); err != nil {
 			return errors.Wrap(err, "failed increment hashtag.score")
 		}
 
@@ -83,15 +83,18 @@ func (s *ReviewCommandServiceImpl) StoreInnReview(review *entity.Review) error {
 	})
 }
 
-func (s *ReviewCommandServiceImpl) UpdateReview(review *entity.Review) error {
+func (s *ReviewCommandServiceImpl) UpdateReview(review *entity.Review, cmd *command.UpdateReview) error {
 	return s.TransactionService.Do(func(c context.Context) error {
 
 		if err := s.ReviewCommandRepository.StoreReview(c, review); err != nil {
 			return errors.Wrap(err, "failed store review")
 		}
 
-		if err := s.persistReviewMedia(review.Medias); err != nil {
-			return errors.Wrap(err, "failed to persist media")
+		// media(写真)に変更があった場合のみ
+		if cmd.HasMedia() {
+			if err := s.persistReviewMedia(review.Medias); err != nil {
+				return errors.Wrap(err, "failed to persist media")
+			}
 		}
 
 		return nil

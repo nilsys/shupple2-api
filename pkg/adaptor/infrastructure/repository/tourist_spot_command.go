@@ -30,7 +30,7 @@ func (r *TouristSpotCommandRepositoryImpl) Store(c context.Context, touristSpot 
 	return errors.Wrap(r.DB(c).Save(touristSpot).Error, "failed to save touristSpot")
 }
 
-func (r *TouristSpotCommandRepositoryImpl) UpdateScoreByID(c context.Context, id int) error {
+func (r *TouristSpotCommandRepositoryImpl) UpdateScoreByID(c context.Context, id int64) error {
 	if err := r.DB(c).Exec("UPDATE  tourist_spot SET rate = (select AVG(score) from review where tourist_spot_id = ?) WHERE id = ?;", id, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update tourist spot rate")
 	}

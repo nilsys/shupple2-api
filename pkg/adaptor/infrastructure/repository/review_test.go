@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"gopkg.in/guregu/null.v3"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
@@ -286,8 +288,8 @@ func newReview(id, userID, touristSpotID, innID int) *entity.Review {
 	review := &entity.Review{
 		ID:            id,
 		UserID:        userID,
-		TouristSpotID: touristSpotID,
-		InnID:         innID,
+		TouristSpotID: null.IntFrom(int64(touristSpotID)),
+		InnID:         null.IntFrom(int64(innID)),
 		Score:         id,
 		MediaCount:    id,
 		Body:          "dummy",

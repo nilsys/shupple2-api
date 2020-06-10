@@ -5,6 +5,8 @@ import (
 	"sort"
 	"time"
 
+	"gopkg.in/guregu/null.v3"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
@@ -14,8 +16,8 @@ type (
 	Review struct {
 		ID            int
 		UserID        int
-		TouristSpotID int `gorm:"default:nil"`
-		InnID         int `gorm:"default:nil"`
+		TouristSpotID null.Int `gorm:"default:nil"`
+		InnID         null.Int `gorm:"default:nil"`
 		Score         int
 		MediaCount    int
 		Body          string
@@ -102,7 +104,7 @@ func (r *Review) HashHashtagIDs() bool {
 
 // TODO: 仮置き
 func (r *Review) WebURL() string {
-	return fmt.Sprintf("https://stayway.jp/tourism/location/%d/review/%d", r.TouristSpotID, r.ID)
+	return fmt.Sprintf("https://stayway.jp/tourism/location/%d/review/%d", r.TouristSpotID.Int64, r.ID)
 }
 
 func (rdi ReviewDetailWithIsFavorite) TableName() string {

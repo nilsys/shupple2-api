@@ -27,3 +27,7 @@ type (
 		MediaUUIDs   []*CreateReviewMedia
 	}
 )
+
+func (c *UpdateReview) HasMedia() bool {
+	return len(c.MediaUUIDs) > 0
+}

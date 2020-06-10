@@ -262,7 +262,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserSummaryList"
-  /users/favorite/reviews/:id:
+  /users/favorite/reviews/{id}:
     get:
       tags:
         - user
@@ -281,7 +281,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserSummaryList"
-  /users/favorite/posts/:id:
+  /users/favorite/posts/{id}:
     get:
       tags:
         - user
@@ -475,7 +475,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /reviews/:id:
+  /reviews/{id}:
     get:
       tags:
         - review
@@ -572,7 +572,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /reviews/:id/comment:
+  /reviews/{id}/comment:
     get:
       tags:
         - review
@@ -642,7 +642,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /reviews/comment/:id/reply:
+  /reviews/comment/{id}/reply:
     get:
       tags:
         - review
@@ -715,7 +715,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /reviews/comment/reply/:id/favorite:
+  /reviews/comment/{commentId}/reply/{replyId}/favorite:
     put:
       tags:
         - review
@@ -724,7 +724,13 @@ paths:
         idに対応するリプライをいいねするAPI
       parameters:
         - in: path
-          name: id
+          name: commentId
+          required: true
+          description: コメントID
+          schema:
+            type: integer
+        - in: path
+          name: replyId
           required: true
           description: リプライID
           schema:
@@ -746,7 +752,13 @@ paths:
         idに対応するリプライをいいねするAPI
       parameters:
         - in: path
-          name: id
+          name: commentId
+          required: true
+          description: コメントID
+          schema:
+            type: integer
+        - in: path
+          name: replyId
           required: true
           description: リプライID
           schema:
@@ -761,7 +773,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /reviews/:id/favorite:
+  /reviews/{id}/favorite:
     put:
       tags:
         - review
@@ -804,7 +816,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /reviews/comment/:id/favorite:
+  /reviews/comment/{id}/favorite:
     put:
       tags:
         - review
@@ -1076,7 +1088,7 @@ paths:
                     example: 120
                   posts:
                     $ref: "#/components/schemas/PostWithCategoryDetailList"
-  /posts/:id:
+  /posts/{id}:
     get:
       tags:
         - post
@@ -1101,7 +1113,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /posts/:slug/slug:
+  /posts/{slug}/slug:
     get:
       tags:
         - post
@@ -1126,7 +1138,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /posts/:id/favorite:
+  /posts/{id}/favorite:
     put:
       tags:
         - post
@@ -1775,7 +1787,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SearchSuggestions"
-  /categories/:slug/slug:
+  /categories/{slug}/slug:
     get:
       tags:
         - category
