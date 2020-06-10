@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -53,7 +55,7 @@ func (r *UserCommandRepositoryImpl) StoreWithAvatar(user *entity.User, avatar io
 
 		_, err := r.MediaUploader.Upload(&s3manager.UploadInput{
 			Bucket:      aws.String(r.AWSConfig.FilesBucket),
-			Key:         aws.String(user.S3AvatarPath()),
+			Key:         aws.String(model.UserS3Path(user.AvatarUUID)),
 			Body:        avatar,
 			ACL:         aws.String(s3.ObjectCannedACLPublicRead),
 			ContentType: aws.String(contentType),
@@ -98,17 +100,17 @@ func (r *UserCommandRepositoryImpl) DeleteFollow(userID, targetID int) error {
 	return nil
 }
 
-func (r *UserCommandRepositoryImpl) PersistUserImage(user *entity.User) error {
+func (r *UserCommandRepositoryImpl) PersistUserImage(cmd *command.UpdateUser) error {
 	svc := s3.New(r.AWSSession)
 
-	if user.AvatarUUID != "" {
-		if err := r.persistImage(svc, user.AvatarUUID, user.S3AvatarPath()); err != nil {
+	if cmd.IconUUID != "" {
+		if err := r.persistImage(svc, cmd.IconUUID, model.UserS3Path(cmd.IconUUID)); err != nil {
 			return errors.Wrap(err, "failed to persist avatar")
 		}
 	}
 
-	if user.HeaderUUID != "" {
-		if err := r.persistImage(svc, user.HeaderUUID, user.S3HeaderPath()); err != nil {
+	if cmd.HeaderUUID != "" {
+		if err := r.persistImage(svc, cmd.HeaderUUID, model.UserS3Path(cmd.HeaderUUID)); err != nil {
 			return errors.Wrap(err, "failed to persist header")
 		}
 	}

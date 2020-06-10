@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"fmt"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
@@ -131,7 +130,7 @@ func (u *User) AvatarURL(filesURL config.URL) string {
 	if u.AvatarUUID == "" {
 		return ""
 	}
-	filesURL.Path = u.S3AvatarPath()
+	filesURL.Path = model.UserS3Path(u.AvatarUUID)
 	return filesURL.String()
 }
 
@@ -139,7 +138,7 @@ func (u *User) HeaderURL(filesURL config.URL) string {
 	if u.HeaderUUID == "" {
 		return ""
 	}
-	filesURL.Path = u.S3HeaderPath()
+	filesURL.Path = model.UserS3Path(u.HeaderUUID)
 	return filesURL.String()
 }
 
@@ -147,20 +146,8 @@ func (u *UserTable) AvatarURL(filesURL config.URL) string {
 	if u.HeaderUUID == "" {
 		return ""
 	}
-	filesURL.Path = u.S3AvatarPath()
+	filesURL.Path = model.UserS3Path(u.AvatarUUID)
 	return filesURL.String()
-}
-
-func (u *UserTable) S3AvatarPath() string {
-	return fmt.Sprintf("user/%s", u.AvatarUUID)
-}
-
-func (u *User) S3AvatarPath() string {
-	return fmt.Sprintf("user/%s", u.AvatarUUID)
-}
-
-func (u *User) S3HeaderPath() string {
-	return fmt.Sprintf("user/%s", u.HeaderUUID)
 }
 
 func (u *User) IsSelfID(id int) bool {

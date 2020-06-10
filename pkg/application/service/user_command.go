@@ -178,16 +178,16 @@ func (s *UserCommandServiceImpl) Update(user *entity.User, cmd *command.UpdateUs
 		return errors.Wrap(err, "failed to update user")
 	}
 
-	if err := s.persistUserImage(user); err != nil {
+	if err := s.persistUserImage(cmd); err != nil {
 		return errors.Wrap(err, "failed to persist user image")
 	}
 
 	return nil
 }
 
-func (s *UserCommandServiceImpl) persistUserImage(user *entity.User) error {
-	if err := s.UserCommandRepository.PersistUserImage(user); err != nil {
-		return errors.Wrapf(err, "failed to persist user(id=%s) image", user.ID)
+func (s *UserCommandServiceImpl) persistUserImage(cmd *command.UpdateUser) error {
+	if err := s.UserCommandRepository.PersistUserImage(cmd); err != nil {
+		return errors.Wrapf(err, "failed to persist user image")
 	}
 	return nil
 }
@@ -198,8 +198,13 @@ func (s *UserCommandServiceImpl) updateUserCmd(user *entity.User, cmd *command.U
 	user.Birthdate = time.Time(cmd.BirthDate)
 	user.Gender = cmd.Gender
 	user.Profile = cmd.Profile
-	user.AvatarUUID = cmd.IconUUID
-	user.HeaderUUID = cmd.HeaderUUID
+	// 画像だけは更新が無い場合はputしない
+	if cmd.IconUUID != "" {
+		user.AvatarUUID = cmd.IconUUID
+	}
+	if cmd.HeaderUUID != "" {
+		user.HeaderUUID = cmd.HeaderUUID
+	}
 	user.URL = cmd.URL
 	user.FacebookURL = cmd.FacebookURL
 	user.InstagramURL = cmd.InstagramURL

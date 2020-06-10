@@ -119,7 +119,7 @@ var _ = Describe("UserRepositoryImpl", func() {
 				It("Avatarが正常に保存される", func() {
 					user, err := query.FindByID(base.ID)
 					Expect(err).To(Succeed())
-					size, err := getS3ObjectSize(user.S3AvatarPath())
+					size, err := getS3ObjectSize(model.UserS3Path(user.AvatarUUID))
 					Expect(err).To(Succeed())
 					Expect(size).To(Equal(len(baseAvatar)))
 				})
