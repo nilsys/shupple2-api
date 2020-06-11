@@ -161,7 +161,7 @@ func parseTravelDate(travelDate string) (model.YearMonth, error) {
 func parseAccompanyingType(accompanyingType string) (model.AccompanyingType, error) {
 	switch accompanyingType {
 	case "ビジネス":
-		return model.AccompanyingTypeBUISINESS, nil
+		return model.AccompanyingTypeBUSINESS, nil
 	case "カップル・夫婦":
 		return model.AccompanyingTypeCOUPLE, nil
 	case "家族":
