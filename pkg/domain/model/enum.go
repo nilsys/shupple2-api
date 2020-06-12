@@ -3,7 +3,7 @@ package model
 //go:generate go-enum -f=$GOFILE --marshal
 
 /*
-ENUM(Male = 1, Female)
+ENUM(Undefined, Male, Female)
 */
 type Gender int
 
