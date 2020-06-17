@@ -116,6 +116,13 @@ func NewUserByWordpressUser(wpUser *wordpress.User) *User {
 	}
 }
 
+func (u *User) ConvertToOptionalUser() *OptionalUser {
+	return &OptionalUser{
+		User:          *u,
+		Authenticated: true,
+	}
+}
+
 func (u *User) PatchByWordpressUser(wpUser *wordpress.User) {
 	u.Name = wpUser.Name
 	u.Profile = wpUser.Description

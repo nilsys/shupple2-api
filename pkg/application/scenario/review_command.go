@@ -14,7 +14,7 @@ import (
 type (
 	// reviewコマンド系シナリオ
 	ReviewCommandScenario interface {
-		Create(user *entity.User, params *command.CreateReview) error
+		Create(user *entity.User, params *command.CreateReview) (*entity.ReviewDetailWithIsFavorite, error)
 		UpdateReview(user *entity.User, prams *command.UpdateReview) error
 		DeleteReview(id int, user *entity.User) error
 	}
@@ -32,22 +32,30 @@ var ReviewCommandScenarioSet = wire.NewSet(
 	wire.Bind(new(ReviewCommandScenario), new(*ReviewCommandScenarioImpl)),
 )
 
-func (s *ReviewCommandScenarioImpl) Create(user *entity.User, param *command.CreateReview) error {
+func (s *ReviewCommandScenarioImpl) Create(user *entity.User, param *command.CreateReview) (*entity.ReviewDetailWithIsFavorite, error) {
 	review := s.convertStoreReviewPramToEntity(param, user)
 
 	hashtags, err := s.HashtagCommandService.FindOrCreateHashtags(model.FindHashtags(review.Body))
 	if err != nil {
-		return errors.Wrap(err, "failed store and show hashtag")
+		return nil, errors.Wrap(err, "failed store and show hashtag")
 	}
 	review.HashtagIDs = s.convertReviewAndHashtagToReviewHashtag(hashtags, review)
 
+	ouser := user.ConvertToOptionalUser()
+
 	// touristSpotと紐付くレビューの場合
 	if review.TouristSpotID.Valid {
-		return s.ReviewCommandService.StoreTouristSpotReview(review)
+		if err := s.ReviewCommandService.StoreTouristSpotReview(review); err != nil {
+			return nil, errors.Wrap(err, "failed to store touristSpotReview")
+		}
+		return s.ReviewQueryService.ShowQueryReview(review.ID, *ouser)
 	}
 
-	// innと紐付くレビューの場合
-	return s.ReviewCommandService.StoreInnReview(review)
+	if err := s.ReviewCommandService.StoreInnReview(review); err != nil {
+		return nil, errors.Wrap(err, "failed to store innReview")
+	}
+
+	return s.ReviewQueryService.ShowQueryReview(review.ID, *ouser)
 }
 
 func (s *ReviewCommandScenarioImpl) UpdateReview(user *entity.User, cmd *command.UpdateReview) error {

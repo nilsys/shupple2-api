@@ -17,6 +17,7 @@ type ReviewCommandController struct {
 	converter.Converters
 	scenario.ReviewCommandScenario
 	service.ReviewCommandService
+	service.HashtagQueryService
 }
 
 var ReviewCommandControllerSet = wire.NewSet(
@@ -29,11 +30,12 @@ func (c *ReviewCommandController) Store(ctx echo.Context, user entity.User) erro
 		return errors.Wrap(err, "validation store review input")
 	}
 
-	if err := c.ReviewCommandScenario.Create(&user, c.ConvertCreateReviewParamToCommand(p)); err != nil {
+	review, err := c.ReviewCommandScenario.Create(&user, c.ConvertCreateReviewParamToCommand(p))
+	if err != nil {
 		return errors.Wrap(err, "failed to store review")
 	}
 
-	return ctx.JSON(http.StatusOK, "ok")
+	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteToOutput(review))
 }
 
 func (c *ReviewCommandController) Update(ctx echo.Context, user entity.User) error {

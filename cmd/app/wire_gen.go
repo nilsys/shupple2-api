@@ -212,10 +212,14 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		ReviewCommandService:  reviewCommandServiceImpl,
 		HashtagCommandService: hashtagCommandServiceImpl,
 	}
+	hashtagQueryServiceImpl := &service.HashtagQueryServiceImpl{
+		HashtagQueryRepository: hashtagQueryRepositoryImpl,
+	}
 	reviewCommandController := api.ReviewCommandController{
 		Converters:            converters,
 		ReviewCommandScenario: reviewCommandScenarioImpl,
 		ReviewCommandService:  reviewCommandServiceImpl,
+		HashtagQueryService:   hashtagQueryServiceImpl,
 	}
 	reviewFavoriteCommandRepositoryImpl := &repository.ReviewFavoriteCommandRepositoryImpl{
 		DAO: dao,
@@ -245,9 +249,6 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	}
 	rssController := api.RSSController{
 		RSSService: rssServiceImpl,
-	}
-	hashtagQueryServiceImpl := &service.HashtagQueryServiceImpl{
-		HashtagQueryRepository: hashtagQueryRepositoryImpl,
 	}
 	hashtagQueryController := api.HashtagQueryController{
 		Converters:          converters,
