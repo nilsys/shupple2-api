@@ -77,7 +77,7 @@ func (s Script) importReview(wordpressDB *gorm.DB) error {
 			return errors.Wrapf(err, "failed to import review(id=%d)", r.ID)
 		}
 
-		if err := s.ReviewCommandScenario.Create(user, reviewCommand); err != nil {
+		if _, err := s.ReviewCommandScenario.Create(user, reviewCommand); err != nil {
 			return errors.WithStack(err)
 		}
 	}
