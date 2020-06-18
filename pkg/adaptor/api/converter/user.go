@@ -175,7 +175,7 @@ func (c Converters) ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWi
 		LivingArea:     user.LivingArea,
 		PostCount:      user.PostCount + user.ReviewCount + user.VlogCount,
 		FollowingCount: user.FollowingCount,
-		FollowedCount:  user.FollowerCount,
+		FollowedCount:  user.FollowedCount,
 		Interests:      interests,
 		IsFollow:       user.IsFollow,
 	}

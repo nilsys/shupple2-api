@@ -65,7 +65,7 @@ type (
 	UserDetailWithMediaCount struct {
 		UserDetail
 		FollowingCount int
-		FollowerCount  int
+		FollowedCount  int
 		PostCount      int
 		ReviewCount    int
 		VlogCount      int

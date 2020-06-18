@@ -120,8 +120,8 @@ func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByID(id int) (*entity.U
 		Joins("LEFT JOIN (SELECT COUNT(id) as review_count, MAX(user_id) as user_id FROM review WHERE user_id = ?) AS r ON user.id = r.user_id", id).
 		Joins("LEFT JOIN (SELECT COUNT(id) as post_count, MAX(user_id) as user_id FROM post WHERE user_id = ?) AS p ON user.id = p.user_id", id).
 		Joins("LEFT JOIN (SELECT COUNT(id) as vlog_count, MAX(user_id) as user_id FROM vlog WHERE user_id = ?) AS v ON user.id = v.user_id", id).
-		Joins("LEFT JOIN (SELECT COUNT(target_id) as following_count, MAX(user_id) as user_id FROM user_following WHERE user_id = ?) AS ufi ON user.id = ufi.user_id", id).
-		Joins("LEFT JOIN (SELECT COUNT(user_id) as followed_count, MAX(target_id) as target_id FROM user_followed WHERE target_id = ?) AS ufe ON user.id = ufe.target_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(target_id) as followed_count, MAX(user_id) as user_id FROM user_followed WHERE user_id = ?) AS ufi ON user.id = ufi.user_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(target_id) as following_count, MAX(user_id) as user_id FROM user_following WHERE user_id = ?) AS ufe ON user.id = ufe.user_id", id).
 		First(&row).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "user(id=%d)", id)
 	}
