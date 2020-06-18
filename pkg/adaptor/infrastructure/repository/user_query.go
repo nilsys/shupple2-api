@@ -166,7 +166,7 @@ func (r *UserQueryRepositoryImpl) FindFollowingByID(query *query.FindFollowUser)
 func (r *UserQueryRepositoryImpl) FindFollowedByID(query *query.FindFollowUser) ([]*entity.User, error) {
 	var rows []*entity.User
 
-	if err := r.DB.Where("id IN (SELECT user_id FROM user_followed WHERE target_id = ?)", query.ID).
+	if err := r.DB.Where("id IN (SELECT user_id FROM user_following WHERE target_id = ?)", query.ID).
 		Limit(query.Limit).
 		Offset(query.Offset).
 		Find(&rows).Error; err != nil {
