@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository/payjp"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/service"
@@ -32,6 +34,7 @@ type (
 		repository.UserCommandRepository
 		repository.UserQueryRepository
 		repository.WordpressQueryRepository
+		payjp.CustomerCommandRepository
 		AuthService
 		service.NoticeDomainService
 		TransactionService
@@ -70,6 +73,11 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 	if err := s.UserCommandRepository.Store(user); err != nil {
 		return errors.Wrap(err, "failed to store user")
 	}
+
+	if err := s.CustomerCommandRepository.StoreCustomer(user.PayjpCustomerID(), user.Email); err != nil {
+		return errors.Wrap(err, "failed store customer to pay.jp")
+	}
+
 	return nil
 }
 

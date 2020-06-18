@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/payjp/payjp-go/v1"
+	payjp2 "github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -64,6 +67,7 @@ var RepositoriesSet = wire.NewSet(
 	AreaCategoryQueryRepositorySet,
 	ThemeCategoryCommandRepositorySet,
 	ThemeCategoryQueryRepositorySet,
+	payjp2.CustomerCommandRepositorySet,
 	ComicCommandRepositorySet,
 	ComicQueryRepositorySet,
 	ComicFavoriteCommandRepositorySet,
@@ -103,6 +107,7 @@ var RepositoriesSet = wire.NewSet(
 	ReportQueryRepositorySet,
 	SlackRepositorySet,
 	ProvideAWSSession,
+	ProvidePayjp,
 )
 
 func ProvideDB(config *config.Config) (*gorm.DB, error) {
@@ -144,6 +149,10 @@ func ProvideAWSSession(config *config.Config) (*session.Session, error) {
 
 func ProvideS3Uploader(sess *session.Session) *s3manager.Uploader {
 	return s3manager.NewUploader(sess)
+}
+
+func ProvidePayjp(config *config.Config) *payjp.Service {
+	return payjp.New(config.Payjp.SecretKey, nil)
 }
 
 func Transaction(db *gorm.DB, f func(db *gorm.DB) error) (err error) {

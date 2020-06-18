@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
@@ -192,4 +193,8 @@ func (q *UserDetail) TableName() string {
 
 func (u *OptionalUser) IsAuthorized() bool {
 	return u.Authenticated
+}
+
+func (u *User) PayjpCustomerID() string {
+	return fmt.Sprintf("sw_%s", u.UID)
 }

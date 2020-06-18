@@ -9,6 +9,7 @@ import (
 	"github.com/google/wire"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
@@ -45,6 +46,10 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		AWSConfig:     aws,
 		AWSSession:    session,
 	}
+	payjpService := repository.ProvidePayjp(configConfig)
+	customerCommandRepositoryImpl := &payjp.CustomerCommandRepositoryImpl{
+		PayjpClient: payjpService,
+	}
 	authService, err := service.ProvideAuthService(configConfig)
 	if err != nil {
 		return nil, err
@@ -63,12 +68,13 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		DB: db,
 	}
 	userCommandServiceImpl := &service.UserCommandServiceImpl{
-		UserCommandRepository:    userCommandRepositoryImpl,
-		UserQueryRepository:      userQueryRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepositoryImpl,
-		AuthService:              authService,
-		NoticeDomainService:      noticeDomainServiceImpl,
-		TransactionService:       transactionServiceImpl,
+		UserCommandRepository:     userCommandRepositoryImpl,
+		UserQueryRepository:       userQueryRepositoryImpl,
+		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
+		CustomerCommandRepository: customerCommandRepositoryImpl,
+		AuthService:               authService,
+		NoticeDomainService:       noticeDomainServiceImpl,
+		TransactionService:        transactionServiceImpl,
 	}
 	areaCategoryCommandRepositoryImpl := &repository.AreaCategoryCommandRepositoryImpl{
 		DAO: dao,

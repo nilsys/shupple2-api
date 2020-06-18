@@ -13,6 +13,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/middleware"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
@@ -317,13 +318,18 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		AWSConfig:     aws,
 		AWSSession:    session,
 	}
+	payjpService := repository.ProvidePayjp(configConfig)
+	customerCommandRepositoryImpl := &payjp.CustomerCommandRepositoryImpl{
+		PayjpClient: payjpService,
+	}
 	userCommandServiceImpl := &service.UserCommandServiceImpl{
-		UserCommandRepository:    userCommandRepositoryImpl,
-		UserQueryRepository:      userQueryRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepositoryImpl,
-		AuthService:              authService,
-		NoticeDomainService:      noticeDomainServiceImpl,
-		TransactionService:       transactionServiceImpl,
+		UserCommandRepository:     userCommandRepositoryImpl,
+		UserQueryRepository:       userQueryRepositoryImpl,
+		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
+		CustomerCommandRepository: customerCommandRepositoryImpl,
+		AuthService:               authService,
+		NoticeDomainService:       noticeDomainServiceImpl,
+		TransactionService:        transactionServiceImpl,
 	}
 	userCommandController := api.UserCommandController{
 		Converters:         converters,

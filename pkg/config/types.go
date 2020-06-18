@@ -23,6 +23,7 @@ type (
 		AWS             AWS             `validate:"required" yaml:"aws"`
 		Slack           Slack           `validate:"required" yaml:"slack"`
 		GoogleAnalytics GoogleAnalytics `validate:"required" yaml:"google_analytics"`
+		Payjp           Payjp           `validate:"required" yaml:"payjp"`
 		Env             Env
 
 		// scripts配下のスクリプト固有の設定
@@ -97,6 +98,10 @@ type (
 
 	URL struct {
 		url.URL
+	}
+
+	Payjp struct {
+		SecretKey string `validate:"required" yaml:"secret_key"`
 	}
 )
 
