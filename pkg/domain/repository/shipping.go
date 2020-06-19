@@ -1,6 +1,10 @@
 package repository
 
-import "github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+import (
+	"context"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+)
 
 type (
 	ShippingCommandRepository interface {
@@ -8,6 +12,6 @@ type (
 	}
 
 	ShippingQueryRepository interface {
-		FindLatestShippingAddressByUserID(userID int) (*entity.ShippingAddress, error)
+		FindLatestShippingAddressByUserID(c context.Context, userID int) (*entity.ShippingAddress, error)
 	}
 )

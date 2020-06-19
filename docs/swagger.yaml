@@ -2113,7 +2113,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ThemeCategoryList"
 
-  /payment/shipping:
+  /payments/shipping:
     post:
       tags:
         - payment
@@ -2142,7 +2142,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ShippingAddress"
-  /payment/card:
+  /payments/card:
     post:
       tags:
         - payment
@@ -2169,7 +2169,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Card"
-  /payment/card/{id}:
+  /payments/card/{id}:
     delete:
       tags:
         - payment
@@ -2185,7 +2185,7 @@ paths:
       responses:
         "200":
           description: OK
-  /payment:
+  /payments/charge:
     post:
       tags:
         - payment
@@ -2706,9 +2706,12 @@ components:
     PaymentRequest:
       type: object
       properties:
-        returnId:
+        cfReturnGiftId:
           type: integer
           description: 選択したリターンのid
+        cfReturnGiftSnapshotId:
+          type: integer
+          description: 選択したリターンのスナップショットid
         amount:
           type: integer
           description: 数量

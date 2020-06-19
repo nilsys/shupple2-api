@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
@@ -33,7 +34,7 @@ var _ = Describe("ShippingRepositoryTest", func() {
 			}
 
 			Expect(commandRepo.StoreShippingAddress(saved)).To(Succeed())
-			actual, err := queryRepo.FindLatestShippingAddressByUserID(saved.UserID)
+			actual, err := queryRepo.FindLatestShippingAddressByUserID(context.Background(), saved.UserID)
 			Expect(err).To(Succeed())
 
 			Expect(actual.CreatedAt).NotTo(BeZero())

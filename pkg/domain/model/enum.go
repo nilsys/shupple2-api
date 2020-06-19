@@ -83,3 +83,8 @@ type ReportTargetType int
 ENUM(UNKNOWN =1, SEXUAL, INAPPROPRIATE, COPYRIGHT, SELFHARM, LIE, UNRELATED, AD)
 */
 type ReportReasonType int
+
+/*
+ENUM(ReservedTicket = 1, Other)
+*/
+type GiftType int
