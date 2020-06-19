@@ -291,57 +291,6 @@ func (x *Gender) UnmarshalText(text []byte) error {
 }
 
 const (
-	// GiftTypeReservedTicket is a GiftType of type ReservedTicket
-	GiftTypeReservedTicket GiftType = iota + 1
-	// GiftTypeOther is a GiftType of type Other
-	GiftTypeOther
-)
-
-const _GiftTypeName = "ReservedTicketOther"
-
-var _GiftTypeMap = map[GiftType]string{
-	1: _GiftTypeName[0:14],
-	2: _GiftTypeName[14:19],
-}
-
-// String implements the Stringer interface.
-func (x GiftType) String() string {
-	if str, ok := _GiftTypeMap[x]; ok {
-		return str
-	}
-	return fmt.Sprintf("GiftType(%d)", x)
-}
-
-var _GiftTypeValue = map[string]GiftType{
-	_GiftTypeName[0:14]:  1,
-	_GiftTypeName[14:19]: 2,
-}
-
-// ParseGiftType attempts to convert a string to a GiftType
-func ParseGiftType(name string) (GiftType, error) {
-	if x, ok := _GiftTypeValue[name]; ok {
-		return x, nil
-	}
-	return GiftType(0), fmt.Errorf("%s is not a valid GiftType", name)
-}
-
-// MarshalText implements the text marshaller method
-func (x GiftType) MarshalText() ([]byte, error) {
-	return []byte(x.String()), nil
-}
-
-// UnmarshalText implements the text unmarshaller method
-func (x *GiftType) UnmarshalText(text []byte) error {
-	name := string(text)
-	tmp, err := ParseGiftType(name)
-	if err != nil {
-		return err
-	}
-	*x = tmp
-	return nil
-}
-
-const (
 	// InterestGroupUndefined is a InterestGroup of type Undefined
 	InterestGroupUndefined InterestGroup = iota
 	// InterestGroupStyle is a InterestGroup of type Style

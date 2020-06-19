@@ -22,11 +22,9 @@ const (
 	CodeForbidden
 	// CodeInvalidCategoryType is a Code of type InvalidCategoryType
 	CodeInvalidCategoryType
-	// CodePayAgentError is a Code of type PayAgentError
-	CodePayAgentError
 )
 
-const _CodeName = "UndefinedInvalidParamNotFoundImportDeletedUnauthorizedForbiddenInvalidCategoryTypePayAgentError"
+const _CodeName = "UndefinedInvalidParamNotFoundImportDeletedUnauthorizedForbiddenInvalidCategoryType"
 
 var _CodeMap = map[Code]string{
 	0: _CodeName[0:9],
@@ -36,7 +34,6 @@ var _CodeMap = map[Code]string{
 	4: _CodeName[42:54],
 	5: _CodeName[54:63],
 	6: _CodeName[63:82],
-	7: _CodeName[82:95],
 }
 
 // String implements the Stringer interface.
@@ -55,7 +52,6 @@ var _CodeValue = map[string]Code{
 	_CodeName[42:54]: 4,
 	_CodeName[54:63]: 5,
 	_CodeName[63:82]: 6,
-	_CodeName[82:95]: 7,
 }
 
 // ParseCode attempts to convert a string to a Code

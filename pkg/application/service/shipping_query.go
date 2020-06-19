@@ -1,8 +1,6 @@
 package service
 
 import (
-	"context"
-
 	"github.com/google/wire"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
@@ -24,5 +22,5 @@ var ShippingQueryServiceSet = wire.NewSet(
 )
 
 func (s *ShippingQueryServiceImpl) ShowShippingAddressByUserID(user *entity.User) (*entity.ShippingAddress, error) {
-	return s.ShippingQueryRepository.FindLatestShippingAddressByUserID(context.Background(), user.ID)
+	return s.ShippingQueryRepository.FindLatestShippingAddressByUserID(user.ID)
 }

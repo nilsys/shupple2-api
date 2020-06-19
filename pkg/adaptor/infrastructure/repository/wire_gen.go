@@ -73,7 +73,7 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 		DB: db,
 	}
 	shippingQueryRepositoryImpl := &ShippingQueryRepositoryImpl{
-		DAO: dao,
+		DB: db,
 	}
 	shippingCommandRepositoryImpl := &ShippingCommandRepositoryImpl{
 		DAO: dao,

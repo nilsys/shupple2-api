@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"reflect"
 
-	payjp2 "github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
-
 	"github.com/payjp/payjp-go/v1"
+	payjp2 "github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -68,6 +67,7 @@ var RepositoriesSet = wire.NewSet(
 	AreaCategoryQueryRepositorySet,
 	ThemeCategoryCommandRepositorySet,
 	ThemeCategoryQueryRepositorySet,
+	payjp2.CustomerCommandRepositorySet,
 	ComicCommandRepositorySet,
 	ComicQueryRepositorySet,
 	ComicFavoriteCommandRepositorySet,
@@ -80,15 +80,6 @@ var RepositoriesSet = wire.NewSet(
 	TouristSpotQueryRepositorySet,
 	ShippingQueryRepositorySet,
 	ShippingCommandRepositorySet,
-	PaymentCommandRepositorySet,
-	payjp2.CustomerQueryRepositorySet,
-	payjp2.CustomerCommandRepositorySet,
-	CardQueryRepositorySet,
-	CardCommandRepositorySet,
-	CfProjectQueryRepositorySet,
-	payjp2.CardQueryRepositorySet,
-	payjp2.CardCommandRepositorySet,
-	payjp2.ChargeCommandRepositorySet,
 	PostCommandRepositorySet,
 	PostQueryRepositorySet,
 	PostFavoriteCommandRepositorySet,
@@ -100,7 +91,6 @@ var RepositoriesSet = wire.NewSet(
 	VlogFavoriteCommandRepositorySet,
 	VlogFavoriteQueryRepositorySet,
 	WordpressQueryRepositorySet,
-	ReturnGiftQueryRepositorySet,
 	ReviewQueryRepositorySet,
 	ReviewCommandRepositorySet,
 	ReviewFavoriteQueryRepositorySet,

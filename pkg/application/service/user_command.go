@@ -74,7 +74,6 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 		return errors.Wrap(err, "failed to store user")
 	}
 
-	// pay.jp側にcustomer登録
 	if err := s.CustomerCommandRepository.StoreCustomer(user.PayjpCustomerID(), user.Email); err != nil {
 		return errors.Wrap(err, "failed store customer to pay.jp")
 	}

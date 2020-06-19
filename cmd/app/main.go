@@ -29,9 +29,6 @@ type App struct {
 	AuthorizeWrapper                staywayMiddleware.Authorize
 	ShippingQueryController         api.ShippingQueryController
 	ShippingCommandController       api.ShippingCommandController
-	CardQueryController             api.CardQueryController
-	ChargeCommandController         api.ChargeCommandController
-	CardCommandController           api.CardCommandController
 	PostQueryController             api.PostQueryController
 	PostFavoriteCommandController   api.PostFavoriteCommandController
 	CategoryQueryController         api.CategoryQueryController
@@ -233,9 +230,6 @@ func setRoutes(app *App) {
 
 	{
 		payment := api.Group("/payment")
-		payment.POST("/charge", auth.Require(app.ChargeCommandController.CaptureCharge))
-		payment.POST("/card", auth.Require(app.CardCommandController.Register))
-		payment.GET("/card", auth.Require(app.CardQueryController.ShowCard))
 		payment.GET("/shipping", auth.Require(app.ShippingQueryController.Show))
 		payment.POST("/shipping", auth.Require(app.ShippingCommandController.StoreShippingAddress))
 	}
