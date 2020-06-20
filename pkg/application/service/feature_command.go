@@ -45,6 +45,10 @@ func (r *FeatureCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Fea
 
 	var feature *entity.Feature
 	err = r.TransactionService.Do(func(c context.Context) error {
+		if err := r.FeatureCommandRepository.UndeleteByID(c, id); err != nil {
+			return errors.Wrapf(err, "failed to undelete feature(id=%d)", id)
+		}
+
 		feature, err = r.FeatureCommandRepository.Lock(c, id)
 		if err != nil {
 			if !serror.IsErrorCode(err, serror.CodeNotFound) {

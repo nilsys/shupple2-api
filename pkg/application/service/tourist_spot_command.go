@@ -45,6 +45,10 @@ func (r *TouristSpotCommandServiceImpl) ImportFromWordpressByID(id int) (*entity
 
 	var touristSpot *entity.TouristSpot
 	err = r.TransactionService.Do(func(c context.Context) error {
+		if err := r.TouristSpotCommandRepository.UndeleteByID(c, id); err != nil {
+			return errors.Wrapf(err, "failed to undelete toursist_spot(id=%d)", id)
+		}
+
 		touristSpot, err = r.TouristSpotCommandRepository.Lock(c, id)
 		if err != nil {
 			if !serror.IsErrorCode(err, serror.CodeNotFound) {

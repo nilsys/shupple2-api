@@ -45,6 +45,10 @@ func (r *ComicCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Comic
 
 	var comic *entity.Comic
 	err = r.TransactionService.Do(func(c context.Context) error {
+		if err := r.ComicCommandRepository.UndeleteByID(c, id); err != nil {
+			return errors.Wrapf(err, "failed to undelete comic(id=%d)", id)
+		}
+
 		comic, err = r.ComicCommandRepository.Lock(c, id)
 		if err != nil {
 			if !serror.IsErrorCode(err, serror.CodeNotFound) {

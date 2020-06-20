@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/wire"
+	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
@@ -28,6 +29,14 @@ func (r *ComicCommandRepositoryImpl) Lock(c context.Context, id int) (*entity.Co
 
 func (r *ComicCommandRepositoryImpl) Store(c context.Context, comic *entity.Comic) error {
 	return errors.Wrap(r.DB(c).Save(comic).Error, "failed to save comic")
+}
+
+func (r *ComicCommandRepositoryImpl) UndeleteByID(c context.Context, id int) error {
+	e := &entity.Comic{}
+	e.ID = id
+	return errors.Wrapf(
+		r.DB(c).Unscoped().Model(e).Update("deleted_at", gorm.Expr("NULL")).Error,
+		"failed to comic post(id=%d)", id)
 }
 
 func (r *ComicCommandRepositoryImpl) DeleteByID(id int) error {

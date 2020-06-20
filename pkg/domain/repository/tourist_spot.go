@@ -13,6 +13,7 @@ type (
 		Store(c context.Context, touristSpot *entity.TouristSpot) error
 		// レビューの平均値を更新
 		UpdateScoreByID(c context.Context, id int64) error
+		UndeleteByID(c context.Context, id int) error
 		DeleteByID(id int) error
 	}
 

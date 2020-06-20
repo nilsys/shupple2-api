@@ -11,6 +11,7 @@ type (
 	PostCommandRepository interface {
 		Lock(c context.Context, id int) (*entity.Post, error)
 		Store(c context.Context, post *entity.Post) error
+		UndeleteByID(c context.Context, id int) error
 		DeleteByID(c context.Context, id int) error
 		IncrementFavoriteCount(c context.Context, postID int) error
 		DecrementFavoriteCount(c context.Context, postID int) error

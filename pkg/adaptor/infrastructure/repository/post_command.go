@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/wire"
+	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
@@ -20,7 +21,7 @@ var PostCommandRepositorySet = wire.NewSet(
 
 func (r *PostCommandRepositoryImpl) Lock(c context.Context, id int) (*entity.Post, error) {
 	var row entity.Post
-	if err := r.LockDB(c).First(&row, id).Error; err != nil {
+	if err := r.LockDB(c).Unscoped().First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "post(id=%d)", id)
 	}
 	return &row, nil
@@ -28,6 +29,14 @@ func (r *PostCommandRepositoryImpl) Lock(c context.Context, id int) (*entity.Pos
 
 func (r *PostCommandRepositoryImpl) Store(c context.Context, post *entity.Post) error {
 	return errors.Wrap(r.DB(c).Save(post).Error, "failed to save post")
+}
+
+func (r *PostCommandRepositoryImpl) UndeleteByID(c context.Context, id int) error {
+	e := &entity.Post{}
+	e.ID = id
+	return errors.Wrapf(
+		r.DB(c).Unscoped().Model(e).Update("deleted_at", gorm.Expr("NULL")).Error,
+		"failed to delete post(id=%d)", id)
 }
 
 func (r *PostCommandRepositoryImpl) DeleteByID(c context.Context, id int) error {

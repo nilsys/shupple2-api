@@ -11,6 +11,7 @@ type (
 	ComicCommandRepository interface {
 		Lock(c context.Context, id int) (*entity.Comic, error)
 		Store(c context.Context, comic *entity.Comic) error
+		UndeleteByID(c context.Context, id int) error
 		DeleteByID(id int) error
 		IncrementFavoriteCount(c context.Context, id int) error
 		DecrementFavoriteCount(c context.Context, id int) error

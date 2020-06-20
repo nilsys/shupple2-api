@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/wire"
+	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
@@ -28,6 +29,14 @@ func (r *FeatureCommandRepositoryImpl) Lock(c context.Context, id int) (*entity.
 
 func (r *FeatureCommandRepositoryImpl) Store(c context.Context, feature *entity.Feature) error {
 	return errors.Wrap(r.DB(c).Save(feature).Error, "failed to save feature")
+}
+
+func (r *FeatureCommandRepositoryImpl) UndeleteByID(c context.Context, id int) error {
+	e := &entity.Feature{}
+	e.ID = id
+	return errors.Wrapf(
+		r.DB(c).Unscoped().Model(e).Update("deleted_at", gorm.Expr("NULL")).Error,
+		"failed to delete feature(id=%d)", id)
 }
 
 func (r *FeatureCommandRepositoryImpl) DeleteByID(id int) error {

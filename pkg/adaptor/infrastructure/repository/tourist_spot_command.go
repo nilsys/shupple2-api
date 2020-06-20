@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/wire"
+	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
@@ -35,6 +36,14 @@ func (r *TouristSpotCommandRepositoryImpl) UpdateScoreByID(c context.Context, id
 		return errors.Wrap(err, "failed to update tourist spot rate")
 	}
 	return nil
+}
+
+func (r *TouristSpotCommandRepositoryImpl) UndeleteByID(c context.Context, id int) error {
+	e := &entity.TouristSpot{}
+	e.ID = id
+	return errors.Wrapf(
+		r.DB(c).Unscoped().Model(e).Update("deleted_at", gorm.Expr("NULL")).Error,
+		"failed to delete tourist_spot(id=%d)", id)
 }
 
 func (r *TouristSpotCommandRepositoryImpl) DeleteByID(id int) error {

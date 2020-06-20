@@ -45,6 +45,10 @@ func (r *VlogCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Vlog, 
 
 	var vlog *entity.Vlog
 	err = r.TransactionService.Do(func(c context.Context) error {
+		if err := r.VlogCommandRepository.UndeleteByID(c, id); err != nil {
+			return errors.Wrapf(err, "failed to undelete vlog(id=%d)", id)
+		}
+
 		vlog, err = r.VlogCommandRepository.Lock(c, id)
 		if err != nil {
 			if !serror.IsErrorCode(err, serror.CodeNotFound) {

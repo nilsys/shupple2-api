@@ -47,6 +47,10 @@ func (r *PostCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Post, 
 
 	var post *entity.Post
 	err = r.TransactionService.Do(func(c context.Context) error {
+		if err := r.PostCommandRepository.UndeleteByID(c, id); err != nil {
+			return errors.Wrapf(err, "failed to undelete post(id=%d)", id)
+		}
+
 		post, err = r.PostCommandRepository.Lock(c, id)
 		if err != nil {
 			if !serror.IsErrorCode(err, serror.CodeNotFound) {

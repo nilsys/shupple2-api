@@ -11,6 +11,7 @@ type (
 	VlogCommandRepository interface {
 		Lock(c context.Context, id int) (*entity.Vlog, error)
 		Store(c context.Context, vlog *entity.Vlog) error
+		UndeleteByID(c context.Context, id int) error
 		DeleteByID(id int) error
 		UpdateViewsByID(id, views int) error
 		IncrementFavoriteCount(c context.Context, vlogID int) error
