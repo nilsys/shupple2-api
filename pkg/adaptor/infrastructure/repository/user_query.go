@@ -53,8 +53,8 @@ func (r *UserQueryRepositoryImpl) FindByWordpressID(wordpressUserID int) (*entit
 	return &row, nil
 }
 
-func (r *UserQueryRepositoryImpl) FindByMigrationCode(code string) (*entity.User, error) {
-	var row entity.User
+func (r *UserQueryRepositoryImpl) FindByMigrationCode(code string) (*entity.UserTable, error) {
+	var row entity.UserTable
 	if err := r.DB.Where("migration_code = ?", code).First(&row).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "user(migration_code=%s)", code)
 	}

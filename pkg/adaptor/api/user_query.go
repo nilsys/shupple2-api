@@ -59,6 +59,20 @@ func (c *UserQueryController) ShowByID(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, c.ConvertUserDetailWithCountToOutPut(user))
 }
 
+func (c *UserQueryController) ShowByMigrationCode(ctx echo.Context) error {
+	p := &input.ShowByMigrationCodeParam{}
+	if err := BindAndValidate(ctx, p); err != nil {
+		return errors.Wrap(err, "failed bind params")
+	}
+
+	user, err := c.UserQueryService.ShowByMigrationCode(p.MigrationCode)
+	if err != nil {
+		return errors.Wrap(err, "failed to show user")
+	}
+
+	return ctx.JSON(http.StatusOK, c.ConvertUserDetailWithCountToOutPut(user))
+}
+
 func (c *UserQueryController) ShowUserRanking(ctx echo.Context) error {
 	p := &input.ListUserRanking{}
 	if err := BindAndValidate(ctx, p); err != nil {

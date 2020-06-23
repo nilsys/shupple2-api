@@ -26,7 +26,7 @@ type (
 		FindByUIDs(uIDs []string) ([]*entity.User, error)
 		FindByCognitoID(cognitoID string) (*entity.User, error)
 		FindByWordpressID(id int) (*entity.User, error)
-		FindByMigrationCode(code string) (*entity.User, error)
+		FindByMigrationCode(code string) (*entity.UserTable, error)
 		FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error)
 		FindByUID(uid string) (*entity.UserTable, error)
 		FindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error)

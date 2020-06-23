@@ -104,6 +104,7 @@ func setRoutes(app *App) {
 		users.GET("", auth.Require(app.UserQueryController.MyPage))
 		users.GET("/uid/:uid", auth.Optional(app.UserQueryController.ShowByUID))
 		users.GET("/id/:id", app.UserQueryController.ShowByID)
+		users.GET("/code/:code", app.UserQueryController.ShowByMigrationCode)
 		users.GET("/ranking", app.UserQueryController.ShowUserRanking)
 		users.GET("/recommend/follow", app.UserQueryController.ListRecommendFollowUser)
 		users.POST("/:id/follow", auth.Require(app.UserCommandController.Follow))

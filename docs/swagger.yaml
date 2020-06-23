@@ -101,6 +101,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+  /users/code/{code}:
+    get:
+      tags:
+        - user
+      summary: プロフィール取得
+      description: |
+        ユーザープロフィール取得
+      parameters:
+        - in: path
+          name: code
+          required: true
+          description: |
+            migration_code
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
   /users/recommend/follow:
     get:
       tags:

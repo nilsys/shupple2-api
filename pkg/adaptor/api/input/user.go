@@ -16,6 +16,10 @@ type (
 		ID int `param:"id" validate:"required"`
 	}
 
+	ShowByMigrationCodeParam struct {
+		MigrationCode string `param:"code" validate:"required"`
+	}
+
 	ListUserRanking struct {
 		AreaID       int              `query:"areaId"`
 		SubAreaID    int              `query:"subAreaId"`

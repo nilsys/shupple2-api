@@ -12,6 +12,7 @@ type (
 	UserQueryService interface {
 		ShowByUID(uid string, ouser entity.OptionalUser) (*entity.UserDetailWithMediaCount, error)
 		ShowByID(id int) (*entity.UserDetailWithMediaCount, error)
+		ShowByMigrationCode(code string) (*entity.UserDetailWithMediaCount, error)
 		ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error)
 		ListRecommendFollowUser(interestIDs []int) ([]*entity.UserTable, error)
 		ListFollowing(query *query.FindFollowUser) ([]*entity.User, error)
@@ -54,6 +55,14 @@ func (s *UserQueryServiceImpl) ShowByUID(uid string, ouser entity.OptionalUser) 
 
 func (s *UserQueryServiceImpl) ShowByID(id int) (*entity.UserDetailWithMediaCount, error) {
 	return s.UserQueryRepository.FindUserDetailWithCountByID(id)
+}
+
+func (s *UserQueryServiceImpl) ShowByMigrationCode(code string) (*entity.UserDetailWithMediaCount, error) {
+	userTable, err := s.UserQueryRepository.FindByMigrationCode(code)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed find user by migration_code")
+	}
+	return s.UserQueryRepository.FindUserDetailWithCountByID(userTable.ID)
 }
 
 func (s *UserQueryServiceImpl) ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error) {
