@@ -31,7 +31,11 @@ var AuthorizeSet = wire.NewSet(
 
 func (a Authorize) Require(f AuthorizedHandlerFunc) echo.HandlerFunc {
 	return func(ctx echo.Context) error {
-		cognitoID, err := a.AuthService.Authorize(getTokenStr(ctx))
+		token := getTokenStr(ctx)
+		if token == "" {
+			return serror.New(nil, serror.CodeUnauthorized, "unauthorized")
+		}
+		cognitoID, err := a.AuthService.Authorize(token)
 		if err != nil {
 			return err
 		}
