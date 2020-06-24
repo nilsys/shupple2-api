@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/google/wire"
-	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -20,10 +19,10 @@ var CfProjectQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.CfProjectQueryRepository), new(*CfProjectQueryRepositoryImpl)),
 )
 
-func (r *CfProjectQueryRepositoryImpl) LockCfProjectListByIDs(c context.Context, ids []int) (*entity.CfProjectList, error) {
-	var rows entity.CfProjectList
-	if err := r.LockDB(c).Where("id IN (?)", ids).Find(&rows.List).Error; err != nil {
-		return nil, errors.Wrap(err, "failed find cf_project")
+func (r *CfProjectQueryRepositoryImpl) Lock(c context.Context, id int) (*entity.CfProject, error) {
+	var rows entity.CfProject
+	if err := r.LockDB(c).Find(&rows, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "cf_project(id=%d)", id)
 	}
 	return &rows, nil
 }

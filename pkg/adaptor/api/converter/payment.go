@@ -5,7 +5,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 )
 
-func (c Converters) ConvertPaymentsToCmd(payments *input.CreateChargeList) *command.PaymentList {
+func (c Converters) ConvertPaymentsToCmd(payments *input.CaptureCharge) *command.PaymentList {
 	idAmountMap := make(map[int]int, len(payments.Payments))
 	idSummaryIDMap := make(map[int]int, len(payments.Payments))
 
@@ -17,11 +17,11 @@ func (c Converters) ConvertPaymentsToCmd(payments *input.CreateChargeList) *comm
 	result := make([]*command.Payment, 0, len(idAmountMap))
 	for id, amount := range idAmountMap {
 		result = append(result, &command.Payment{
-			ReturnGiftID:        id,
-			ReturnGiftSummaryID: idSummaryIDMap[id],
-			Amount:              amount,
+			ReturnGiftID:         id,
+			ReturnGiftSnapshotID: idSummaryIDMap[id],
+			Amount:               amount,
 		})
 	}
 
-	return &command.PaymentList{Payments: result}
+	return &command.PaymentList{List: result, Body: payments.SupportCommentBody}
 }

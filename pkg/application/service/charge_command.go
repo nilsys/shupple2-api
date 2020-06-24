@@ -25,8 +25,9 @@ type (
 		repository.CardQueryRepository
 		repository.CfProjectQueryRepository
 		payjp.ChargeCommandRepository
-		repository.ReturnGiftQueryRepository
+		repository.CfReturnGiftQueryRepository
 		repository.ShippingQueryRepository
+		repository.CfProjectCommandRepository
 		TransactionService
 	}
 )
@@ -45,44 +46,48 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 			return errors.Wrap(err, "failed find latest")
 		}
 
-		paymentReturnGifts := make([]*entity.PaymentReturnGift, len(cmd.Payments))
-		gifts, err := s.ReturnGiftQueryRepository.LockReturnGiftsWitLatestSummary(c, cmd.ReturnIDs())
+		paymentReturnGifts := make([]*entity.PaymentCfReturnGift, len(cmd.List))
+
+		gifts, err := s.CfReturnGiftQueryRepository.LockCfReturnGiftList(c, cmd.ReturnIDs())
 		if err != nil {
 			return errors.Wrap(err, "failed lock return_gift")
 		}
 
-		projects, err := s.CfProjectQueryRepository.LockCfProjectListByIDs(c, gifts.CfProjectIDs())
+		projectID, isUnique := gifts.UniqueCfProjectID()
+		// 複数のprojectのギフトを同時購入しようとした時
+		if !isUnique {
+			return serror.New(nil, serror.CodeInvalidParam, "need gift's project is unique")
+		}
+
+		project, err := s.CfProjectQueryRepository.Lock(c, projectID)
 		if err != nil {
 			return errors.Wrap(err, "failed lock cf_project")
 		}
 
-		soldCountList, err := s.ReturnGiftQueryRepository.FindSoldCountByReturnGiftIDs(c, cmd.ReturnIDs())
+		soldCountList, err := s.CfReturnGiftQueryRepository.FindSoldCountByReturnGiftIDs(c, cmd.ReturnIDs())
 		if err != nil {
 			return errors.Wrap(err, "failed find sold_count list")
 		}
 
 		giftIDMap := gifts.ToIDMap()
-		giftIDSoldCountMap := soldCountList.ToIDSoldCountMap()
-		projectIDMap := projects.ToIDMap()
 
 		var price int
-		for i, payment := range cmd.Payments {
+		for i, payment := range cmd.List {
 			// 商品情報が更新されている時
-			if payment.ReturnGiftSummaryID != giftIDMap[payment.ReturnGiftID].LatestSnapshotID {
-				return serror.New(nil, serror.CodeInvalidParam, "modify return_gift_summary")
+			if payment.ReturnGiftSnapshotID != giftIDMap[payment.ReturnGiftID].LatestCfReturnGiftSnapshotID {
+				return serror.New(nil, serror.CodeInvalidParam, "return_gift updated")
 			}
 
 			// 残り在庫数確認
-			if giftIDMap[payment.ReturnGiftID].Summary.FullAmount < giftIDSoldCountMap[payment.ReturnGiftID]+payment.Amount {
+			if giftIDMap[payment.ReturnGiftID].Snapshot.FullAmount < soldCountList.GetSoldCount(payment.ReturnGiftID)+payment.Amount {
 				// 在庫が確保できなかった場合
 				return serror.New(nil, serror.CodeInvalidParam, "failed stock acquisition")
 			}
 
 			// 金額x数量
-			price += giftIDMap[payment.ReturnGiftID].Summary.Price * payment.Amount
+			price += giftIDMap[payment.ReturnGiftID].Snapshot.Price * payment.Amount
 			gift := giftIDMap[payment.ReturnGiftID]
-			project := projectIDMap[gift.CfProjectID]
-			paymentReturnGifts[i] = entity.NewPaymentReturnGift(payment.ReturnGiftID, gift.LatestSnapshotID, gift.CfProjectID, project.LatestSnapshotID, payment.Amount)
+			paymentReturnGifts[i] = entity.NewPaymentReturnGift(payment.ReturnGiftID, gift.LatestCfReturnGiftSnapshotID, gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount)
 		}
 
 		// 最新のカードidを取得
@@ -109,6 +114,15 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 		}
 		if err := s.PaymentCommandRepository.StorePaymentReturnGiftList(c, paymentReturnGifts, payment.ID); err != nil {
 			return errors.Wrap(err, "failed store payment_return_gift")
+		}
+
+		// 応援コメントを保存
+		comment := entity.NewCfProjectSupportTable(user.ID, project.ID, cmd.Body)
+		if err := s.CfProjectCommandRepository.StoreSupportComment(c, comment); err != nil {
+			return errors.Wrap(err, "failed store support_comment")
+		}
+		if err := s.CfProjectCommandRepository.IncrementSupportCommentCount(c, project.ID); err != nil {
+			return errors.Wrap(err, "failed increment support_comment_count")
 		}
 
 		// 決済確定

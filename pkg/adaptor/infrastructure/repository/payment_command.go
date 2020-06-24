@@ -26,7 +26,7 @@ func (r *PaymentCommandRepositoryImpl) Store(c context.Context, payment *entity.
 	return nil
 }
 
-func (r *PaymentCommandRepositoryImpl) StorePaymentReturnGiftList(c context.Context, list []*entity.PaymentReturnGift, paymentID int) error {
+func (r *PaymentCommandRepositoryImpl) StorePaymentReturnGiftList(c context.Context, list []*entity.PaymentCfReturnGift, paymentID int) error {
 	for _, gift := range list {
 		gift.PaymentID = paymentID
 		if err := r.DB(c).Save(gift).Error; err != nil {

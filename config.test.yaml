@@ -30,6 +30,8 @@ slack:
   token: changeme
   callback_key: changeme
   report_channel: changeme
+payjp:
+  secret_key: changeme
 
 
 # vim: set ft=yaml:

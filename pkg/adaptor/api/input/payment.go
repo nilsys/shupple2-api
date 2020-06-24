@@ -1,17 +1,14 @@
 package input
 
 type (
-	CreateCharge struct {
+	Charge struct {
 		CfReturnGiftID         int `json:"cfReturnGiftId"`
 		CfReturnGiftSnapshotID int `json:"cfReturnGiftSnapshotId"`
 		Amount                 int `json:"amount"`
 	}
 
-	CreateChargeList struct {
-		Payments []CreateCharge `json:"payments"`
-	}
-
-	CapturePayment struct {
-		ID int `param:"id"`
+	CaptureCharge struct {
+		Payments           []Charge `json:"payments" validate:"gt=0"`
+		SupportCommentBody string   `json:"supportCommentBody"`
 	}
 )

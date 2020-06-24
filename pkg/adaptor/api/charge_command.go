@@ -22,7 +22,7 @@ var ChargeCommandControllerSet = wire.NewSet(
 )
 
 func (c *ChargeCommandController) CaptureCharge(ctx echo.Context, user entity.User) error {
-	i := &input.CreateChargeList{}
+	i := &input.CaptureCharge{}
 	if err := BindAndValidate(ctx, i); err != nil {
 		return errors.Wrap(err, "invalid request body")
 	}

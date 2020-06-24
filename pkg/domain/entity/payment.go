@@ -10,7 +10,7 @@ type (
 		Times
 	}
 
-	PaymentReturnGift struct {
+	PaymentCfReturnGift struct {
 		PaymentID              int `gorm:"primary_key"`
 		CfReturnGiftID         int `gorm:"primary_key"`
 		CfReturnGiftSnapshotID int
@@ -31,8 +31,8 @@ func NewPayment(userID, cardID, addressID int, chargeID string) *Payment {
 }
 
 // PaymentIDが先に取得できない為、後でいれる想定
-func NewPaymentReturnGift(giftID, giftSnapshotID, projectID, projectSnapshotID, amount int) *PaymentReturnGift {
-	return &PaymentReturnGift{
+func NewPaymentReturnGift(giftID, giftSnapshotID, projectID, projectSnapshotID, amount int) *PaymentCfReturnGift {
+	return &PaymentCfReturnGift{
 		CfReturnGiftID:         giftID,
 		CfReturnGiftSnapshotID: giftSnapshotID,
 		CfProjectID:            projectID,

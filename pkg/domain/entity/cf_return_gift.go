@@ -1,15 +1,18 @@
 package entity
 
-import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+import (
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
+)
 
 type (
 	CfReturnGiftTable struct {
-		ID               int `gorm:"primary_key"`
-		CfProjectID      int
-		LatestSnapshotID int
-		Thumbnail        string
-		SortOrder        int
-		GiftType         model.GiftType
+		ID                           int `gorm:"primary_key"`
+		CfProjectID                  int
+		LatestCfReturnGiftSnapshotID int
+		Thumbnail                    string
+		SortOrder                    int
+		GiftType                     model.GiftType
 		Times
 	}
 
@@ -25,7 +28,7 @@ type (
 
 	CfReturnGift struct {
 		CfReturnGiftTable
-		Summary *CfReturnGiftSnapshotTable `gorm:"foreignkey:LatestSnapshotID"`
+		Snapshot *CfReturnGiftSnapshotTable `gorm:"foreignkey:LatestCfReturnGiftSnapshotID"`
 		Times
 	}
 
@@ -43,10 +46,6 @@ type (
 	}
 )
 
-func (r *CfReturnGift) TableName() string {
-	return "return_gift"
-}
-
 // id:CfReturnGiftDetailのmapへ変換
 func (r *CfReturnGiftList) ToIDMap() map[int]*CfReturnGift {
 	idMap := make(map[int]*CfReturnGift, len(r.List))
@@ -56,21 +55,24 @@ func (r *CfReturnGiftList) ToIDMap() map[int]*CfReturnGift {
 	return idMap
 }
 
-func (r *CfReturnGiftList) CfProjectIDs() []int {
+func (r *CfReturnGiftList) UniqueCfProjectID() (int, bool) {
 	ids := make([]int, len(r.List))
 	for i, summary := range r.List {
 		ids[i] = summary.CfProjectID
 	}
-	return ids
+	if len(util.RemoveDuplicatesAndZeroFromIntSlice(ids)) == 1 {
+		return ids[0], true
+	}
+	return 0, false
 }
 
-// id:sold_countのmapへ変換
-func (r *CfReturnGiftSoldCountList) ToIDSoldCountMap() map[int]int {
-	result := make(map[int]int, len(r.List))
+func (r *CfReturnGiftSoldCountList) GetSoldCount(id int) int {
 	for _, summary := range r.List {
-		result[summary.ReturnGiftID] = summary.SoldCount
+		if summary.ReturnGiftID == id {
+			return summary.SoldCount
+		}
 	}
-	return result
+	return 0
 }
 
 func (c *CfReturnGiftTable) TableName() string {

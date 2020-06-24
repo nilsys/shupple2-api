@@ -48,6 +48,12 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 	themeCategoryQueryRepositoryImpl := &ThemeCategoryQueryRepositoryImpl{
 		DB: db,
 	}
+	cfProjectQueryRepositoryImpl := &CfProjectQueryRepositoryImpl{
+		DAO: dao,
+	}
+	cfProjectCommandRepositoryImpl := &CfProjectCommandRepositoryImpl{
+		DAO: dao,
+	}
 	comicCommandRepositoryImpl := &ComicCommandRepositoryImpl{
 		DAO: dao,
 	}
@@ -118,6 +124,8 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 		AreaCategoryQueryRepositoryImpl:    areaCategoryQueryRepositoryImpl,
 		ThemeCategoryCommandRepositoryImpl: themeCategoryCommandRepositoryImpl,
 		ThemeCategoryQueryRepositoryImpl:   themeCategoryQueryRepositoryImpl,
+		CfProjectQueryRepositoryImpl:       cfProjectQueryRepositoryImpl,
+		CfProjectCommandRepositoryImpl:     cfProjectCommandRepositoryImpl,
 		ComicCommandRepositoryImpl:         comicCommandRepositoryImpl,
 		ComicQueryRepositoryImpl:           comicQueryRepositoryImpl,
 		FeatureCommandRepositoryImpl:       featureCommandRepositoryImpl,
@@ -152,6 +160,8 @@ type Test struct {
 	*AreaCategoryQueryRepositoryImpl
 	*ThemeCategoryCommandRepositoryImpl
 	*ThemeCategoryQueryRepositoryImpl
+	*CfProjectQueryRepositoryImpl
+	*CfProjectCommandRepositoryImpl
 	*ComicCommandRepositoryImpl
 	*ComicQueryRepositoryImpl
 	*FeatureCommandRepositoryImpl

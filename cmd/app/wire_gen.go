@@ -19,7 +19,9 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 	service2 "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
+)
 
+import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
@@ -98,20 +100,24 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	chargeCommandRepositoryImpl := &payjp.ChargeCommandRepositoryImpl{
 		PayjpClient: payjpService,
 	}
-	returnGiftQueryRepositoryImpl := &repository.ReturnGiftQueryRepositoryImpl{
+	cfReturnGiftQueryRepositoryImpl := &repository.CfReturnGiftQueryRepositoryImpl{
+		DAO: dao,
+	}
+	cfProjectCommandRepositoryImpl := &repository.CfProjectCommandRepositoryImpl{
 		DAO: dao,
 	}
 	transactionServiceImpl := &repository.TransactionServiceImpl{
 		DB: db,
 	}
 	chargeCommandServiceImpl := &service.ChargeCommandServiceImpl{
-		PaymentCommandRepository:  paymentCommandRepositoryImpl,
-		CardQueryRepository:       cardQueryRepositoryImpl,
-		CfProjectQueryRepository:  cfProjectQueryRepositoryImpl,
-		ChargeCommandRepository:   chargeCommandRepositoryImpl,
-		ReturnGiftQueryRepository: returnGiftQueryRepositoryImpl,
-		ShippingQueryRepository:   shippingQueryRepositoryImpl,
-		TransactionService:        transactionServiceImpl,
+		PaymentCommandRepository:    paymentCommandRepositoryImpl,
+		CardQueryRepository:         cardQueryRepositoryImpl,
+		CfProjectQueryRepository:    cfProjectQueryRepositoryImpl,
+		ChargeCommandRepository:     chargeCommandRepositoryImpl,
+		CfReturnGiftQueryRepository: cfReturnGiftQueryRepositoryImpl,
+		ShippingQueryRepository:     shippingQueryRepositoryImpl,
+		CfProjectCommandRepository:  cfProjectCommandRepositoryImpl,
+		TransactionService:          transactionServiceImpl,
 	}
 	chargeCommandController := api.ChargeCommandController{
 		ChargeCommandService: chargeCommandServiceImpl,

@@ -7,8 +7,8 @@ import (
 )
 
 type (
-	ReturnGiftQueryRepository interface {
-		LockReturnGiftsWitLatestSummary(c context.Context, ids []int) (*entity.CfReturnGiftList, error)
+	CfReturnGiftQueryRepository interface {
+		LockCfReturnGiftList(c context.Context, ids []int) (*entity.CfReturnGiftList, error)
 		FindSoldCountByReturnGiftIDs(c context.Context, ids []int) (*entity.CfReturnGiftSoldCountList, error)
 	}
 )

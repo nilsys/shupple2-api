@@ -1,12 +1,17 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"gopkg.in/guregu/null.v3"
+)
 
 type (
 	CfProjectTable struct {
-		ID               int `gorm:"primary_key"`
-		UserID           int
-		LatestSnapshotID int
+		ID                  int `gorm:"primary_key"`
+		UserID              int
+		LatestSnapshotID    null.Int
+		SupportCommentCount int
 		Times
 	}
 
@@ -22,6 +27,14 @@ type (
 		Deadline    time.Time
 		IsAttention bool
 		Times
+	}
+
+	CfProjectSupportCommentTable struct {
+		ID          int `gorm:"primary_key"`
+		UserID      int
+		CfProjectID int
+		Body        string
+		TimesWithoutDeletedAt
 	}
 
 	CfProject struct {
@@ -54,4 +67,25 @@ func (c *CfProjectList) ToIDMap() map[int]*CfProject {
 		result[summary.ID] = summary
 	}
 	return result
+}
+
+// 名前おかしい(そもそもentityの名前がおかしい)
+func NewCfProjectSupportTable(userID, projectID int, body string) *CfProjectSupportCommentTable {
+	return &CfProjectSupportCommentTable{
+		UserID:      userID,
+		CfProjectID: projectID,
+		Body:        body,
+	}
+}
+
+func (c *CfProjectSnapshotTable) TableName() string {
+	return "cf_project_snapshot"
+}
+
+func (c *CfProjectSupportCommentTable) TableName() string {
+	return "cf_project_support_comment"
+}
+
+func (c *CfProjectTable) TableName() string {
+	return "cf_project"
 }

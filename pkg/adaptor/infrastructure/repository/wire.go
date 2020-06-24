@@ -19,6 +19,8 @@ type Test struct {
 	*AreaCategoryQueryRepositoryImpl
 	*ThemeCategoryCommandRepositoryImpl
 	*ThemeCategoryQueryRepositoryImpl
+	*CfProjectQueryRepositoryImpl
+	*CfProjectCommandRepositoryImpl
 	*ComicCommandRepositoryImpl
 	*ComicQueryRepositoryImpl
 	*FeatureCommandRepositoryImpl
