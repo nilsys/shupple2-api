@@ -68,6 +68,8 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 		}
 		user.ID = existingUser.ID
 		user.UID = existingUser.UID // TODO: これでいいのか？
+		user.AvatarUUID = existingUser.AvatarUUID
+		user.HeaderUUID = existingUser.HeaderUUID
 	}
 
 	if err := s.UserCommandRepository.Store(user); err != nil {
