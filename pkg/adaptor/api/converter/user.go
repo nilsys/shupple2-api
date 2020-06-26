@@ -52,29 +52,31 @@ func (c Converters) ConvertStoreUserParamToEntity(param *input.StoreUser) *entit
 		FacebookURL:  param.FacebookURL,
 		InstagramURL: param.InstagramURL,
 		TwitterURL:   param.TwitterURL,
+		YoutubeURL:   param.YoutubeURL,
 		LivingArea:   param.LivingArea,
 		Interests:    interests,
 	}
 }
 
-func (c Converters) ConvertUpdateUserParamToCmd(param *input.UpdateUser) *command.UpdateUser {
-	interests := make([]*entity.UserInterest, len(param.Interests))
-	for i, interest := range param.Interests {
+func (c Converters) ConvertUpdateUserParamToCmd(i *input.UpdateUser) *command.UpdateUser {
+	interests := make([]*entity.UserInterest, len(i.Interests))
+	for i, interest := range i.Interests {
 		interests[i] = &entity.UserInterest{InterestID: interest}
 	}
 	return &command.UpdateUser{
-		Name:         param.Name,
-		Email:        param.Email,
-		BirthDate:    param.BirthDate,
-		Gender:       param.Gender,
-		Profile:      param.Profile,
-		IconUUID:     param.IconUUID,
-		HeaderUUID:   param.HeaderUUID,
-		URL:          param.URL,
-		FacebookURL:  param.FacebookURL,
-		InstagramURL: param.InstagramURL,
-		TwitterURL:   param.TwitterURL,
-		LivingArea:   param.LivingArea,
+		Name:         i.Name,
+		Email:        i.Email,
+		BirthDate:    i.BirthDate,
+		Gender:       i.Gender,
+		Profile:      i.Profile,
+		IconUUID:     i.IconUUID,
+		HeaderUUID:   i.HeaderUUID,
+		URL:          i.URL,
+		FacebookURL:  i.FacebookURL,
+		InstagramURL: i.InstagramURL,
+		TwitterURL:   i.TwitterURL,
+		YoutubeURL:   i.YoutubeURL,
+		LivingArea:   i.LivingArea,
 		Interests:    interests,
 	}
 }

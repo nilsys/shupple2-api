@@ -54,6 +54,7 @@ type (
 		FacebookURL   string       `json:"facebookUrl"`
 		InstagramURL  string       `json:"instagramUrl"`
 		TwitterURL    string       `json:"twitterUrl"`
+		YoutubeURL    string       `json:"youtubeUrl"`
 		LivingArea    string       `json:"livingArea"`
 		Interests     []int        `json:"interests"`
 	}
@@ -70,6 +71,7 @@ type (
 		FacebookURL  string       `json:"facebookUrl"`
 		InstagramURL string       `json:"instagramUrl"`
 		TwitterURL   string       `json:"twitterUrl"`
+		YoutubeURL   string       `json:"youtubeUrl"`
 		LivingArea   string       `json:"livingArea"`
 		Interests    []int        `json:"interests"`
 	}

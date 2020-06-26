@@ -2423,6 +2423,10 @@ components:
           type: string
           description: twitterのurl
           example: https://twitter.com
+        youtubeUrl:
+          type: string
+          description: youtubeのurl
+          example: https://youtube.com
         livingArea:
           type: string
           description: 居住エリア
@@ -2490,6 +2494,10 @@ components:
           type: string
           description: twitterURL
           example: https://twitter.com/
+        youtubeUrl:
+          type: string
+          description: youtubuURL
+          example: https://youtube.com
         livingArea:
           type: string
           description: 居住エリア

@@ -16,6 +16,7 @@ type UpdateUser struct {
 	URL          string
 	FacebookURL  string
 	InstagramURL string
+	YoutubeURL   string
 	TwitterURL   string
 	LivingArea   string
 	Interests    []*entity.UserInterest
