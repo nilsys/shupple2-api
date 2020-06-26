@@ -88,7 +88,7 @@ type (
 	}
 
 	PhoneNumber struct {
-		Val string `json:"phoneNumber"`
+		Val string `param:"phoneNumber" validate:"required"`
 	}
 )
 
