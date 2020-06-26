@@ -41,5 +41,7 @@ type (
 		FindFavoriteReviewUser(reviewID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
 		FindFavoritePostUserByUserID(postID, userID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
 		FindFavoriteReviewUserByUserID(reviewID, userID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
+		// TODO: ここにあっていいか？
+		IsExistPhoneNumber(number string) (bool, error)
 	}
 )

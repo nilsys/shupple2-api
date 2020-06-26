@@ -90,10 +90,12 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 	postQueryRepositoryImpl := &PostQueryRepositoryImpl{
 		DB: db,
 	}
-	userQueryRepositoryImpl := &UserQueryRepositoryImpl{
-		DB: db,
-	}
 	aws := configConfig.AWS
+	userQueryRepositoryImpl := &UserQueryRepositoryImpl{
+		DB:         db,
+		AWSConfig:  aws,
+		AWSSession: session,
+	}
 	userCommandRepositoryImpl := &UserCommandRepositoryImpl{
 		DAO:           dao,
 		MediaUploader: uploader,

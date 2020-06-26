@@ -160,3 +160,19 @@ func (c *UserQueryController) ListFavoriteReviewUser(ctx echo.Context, user enti
 
 	return ctx.JSON(http.StatusOK, c.ConvertUsersToUserSummaryList(users))
 }
+
+func (c *UserQueryController) IsExistPhoneNumber(ctx echo.Context) error {
+	i := &input.PhoneNumber{}
+	if err := BindAndValidate(ctx, i); err != nil {
+		return errors.Wrap(err, "failed bind")
+	}
+
+	isExist, err := c.UserQueryService.IsExistByPhoneNumber(i.Val)
+	if err != nil {
+		return errors.Wrap(err, "failed is_exist by phone_number")
+	}
+
+	return ctx.JSON(http.StatusOK, struct {
+		IsExist bool `json:"isExist"`
+	}{IsExist: isExist})
+}

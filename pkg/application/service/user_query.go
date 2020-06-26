@@ -19,6 +19,7 @@ type (
 		ListFollowed(query *query.FindFollowUser) ([]*entity.User, error)
 		ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.User, error)
 		ListFavoriteReviewUser(reviewID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.User, error)
+		IsExistByPhoneNumber(number string) (bool, error)
 	}
 
 	UserQueryServiceImpl struct {
@@ -95,4 +96,8 @@ func (s *UserQueryServiceImpl) ListFavoriteReviewUser(reviewID int, user *entity
 	}
 
 	return s.UserQueryRepository.FindFavoriteReviewUser(reviewID, query)
+}
+
+func (s *UserQueryServiceImpl) IsExistByPhoneNumber(number string) (bool, error) {
+	return s.UserQueryRepository.IsExistPhoneNumber(number)
 }

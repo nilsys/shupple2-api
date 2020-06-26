@@ -35,7 +35,9 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	aws := configConfig.AWS
 	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(configConfig)
 	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
-		DB: db,
+		DB:         db,
+		AWSConfig:  aws,
+		AWSSession: session,
 	}
 	dao := repository.DAO{
 		UnderlyingDB: db,

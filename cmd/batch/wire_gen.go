@@ -8,6 +8,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	service2 "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
@@ -40,9 +41,15 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		AWSSession:    session,
 	}
 	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
-		DB: db,
+		DB:         db,
+		AWSConfig:  aws,
+		AWSSession: session,
 	}
 	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(configConfig)
+	payjpService := repository.ProvidePayjp(configConfig)
+	customerCommandRepositoryImpl := &payjp.CustomerCommandRepositoryImpl{
+		PayjpClient: payjpService,
+	}
 	authService, err := service.ProvideAuthService(configConfig)
 	if err != nil {
 		return nil, err
@@ -61,12 +68,13 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		DB: db,
 	}
 	userCommandServiceImpl := &service.UserCommandServiceImpl{
-		UserCommandRepository:    userCommandRepositoryImpl,
-		UserQueryRepository:      userQueryRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepositoryImpl,
-		AuthService:              authService,
-		NoticeDomainService:      noticeDomainServiceImpl,
-		TransactionService:       transactionServiceImpl,
+		UserCommandRepository:     userCommandRepositoryImpl,
+		UserQueryRepository:       userQueryRepositoryImpl,
+		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
+		CustomerCommandRepository: customerCommandRepositoryImpl,
+		AuthService:               authService,
+		NoticeDomainService:       noticeDomainServiceImpl,
+		TransactionService:        transactionServiceImpl,
 	}
 	areaCategoryCommandRepositoryImpl := &repository.AreaCategoryCommandRepositoryImpl{
 		DAO: dao,

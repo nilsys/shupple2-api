@@ -43,7 +43,9 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		AWSSession:    session,
 	}
 	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
-		DB: db,
+		DB:         db,
+		AWSConfig:  aws,
+		AWSSession: session,
 	}
 	payjpService := repository.ProvidePayjp(configConfig)
 	customerCommandRepositoryImpl := &payjp.CustomerCommandRepositoryImpl{

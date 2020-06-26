@@ -1,9 +1,15 @@
 package repository
 
 import (
+	"fmt"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
+	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
@@ -13,7 +19,9 @@ import (
 
 // User参照系レポジトリ実装
 type UserQueryRepositoryImpl struct {
-	DB *gorm.DB
+	DB         *gorm.DB
+	AWSConfig  config.AWS
+	AWSSession *session.Session
 }
 
 var UserQueryRepositorySet = wire.NewSet(
@@ -274,4 +282,21 @@ func (r *UserQueryRepositoryImpl) buildFindUserRankingListQuery(query *query.Fin
 
 	return q.Joins("INNER JOIN (SELECT MAX(user_id) AS user_id, SUM(weekly_views) AS views_count FROM (SELECT user_id, weekly_views FROM review UNION ALL SELECT user_id, weekly_views FROM post) AS user_views_count GROUP BY user_id) user_views_count ON user.id = user_views_count.user_id").
 		Order("user_views_count.views_count DESC")
+}
+
+// TODO: ここに置いて良いのか
+// cognitoのpoolから電話番号が使用されているか検索
+func (r *UserQueryRepositoryImpl) IsExistPhoneNumber(number string) (bool, error) {
+	svc := cognitoidentityprovider.New(r.AWSSession)
+
+	input := &cognitoidentityprovider.ListUsersInput{
+		UserPoolId: aws.String(r.AWSConfig.UserPoolID),
+		Filter:     aws.String(fmt.Sprintf("phone_number = \"%s\"", number)),
+	}
+	output, err := svc.ListUsers(input)
+	if err != nil {
+		return false, errors.Wrap(err, "failed list users")
+	}
+
+	return len(output.Users) > 0, nil
 }

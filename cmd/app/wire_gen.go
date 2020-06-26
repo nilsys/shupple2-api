@@ -41,8 +41,15 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	if err != nil {
 		return nil, err
 	}
+	aws := configConfig.AWS
+	session, err := repository.ProvideAWSSession(configConfig)
+	if err != nil {
+		return nil, err
+	}
 	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
-		DB: db,
+		DB:         db,
+		AWSConfig:  aws,
+		AWSSession: session,
 	}
 	authorize := middleware.Authorize{
 		AuthService: authService,
@@ -237,11 +244,6 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		Converters:         converters,
 		ReviewQueryService: reviewQueryServiceImpl,
 	}
-	session, err := repository.ProvideAWSSession(configConfig)
-	if err != nil {
-		return nil, err
-	}
-	aws := configConfig.AWS
 	reviewCommandRepositoryImpl := &repository.ReviewCommandRepositoryImpl{
 		DAO:        dao,
 		AWSSession: session,

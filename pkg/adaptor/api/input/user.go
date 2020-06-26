@@ -86,6 +86,10 @@ type (
 		PerPage int `query:"perPage"`
 		Page    int `query:"page"`
 	}
+
+	PhoneNumber struct {
+		Val string `json:"phoneNumber"`
+	}
 )
 
 const getUsersDefaultPerPage = 30
