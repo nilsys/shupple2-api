@@ -48,6 +48,7 @@ type (
 		FacebookURL    string       `json:"facebookUrl"`
 		InstagramURL   string       `json:"instagramUrl"`
 		TwitterURL     string       `json:"twitterUrl"`
+		YoutubeURL     string       `json:"youtubeUrl"`
 		URL            string       `json:"url"`
 		LivingArea     string       `json:"livingArea"`
 		PostCount      int          `json:"postCount"`
