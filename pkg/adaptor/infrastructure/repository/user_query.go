@@ -298,5 +298,12 @@ func (r *UserQueryRepositoryImpl) IsExistPhoneNumber(number string) (bool, error
 		return false, errors.Wrap(err, "failed list users")
 	}
 
-	return len(output.Users) > 0, nil
+	// 複数検索条件指定できないのでここで確認する
+	for _, user := range output.Users {
+		if *user.UserStatus == "CONFIRMED" {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }
