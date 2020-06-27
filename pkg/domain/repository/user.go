@@ -35,7 +35,7 @@ type (
 		IsFollow(targetID, userID int) (bool, error)
 		FindRecommendFollowUserList(interestIDs []int) ([]*entity.UserTable, error)
 		IsExistByUID(uid string) (bool, error)
-		IsExistByCognitoUserName(cognitoUserName string) (bool, error)
+		FindByCognitoUserName(cognitoUserName []string) ([]*entity.UserTable, error)
 		// name部分一致検索
 		SearchByName(name string) ([]*entity.User, error)
 		FindFollowingByID(query *query.FindFollowUser) ([]*entity.User, error)
@@ -45,6 +45,6 @@ type (
 		FindFavoritePostUserByUserID(postID, userID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
 		FindFavoriteReviewUserByUserID(reviewID, userID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
 		// TODO: ここにあっていいか？
-		FindConfirmedUserTypeByPhoneNumberFromCognito(number string) (*cognitoidentityprovider.UserType, error)
+		FindConfirmedUserTypeByPhoneNumberFromCognito(number string) ([]*cognitoidentityprovider.UserType, error)
 	}
 )

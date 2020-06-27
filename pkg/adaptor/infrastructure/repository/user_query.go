@@ -145,10 +145,12 @@ func (r *UserQueryRepositoryImpl) IsExistByUID(uid string) (bool, error) {
 	return ErrorToIsExist(err, "user(uid=%s)", uid)
 }
 
-func (r *UserQueryRepositoryImpl) IsExistByCognitoUserName(cognitoUserName string) (bool, error) {
-	var row entity.UserTable
-	err := r.DB.Where("cognito_user_name = ?", cognitoUserName).First(&row).Error
-	return ErrorToIsExist(err, "user(cognito_user_name=%s)", cognitoUserName)
+func (r *UserQueryRepositoryImpl) FindByCognitoUserName(cognitoUserName []string) ([]*entity.UserTable, error) {
+	var row []*entity.UserTable
+	if err := r.DB.Where("cognito_user_name IN (?)", cognitoUserName).Find(&row).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find by cognito_user_name")
+	}
+	return row, nil
 }
 
 // name部分一致検索
@@ -292,9 +294,10 @@ func (r *UserQueryRepositoryImpl) buildFindUserRankingListQuery(query *query.Fin
 
 // TODO: ここに置いて良いのか
 // cognitoのpoolから電話番号が使用されているか検索
-func (r *UserQueryRepositoryImpl) FindConfirmedUserTypeByPhoneNumberFromCognito(number string) (*cognitoidentityprovider.UserType, error) {
+func (r *UserQueryRepositoryImpl) FindConfirmedUserTypeByPhoneNumberFromCognito(number string) ([]*cognitoidentityprovider.UserType, error) {
 	svc := cognitoidentityprovider.New(r.AWSSession)
 
+	// TODO: 無限対応
 	input := &cognitoidentityprovider.ListUsersInput{
 		UserPoolId: aws.String(r.AWSConfig.UserPoolID),
 		Filter:     aws.String(fmt.Sprintf("phone_number = \"%s\"", number)),
@@ -304,12 +307,13 @@ func (r *UserQueryRepositoryImpl) FindConfirmedUserTypeByPhoneNumberFromCognito(
 		return nil, errors.Wrap(err, "failed list users")
 	}
 
+	users := make([]*cognitoidentityprovider.UserType, 0, len(output.Users))
 	// 複数検索条件指定できないのでここで確認する
 	for _, user := range output.Users {
 		if *user.UserStatus == "CONFIRMED" {
-			return user, nil
+			users = append(users, user)
 		}
 	}
 
-	return nil, nil
+	return users, nil
 }

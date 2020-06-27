@@ -99,14 +99,24 @@ func (s *UserQueryServiceImpl) ListFavoriteReviewUser(reviewID int, user *entity
 }
 
 func (s *UserQueryServiceImpl) IsExistByPhoneNumber(number string) (bool, error) {
-	cognitoUser, err := s.UserQueryRepository.FindConfirmedUserTypeByPhoneNumberFromCognito(number)
+	cognitoUsers, err := s.UserQueryRepository.FindConfirmedUserTypeByPhoneNumberFromCognito(number)
 	if err != nil {
 		return false, errors.Wrap(err, "failed find from cognito")
 	}
-	if cognitoUser == nil {
+	if len(cognitoUsers) == 0 {
 		return false, nil
 	}
 
+	cognitoUserNames := make([]string, len(cognitoUsers))
+	for i, user := range cognitoUsers {
+		cognitoUserNames[i] = *user.Username
+	}
+
 	// stayway側に登録されているか
-	return s.UserQueryRepository.IsExistByCognitoUserName(*cognitoUser.Username)
+	user, err := s.UserQueryRepository.FindByCognitoUserName(cognitoUserNames)
+	if err != nil {
+		return false, errors.Wrap(err, "failed find by cognito_user_name")
+	}
+
+	return len(user) > 0, nil
 }
