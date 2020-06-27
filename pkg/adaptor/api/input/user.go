@@ -42,21 +42,22 @@ type (
 	}
 
 	StoreUser struct {
-		Name          string       `json:"name"`
-		CognitoToken  string       `json:"cognitoToken"`
-		MigrationCode *string      `json:"migrationCode"`
-		UID           string       `json:"uid"`
-		Email         string       `json:"email"`
-		BirthDate     model.Date   `json:"birthDate"`
-		Gender        model.Gender `json:"gender"`
-		Profile       string       `json:"profile"`
-		URL           string       `json:"url"`
-		FacebookURL   string       `json:"facebookUrl"`
-		InstagramURL  string       `json:"instagramUrl"`
-		TwitterURL    string       `json:"twitterUrl"`
-		YoutubeURL    string       `json:"youtubeUrl"`
-		LivingArea    string       `json:"livingArea"`
-		Interests     []int        `json:"interests"`
+		Name            string       `json:"name"`
+		CognitoToken    string       `json:"cognitoToken"`
+		MigrationCode   *string      `json:"migrationCode"`
+		CognitoUserName string       `json:"cognitoUserName"`
+		UID             string       `json:"uid"`
+		Email           string       `json:"email"`
+		BirthDate       model.Date   `json:"birthDate"`
+		Gender          model.Gender `json:"gender"`
+		Profile         string       `json:"profile"`
+		URL             string       `json:"url"`
+		FacebookURL     string       `json:"facebookUrl"`
+		InstagramURL    string       `json:"instagramUrl"`
+		TwitterURL      string       `json:"twitterUrl"`
+		YoutubeURL      string       `json:"youtubeUrl"`
+		LivingArea      string       `json:"livingArea"`
+		Interests       []int        `json:"interests"`
 	}
 
 	UpdateUser struct {

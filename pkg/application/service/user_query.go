@@ -99,5 +99,14 @@ func (s *UserQueryServiceImpl) ListFavoriteReviewUser(reviewID int, user *entity
 }
 
 func (s *UserQueryServiceImpl) IsExistByPhoneNumber(number string) (bool, error) {
-	return s.UserQueryRepository.IsExistPhoneNumber(number)
+	cognitoUser, err := s.UserQueryRepository.FindConfirmedUserTypeByPhoneNumberFromCognito(number)
+	if err != nil {
+		return false, errors.Wrap(err, "failed find from cognito")
+	}
+	if cognitoUser == nil {
+		return false, nil
+	}
+
+	// stayway側に登録されているか
+	return s.UserQueryRepository.IsExistByCognitoUserName(*cognitoUser.Username)
 }

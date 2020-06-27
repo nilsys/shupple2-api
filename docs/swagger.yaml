@@ -2438,6 +2438,10 @@ components:
     UserRegisterRequest:
       type: object
       properties:
+        cognitoUserName:
+          type: string
+          description: cognito側のusername
+          example: "sms_eyJhbGc"
         cognitoToken:
           type: string
           description: cognitoで認証して得られたJWT

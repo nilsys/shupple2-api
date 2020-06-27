@@ -145,6 +145,12 @@ func (r *UserQueryRepositoryImpl) IsExistByUID(uid string) (bool, error) {
 	return ErrorToIsExist(err, "user(uid=%s)", uid)
 }
 
+func (r *UserQueryRepositoryImpl) IsExistByCognitoUserName(cognitoUserName string) (bool, error) {
+	var row entity.UserTable
+	err := r.DB.Where("cognito_user_name = ?", cognitoUserName).First(&row).Error
+	return ErrorToIsExist(err, "user(cognito_user_name=%s)", cognitoUserName)
+}
+
 // name部分一致検索
 func (r *UserQueryRepositoryImpl) SearchByName(name string) ([]*entity.User, error) {
 	var rows []*entity.User
@@ -286,7 +292,7 @@ func (r *UserQueryRepositoryImpl) buildFindUserRankingListQuery(query *query.Fin
 
 // TODO: ここに置いて良いのか
 // cognitoのpoolから電話番号が使用されているか検索
-func (r *UserQueryRepositoryImpl) IsExistPhoneNumber(number string) (bool, error) {
+func (r *UserQueryRepositoryImpl) FindConfirmedUserTypeByPhoneNumberFromCognito(number string) (*cognitoidentityprovider.UserType, error) {
 	svc := cognitoidentityprovider.New(r.AWSSession)
 
 	input := &cognitoidentityprovider.ListUsersInput{
@@ -295,15 +301,15 @@ func (r *UserQueryRepositoryImpl) IsExistPhoneNumber(number string) (bool, error
 	}
 	output, err := svc.ListUsers(input)
 	if err != nil {
-		return false, errors.Wrap(err, "failed list users")
+		return nil, errors.Wrap(err, "failed list users")
 	}
 
 	// 複数検索条件指定できないのでここで確認する
 	for _, user := range output.Users {
 		if *user.UserStatus == "CONFIRMED" {
-			return true, nil
+			return user, nil
 		}
 	}
 
-	return false, nil
+	return nil, nil
 }

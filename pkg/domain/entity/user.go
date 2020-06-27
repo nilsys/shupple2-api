@@ -13,47 +13,49 @@ import (
 
 type (
 	User struct {
-		ID            int `gorm:"primary_key"`
-		UID           string
-		CognitoID     null.String
-		WordpressID   null.Int
-		MigrationCode null.String
-		Name          string
-		Email         string
-		Birthdate     time.Time
-		Gender        model.Gender
-		Profile       string
-		AvatarUUID    string
-		HeaderUUID    string
-		URL           string
-		FacebookURL   string
-		InstagramURL  string
-		TwitterURL    string
-		YoutubeURL    string
-		LivingArea    string
-		Interests     []*UserInterest `gorm:"foreignkey:UserID"`
+		ID              int `gorm:"primary_key"`
+		UID             string
+		CognitoID       null.String
+		WordpressID     null.Int
+		CognitoUserName string
+		MigrationCode   null.String
+		Name            string
+		Email           string
+		Birthdate       time.Time
+		Gender          model.Gender
+		Profile         string
+		AvatarUUID      string
+		HeaderUUID      string
+		URL             string
+		FacebookURL     string
+		InstagramURL    string
+		TwitterURL      string
+		YoutubeURL      string
+		LivingArea      string
+		Interests       []*UserInterest `gorm:"foreignkey:UserID"`
 		Times
 	}
 
 	UserTable struct {
-		ID            int `gorm:"primary_key"`
-		UID           string
-		CognitoID     null.String
-		WordpressID   null.Int
-		MigrationCode null.String
-		Name          string
-		Email         string
-		Birthdate     time.Time
-		Gender        model.Gender
-		Profile       string
-		AvatarUUID    string
-		HeaderUUID    string
-		URL           string
-		FacebookURL   string
-		InstagramURL  string
-		TwitterURL    string
-		YoutubeURL    string
-		LivingArea    string
+		ID              int `gorm:"primary_key"`
+		UID             string
+		CognitoID       null.String
+		WordpressID     null.Int
+		CognitoUserName string
+		MigrationCode   null.String
+		Name            string
+		Email           string
+		Birthdate       time.Time
+		Gender          model.Gender
+		Profile         string
+		AvatarUUID      string
+		HeaderUUID      string
+		URL             string
+		FacebookURL     string
+		InstagramURL    string
+		TwitterURL      string
+		YoutubeURL      string
+		LivingArea      string
 		Times
 	}
 
