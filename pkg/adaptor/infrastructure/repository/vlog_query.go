@@ -55,7 +55,7 @@ func (r *VlogQueryRepositoryImpl) FindListByParams(query *query.FindVlogListQuer
 	// フリーワード検索の場合
 	if query.Keyword != "" {
 		if err := q.
-			Select("*, CASE WHEN title LIKE ? THEN 'TRUE' ELSE 'FALSE' END is_matched_title", query.SQLLikeKeyword()).
+			Select("*, CASE WHEN vlog.title LIKE ? THEN 'TRUE' ELSE 'FALSE' END is_matched_title", query.SQLLikeKeyword()).
 			Order("is_matched_title desc").
 			Order(query.SortBy.GetVlogOrderQuery()).
 			Limit(query.Limit).
@@ -86,7 +86,7 @@ func (r *VlogQueryRepositoryImpl) FindWithIsFavoriteListByParams(query *query.Fi
 	// フリーワード検索の場合
 	if query.Keyword != "" {
 		if err := q.
-			Select("*, CASE WHEN title LIKE ? THEN 'TRUE' ELSE 'FALSE' END is_matched_title, CASE WHEN user_favorite_vlog.vlog_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite", query.SQLLikeKeyword()).
+			Select("*, CASE WHEN vlog.title LIKE ? THEN 'TRUE' ELSE 'FALSE' END is_matched_title, CASE WHEN user_favorite_vlog.vlog_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite", query.SQLLikeKeyword()).
 			Joins("LEFT JOIN user_favorite_vlog ON vlog.id = user_favorite_vlog.vlog_id AND user_favorite_vlog.user_id = ?", userID).
 			Order("is_matched_title desc").
 			Order(query.SortBy.GetVlogOrderQuery()).
@@ -127,27 +127,27 @@ func (r *VlogQueryRepositoryImpl) buildFindByParamsQuery(query *query.FindVlogLi
 	q := r.DB
 
 	if query.AreaID != 0 {
-		q = q.Where("id IN (SELECT vlog_id FROM vlog_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?))", query.AreaID)
+		q = q.Where("vlog.id IN (SELECT vlog_id FROM vlog_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?))", query.AreaID)
 	}
 
 	if query.SubAreaID != 0 {
-		q = q.Where("id IN (SELECT vlog_id FROM vlog_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?))", query.SubAreaID)
+		q = q.Where("vlog.id IN (SELECT vlog_id FROM vlog_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?))", query.SubAreaID)
 	}
 
 	if query.SubSubAreaID != 0 {
-		q = q.Where("id IN (SELECT vlog_id FROM vlog_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))", query.SubSubAreaID)
+		q = q.Where("vlog.id IN (SELECT vlog_id FROM vlog_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))", query.SubSubAreaID)
 	}
 
 	if query.TouristSpotID != 0 {
-		q = q.Where("id IN (SELECT vlog_id FROM vlog_tourist_spot WHERE tourist_spot_id = ?)", query.TouristSpotID)
+		q = q.Where("vlog.id IN (SELECT vlog_id FROM vlog_tourist_spot WHERE tourist_spot_id = ?)", query.TouristSpotID)
 	}
 
 	if query.UserID != 0 {
-		q = q.Where("user_id = ?", query.UserID)
+		q = q.Where("vlog.user_id = ?", query.UserID)
 	}
 
 	if query.Keyword != "" {
-		q = q.Where("title LIKE ?", query.SQLLikeKeyword()).Or("body LIKE ?", query.SQLLikeKeyword())
+		q = q.Where("vlog.title LIKE ?", query.SQLLikeKeyword()).Or("vlog.body LIKE ?", query.SQLLikeKeyword())
 	}
 
 	return q

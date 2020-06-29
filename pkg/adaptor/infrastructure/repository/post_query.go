@@ -126,13 +126,32 @@ func (r *PostQueryRepositoryImpl) FindListWithIsFavoriteByParams(query *query.Fi
 
 	q := r.buildFindListByParamsQuery(query)
 
+	// フリーワード検索の場合
+	if query.Keyword != "" {
+		if err := q.
+			Select("post.*, CASE WHEN post.title LIKE ? THEN 'TRUE' ELSE 'FALSE' END is_matched_title", query.SQLLikeKeyword()).
+			Order("is_matched_title desc").
+			Order(query.SortBy.GetPostOrderQuery()).
+			Limit(query.Limit).
+			Offset(query.OffSet).
+			Find(&postList.Posts).
+			Offset(0).
+			Count(&postList.TotalNumber).Error; err != nil {
+			return nil, errors.Wrapf(err, "Failed get posts by params")
+		}
+
+		return &postList, nil
+	}
+
 	if err := q.
 		Select("post.*, CASE WHEN user_favorite_post.post_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
 		Joins("LEFT JOIN user_favorite_post ON post.id = user_favorite_post.post_id AND user_favorite_post.user_id = ?", userID).
 		Order(query.SortBy.GetPostOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
-		Find(&postList.Posts).Count(&postList.TotalNumber).Error; err != nil {
+		Find(&postList.Posts).
+		Offset(0).
+		Count(&postList.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get posts by params")
 	}
 
@@ -213,59 +232,59 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 	}
 
 	if query.AreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?))", query.AreaID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE area_id = ?))", query.AreaID)
 	}
 
 	if query.SubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?))", query.SubAreaID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_area_id = ?))", query.SubAreaID)
 	}
 
 	if query.SubSubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))", query.SubSubAreaID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))", query.SubSubAreaID)
 	}
 
 	// 一つ上のエリアに紐づいた記事を返す
 	if query.ChildAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT area_group FROM area_category WHERE area_id = ?))", query.ChildAreaID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT area_group FROM area_category WHERE area_id = ?))", query.ChildAreaID)
 	}
 	if query.ChildSubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT area_id FROM area_category WHERE sub_area_id = ?))", query.ChildSubAreaID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT area_id FROM area_category WHERE sub_area_id = ?))", query.ChildSubAreaID)
 	}
 	if query.ChildSubSubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT sub_area_id FROM area_category WHERE sub_sub_area_id = ?))", query.ChildSubSubAreaID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT sub_area_id FROM area_category WHERE sub_sub_area_id = ?))", query.ChildSubSubAreaID)
 	}
 	//
 
 	if query.MetasearchAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_area_id` = ?))", query.MetasearchAreaID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_area_id` = ?))", query.MetasearchAreaID)
 	}
 
 	if query.MetasearchSubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_sub_area_id` = ?))", query.MetasearchSubAreaID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_sub_area_id` = ?))", query.MetasearchSubAreaID)
 	}
 
 	if query.MetasearchSubSubAreaID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_sub_sub_area_id` = ?))", query.MetasearchSubSubAreaID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_sub_sub_area_id` = ?))", query.MetasearchSubSubAreaID)
 	}
 
 	if query.InnTypeID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_inn_type_id` = ?))", query.InnTypeID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_inn_type_id` = ?))", query.InnTypeID)
 	}
 
 	if query.InnDiscerningType != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_discerning_condition_id` = ?))", query.InnDiscerningType)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_discerning_condition_id` = ?))", query.InnDiscerningType)
 	}
 
 	if query.ThemeID != 0 {
-		q = q.Where("id IN (SELECT post_id FROM post_theme_category WHERE theme_category_id IN (SELECT id FROM theme_category WHERE theme_id = ?))", query.ThemeID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_theme_category WHERE theme_category_id IN (SELECT id FROM theme_category WHERE theme_id = ?))", query.ThemeID)
 	}
 
 	if query.HashTag != "" {
-		q = q.Where("id IN (SELECT post_id FROM post_hashtag WHERE hashtag_id = (SELECT id FROM hashtag WHERE name = ?))", query.HashTag)
+		q = q.Where("post.id IN (SELECT post_id FROM post_hashtag WHERE hashtag_id = (SELECT id FROM hashtag WHERE name = ?))", query.HashTag)
 	}
 
 	if query.Keyword != "" {
-		q = q.Where("title LIKE ?", query.SQLLikeKeyword()).Or("id IN (SELECT post_id FROM post_body WHERE body LIKE ?)", query.SQLLikeKeyword())
+		q = q.Where("post.title LIKE ?", query.SQLLikeKeyword()).Or("post.id IN (SELECT post_id FROM post_body WHERE body LIKE ?)", query.SQLLikeKeyword())
 	}
 
 	return q
