@@ -17,8 +17,10 @@ type (
 		ListRecommendFollowUser(interestIDs []int) ([]*entity.UserTable, error)
 		ListFollowing(query *query.FindFollowUser) ([]*entity.User, error)
 		ListFollowed(query *query.FindFollowUser) ([]*entity.User, error)
-		ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.User, error)
-		ListFavoriteReviewUser(reviewID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.User, error)
+		ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTable, error)
+		ListFavoriteReviewUser(reviewID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTable, error)
+		ListFavoriteComicUser(comicID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTable, error)
+		ListFavoriteVlogUser(vlogID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTable, error)
 		IsExistByPhoneNumber(number string) (bool, error)
 	}
 
@@ -82,7 +84,7 @@ func (s *UserQueryServiceImpl) ListFollowed(query *query.FindFollowUser) ([]*ent
 	return s.UserQueryRepository.FindFollowedByID(query)
 }
 
-func (s *UserQueryServiceImpl) ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.User, error) {
+func (s *UserQueryServiceImpl) ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTable, error) {
 	if user.IsAuthorized() {
 		return s.UserQueryRepository.FindFavoritePostUserByUserID(postID, user.ID, query)
 	}
@@ -90,12 +92,26 @@ func (s *UserQueryServiceImpl) ListFavoritePostUser(postID int, user *entity.Opt
 	return s.UserQueryRepository.FindFavoritePostUser(postID, query)
 }
 
-func (s *UserQueryServiceImpl) ListFavoriteReviewUser(reviewID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.User, error) {
+func (s *UserQueryServiceImpl) ListFavoriteReviewUser(reviewID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTable, error) {
 	if user.IsAuthorized() {
 		return s.UserQueryRepository.FindFavoriteReviewUserByUserID(reviewID, user.ID, query)
 	}
 
 	return s.UserQueryRepository.FindFavoriteReviewUser(reviewID, query)
+}
+
+func (s *UserQueryServiceImpl) ListFavoriteComicUser(comicID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTable, error) {
+	if ouser.IsAuthorized() {
+		return s.UserQueryRepository.FindFavoriteComicUserByUserID(comicID, ouser.ID, query)
+	}
+	return s.UserQueryRepository.FindFavoriteComicUser(comicID, query)
+}
+
+func (s *UserQueryServiceImpl) ListFavoriteVlogUser(vlogID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTable, error) {
+	if ouser.IsAuthorized() {
+		return s.UserQueryRepository.FindFavoriteVlogUserByUserID(vlogID, ouser.ID, query)
+	}
+	return s.UserQueryRepository.FindFavoriteVlogUser(vlogID, query)
 }
 
 func (s *UserQueryServiceImpl) IsExistByPhoneNumber(number string) (bool, error) {

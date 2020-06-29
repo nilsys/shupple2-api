@@ -117,6 +117,8 @@ func setRoutes(app *App) {
 		users.GET("/:id/favorite/reviews", auth.Optional(app.ReviewQueryController.ListFavoriteReview))
 		users.GET("/favorite/reviews/:id", auth.Optional(app.UserQueryController.ListFavoriteReviewUser))
 		users.GET("/favorite/posts/:id", auth.Optional(app.UserQueryController.ListFavoritePostUser))
+		users.GET("/favorite/comics/:id", auth.Optional(app.UserQueryController.ListFavoriteComicUser))
+		users.GET("/favorite/vlogs/:id", auth.Optional(app.UserQueryController.ListFavoriteVlogUser))
 		users.GET("/phone_number/:phoneNumber", app.UserQueryController.IsExistPhoneNumber)
 	}
 

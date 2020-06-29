@@ -139,12 +139,12 @@ func (c *UserQueryController) ListFavoritePostUser(ctx echo.Context, user entity
 		return errors.Wrap(err, "")
 	}
 
-	users, err := c.UserQueryService.ListFavoritePostUser(p.MediaID, &user, c.ConvertListFavoriteMediaUserToQuery(p))
+	users, err := c.UserQueryService.ListFavoritePostUser(p.ID, &user, c.ConvertListFavoriteMediaUserToQuery(p))
 	if err != nil {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertUsersToUserSummaryList(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUserTableListToOutput(users))
 }
 
 func (c *UserQueryController) ListFavoriteReviewUser(ctx echo.Context, user entity.OptionalUser) error {
@@ -153,12 +153,40 @@ func (c *UserQueryController) ListFavoriteReviewUser(ctx echo.Context, user enti
 		return errors.Wrap(err, "")
 	}
 
-	users, err := c.UserQueryService.ListFavoriteReviewUser(p.MediaID, &user, c.ConvertListFavoriteMediaUserToQuery(p))
+	users, err := c.UserQueryService.ListFavoriteReviewUser(p.ID, &user, c.ConvertListFavoriteMediaUserToQuery(p))
 	if err != nil {
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertUsersToUserSummaryList(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUserTableListToOutput(users))
+}
+
+func (c *UserQueryController) ListFavoriteComicUser(ctx echo.Context, ouser entity.OptionalUser) error {
+	i := &input.ListFavoriteMediaUser{}
+	if err := BindAndValidate(ctx, i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	users, err := c.UserQueryService.ListFavoriteComicUser(i.ID, &ouser, c.ConvertListFavoriteMediaUserToQuery(i))
+	if err != nil {
+		return errors.Wrap(err, "failed list favorite comic user")
+	}
+
+	return ctx.JSON(http.StatusOK, c.ConvertUserTableListToOutput(users))
+}
+
+func (c *UserQueryController) ListFavoriteVlogUser(ctx echo.Context, ouser entity.OptionalUser) error {
+	i := &input.ListFavoriteMediaUser{}
+	if err := BindAndValidate(ctx, i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	users, err := c.UserQueryService.ListFavoriteVlogUser(i.ID, &ouser, c.ConvertListFavoriteMediaUserToQuery(i))
+	if err != nil {
+		return errors.Wrap(err, "failed list favorite vlog user")
+	}
+
+	return ctx.JSON(http.StatusOK, c.ConvertUserTableListToOutput(users))
 }
 
 func (c *UserQueryController) IsExistPhoneNumber(ctx echo.Context) error {

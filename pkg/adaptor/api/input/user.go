@@ -81,9 +81,9 @@ type (
 		ID int `param:"id" validate:"required"`
 	}
 
-	// 記事、レビューにいいねしているユーザー一覧
 	ListFavoriteMediaUser struct {
-		MediaID int `param:"id" validate:"required"`
+		IDParam
+
 		PerPage int `query:"perPage"`
 		Page    int `query:"page"`
 	}

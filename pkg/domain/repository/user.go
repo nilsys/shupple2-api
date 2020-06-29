@@ -40,10 +40,14 @@ type (
 		SearchByName(name string) ([]*entity.User, error)
 		FindFollowingByID(query *query.FindFollowUser) ([]*entity.User, error)
 		FindFollowedByID(query *query.FindFollowUser) ([]*entity.User, error)
-		FindFavoritePostUser(postID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
-		FindFavoriteReviewUser(reviewID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
-		FindFavoritePostUserByUserID(postID, userID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
-		FindFavoriteReviewUserByUserID(reviewID, userID int, query *query.FindListPaginationQuery) ([]*entity.User, error)
+		FindFavoritePostUser(postID int, query *query.FindListPaginationQuery) ([]*entity.UserTable, error)
+		FindFavoriteReviewUser(reviewID int, query *query.FindListPaginationQuery) ([]*entity.UserTable, error)
+		FindFavoriteComicUser(comicID int, query *query.FindListPaginationQuery) ([]*entity.UserTable, error)
+		FindFavoriteVlogUser(vlogID int, query *query.FindListPaginationQuery) ([]*entity.UserTable, error)
+		FindFavoritePostUserByUserID(postID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTable, error)
+		FindFavoriteReviewUserByUserID(reviewID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTable, error)
+		FindFavoriteVlogUserByUserID(vlogID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTable, error)
+		FindFavoriteComicUserByUserID(comicID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTable, error)
 		// TODO: ここにあっていいか？
 		FindConfirmedUserTypeByPhoneNumberFromCognito(number string) ([]*cognitoidentityprovider.UserType, error)
 	}
