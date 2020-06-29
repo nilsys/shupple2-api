@@ -16,6 +16,8 @@ aws:
   upload_expire: 15m
   user_pool_id: dummy
   client_id: dummy
+  ses_region: changeme
+  from_email: noreply@stayway.jp
 wordpress:
   base_url: "https://stg-admin.stayway.jp/tourism"
   basic_auth:

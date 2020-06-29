@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
+
 	payjp2 "github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
 
 	"github.com/payjp/payjp-go/v1"
@@ -35,9 +37,13 @@ const (
 	defaultFollowRecommendUserLimit = 20
 )
 
-type DAO struct {
-	UnderlyingDB *gorm.DB
-}
+type (
+	DAO struct {
+		UnderlyingDB *gorm.DB
+	}
+
+	SESAWSSession *session.Session
+)
 
 func (d DAO) DB(c context.Context) *gorm.DB {
 	if c == nil {
@@ -118,7 +124,9 @@ var RepositoriesSet = wire.NewSet(
 	ReportQueryRepositorySet,
 	SlackRepositorySet,
 	ProvideAWSSession,
+	ProvideAWSSESSession,
 	ProvidePayjp,
+	ProvideMailer,
 )
 
 func ProvideDB(config *config.Config) (*gorm.DB, error) {
@@ -158,12 +166,27 @@ func ProvideAWSSession(config *config.Config) (*session.Session, error) {
 	return session.NewSession(cfgs)
 }
 
+func ProvideAWSSESSession(config *config.Config) (SESAWSSession, error) {
+	return session.NewSession(aws.NewConfig().WithRegion(config.AWS.SESRegion))
+}
+
 func ProvideS3Uploader(sess *session.Session) *s3manager.Uploader {
 	return s3manager.NewUploader(sess)
 }
 
 func ProvidePayjp(config *config.Config) *payjp.Service {
 	return payjp.New(config.Payjp.SecretKey, nil)
+}
+
+func ProvideMailer(config *config.Config, sess *SESAWSSession) repository.MailCommandRepository {
+	if config.IsDev() {
+		return &MailCommandRepositoryForLocalImpl{}
+	}
+
+	return &MailCommandRepositoryImpl{
+		AWSSession: *sess,
+		AWSConfig:  config.AWS,
+	}
 }
 
 func Transaction(db *gorm.DB, f func(db *gorm.DB) error) (err error) {

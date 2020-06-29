@@ -88,3 +88,8 @@ type ReportReasonType int
 ENUM(ReservedTicket = 1, Other)
 */
 type GiftType int
+
+/*
+ENUM(ThanksPurchase = 1)
+*/
+type MailTemplateName int

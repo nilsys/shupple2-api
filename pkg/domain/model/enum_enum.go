@@ -413,6 +413,53 @@ func (x *InterestGroup) UnmarshalText(text []byte) error {
 }
 
 const (
+	// MailTemplateNameThanksPurchase is a MailTemplateName of type ThanksPurchase
+	MailTemplateNameThanksPurchase MailTemplateName = iota + 1
+)
+
+const _MailTemplateNameName = "ThanksPurchase"
+
+var _MailTemplateNameMap = map[MailTemplateName]string{
+	1: _MailTemplateNameName[0:14],
+}
+
+// String implements the Stringer interface.
+func (x MailTemplateName) String() string {
+	if str, ok := _MailTemplateNameMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("MailTemplateName(%d)", x)
+}
+
+var _MailTemplateNameValue = map[string]MailTemplateName{
+	_MailTemplateNameName[0:14]: 1,
+}
+
+// ParseMailTemplateName attempts to convert a string to a MailTemplateName
+func ParseMailTemplateName(name string) (MailTemplateName, error) {
+	if x, ok := _MailTemplateNameValue[name]; ok {
+		return x, nil
+	}
+	return MailTemplateName(0), fmt.Errorf("%s is not a valid MailTemplateName", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x MailTemplateName) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *MailTemplateName) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseMailTemplateName(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// MediaSortByNEW is a MediaSortBy of type NEW
 	MediaSortByNEW MediaSortBy = iota + 1
 	// MediaSortByRANKING is a MediaSortBy of type RANKING
