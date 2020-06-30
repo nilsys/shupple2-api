@@ -37,9 +37,9 @@ func (c Converters) ConvertVlogListToOutput(queryVlogs *entity.VlogList, areaCat
 }
 
 func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.VlogDetail {
-	touristSpots := make([]*output.TouristSpot, len(vlog.TouristSpots))
+	touristSpots := make([]*output.TouristSpotTiny, len(vlog.TouristSpots))
 	for i, touristSpot := range vlog.TouristSpots {
-		touristSpots[i] = output.NewTouristSpots(touristSpot.ID, touristSpot.Name, touristSpot.Thumbnail)
+		touristSpots[i] = output.NewTouristSpotTinyFromEntity(touristSpot)
 	}
 
 	editors := make([]*output.Creator, len(vlog.Editors))

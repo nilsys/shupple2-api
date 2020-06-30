@@ -37,7 +37,7 @@ type (
 		Editors         []*Creator             `json:"editors"`
 		AreaCategories  []*AreaCategoryDetail  `json:"areaCategories"`
 		ThemeCategories []*ThemeCategoryDetail `json:"themeCategories"`
-		TouristSpot     []*TouristSpot         `json:"touristSpots"`
+		TouristSpot     []*TouristSpotTiny     `json:"touristSpots"`
 		CreatedAt       model.TimeResponse     `json:"createdAt"`
 		UpdatedAt       model.TimeResponse     `json:"updatedAt"`
 	}

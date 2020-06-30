@@ -3447,11 +3447,101 @@ components:
         touristSpots:
           type: array
           items:
-            $ref: "#/components/schemas/TouristSpot"
+            $ref: "#/components/schemas/TouristSpotTiny"
     TouristSpotList:
       type: array
       items:
         $ref: "#/components/schemas/TouristSpot"
+    TouristSpotTiny:
+      type: object
+      required:
+        - id
+        - slug
+        - name
+        - city
+        - address
+        - latitude
+        - longitude
+        - accessCar
+        - accessTrain
+        - openingHours
+        - price
+      properties:
+        id:
+          type: integer
+          description: スポットID
+          example: 12345
+        slug:
+          type: string
+          description: スラッグ
+          example: zekkei
+        name:
+          type: string
+          description: 観光スポット名
+          example: 絶景
+        thumbnail:
+          type: string
+          description: サムネイルURL
+          example: https://files.stayway.jp/example/img/1
+        url:
+          type: string
+          description: 公式ホームページ
+          example: http://zekkei.com
+        city:
+          type: string
+          description: 件名・都市
+          example: 渋谷
+        address:
+          type: string
+          description: 住所
+          example: 東京都渋谷区道玄坂１丁目１０−１０番８号 １F・2F 渋谷道玄坂東急ビル
+        latitude:
+          type: number
+          format: double
+          description: 緯度
+          example: 35.65695
+        longitude:
+          type: number
+          format: double
+          description: 経度
+          example: 139.698556
+        accessCar:
+          type: string
+          description: 車でのアクセス
+        accessTrain:
+          type: string
+          description: 電車でのアクセス
+        accessBus:
+          type: string
+          description: バスでのアクセス
+        openingHours:
+          type: string
+          description: 営業時間
+        tel:
+          type: string
+          description: 電話番号
+          example: 080-2374-2754
+        price:
+          type: string
+          description: 価格
+        instagramUrl:
+          type: string
+          description: インスタグラムURL
+          example: http://instagram.com/zekkei
+        searchInnUrl:
+          type: string
+          description: 関連宿を探すためのURL
+          example: http://stayway.jp/zekkei/recommend
+        rate:
+          type: number
+          format: double
+          description: 評価
+          example: 3.5
+        vendorRate:
+          type: number
+          format: double
+          description: 外部評価
+          example: 2.5
     TouristSpot:
       type: object
       required:
