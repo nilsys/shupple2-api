@@ -25,5 +25,6 @@ type (
 		FindRecommendListByParams(query *query.FindRecommendTouristSpotListQuery) (*entity.TouristSpotList, error)
 		// name部分一致検索
 		SearchByName(name string) ([]*entity.TouristSpot, error)
+		FindReviewCountByIDs(ids []int) (*entity.TouristSpotReviewCountList, error)
 	}
 )

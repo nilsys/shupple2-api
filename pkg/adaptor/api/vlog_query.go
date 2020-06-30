@@ -23,18 +23,19 @@ var VlogQueryControllerSet = wire.NewSet(
 	wire.Struct(new(VlogQueryController), "*"),
 )
 
+// TODO: review_countをtourist_spotテーブルに追加して、Review投稿時にIncrementする様にする、その際にscriptを書いて既存のReviewの数を含める
 func (c *VlogQueryController) Show(ctx echo.Context, ouser entity.OptionalUser) error {
 	p := &input.ShowVlog{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "required vlog id")
 	}
 
-	vlog, areaCategoriesMap, themeCategoriesMap, err := c.VlogQueryScenario.Show(p.ID, &ouser)
+	vlog, touristSpotReviewCountMap, areaCategoriesMap, themeCategoriesMap, err := c.VlogQueryScenario.Show(p.ID, &ouser)
 	if err != nil {
 		return errors.Wrapf(err, "failed show vlog id=%d", p.ID)
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertVlogDetail(vlog, areaCategoriesMap, themeCategoriesMap))
+	return ctx.JSON(http.StatusOK, c.ConvertVlogDetail(vlog, touristSpotReviewCountMap, areaCategoriesMap, themeCategoriesMap))
 }
 func (c *VlogQueryController) ListVlog(ctx echo.Context, ouser entity.OptionalUser) error {
 	param := &input.ListVlogParam{}

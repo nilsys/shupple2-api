@@ -3542,6 +3542,9 @@ components:
           format: double
           description: 外部評価
           example: 2.5
+        reviewCount:
+          type: integer
+          description: レビュー数
     TouristSpot:
       type: object
       required:

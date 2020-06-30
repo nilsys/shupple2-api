@@ -371,8 +371,9 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		DB: db,
 	}
 	vlogQueryServiceImpl := &service.VlogQueryServiceImpl{
-		VlogQueryRepository:  vlogQueryRepositoryImpl,
-		CategoryIDMapFactory: categoryIDMapFactory,
+		VlogQueryRepository:        vlogQueryRepositoryImpl,
+		TouristSpotQueryRepository: touristSpotQueryRepositoryImpl,
+		CategoryIDMapFactory:       categoryIDMapFactory,
 	}
 	vlogQueryScenarioImpl := &scenario.VlogQueryScenarioImpl{
 		VlogQueryService:     vlogQueryServiceImpl,

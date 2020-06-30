@@ -208,3 +208,13 @@ func (v *VlogDetail) ThemeCategoryIDs() []int {
 
 	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
 }
+
+func (v *VlogDetail) TouristSpotIDs() []int {
+	ids := make([]int, len(v.TouristSpots))
+
+	for i, touristSpot := range v.TouristSpots {
+		ids[i] = touristSpot.ID
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
+}

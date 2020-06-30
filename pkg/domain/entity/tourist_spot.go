@@ -7,6 +7,7 @@ import (
 )
 
 type (
+	// TODO: review_countをtourist_spotテーブルに追加して、Review投稿時にIncrementする様にする、その際にscriptを書いて既存のReviewの数を含める
 	TouristSpotTiny struct {
 		ID           int `gorm:"primary_key"`
 		Slug         string
@@ -28,6 +29,15 @@ type (
 		Rate         float64
 		VendorRate   float64
 		Times
+	}
+
+	TouristSpotReviewCount struct {
+		TouristSpotID int
+		ReviewCount   int
+	}
+
+	TouristSpotReviewCountList struct {
+		List []*TouristSpotReviewCount
 	}
 
 	TouristSpotList struct {
@@ -180,4 +190,14 @@ func (t *TouristSpotDetail) ThemeCategoryIDs() []int {
 
 func (t *TouristSpotTiny) TableName() string {
 	return "tourist_spot"
+}
+
+func (t *TouristSpotReviewCountList) IDMap() map[int]*TouristSpotReviewCount {
+	result := make(map[int]*TouristSpotReviewCount, len(t.List))
+
+	for _, touristSpotReviewCount := range t.List {
+		result[touristSpotReviewCount.TouristSpotID] = touristSpotReviewCount
+	}
+
+	return result
 }

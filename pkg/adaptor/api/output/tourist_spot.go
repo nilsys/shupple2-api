@@ -61,10 +61,12 @@ type (
 		OpeningHours string     `json:"openingHours"`
 		Rate         float64    `json:"rate"`
 		VendorRate   float64    `json:"vendorRate"`
+		ReviewCount  int        `json:"reviewCount"`
 	}
 )
 
-func NewTouristSpotTinyFromEntity(touristSpot *entity.TouristSpot) *TouristSpotTiny {
+// TODO: review_countをtourist_spotテーブルに追加して、Review投稿時にIncrementする様にする、その際にscriptを書いて既存のReviewの数を含める
+func NewTouristSpotTinyFromEntity(touristSpot *entity.TouristSpot, reviewCount int) *TouristSpotTiny {
 	return &TouristSpotTiny{
 		ID:           touristSpot.ID,
 		Slug:         touristSpot.Slug,
@@ -85,5 +87,6 @@ func NewTouristSpotTinyFromEntity(touristSpot *entity.TouristSpot) *TouristSpotT
 		OpeningHours: touristSpot.OpeningHours,
 		Rate:         touristSpot.Rate,
 		VendorRate:   touristSpot.VendorRate,
+		ReviewCount:  reviewCount,
 	}
 }

@@ -99,6 +99,19 @@ func (r *TouristSpotQueryRepositoryImpl) SearchByName(name string) ([]*entity.To
 	return rows, nil
 }
 
+func (r *TouristSpotQueryRepositoryImpl) FindReviewCountByIDs(ids []int) (*entity.TouristSpotReviewCountList, error) {
+	var rows entity.TouristSpotReviewCountList
+
+	if err := r.DB.Table("tourist_spot").
+		Select("tourist_spot.id AS tourist_spot_id, rc.review_count AS review_count").
+		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
+		Where("id IN (?)", ids).Find(&rows.List).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find tourist_spot review_count")
+	}
+
+	return &rows, nil
+}
+
 // TODO: 速度ヤバそうなんでstg環境で確認後チューニング
 // golang側で緯度経度
 func (r *TouristSpotQueryRepositoryImpl) buildFindRecommendListQuery(query *query.FindRecommendTouristSpotListQuery) *gorm.DB {
