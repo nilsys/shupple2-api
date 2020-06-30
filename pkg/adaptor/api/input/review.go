@@ -87,10 +87,9 @@ type (
 	}
 )
 
-const getReviewsDefaultPerPage = 10
-
 // 投稿内容の最低文字数
 const storeBodyMinimumLimit = 50
+const getReviewsDefaultPerPage = 10
 
 func (param *ListReviewParams) Validate() error {
 	// いずれのクエリも飛んで来なかった場合

@@ -115,18 +115,9 @@ func (c Converters) ConvertUserRankingToOutput(users []*entity.UserDetail) []*ou
 func (c Converters) ConvertUsersToUserSummaryList(users []*entity.User) []*output.UserSummary {
 	followUsers := make([]*output.UserSummary, len(users))
 	for i, user := range users {
-		followUsers[i] = c.convertUserToUserSummary(user)
+		followUsers[i] = c.NewUserSummaryFromUser(user)
 	}
 	return followUsers
-}
-
-func (c Converters) convertUserToUserSummary(user *entity.User) *output.UserSummary {
-	return &output.UserSummary{
-		ID:      user.ID,
-		UID:     user.UID,
-		Name:    user.Name,
-		IconURL: user.AvatarURL(c.filesURL()),
-	}
 }
 
 func (c Converters) convertUserTableToOutput(user *entity.UserTable) *output.UserSummary {
@@ -190,4 +181,8 @@ func (c Converters) NewCreatorFromUser(user *entity.User) output.Creator {
 		user.ID, user.UID, user.AvatarURL(c.filesURL()), user.Name, user.Profile,
 		user.FacebookURL, user.InstagramURL, user.TwitterURL, user.YoutubeURL, user.URL,
 	)
+}
+
+func (c Converters) NewUserSummaryFromUser(user *entity.User) *output.UserSummary {
+	return output.NewUserSummary(user.ID, user.UID, user.Name, user.AvatarURL(c.filesURL()))
 }

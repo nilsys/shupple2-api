@@ -2219,6 +2219,137 @@ paths:
       responses:
         "200":
           description: OK
+  /projects:
+    get:
+      tags:
+        - project
+      summary: クラウドファンディングプロジェクト検索API
+      parameters:
+        - in: query
+          name: areaId
+          description: |
+            エリアID
+          schema:
+            type: integer
+        - in: query
+          name: subAreaId
+          description: |
+            サブエリアID
+          schema:
+            type: integer
+        - in: query
+          name: subSubAreaId
+          description: |
+            サブサブエリアID
+          schema:
+            type: integer
+        - in: query
+          name: sortBy
+          schema:
+            $ref: "#/components/schemas/CfProjectSortBy"
+          description: |
+            New - 新着順
+            LargeAmount - 支援金額の多い順
+            Push - 達成金額70%以上
+            Attention - 注目
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CfProjectList"
+  /projects/{id}:
+    get:
+      tags:
+        - project
+      summary: クラウドファンディングプロジェクト取得API
+      parameters:
+        - in: path
+          name: id
+          description: |
+            プロジェクトid
+          schema:
+            type: integer
+          required: true
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CfProject"
+  /projects/{id}/gift:
+    get:
+      tags:
+        - project
+      summary: クラウドファンディングプロジェクトギフト一覧API
+      parameters:
+        - in: path
+          name: id
+          description: |
+            プロジェクトid
+          schema:
+            type: integer
+          required: true
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CfReturnGiftList"
+  /projects/{id}/comment:
+    get:
+      tags:
+        - project
+      summary: クラウドファンディング応援コメント
+      parameters:
+        - in: path
+          name: id
+          description: |
+            プロジェクトID
+          schema:
+            type: integer
+          required: true
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CfProjectSupportCommentList"
+  /projects/{id}/favorite:
+    put:
+      tags:
+        - project
+      summary: クラウドファンディングfavAPI
+      parameters:
+        - in: path
+          name: id
+          description: |
+            プロジェクトID
+          schema:
+            type: integer
+          required: true
+      responses:
+        "204":
+          description: ok
+    delete:
+      tags:
+        - project
+      summary: クラウドファンディングunfavAPI
+      parameters:
+        - in: path
+          name: id
+          description: |
+            プロジェクトID
+          schema:
+            type: integer
+          required: true
+      responses:
+        "204":
+          description: ok
   /reports:
     post:
       tags:
@@ -2230,7 +2361,6 @@ paths:
         - iDPCognito: []
       requestBody:
         $ref: "#/components/requestBodies/ReportRequest"
-
       responses:
         "200":
           description: 成功
@@ -2737,6 +2867,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PaymentRequest"
+        supportCommentBody:
+          type: string
+          description: |
+            応援コメント
+          example: 応援しています！
     PaymentRequest:
       type: object
       properties:
@@ -2916,6 +3051,22 @@ components:
         favoriteCount:
           type: integer
           description: いいね数
+        createdAt:
+          type: string
+          format: date-time
+    CfProjectSupportCommentList:
+      type: array
+      items:
+        $ref: "#/components/schemas/CfProjectSupportComment"
+    CfProjectSupportComment:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: "#/components/schemas/UserSummary"
+        body:
+          type: string
         createdAt:
           type: string
           format: date-time
@@ -4135,6 +4286,79 @@ components:
         body:
           type: string
           description: コメント
+    CfProjectList:
+      type: array
+      items:
+        $ref: "#/components/schemas/CfProject"
+    CfProject:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        snapshotId:
+          type: integer
+          example: 1
+        title:
+          type: string
+        summary:
+          type: string
+        thumbnail:
+          type: string
+        body:
+          type: string
+        goalPrice:
+          type: string
+          example: 1,000
+        achievedPrice:
+          type: string
+          example: 1,000
+        deadLine:
+          type: string
+          format: date-time
+        supporterCount:
+          type: integer
+        favoriteCount:
+          type: integer
+        creator:
+          $ref: "#/components/schemas/Creator"
+        areaCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/AreaCategoryDetail"
+        themeCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/ThemeCategoryDetail"
+    CfReturnGiftList:
+      type: array
+      items:
+        $ref: "#/components/schemas/CfReturnGift"
+    CfReturnGift:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        snapshotId:
+          type: integer
+          example: 1
+        thumbnail:
+          type: string
+        giftType:
+          type: string
+          enum:
+            - ReservedTicket
+            - Other
+        body:
+          type: string
+        price:
+          type: integer
+        supporterCount:
+          type: integer
+        deliveryDate:
+          type: string
+          format: date-time
     ReportReasonType:
       type: string
       enum:
@@ -4188,6 +4412,13 @@ components:
         - LifeStyle
         - Activity
         - Sport
+    CfProjectSortBy:
+      type: string
+      enum:
+        - New
+        - LargeAmount
+        - Push
+        - Attention
     Error:
       type: object
       properties:

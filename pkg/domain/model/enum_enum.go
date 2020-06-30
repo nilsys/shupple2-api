@@ -189,6 +189,65 @@ func (x *AreaGroup) UnmarshalText(text []byte) error {
 }
 
 const (
+	// CfProjectSortByNew is a CfProjectSortBy of type New
+	CfProjectSortByNew CfProjectSortBy = iota
+	// CfProjectSortByLargeAmount is a CfProjectSortBy of type LargeAmount
+	CfProjectSortByLargeAmount
+	// CfProjectSortByPush is a CfProjectSortBy of type Push
+	CfProjectSortByPush
+	// CfProjectSortByAttention is a CfProjectSortBy of type Attention
+	CfProjectSortByAttention
+)
+
+const _CfProjectSortByName = "NewLargeAmountPushAttention"
+
+var _CfProjectSortByMap = map[CfProjectSortBy]string{
+	0: _CfProjectSortByName[0:3],
+	1: _CfProjectSortByName[3:14],
+	2: _CfProjectSortByName[14:18],
+	3: _CfProjectSortByName[18:27],
+}
+
+// String implements the Stringer interface.
+func (x CfProjectSortBy) String() string {
+	if str, ok := _CfProjectSortByMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("CfProjectSortBy(%d)", x)
+}
+
+var _CfProjectSortByValue = map[string]CfProjectSortBy{
+	_CfProjectSortByName[0:3]:   0,
+	_CfProjectSortByName[3:14]:  1,
+	_CfProjectSortByName[14:18]: 2,
+	_CfProjectSortByName[18:27]: 3,
+}
+
+// ParseCfProjectSortBy attempts to convert a string to a CfProjectSortBy
+func ParseCfProjectSortBy(name string) (CfProjectSortBy, error) {
+	if x, ok := _CfProjectSortByValue[name]; ok {
+		return x, nil
+	}
+	return CfProjectSortBy(0), fmt.Errorf("%s is not a valid CfProjectSortBy", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x CfProjectSortBy) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *CfProjectSortBy) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseCfProjectSortBy(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// ContextKeyTransaction is a ContextKey of type Transaction
 	ContextKeyTransaction ContextKey = iota + 1
 )

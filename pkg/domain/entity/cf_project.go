@@ -11,21 +11,23 @@ type (
 		ID                  int `gorm:"primary_key"`
 		UserID              int
 		LatestSnapshotID    null.Int
-		SupportCommentCount int
+		SupportCommentCount int // == SupporterCount
+		FavoriteCount       int
 		Times
 	}
 
 	CfProjectSnapshotTable struct {
-		ID          int `gorm:"primary_key"`
-		CfProjectID int
-		UserID      int
-		Title       string
-		Summary     string
-		Thumbnail   string
-		Body        string
-		GoalPrice   int
-		Deadline    time.Time
-		IsAttention bool
+		ID            int `gorm:"primary_key"`
+		CfProjectID   int
+		UserID        int
+		Title         string
+		Summary       string
+		Thumbnail     string
+		Body          string
+		GoalPrice     int
+		AchievedPrice int
+		Deadline      time.Time
+		IsAttention   bool
 		Times
 	}
 
@@ -39,20 +41,37 @@ type (
 
 	CfProject struct {
 		CfProjectTable
-		Snapshot *CfProjectSnapshotTable `gorm:"foreignkey:LatestSnapshotID"`
-		User     *User                   `gorm:"foreignkey:UserID"`
+		Snapshot *CfProjectSnapshot `gorm:"foreignkey:LatestSnapshotID"`
+		User     *User              `gorm:"foreignkey:UserID"`
 		Times
 	}
 
+	CfProjectSnapshot struct {
+		CfProjectSnapshotTable
+		AreaCategories  []*AreaCategory  `gorm:"many2many:cf_project_snapshot_area_category;jointable_foreignkey:cf_project_snapshot_id;"`
+		ThemeCategories []*ThemeCategory `gorm:"many2many:cf_project_snapshot_theme_category;jointable_foreignkey:cf_project_snapshot_id;"`
+	}
+
+	CfProjectSupportComment struct {
+		CfProjectSupportCommentTable
+		User *User `gorm:"UserID"`
+	}
+
 	CfProjectSnapshotAreaCategory struct {
-		CfProjectSnapshotID int
-		AreaCategoryID      int
+		CfProjectSnapshotID int `gorm:"primary_key"`
+		AreaCategoryID      int `gorm:"primary_key"`
 		TimesWithoutDeletedAt
 	}
 
 	CfProjectSnapshotThemeCategory struct {
-		CfProjectSnapshotID int
-		ThemeCategoryID     int
+		CfProjectSnapshotID int `gorm:"primary_key"`
+		ThemeCategoryID     int `gorm:"primary_key"`
+		TimesWithoutDeletedAt
+	}
+
+	UserFavoriteCfProject struct {
+		UserID      int `gorm:"primary_key"`
+		CfProjectID int `gorm:"primary_key"`
 		TimesWithoutDeletedAt
 	}
 
@@ -78,14 +97,21 @@ func NewCfProjectSupportTable(userID, projectID int, body string) *CfProjectSupp
 	}
 }
 
+func NewUserFavoriteCfProject(userID, projectID int) *UserFavoriteCfProject {
+	return &UserFavoriteCfProject{
+		UserID:      userID,
+		CfProjectID: projectID,
+	}
+}
+
+func (c *CfProjectTable) TableName() string {
+	return "cf_project"
+}
+
 func (c *CfProjectSnapshotTable) TableName() string {
 	return "cf_project_snapshot"
 }
 
 func (c *CfProjectSupportCommentTable) TableName() string {
 	return "cf_project_support_comment"
-}
-
-func (c *CfProjectTable) TableName() string {
-	return "cf_project"
 }

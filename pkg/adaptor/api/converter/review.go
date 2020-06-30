@@ -38,9 +38,8 @@ func (c Converters) ConvertListFeedReviewParamToQuery(param *input.ListFeedRevie
 }
 
 func (c Converters) ConvertReviewCommentToOutput(reviewComment *entity.ReviewComment) *output.ReviewComment {
-	userSummary := output.NewUserSummary(reviewComment.User.ID, reviewComment.User.UID, reviewComment.User.Name, reviewComment.User.AvatarURL(c.filesURL()))
 	return output.NewReviewComment(
-		userSummary,
+		c.NewUserSummaryFromUser(reviewComment.User),
 		reviewComment.Body,
 		model.TimeResponse(reviewComment.CreatedAt),
 		reviewComment.ID,
@@ -59,9 +58,8 @@ func (c Converters) ConvertReviewCommentWithIsFavoriteListToOutput(reviewComment
 }
 
 func (c Converters) ConvertReviewCommentWithIsFavoriteToOutput(reviewComment *entity.ReviewCommentWithIsFavorite) *output.ReviewComment {
-	userSummary := output.NewUserSummary(reviewComment.User.ID, reviewComment.User.UID, reviewComment.User.Name, reviewComment.User.AvatarURL(c.filesURL()))
 	return output.NewReviewComment(
-		userSummary,
+		c.NewUserSummaryFromUser(reviewComment.User),
 		reviewComment.Body,
 		model.TimeResponse(reviewComment.CreatedAt),
 		reviewComment.ID,

@@ -27,6 +27,8 @@ type App struct {
 	DB                              *gorm.DB
 	Echo                            *echo.Echo
 	AuthorizeWrapper                staywayMiddleware.Authorize
+	CfProjectQueryController        api.CfProjectQueryController
+	CfProjectCommandController      api.CfProjectCommandController
 	ShippingQueryController         api.ShippingQueryController
 	ShippingCommandController       api.ShippingCommandController
 	CardQueryController             api.CardQueryController
@@ -242,6 +244,15 @@ func setRoutes(app *App) {
 		payment.GET("/card", auth.Require(app.CardQueryController.ShowCard))
 		payment.GET("/shipping", auth.Require(app.ShippingQueryController.Show))
 		payment.POST("/shipping", auth.Require(app.ShippingCommandController.StoreShippingAddress))
+	}
+
+	{
+		projects := api.Group("/projects")
+		projects.GET("", app.CfProjectQueryController.List)
+		projects.GET("/:id", app.CfProjectQueryController.Show)
+		projects.GET("/:id/comment", app.CfProjectQueryController.ListSupportComment)
+		projects.PUT("/:id/favorite", auth.Require(app.CfProjectCommandController.Favorite))
+		projects.DELETE("/:id/favorite", auth.Require(app.CfProjectCommandController.Unfavorite))
 	}
 
 	api.POST("/s3", auth.Require(app.S3CommandController.Post))

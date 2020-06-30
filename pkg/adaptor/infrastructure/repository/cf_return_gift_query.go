@@ -36,3 +36,13 @@ func (r *CfReturnGiftQueryRepositoryImpl) FindSoldCountByReturnGiftIDs(c context
 
 	return &rows, nil
 }
+
+func (r *CfReturnGiftQueryRepositoryImpl) FindByCfProjectID(projectID int) (*entity.CfReturnGiftList, error) {
+	var rows entity.CfReturnGiftList
+
+	if err := r.DB(context.Background()).Where("cf_project_id = ?", projectID).Find(&rows.List).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find cf_return_gift")
+	}
+
+	return &rows, nil
+}

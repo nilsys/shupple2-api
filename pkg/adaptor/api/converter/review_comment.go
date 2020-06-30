@@ -24,10 +24,9 @@ func (c Converters) ConvertReviewCommentReplyListToOutput(r []*entity.ReviewComm
 }
 
 func (c Converters) ConvertReviewCommentReplyWithIsFavoriteToOutput(r *entity.ReviewCommentReplyWithIsFavorite) *output.ReviewCommentReply {
-	user := output.NewUserSummary(r.User.ID, r.User.UID, r.User.Name, r.User.AvatarURL(c.filesURL()))
 	return &output.ReviewCommentReply{
 		ID:            r.ID,
-		UserSummary:   user,
+		UserSummary:   c.NewUserSummaryFromUser(r.User),
 		Body:          r.Body,
 		FavoriteCount: r.FavoriteCount,
 		IsFavorite:    r.IsFavorite,
@@ -36,10 +35,9 @@ func (c Converters) ConvertReviewCommentReplyWithIsFavoriteToOutput(r *entity.Re
 }
 
 func (c Converters) ConvertReviewCommentReplyToOutput(r *entity.ReviewCommentReply) *output.ReviewCommentReply {
-	user := output.NewUserSummary(r.User.ID, r.User.UID, r.User.Name, r.User.AvatarURL(c.filesURL()))
 	return &output.ReviewCommentReply{
 		ID:            r.ID,
-		UserSummary:   user,
+		UserSummary:   c.NewUserSummaryFromUser(r.User),
 		Body:          r.Body,
 		FavoriteCount: r.FavoriteCount,
 		CreatedAt:     model.TimeResponse(r.CreatedAt),
