@@ -67,7 +67,8 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 			return errors.Wrap(err, "failed to get user by migration code")
 		}
 		user.ID = existingUser.ID
-		user.UID = existingUser.UID // TODO: これでいいのか？
+		user.UID = existingUser.UID
+		user.WordpressID = existingUser.WordpressID
 		user.AvatarUUID = existingUser.AvatarUUID
 		user.HeaderUUID = existingUser.HeaderUUID
 	}
