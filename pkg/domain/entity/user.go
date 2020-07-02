@@ -32,7 +32,7 @@ type (
 		TwitterURL      string
 		YoutubeURL      string
 		LivingArea      string
-		Interests       []*UserInterest `gorm:"foreignkey:UserID"`
+		UserInterests   []*UserInterest `gorm:"foreignkey:UserID"`
 		Times
 	}
 

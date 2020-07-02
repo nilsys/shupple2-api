@@ -223,5 +223,5 @@ func (s *UserCommandServiceImpl) updateUserCmd(user *entity.User, cmd *command.U
 	user.TwitterURL = cmd.TwitterURL
 	user.YoutubeURL = cmd.YoutubeURL
 	user.LivingArea = cmd.LivingArea
-	user.Interests = cmd.Interests
+	user.UserInterests = cmd.Interests
 }

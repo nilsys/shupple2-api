@@ -55,7 +55,7 @@ func (c Converters) ConvertStoreUserParamToEntity(param *input.StoreUser) *entit
 		TwitterURL:      param.TwitterURL,
 		YoutubeURL:      param.YoutubeURL,
 		LivingArea:      param.LivingArea,
-		Interests:       interests,
+		UserInterests:   interests,
 	}
 }
 
