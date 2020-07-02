@@ -6,6 +6,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
 func (c *Converters) ConvertCfProjectSupportCommentListToOutput(comments []*entity.CfProjectSupportComment) []*output.CfProjectSupportComment {
@@ -54,8 +55,8 @@ func (c *Converters) ConvertCfProjectToOutput(project *entity.CfProject) *output
 		Summary:         project.Snapshot.Summary,
 		Thumbnail:       project.Snapshot.Thumbnail,
 		Body:            project.Snapshot.Body,
-		GoalPrice:       model.PriceFormatCnv(project.Snapshot.GoalPrice),
-		AchievedPrice:   model.PriceFormatCnv(project.Snapshot.AchievedPrice),
+		GoalPrice:       util.WithComma(project.Snapshot.GoalPrice),
+		AchievedPrice:   util.WithComma(project.AchievedPrice),
 		SupporterCount:  project.SupportCommentCount,
 		FavoriteCount:   project.FavoriteCount,
 		Creator:         c.NewCreatorFromUser(project.User),

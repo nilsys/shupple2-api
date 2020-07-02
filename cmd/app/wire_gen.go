@@ -131,6 +131,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	cfReturnGiftQueryRepositoryImpl := &repository.CfReturnGiftQueryRepositoryImpl{
 		DAO: dao,
 	}
+	mailCommandRepository := repository.ProvideMailer(configConfig, session)
 	chargeCommandServiceImpl := &service.ChargeCommandServiceImpl{
 		PaymentCommandRepository:    paymentCommandRepositoryImpl,
 		CardQueryRepository:         cardQueryRepositoryImpl,
@@ -139,6 +140,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		CfReturnGiftQueryRepository: cfReturnGiftQueryRepositoryImpl,
 		ShippingQueryRepository:     shippingQueryRepositoryImpl,
 		CfProjectCommandRepository:  cfProjectCommandRepositoryImpl,
+		MailCommandRepository:       mailCommandRepository,
 		TransactionService:          transactionServiceImpl,
 	}
 	chargeCommandController := api.ChargeCommandController{

@@ -25,6 +25,18 @@ type (
 	}
 )
 
+func NewThanksPurchaseTemplate(ownerName, returnGiftDesc, chargeID, price, userEmail, userShippingAddress, userName string) *ThanksPurchaseTemplate {
+	return &ThanksPurchaseTemplate{
+		OwnerName:             ownerName,
+		ReturnGiftDescription: returnGiftDesc,
+		ChargeID:              chargeID,
+		Price:                 price,
+		UserEmail:             userEmail,
+		UserShippingAddress:   userShippingAddress,
+		UserName:              userName,
+	}
+}
+
 func (t *ThanksPurchaseTemplate) TemplateName() model.MailTemplateName {
 	return model.MailTemplateNameThanksPurchase
 }

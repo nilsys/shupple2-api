@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository/payjp"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
@@ -28,6 +30,7 @@ type (
 		repository.CfReturnGiftQueryRepository
 		repository.ShippingQueryRepository
 		repository.CfProjectCommandRepository
+		repository.MailCommandRepository
 		TransactionService
 	}
 )
@@ -125,9 +128,20 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 			return errors.Wrap(err, "failed increment support_comment_count")
 		}
 
+		// projectの達成金額に加算
+		if err := s.CfProjectCommandRepository.IncrementAchievedPrice(c, project.ID, price); err != nil {
+			return errors.Wrap(err, "failed increment project_snapshot.achieved_price")
+		}
+
 		// 決済確定
 		if err := s.ChargeCommandRepository.Capture(charge.ID); err != nil {
 			return errors.Wrap(err, "failed capture charge")
+		}
+
+		// 決済確定メール送信
+		template := entity.NewThanksPurchaseTemplate(project.User.Name, gifts.OnEmailDescription(), charge.ID, util.WithComma(price), address.Email, address.FullAddress(), user.Name)
+		if err := s.MailCommandRepository.SendTemplateMail(address.Email, template); err != nil {
+			return errors.Wrap(err, "failed send email from ses")
 		}
 
 		return nil

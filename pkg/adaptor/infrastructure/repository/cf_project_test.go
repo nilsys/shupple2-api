@@ -81,6 +81,27 @@ var _ = Describe("", func() {
 
 		Expect(actual).To(Equal(saved))
 	})
+
+	It("IncrementAchievedPrice: 正常系", func() {
+		err := commandRepo.IncrementAchievedPrice(context.Background(), cfProjectID, 100)
+		Expect(err).To(Succeed())
+
+		saved.AchievedPrice += 100
+
+		actual, err := queryRepo.Lock(context.WithValue(context.Background(), model.ContextKeyTransaction, db), cfProjectID)
+		Expect(err).To(Succeed())
+
+		Expect(actual.CreatedAt).NotTo(BeZero())
+		Expect(actual.UpdatedAt).NotTo(BeZero())
+		Expect(actual.User.CreatedAt).NotTo(BeZero())
+		Expect(actual.User.UpdatedAt).NotTo(BeZero())
+		actual.CreatedAt = time.Time{}
+		actual.UpdatedAt = time.Time{}
+		actual.User.CreatedAt = time.Time{}
+		actual.User.UpdatedAt = time.Time{}
+
+		Expect(actual).To(Equal(saved))
+	})
 })
 
 func newCfProjectTable(id, userID int) entity.CfProjectTable {

@@ -9,6 +9,6 @@ type (
 		Thumbnail  string         `json:"thumbnail"`
 		GiftType   model.GiftType `json:"giftType"`
 		Body       string         `json:"body"`
-		Price      int            `json:"price"`
+		Price      string         `json:"price"`
 	}
 )

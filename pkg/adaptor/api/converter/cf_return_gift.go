@@ -3,6 +3,7 @@ package converter
 import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/output"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
 func (c *Converters) ConvertCfReturnGiftListToOutput(gifts *entity.CfReturnGiftList) []*output.CfReturnGift {
@@ -20,6 +21,6 @@ func (c *Converters) convertCfReturnGiftToOutput(gift *entity.CfReturnGift) *out
 		Thumbnail:  gift.Thumbnail,
 		GiftType:   gift.GiftType,
 		Body:       gift.Snapshot.Body,
-		Price:      gift.Snapshot.Price,
+		Price:      util.WithComma(gift.Snapshot.Price),
 	}
 }

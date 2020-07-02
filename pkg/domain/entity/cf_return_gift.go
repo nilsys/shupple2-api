@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"fmt"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
@@ -66,6 +68,14 @@ func (r *CfReturnGiftList) UniqueCfProjectID() (int, bool) {
 	return 0, false
 }
 
+func (r *CfReturnGiftList) OnEmailDescription() string {
+	var body string
+	for _, gift := range r.List {
+		body += fmt.Sprintf("<br>%s", gift.Snapshot.Body)
+	}
+	return body
+}
+
 func (r *CfReturnGiftSoldCountList) GetSoldCount(id int) int {
 	for _, summary := range r.List {
 		if summary.ReturnGiftID == id {
@@ -74,6 +84,10 @@ func (r *CfReturnGiftSoldCountList) GetSoldCount(id int) int {
 	}
 	return 0
 }
+
+/**************************
+         TableName
+***************************/
 
 func (c *CfReturnGiftTable) TableName() string {
 	return "cf_return_gift"

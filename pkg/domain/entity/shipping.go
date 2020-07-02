@@ -1,5 +1,7 @@
 package entity
 
+import "fmt"
+
 type (
 	ShippingAddress struct {
 		ID            int    `gorm:"primary_key"`
@@ -34,4 +36,8 @@ func NewShippingAddress(userID int, firstName, lastName, firstNameKana, lastName
 		Building:      building,
 		Email:         email,
 	}
+}
+
+func (s *ShippingAddress) FullAddress() string {
+	return fmt.Sprintf("〒%s %s%s%s%s", s.PostalNumber, s.Prefecture, s.City, s.Address, s.Building)
 }

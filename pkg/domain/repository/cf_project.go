@@ -16,6 +16,7 @@ type (
 		DecrementFavoriteCountByID(c context.Context, projectID int) error
 		StoreSupportComment(c context.Context, comment *entity.CfProjectSupportCommentTable) error
 		IncrementSupportCommentCount(c context.Context, id int) error
+		IncrementAchievedPrice(c context.Context, id, price int) error
 	}
 
 	CfProjectQueryRepository interface {

@@ -13,21 +13,21 @@ type (
 		LatestSnapshotID    null.Int
 		SupportCommentCount int // == SupporterCount
 		FavoriteCount       int
+		AchievedPrice       int
 		Times
 	}
 
 	CfProjectSnapshotTable struct {
-		ID            int `gorm:"primary_key"`
-		CfProjectID   int
-		UserID        int
-		Title         string
-		Summary       string
-		Thumbnail     string
-		Body          string
-		GoalPrice     int
-		AchievedPrice int
-		Deadline      time.Time
-		IsAttention   bool
+		ID          int `gorm:"primary_key"`
+		CfProjectID int
+		UserID      int
+		Title       string
+		Summary     string
+		Thumbnail   string
+		Body        string
+		GoalPrice   int
+		Deadline    time.Time
+		IsAttention bool
 		Times
 	}
 

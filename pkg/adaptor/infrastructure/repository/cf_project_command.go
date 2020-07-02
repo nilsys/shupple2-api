@@ -61,3 +61,10 @@ func (r *CfProjectCommandRepositoryImpl) IncrementSupportCommentCount(c context.
 	}
 	return nil
 }
+
+func (r *CfProjectCommandRepositoryImpl) IncrementAchievedPrice(c context.Context, id, price int) error {
+	if err := r.DB(c).Exec("UPDATE cf_project SET achieved_price=achieved_price+? WHERE id = ?", price, id).Error; err != nil {
+		return errors.Wrap(err, "failed to increment cf_project.achieved_price")
+	}
+	return nil
+}

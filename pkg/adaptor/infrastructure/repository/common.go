@@ -41,8 +41,6 @@ type (
 	DAO struct {
 		UnderlyingDB *gorm.DB
 	}
-
-	SESAWSSession *session.Session
 )
 
 func (d DAO) DB(c context.Context) *gorm.DB {
@@ -124,7 +122,6 @@ var RepositoriesSet = wire.NewSet(
 	ReportQueryRepositorySet,
 	SlackRepositorySet,
 	ProvideAWSSession,
-	ProvideAWSSESSession,
 	ProvidePayjp,
 	ProvideMailer,
 )
@@ -166,10 +163,6 @@ func ProvideAWSSession(config *config.Config) (*session.Session, error) {
 	return session.NewSession(cfgs)
 }
 
-func ProvideAWSSESSession(config *config.Config) (SESAWSSession, error) {
-	return session.NewSession(aws.NewConfig().WithRegion(config.AWS.SESRegion))
-}
-
 func ProvideS3Uploader(sess *session.Session) *s3manager.Uploader {
 	return s3manager.NewUploader(sess)
 }
@@ -178,13 +171,13 @@ func ProvidePayjp(config *config.Config) *payjp.Service {
 	return payjp.New(config.Payjp.SecretKey, nil)
 }
 
-func ProvideMailer(config *config.Config, sess *SESAWSSession) repository.MailCommandRepository {
+func ProvideMailer(config *config.Config, sess *session.Session) repository.MailCommandRepository {
 	if config.IsDev() {
 		return &MailCommandRepositoryForLocalImpl{}
 	}
 
 	return &MailCommandRepositoryImpl{
-		AWSSession: *sess,
+		AWSSession: sess,
 		AWSConfig:  config.AWS,
 	}
 }

@@ -13,7 +13,7 @@ import (
 
 type (
 	MailCommandRepositoryImpl struct {
-		AWSSession SESAWSSession
+		AWSSession *session.Session
 		AWSConfig  config.AWS
 	}
 
@@ -40,7 +40,7 @@ func (r *MailCommandRepositoryImpl) SendTemplateMail(toEmail string, template en
 		},
 	}
 
-	svc := ses.New((*session.Session)(r.AWSSession))
+	svc := ses.New(r.AWSSession)
 	input := &ses.SendBulkTemplatedEmailInput{
 		DefaultTemplateData: aws.String(defaultData),
 		Destinations:        destinations,

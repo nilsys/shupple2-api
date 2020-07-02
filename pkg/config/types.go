@@ -83,7 +83,6 @@ type (
 		UserPoolID   string        `validate:"required" yaml:"user_pool_id"`
 		ClientID     string        `validate:"required" yaml:"client_id"`
 		UploadExpire time.Duration `validate:"required" yaml:"upload_expire"`
-		SESRegion    string        `validate:"required" yaml:"ses_region"`
 		FromEmail    string        `validate:"required" yaml:"from_email"`
 	}
 
