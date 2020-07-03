@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
@@ -15,7 +16,6 @@ type (
 		Thumbnail                    string
 		SortOrder                    int
 		GiftType                     model.GiftType
-		IsCanceled                   bool
 		Times
 	}
 
@@ -26,6 +26,8 @@ type (
 		Body           string
 		Price          int
 		FullAmount     int
+		IsCancelable   bool
+		Deadline       time.Time
 		Times
 	}
 
@@ -40,8 +42,8 @@ type (
 	}
 
 	CfReturnGiftSoldCount struct {
-		ReturnGiftID int
-		SoldCount    int
+		CfReturnGiftID int
+		SoldCount      int
 	}
 
 	CfReturnGiftSoldCountList struct {
@@ -56,6 +58,14 @@ func (r *CfReturnGiftList) ToIDMap() map[int]*CfReturnGift {
 		idMap[summary.ID] = summary
 	}
 	return idMap
+}
+
+func (r *CfReturnGiftList) IDs() []int {
+	ids := make([]int, len(r.List))
+	for i, summary := range r.List {
+		ids[i] = summary.ID
+	}
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
 }
 
 func (r *CfReturnGiftList) UniqueCfProjectID() (int, bool) {
@@ -79,7 +89,8 @@ func (r *CfReturnGiftList) OnEmailDescription() string {
 
 func (r *CfReturnGiftSoldCountList) GetSoldCount(id int) int {
 	for _, summary := range r.List {
-		if summary.ReturnGiftID == id {
+		if summary.CfReturnGiftID == id {
+			fmt.Println(summary.SoldCount)
 			return summary.SoldCount
 		}
 	}

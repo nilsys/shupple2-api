@@ -4459,11 +4459,19 @@ components:
           type: string
         price:
           type: integer
-        supporterCount:
+        isCancelable:
+          type: boolean
+          description: キャンセル可能か
+        deadline:
+          type: string
+          description: |
+            有効期限
+            ＊宿泊券(giftType:ReservedTicket)の場合のみ
+        soldCount:
           type: integer
         deliveryDate:
           type: string
-          format: date-time
+          format: date
     ReportReasonType:
       type: string
       enum:

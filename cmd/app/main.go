@@ -29,6 +29,7 @@ type App struct {
 	AuthorizeWrapper                staywayMiddleware.Authorize
 	CfProjectQueryController        api.CfProjectQueryController
 	CfProjectCommandController      api.CfProjectCommandController
+	CfReturnGiftQueryController     api.CfReturnGiftQueryController
 	ShippingQueryController         api.ShippingQueryController
 	ShippingCommandController       api.ShippingCommandController
 	CardQueryController             api.CardQueryController
@@ -253,6 +254,7 @@ func setRoutes(app *App) {
 		projects.GET("/:id/comment", app.CfProjectQueryController.ListSupportComment)
 		projects.PUT("/:id/favorite", auth.Require(app.CfProjectCommandController.Favorite))
 		projects.DELETE("/:id/favorite", auth.Require(app.CfProjectCommandController.Unfavorite))
+		projects.GET("/:id/gift", app.CfReturnGiftQueryController.List)
 	}
 
 	api.POST("/s3", auth.Require(app.S3CommandController.Post))

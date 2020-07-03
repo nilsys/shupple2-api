@@ -85,6 +85,16 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		Converters:              converters,
 		CfProjectCommandService: cfProjectCommandServiceImpl,
 	}
+	cfReturnGiftQueryRepositoryImpl := &repository.CfReturnGiftQueryRepositoryImpl{
+		DAO: dao,
+	}
+	cfReturnGiftQueryServiceImpl := &service.CfReturnGiftQueryServiceImpl{
+		CfReturnGiftQueryRepository: cfReturnGiftQueryRepositoryImpl,
+	}
+	cfReturnGiftQueryController := api.CfReturnGiftQueryController{
+		Converters:               converters,
+		CfReturnGiftQueryService: cfReturnGiftQueryServiceImpl,
+	}
 	shippingQueryRepositoryImpl := &repository.ShippingQueryRepositoryImpl{
 		DAO: dao,
 	}
@@ -127,9 +137,6 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	}
 	chargeCommandRepositoryImpl := &payjp.ChargeCommandRepositoryImpl{
 		PayjpClient: payjpService,
-	}
-	cfReturnGiftQueryRepositoryImpl := &repository.CfReturnGiftQueryRepositoryImpl{
-		DAO: dao,
 	}
 	mailCommandRepository := repository.ProvideMailer(configConfig, session)
 	chargeCommandServiceImpl := &service.ChargeCommandServiceImpl{
@@ -665,6 +672,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		AuthorizeWrapper:                authorize,
 		CfProjectQueryController:        cfProjectQueryController,
 		CfProjectCommandController:      cfProjectCommandController,
+		CfReturnGiftQueryController:     cfReturnGiftQueryController,
 		ShippingQueryController:         shippingQueryController,
 		ShippingCommandController:       shippingCommandController,
 		CardQueryController:             cardQueryController,
