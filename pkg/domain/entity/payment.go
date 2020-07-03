@@ -4,9 +4,11 @@ type (
 	Payment struct {
 		ID                int `gorm:"primary_key"`
 		UserID            int
+		ProjectOwnerID    int
 		CardID            int
 		ChargeID          string
 		ShippingAddressID int
+		TotalPrice        int
 		Times
 	}
 
@@ -17,16 +19,20 @@ type (
 		CfProjectID            int
 		CfProjectSnapshotID    int
 		Amount                 int
+		IsCanceled             bool
+		IsOwnerConfirmed       bool
 		TimesWithoutDeletedAt
 	}
 )
 
-func NewPayment(userID, cardID, addressID int, chargeID string) *Payment {
+func NewPayment(userID, projectOwnerID, cardID, addressID int, chargeID string, price int) *Payment {
 	return &Payment{
 		UserID:            userID,
+		ProjectOwnerID:    projectOwnerID,
 		CardID:            cardID,
 		ChargeID:          chargeID,
 		ShippingAddressID: addressID,
+		TotalPrice:        price,
 	}
 }
 

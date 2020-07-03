@@ -9,20 +9,27 @@ type (
 		User      *UserSummary       `json:"user"`
 		CreatedAt model.TimeResponse `json:"createdAt"`
 	}
+
 	CfProject struct {
-		ID              int                `json:"id"`
-		SnapshotID      int                `json:"snapshotId"`
-		Title           string             `json:"title"`
-		Summary         string             `json:"summary"`
-		Thumbnail       string             `json:"thumbnail"`
-		Body            string             `json:"body"`
-		GoalPrice       string             `json:"goalPrice"`
-		AchievedPrice   string             `json:"achievedPrice"`
-		SupporterCount  int                `json:"supporterCount"`
-		FavoriteCount   int                `json:"favoriteCount"`
-		Creator         Creator            `json:"creator"`
-		AreaCategories  []*AreaCategory    `json:"areaCategories"`
-		ThemeCategories []*ThemeCategory   `json:"themeCategories"`
-		DeadLine        model.TimeResponse `json:"deadLine"`
+		ID              int                   `json:"id"`
+		SnapshotID      int                   `json:"snapshotId"`
+		Title           string                `json:"title"`
+		Summary         string                `json:"summary"`
+		Thumbnail       string                `json:"thumbnail"`
+		Body            string                `json:"body"`
+		GoalPrice       string                `json:"goalPrice"`
+		AchievedPrice   string                `json:"achievedPrice"`
+		SupporterCount  int                   `json:"supporterCount"`
+		FavoriteCount   int                   `json:"favoriteCount"`
+		Creator         Creator               `json:"creator"`
+		Thumbnails      []*CfProjectThumbnail `json:"thumbnails"`
+		AreaCategories  []*AreaCategory       `json:"areaCategories"`
+		ThemeCategories []*ThemeCategory      `json:"themeCategories"`
+		DeadLine        model.TimeResponse    `json:"deadLine"`
+	}
+
+	CfProjectThumbnail struct {
+		Priority  int    `json:"priority"`
+		Thumbnail string `json:"thumbnail"`
 	}
 )

@@ -111,7 +111,7 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 		}
 
 		// 支払い情報を保存
-		payment := entity.NewPayment(user.ID, card.ID, address.ID, charge.ID)
+		payment := entity.NewPayment(user.ID, project.UserID, card.ID, address.ID, charge.ID, price)
 		if err := s.PaymentCommandRepository.Store(c, payment); err != nil {
 			return errors.Wrap(err, "failed store payment")
 		}

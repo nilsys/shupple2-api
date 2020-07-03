@@ -4396,8 +4396,6 @@ components:
           type: string
         summary:
           type: string
-        thumbnail:
-          type: string
         body:
           type: string
         goalPrice:
@@ -4415,6 +4413,10 @@ components:
           type: integer
         creator:
           $ref: "#/components/schemas/Creator"
+        thumbnails:
+          type: array
+          items:
+            $ref: "#/components/schemas/CfProjectThumbnail"
         areaCategories:
           type: array
           items:
@@ -4423,6 +4425,16 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ThemeCategoryDetail"
+    CfProjectThumbnail:
+      type: object
+      properties:
+        priority:
+          type: integer
+          example: 1
+          description: 表示順
+        thumbnail:
+          type: string
+          example: http://stg-files.stayway.jp/image
     CfReturnGiftList:
       type: array
       items:

@@ -48,18 +48,26 @@ func (c *Converters) ConvertCfProjectToOutput(project *entity.CfProject) *output
 	if project.Snapshot == nil {
 		project.Snapshot = &entity.CfProjectSnapshot{}
 	}
+
+	thumbnails := make([]*output.CfProjectThumbnail, len(project.Thumbnails))
+	for i, thumbnail := range project.Thumbnails {
+		thumbnails[i] = &output.CfProjectThumbnail{
+			Priority:  thumbnail.Priority,
+			Thumbnail: thumbnail.Thumbnail,
+		}
+	}
 	return &output.CfProject{
 		ID:              project.ID,
 		SnapshotID:      project.Snapshot.ID,
 		Title:           project.Snapshot.Title,
 		Summary:         project.Snapshot.Summary,
-		Thumbnail:       project.Snapshot.Thumbnail,
 		Body:            project.Snapshot.Body,
 		GoalPrice:       util.WithComma(project.Snapshot.GoalPrice),
 		AchievedPrice:   util.WithComma(project.AchievedPrice),
 		SupporterCount:  project.SupportCommentCount,
 		FavoriteCount:   project.FavoriteCount,
 		Creator:         c.NewCreatorFromUser(project.User),
+		Thumbnails:      thumbnails,
 		AreaCategories:  c.ConvertAreaCategoriesToOutput(project.Snapshot.AreaCategories),
 		ThemeCategories: c.ConvertThemeCategoriesToOutput(project.Snapshot.ThemeCategories),
 		DeadLine:        model.TimeResponse(project.Snapshot.Deadline),

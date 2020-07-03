@@ -23,12 +23,18 @@ type (
 		UserID      int
 		Title       string
 		Summary     string
-		Thumbnail   string
 		Body        string
 		GoalPrice   int
 		Deadline    time.Time
 		IsAttention bool
 		Times
+	}
+
+	CfProjectSnapshotThumbnail struct {
+		CfProjectSnapshotID int
+		Priority            int
+		Thumbnail           string
+		TimesWithoutDeletedAt
 	}
 
 	CfProjectSupportCommentTable struct {
@@ -41,8 +47,9 @@ type (
 
 	CfProject struct {
 		CfProjectTable
-		Snapshot *CfProjectSnapshot `gorm:"foreignkey:LatestSnapshotID"`
-		User     *User              `gorm:"foreignkey:UserID"`
+		Snapshot   *CfProjectSnapshot            `gorm:"foreignkey:ID;association_foreignkey:LatestSnapshotID"`
+		User       *User                         `gorm:"foreignkey:ID;association_foreignkey:UserID"`
+		Thumbnails []*CfProjectSnapshotThumbnail `gorm:"foreignkey:CfProjectSnapshotID;association_foreignkey:LatestSnapshotID"`
 		Times
 	}
 
@@ -54,7 +61,7 @@ type (
 
 	CfProjectSupportComment struct {
 		CfProjectSupportCommentTable
-		User *User `gorm:"UserID"`
+		User *User `gorm:"foreignkey:ID;association_foreignkey:UserID"`
 	}
 
 	CfProjectSnapshotAreaCategory struct {

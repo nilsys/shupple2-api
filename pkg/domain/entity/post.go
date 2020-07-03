@@ -56,7 +56,7 @@ type (
 	PostDetail struct {
 		PostTiny
 		Bodies          []*PostBody      `gorm:"foreignkey:PostID"`
-		User            *User            `gorm:"foreignkey:UserID"`
+		User            *User            `gorm:"foreignkey:ID;association_foreignkey:UserID"`
 		AreaCategories  []*AreaCategory  `gorm:"many2many:post_area_category;jointable_foreignkey:post_id;"`
 		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
 	}
@@ -79,7 +79,7 @@ type (
 	// 一覧用Post
 	PostListTiny struct {
 		PostTiny
-		User            *User `gorm:"foreignkey:UserID"`
+		User            *User `gorm:"foreignkey:ID;association_foreignkey:UserID"`
 		IsFavorite      bool
 		AreaCategories  []*AreaCategory  `gorm:"many2many:post_area_category;jointable_foreignkey:post_id;"`
 		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
@@ -88,7 +88,7 @@ type (
 	PostDetailWithHashtagAndIsFavorite struct {
 		PostTiny
 		Bodies          []*PostBody `gorm:"foreignkey:PostID"`
-		User            *User       `gorm:"foreignkey:UserID"`
+		User            *User       `gorm:"foreignkey:ID;association_foreignkey:UserID"`
 		IsFavorite      bool
 		AreaCategories  []*AreaCategory  `gorm:"many2many:post_area_category;jointable_foreignkey:post_id;"`
 		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`

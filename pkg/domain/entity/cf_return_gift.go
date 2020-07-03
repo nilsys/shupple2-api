@@ -15,6 +15,7 @@ type (
 		Thumbnail                    string
 		SortOrder                    int
 		GiftType                     model.GiftType
+		IsCanceled                   bool
 		Times
 	}
 
@@ -30,7 +31,7 @@ type (
 
 	CfReturnGift struct {
 		CfReturnGiftTable
-		Snapshot *CfReturnGiftSnapshotTable `gorm:"foreignkey:LatestCfReturnGiftSnapshotID"`
+		Snapshot *CfReturnGiftSnapshotTable `gorm:"foreignkey:ID;association_foreignkey:LatestCfReturnGiftSnapshotID"`
 		Times
 	}
 
