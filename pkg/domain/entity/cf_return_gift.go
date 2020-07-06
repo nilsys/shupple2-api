@@ -28,6 +28,7 @@ type (
 		FullAmount     int
 		IsCancelable   bool
 		Deadline       time.Time
+		DeliveryDate   time.Time
 		Times
 	}
 

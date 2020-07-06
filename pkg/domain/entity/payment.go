@@ -1,5 +1,7 @@
 package entity
 
+import "time"
+
 type (
 	Payment struct {
 		ID                int `gorm:"primary_key"`
@@ -21,6 +23,7 @@ type (
 		Amount                 int
 		IsCanceled             bool
 		IsOwnerConfirmed       bool
+		OwnerConfirmedAt       *time.Time
 		TimesWithoutDeletedAt
 	}
 )
