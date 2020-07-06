@@ -116,43 +116,6 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 	}
 }
 
-func (c Converters) ConvertPostListToOutput(list *entity.PostList) *output.PostList {
-	posts := c.ConvertPostListTiniesToOutput(list.Posts)
-
-	return &output.PostList{
-		TotalNumber: list.TotalNumber,
-		Posts:       posts,
-	}
-}
-
-func (c Converters) ConvertPostListTiniesToOutput(list []*entity.PostListTiny) []*output.Post {
-	res := make([]*output.Post, len(list))
-
-	for i, tiny := range list {
-		res[i] = c.ConvertPostListTinyToOutput(tiny)
-	}
-
-	return res
-}
-
-func (c Converters) ConvertPostListTinyToOutput(post *entity.PostListTiny) *output.Post {
-	return &output.Post{
-		ID:              post.ID,
-		Thumbnail:       post.Thumbnail,
-		Title:           post.Title,
-		Slug:            post.Slug,
-		AreaCategories:  c.ConvertAreaCategoriesToOutput(post.AreaCategories),
-		ThemeCategories: c.ConvertThemeCategoriesToOutput(post.ThemeCategories),
-		Creator:         c.NewCreatorFromUser(post.User),
-		FavoriteCount:   post.FavoriteCount,
-		Views:           post.Views,
-		HideAds:         post.HideAds,
-		IsFavorite:      post.IsFavorite,
-		CreatedAt:       model.TimeResponse(post.CreatedAt),
-		UpdatedAt:       model.TimeResponse(post.UpdatedAt),
-	}
-}
-
 func (c Converters) ConvertPostListTinyWithCategoryDetailForListToOutput(posts *entity.PostList, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.PostWithCategoryDetailList {
 	postsRes := make([]*output.PostWithCategoryDetail, len(posts.Posts))
 

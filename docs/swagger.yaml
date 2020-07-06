@@ -1245,7 +1245,7 @@ paths:
                     description: 検索総件数
                     example: 120
                   posts:
-                    $ref: "#/components/schemas/PostList"
+                    $ref: "#/components/schemas/PostWithCategoryDetailList"
   /users/{userId}/favorite/posts:
     get:
       tags:
@@ -1284,7 +1284,7 @@ paths:
                     description: 検索総件数
                     example: 120
                   posts:
-                    $ref: "#/components/schemas/PostList"
+                    $ref: "#/components/schemas/PostWithCategoryDetailList"
   /feature_posts:
     get:
       tags:

@@ -11,11 +11,11 @@ import (
 
 type (
 	PostQueryScenario interface {
-		ShowQueryByID(id int, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error)
-		ShowQueryBySlug(slug string, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error)
+		ShowByID(id int, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error)
+		ShowBySlug(slug string, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error)
 		ListByParams(query *query.FindPostListQuery, ouser entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error)
-		ListFeed(targetUserID int, query *query.FindListPaginationQuery, ouser entity.OptionalUser) (*entity.PostList, error)
-		LitFavorite(targetUserID int, query *query.FindListPaginationQuery, ouser entity.OptionalUser) (*entity.PostList, error)
+		ListFeed(targetUserID int, query *query.FindListPaginationQuery, ouser entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error)
+		LitFavorite(targetUserID int, query *query.FindListPaginationQuery, ouser entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error)
 	}
 
 	PostQueryScenarioImpl struct {
@@ -29,7 +29,7 @@ var PostQueryScenarioSet = wire.NewSet(
 	wire.Bind(new(PostQueryScenario), new(*PostQueryScenarioImpl)),
 )
 
-func (s *PostQueryScenarioImpl) ShowQueryByID(id int, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error) {
+func (s *PostQueryScenarioImpl) ShowByID(id int, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error) {
 	var (
 		post *entity.PostDetailWithHashtagAndIsFavorite
 		err  error
@@ -51,7 +51,7 @@ func (s *PostQueryScenarioImpl) ShowQueryByID(id int, ouser entity.OptionalUser)
 	return post, areaCategoriesMap, themeCategoriesMap, nil
 }
 
-func (s *PostQueryScenarioImpl) ShowQueryBySlug(slug string, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error) {
+func (s *PostQueryScenarioImpl) ShowBySlug(slug string, ouser entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error) {
 	var (
 		post *entity.PostDetailWithHashtagAndIsFavorite
 		err  error
@@ -95,16 +95,42 @@ func (s *PostQueryScenarioImpl) ListByParams(query *query.FindPostListQuery, ous
 	return posts, areaCategoriesMap, themeCategoriesMap, nil
 }
 
-func (s *PostQueryScenarioImpl) ListFeed(targetUserID int, query *query.FindListPaginationQuery, ouser entity.OptionalUser) (*entity.PostList, error) {
+func (s *PostQueryScenarioImpl) ListFeed(targetUserID int, query *query.FindListPaginationQuery, ouser entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error) {
+	var (
+		posts *entity.PostList
+		err   error
+	)
 	if ouser.Authenticated {
-		return s.PostQueryService.ListFeedForAuth(ouser.ID, targetUserID, query)
+		posts, err = s.PostQueryService.ListFeedForAuth(ouser.ID, targetUserID, query)
+	} else {
+		posts, err = s.PostQueryService.ListFeed(targetUserID, query)
 	}
-	return s.PostQueryService.ListFeed(targetUserID, query)
+	if err != nil {
+		return nil, nil, nil, errors.Wrap(err, "failed list feed post")
+	}
+	areaCategoriesMap, themeCategoriesMap, err := s.CategoryIDMapFactory.GenerateCategoryIDMap(posts.AreaCategoryIDs(), posts.ThemeCategoryIDs())
+	if err != nil {
+		return nil, areaCategoriesMap, themeCategoriesMap, errors.Wrap(err, "failed gen category map")
+	}
+	return posts, areaCategoriesMap, themeCategoriesMap, nil
 }
 
-func (s *PostQueryScenarioImpl) LitFavorite(targetUserID int, query *query.FindListPaginationQuery, ouser entity.OptionalUser) (*entity.PostList, error) {
+func (s *PostQueryScenarioImpl) LitFavorite(targetUserID int, query *query.FindListPaginationQuery, ouser entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error) {
+	var (
+		posts *entity.PostList
+		err   error
+	)
 	if ouser.Authenticated {
-		return s.PostQueryService.ListFavoritePostForAuth(ouser.ID, targetUserID, query)
+		posts, err = s.PostQueryService.ListFavoritePostForAuth(ouser.ID, targetUserID, query)
+	} else {
+		posts, err = s.PostQueryService.ListFavoritePost(targetUserID, query)
 	}
-	return s.PostQueryService.ListFavoritePost(targetUserID, query)
+	if err != nil {
+		return nil, nil, nil, errors.Wrap(err, "failed list favorite post")
+	}
+	areaCategoriesMap, themeCategoriesMap, err := s.CategoryIDMapFactory.GenerateCategoryIDMap(posts.AreaCategoryIDs(), posts.ThemeCategoryIDs())
+	if err != nil {
+		return nil, areaCategoriesMap, themeCategoriesMap, errors.Wrap(err, "failed gen category map")
+	}
+	return posts, areaCategoriesMap, themeCategoriesMap, nil
 }
