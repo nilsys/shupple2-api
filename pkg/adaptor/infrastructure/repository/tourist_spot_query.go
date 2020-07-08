@@ -39,7 +39,7 @@ func (r *TouristSpotQueryRepositoryImpl) FindByID(id int) (*entity.TouristSpot, 
 
 func (r *TouristSpotQueryRepositoryImpl) FindDetailByID(id int) (*entity.TouristSpotDetail, error) {
 	var row entity.TouristSpotDetail
-	if err := r.DB.Select("*").Joins("INNER JOIN (SELECT count(id) AS review_count FROM review WHERE tourist_spot_id = ?) AS r", id).First(&row, id).Error; err != nil {
+	if err := r.DB.Select("*").Joins("INNER JOIN (SELECT count(id) AS review_count FROM review WHERE tourist_spot_id = ? AND deleted_at IS NULL) AS r", id).First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "touristSpot detail(id=%d)", id)
 	}
 	return &row, nil
@@ -53,7 +53,7 @@ func (r *TouristSpotQueryRepositoryImpl) FindListByParams(query *query.FindTouri
 
 	if err := q.
 		Select("*").
-		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
+		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review WHERE deleted_at IS NULL GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
 		Limit(query.Limit).
 		Offset(query.OffSet).
 		Order("vendor_rate desc").
@@ -72,7 +72,7 @@ func (r *TouristSpotQueryRepositoryImpl) FindRecommendListByParams(query *query.
 	cq := r.buildCountRecommendListQuery(query)
 
 	if err := q.
-		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
+		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review WHERE deleted_at IS NULL GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
 		Limit(query.Limit).
 		Offset(query.OffSet).
 		Order("vendor_rate desc").
@@ -104,7 +104,7 @@ func (r *TouristSpotQueryRepositoryImpl) FindReviewCountByIDs(ids []int) (*entit
 
 	if err := r.DB.Table("tourist_spot").
 		Select("tourist_spot.id AS tourist_spot_id, rc.review_count AS review_count").
-		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
+		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review WHERE deleted_at IS NULL GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
 		Where("id IN (?)", ids).Find(&rows.List).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find tourist_spot review_count")
 	}
