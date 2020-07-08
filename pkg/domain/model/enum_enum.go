@@ -248,6 +248,65 @@ func (x *CfProjectSortBy) UnmarshalText(text []byte) error {
 }
 
 const (
+	// CfReturnGiftReserveStatusUndefined is a CfReturnGiftReserveStatus of type Undefined
+	CfReturnGiftReserveStatusUndefined CfReturnGiftReserveStatus = iota
+	// CfReturnGiftReserveStatusUnreserved is a CfReturnGiftReserveStatus of type Unreserved
+	CfReturnGiftReserveStatusUnreserved
+	// CfReturnGiftReserveStatusReserved is a CfReturnGiftReserveStatus of type Reserved
+	CfReturnGiftReserveStatusReserved
+	// CfReturnGiftReserveStatusInvalid is a CfReturnGiftReserveStatus of type Invalid
+	CfReturnGiftReserveStatusInvalid
+)
+
+const _CfReturnGiftReserveStatusName = "UndefinedUnreservedReservedInvalid"
+
+var _CfReturnGiftReserveStatusMap = map[CfReturnGiftReserveStatus]string{
+	0: _CfReturnGiftReserveStatusName[0:9],
+	1: _CfReturnGiftReserveStatusName[9:19],
+	2: _CfReturnGiftReserveStatusName[19:27],
+	3: _CfReturnGiftReserveStatusName[27:34],
+}
+
+// String implements the Stringer interface.
+func (x CfReturnGiftReserveStatus) String() string {
+	if str, ok := _CfReturnGiftReserveStatusMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("CfReturnGiftReserveStatus(%d)", x)
+}
+
+var _CfReturnGiftReserveStatusValue = map[string]CfReturnGiftReserveStatus{
+	_CfReturnGiftReserveStatusName[0:9]:   0,
+	_CfReturnGiftReserveStatusName[9:19]:  1,
+	_CfReturnGiftReserveStatusName[19:27]: 2,
+	_CfReturnGiftReserveStatusName[27:34]: 3,
+}
+
+// ParseCfReturnGiftReserveStatus attempts to convert a string to a CfReturnGiftReserveStatus
+func ParseCfReturnGiftReserveStatus(name string) (CfReturnGiftReserveStatus, error) {
+	if x, ok := _CfReturnGiftReserveStatusValue[name]; ok {
+		return x, nil
+	}
+	return CfReturnGiftReserveStatus(0), fmt.Errorf("%s is not a valid CfReturnGiftReserveStatus", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x CfReturnGiftReserveStatus) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *CfReturnGiftReserveStatus) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseCfReturnGiftReserveStatus(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// ContextKeyTransaction is a ContextKey of type Transaction
 	ContextKeyTransaction ContextKey = iota + 1
 )

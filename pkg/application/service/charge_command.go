@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository/payjp"
@@ -90,6 +92,10 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 			// 金額x数量
 			price += giftIDMap[payment.ReturnGiftID].Snapshot.Price * payment.Amount
 			gift := giftIDMap[payment.ReturnGiftID]
+			if gift.CfReturnGiftTable.GiftType == model.GiftTypeReservedTicket {
+				paymentReturnGifts[i] = entity.NewPaymentReturnGiftForReservedTicket(payment.ReturnGiftID, gift.LatestCfReturnGiftSnapshotID, gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount)
+				continue
+			}
 			paymentReturnGifts[i] = entity.NewPaymentReturnGift(payment.ReturnGiftID, gift.LatestCfReturnGiftSnapshotID, gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount)
 		}
 

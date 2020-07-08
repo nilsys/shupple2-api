@@ -95,6 +95,11 @@ ENUM(ReservedTicket = 1, Other)
 type GiftType int
 
 /*
+ENUM(Undefined, Unreserved, Reserved, Invalid)
+*/
+type CfReturnGiftReserveStatus int
+
+/*
 ENUM(ThanksPurchase = 1)
 */
 type MailTemplateName int

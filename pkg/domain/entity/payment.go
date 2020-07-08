@@ -1,6 +1,10 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+)
 
 type (
 	Payment struct {
@@ -24,6 +28,7 @@ type (
 		IsCanceled             bool
 		IsOwnerConfirmed       bool
 		OwnerConfirmedAt       *time.Time
+		UserReservedStatus     model.CfReturnGiftReserveStatus
 		TimesWithoutDeletedAt
 	}
 )
@@ -47,5 +52,19 @@ func NewPaymentReturnGift(giftID, giftSnapshotID, projectID, projectSnapshotID, 
 		CfProjectID:            projectID,
 		CfProjectSnapshotID:    projectSnapshotID,
 		Amount:                 amount,
+	}
+}
+
+func NewPaymentReturnGiftForReservedTicket(giftID, giftSnapshotID, projectID, projectSnapshotID, amount int) *PaymentCfReturnGift {
+	now := time.Now()
+	return &PaymentCfReturnGift{
+		CfReturnGiftID:         giftID,
+		CfReturnGiftSnapshotID: giftSnapshotID,
+		CfProjectID:            projectID,
+		CfProjectSnapshotID:    projectSnapshotID,
+		Amount:                 amount,
+		IsOwnerConfirmed:       true,
+		OwnerConfirmedAt:       &now,
+		UserReservedStatus:     model.CfReturnGiftReserveStatusUnreserved,
 	}
 }

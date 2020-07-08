@@ -2756,7 +2756,7 @@ components:
             format yyyy-MM
         accompanying:
           $ref: "#/components/schemas/Accompanying"
-        spotId:
+        touristSpotId:
           type: integer
         innId:
           type: integer
