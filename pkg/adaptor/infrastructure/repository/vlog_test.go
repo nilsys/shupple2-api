@@ -113,8 +113,9 @@ var _ = Describe("VlogRepositoryImpl", func() {
 
 func newVlog(id int, areaCategoryIDs, themeCategoryIDs, touristSpotIDs, editors []int) *entity.Vlog {
 	vlog := entity.VlogTiny{
-		ID:     id,
-		UserID: userID,
+		ID:       id,
+		UserID:   userID,
+		EditedAt: time.Now().Truncate(time.Second),
 	}
 	util.FillDummyString(&vlog, id)
 

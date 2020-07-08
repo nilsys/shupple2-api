@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"time"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
@@ -20,6 +22,7 @@ type (
 		Views          int
 		SEOTitle       string
 		SEODescription string
+		EditedAt       time.Time
 		Times
 	}
 

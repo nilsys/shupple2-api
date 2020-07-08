@@ -38,6 +38,7 @@ type (
 		AreaCategories  []*AreaCategoryDetail  `json:"areaCategories"`
 		ThemeCategories []*ThemeCategoryDetail `json:"themeCategories"`
 		TouristSpot     []*TouristSpotTiny     `json:"touristSpots"`
+		EditedAt        model.TimeResponse     `json:"editedAt"`
 		CreatedAt       model.TimeResponse     `json:"createdAt"`
 		UpdatedAt       model.TimeResponse     `json:"updatedAt"`
 	}

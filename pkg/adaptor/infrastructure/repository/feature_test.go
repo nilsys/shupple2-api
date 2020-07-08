@@ -58,8 +58,9 @@ var _ = Describe("FeatureRepositoryImpl", func() {
 
 func newFeature(id int, postIDs []int) *entity.Feature {
 	feature := entity.FeatureTiny{
-		ID:     id,
-		UserID: userID,
+		ID:       id,
+		UserID:   userID,
+		EditedAt: time.Now().Truncate(time.Second),
 	}
 	util.FillDummyString(&feature, id)
 

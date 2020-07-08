@@ -74,6 +74,7 @@ func (c Converters) ConvertTouristSpotToOutput(touristSpot *entity.TouristSpotDe
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
 		SpotCategories:  spotCategories,
+		EditedAt:        model.TimeResponse(touristSpot.EditedAt),
 		CreatedAt:       model.TimeResponse(touristSpot.CreatedAt),
 		UpdatedAt:       model.TimeResponse(touristSpot.UpdatedAt),
 	}

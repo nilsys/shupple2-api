@@ -78,6 +78,7 @@ func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail, touristSpotReview
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
 		TouristSpot:     touristSpots,
+		EditedAt:        model.TimeResponse(vlog.EditedAt),
 		CreatedAt:       model.TimeResponse(vlog.CreatedAt),
 		UpdatedAt:       model.TimeResponse(vlog.UpdatedAt),
 	}

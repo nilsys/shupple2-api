@@ -17,15 +17,16 @@ type (
 
 	// フロント返却用Feature詳細
 	ShowFeature struct {
-		ID            int    `json:"id"`
-		Slug          string `json:"slug"`
-		Thumbnail     string `json:"thumbnail"`
-		Title         string `json:"title"`
-		Body          string `json:"body"`
-		FacebookCount int    `json:"facebookCount"`
-		TwitterCount  int    `json:"twitterCount"`
-		Views         int    `json:"views"`
-		Creator       `json:"creator"`
+		ID            int                       `json:"id"`
+		Slug          string                    `json:"slug"`
+		Thumbnail     string                    `json:"thumbnail"`
+		Title         string                    `json:"title"`
+		Body          string                    `json:"body"`
+		FacebookCount int                       `json:"facebookCount"`
+		TwitterCount  int                       `json:"twitterCount"`
+		Views         int                       `json:"views"`
+		Creator       Creator                   `json:"creator"`
+		EditedAt      model.TimeResponse        `json:"editedAt"`
 		CreatedAt     model.TimeResponse        `json:"createdAt"`
 		UpdatedAt     model.TimeResponse        `json:"updatedAt"`
 		RelationPosts []*PostWithCategoryDetail `json:"relationPosts"`

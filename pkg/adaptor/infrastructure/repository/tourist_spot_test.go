@@ -102,9 +102,10 @@ var _ = Describe("TouristSpotRepositoryImpl", func() {
 
 func newTouristSpot(id int, areaCategoryIDs, themeCategoryIDs, spotCategoryIDs []int) *entity.TouristSpot {
 	touristSpot := entity.TouristSpotTiny{
-		ID:  id,
-		Lat: null.FloatFrom(float64(id)),
-		Lng: null.FloatFrom(float64(id * 10)),
+		ID:       id,
+		Lat:      null.FloatFrom(float64(id)),
+		Lng:      null.FloatFrom(float64(id * 10)),
+		EditedAt: time.Now().Truncate(time.Second),
 	}
 	util.FillDummyString(&touristSpot, id)
 

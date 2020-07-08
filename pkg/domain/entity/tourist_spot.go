@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"time"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 
 	"gopkg.in/guregu/null.v3"
@@ -28,6 +30,7 @@ type (
 		SearchInnURL string
 		Rate         float64
 		VendorRate   float64
+		EditedAt     time.Time
 		Times
 	}
 

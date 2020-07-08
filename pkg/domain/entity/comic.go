@@ -1,5 +1,7 @@
 package entity
 
+import "time"
+
 type (
 	Comic struct {
 		ID            int `gorm:"primary_key"`
@@ -9,6 +11,7 @@ type (
 		Title         string
 		Body          string
 		FavoriteCount int
+		EditedAt      time.Time
 		Times
 	}
 

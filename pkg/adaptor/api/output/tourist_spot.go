@@ -32,6 +32,7 @@ type (
 		AreaCategories  []*AreaCategoryDetail  `json:"areaCategories"`
 		ThemeCategories []*ThemeCategoryDetail `json:"themeCategories"`
 		SpotCategories  []*SpotCategory        `json:"spotCategories"`
+		EditedAt        model.TimeResponse     `json:"editedAt"`
 		CreatedAt       model.TimeResponse     `json:"createdAt"`
 		UpdatedAt       model.TimeResponse     `json:"updatedAt"`
 	}

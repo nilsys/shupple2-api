@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"time"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
@@ -15,6 +17,7 @@ type (
 		FacebookCount int
 		TwitterCount  int
 		Views         int
+		EditedAt      time.Time
 		Times
 	}
 

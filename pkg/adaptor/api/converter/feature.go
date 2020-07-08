@@ -46,6 +46,7 @@ func (c Converters) ConvertFeatureDetailPostsToOutput(feature *entity.FeatureDet
 		TwitterCount:  feature.TwitterCount,
 		Views:         feature.Views,
 		Creator:       c.NewCreatorFromUser(feature.User),
+		EditedAt:      model.TimeResponse(feature.EditedAt),
 		CreatedAt:     model.TimeResponse(feature.CreatedAt),
 		UpdatedAt:     model.TimeResponse(feature.UpdatedAt),
 		RelationPosts: relationPosts,

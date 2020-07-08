@@ -66,6 +66,7 @@ func (c Converters) ConvertQueryPostToOutput(queryPost *entity.PostDetail) *outp
 		FavoriteCount:   queryPost.FavoriteCount,
 		Views:           queryPost.Views,
 		HideAds:         queryPost.HideAds,
+		EditedAt:        model.TimeResponse(queryPost.EditedAt),
 		CreatedAt:       model.TimeResponse(queryPost.CreatedAt),
 		UpdatedAt:       model.TimeResponse(queryPost.UpdatedAt),
 	}
@@ -111,6 +112,7 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
 		Hashtags:        hashtags,
+		EditedAt:        model.TimeResponse(post.EditedAt),
 		CreatedAt:       model.TimeResponse(post.CreatedAt),
 		UpdatedAt:       model.TimeResponse(post.UpdatedAt),
 	}
@@ -152,6 +154,7 @@ func (c Converters) ConvertPostListTinyWithCategoryDetailToOutput(post *entity.P
 		Views:           post.Views,
 		HideAds:         post.HideAds,
 		IsFavorite:      post.IsFavorite,
+		EditedAt:        model.TimeResponse(post.EditedAt),
 		CreatedAt:       model.TimeResponse(post.CreatedAt),
 		UpdatedAt:       model.TimeResponse(post.UpdatedAt),
 	}

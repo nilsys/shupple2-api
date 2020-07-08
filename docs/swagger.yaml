@@ -2508,6 +2508,21 @@ components:
       type: apiKey
       description: CognitoIDPから取得するDToken
   schemas:
+    createdAt:
+      type: string
+      format: date-time
+      description: 公開日時, ISO 8601形式
+      example: 2020-01-01T13:16+09:00
+    updatedAt:
+      type: string
+      format: date-time
+      description: 更新日時, DBのレコードとしての更新日時なので、子要素の更新が反映されない, ISO 8601形式
+      example: 2020-01-01T13:16+09:00
+    editedAt:
+      type: string
+      format: date-time
+      description: 更新日時, ISO 8601形式
+      example: 2020-01-01T13:16+09:00
     UserUpdateRequest:
       type: object
       properties:
@@ -2954,13 +2969,9 @@ components:
         accompanying:
           $ref: "#/components/schemas/Accompanying"
         createdAt:
-          type: string
-          description: 投稿日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
+          $ref: "#/components/schemas/createdAt"
         updatedAt:
-          type: string
-          description: 最終更新日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
+          $ref: "#/components/schemas/updatedAt"
         travelDate:
           type: string
           description: |
@@ -3023,8 +3034,7 @@ components:
             良いねしているかフラグ
             ＊認証を挟まない場合はfalse
         createdAt:
-          type: string
-          format: date-time
+          $ref: "#/components/schemas/createdAt"
     ReviewCommentRequest:
       type: object
       properties:
@@ -3052,8 +3062,7 @@ components:
           type: integer
           description: いいね数
         createdAt:
-          type: string
-          format: date-time
+          $ref: "#/components/schemas/createdAt"
     CfProjectSupportCommentList:
       type: array
       items:
@@ -3068,8 +3077,7 @@ components:
         body:
           type: string
         createdAt:
-          type: string
-          format: date-time
+          $ref: "#/components/schemas/createdAt"
     PostWithCategoryDetailList:
       type: array
       items:
@@ -3120,14 +3128,12 @@ components:
           type: boolean
           description: 広告非表示フラグ
           example: false
-        updatedAt:
-          type: string
-          description: 最終更新日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
         createdAt:
-          type: string
-          description: 最終更新日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
+          $ref: "#/components/schemas/createdAt"
+        updatedAt:
+          $ref: "#/components/schemas/updatedAt"
+        editedAt:
+          $ref: "#/components/schemas/editedAt"
     PostList:
       type: array
       items:
@@ -3178,14 +3184,12 @@ components:
           type: boolean
           description: 広告非表示フラグ
           example: false
-        updatedAt:
-          type: string
-          description: 最終更新日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
         createdAt:
-          type: string
-          description: 最終更新日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
+          $ref: "#/components/schemas/createdAt"
+        updatedAt:
+          $ref: "#/components/schemas/updatedAt"
+        editedAt:
+          $ref: "#/components/schemas/editedAt"
     PostShow:
       type: object
       properties:
@@ -3245,18 +3249,16 @@ components:
           type: integer
           description: 閲覧数
           example: 6
-        updatedAt:
-          type: string
-          description: 最終更新日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
-        createdAt:
-          type: string
-          description: 最終更新日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
         hideAds:
           type: boolean
           description: 広告非表示フラグ
           example: false
+        createdAt:
+          $ref: "#/components/schemas/createdAt"
+        updatedAt:
+          $ref: "#/components/schemas/updatedAt"
+        editedAt:
+          $ref: "#/components/schemas/editedAt"
     PostBody:
       type: object
       properties:
@@ -3320,13 +3322,11 @@ components:
           description: 閲覧数
           example: 103
         createdAt:
-          type: string
-          description: 公開日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
+          $ref: "#/components/schemas/createdAt"
         updatedAt:
-          type: string
-          description: 最終更新日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
+          $ref: "#/components/schemas/updatedAt"
+        editedAt:
+          $ref: "#/components/schemas/editedAt"
         relationPosts:
           $ref: "#/components/schemas/PostWithCategoryDetailList"
 
@@ -3399,13 +3399,11 @@ components:
           description: 撮影日時, ISO 8601形式
           example: 2020-01-01T13:16+09:00
         createdAt:
-          type: string
-          description: 公開日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
+          $ref: "#/components/schemas/createdAt"
         updatedAt:
-          type: string
-          description: 更新日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
+          $ref: "#/components/schemas/updatedAt"
+        editedAt:
+          $ref: "#/components/schemas/editedAt"
         playTime:
           type: string
           description: 再生時間
@@ -3652,13 +3650,11 @@ components:
           items:
             $ref: "#/components/schemas/Category"
         createdAt:
-          type: string
-          description: 公開日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
+          $ref: "#/components/schemas/createdAt"
         updatedAt:
-          type: string
-          description: 更新日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
+          $ref: "#/components/schemas/updatedAt"
+        editedAt:
+          $ref: "#/components/schemas/editedAt"
     HashtagList:
       type: array
       items:
@@ -3774,9 +3770,7 @@ components:
           description: |
             いいね数
         createdAt:
-          type: string
-          description: 公開日時, ISO 8601形式
-          example: 2020-01-01T13:16+09:00
+          $ref: "#/components/schemas/createdAt"
         creator:
           $ref: "#/components/schemas/Creator"
     InterestList:

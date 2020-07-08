@@ -28,12 +28,9 @@ var _ = Describe("ComicRepositoryImpl", func() {
 	base := newComic(comicID)
 	baseChanged := newComic(comicID)
 	baseChanged.Title = "changed"
-	baseQuery := newQueryComic(comicID)
-	baseQueryChanged := newQueryComic(comicID)
-	baseQueryChanged.Title = "changed"
 
-	DescribeTable("Saveは引数のcomicを作成するか、その状態になるように更新する",
-		func(before *entity.Comic, saved *entity.Comic, querySaved *entity.ComicDetail) {
+	DescribeTable("Storeは引数のcomicを作成するか、その状態になるように更新する",
+		func(before *entity.Comic, saved *entity.Comic) {
 			if before != nil {
 				Expect(command.Store(context.Background(), before)).To(Succeed())
 			}
@@ -42,44 +39,24 @@ var _ = Describe("ComicRepositoryImpl", func() {
 			actual, err := query.FindByID(saved.ID)
 			Expect(err).To(Succeed())
 
-			Expect(actual.User.CreatedAt).NotTo(BeZero())
-			Expect(actual.User.UpdatedAt).NotTo(BeZero())
-			actual.User.CreatedAt = time.Time{}
-			actual.User.UpdatedAt = time.Time{}
-
 			Expect(actual.CreatedAt).NotTo(BeZero())
 			Expect(actual.UpdatedAt).NotTo(BeZero())
 			actual.CreatedAt = time.Time{}
 			actual.UpdatedAt = time.Time{}
-			Expect(actual).To(Equal(querySaved))
+			Expect(&actual.Comic).To(Equal(saved))
 		},
-		Entry("新規作成", nil, &base, baseQuery),
-		Entry("フィールドに変更がある場合", &base, &baseChanged, baseQueryChanged),
+		Entry("新規作成", nil, &base),
+		Entry("フィールドに変更がある場合", &base, &baseChanged),
 	)
 })
 
 func newComic(id int) entity.Comic {
 	comic := entity.Comic{
-		ID:     id,
-		UserID: userID,
+		ID:       id,
+		UserID:   userID,
+		EditedAt: time.Now().Truncate(time.Second),
 	}
 	util.FillDummyString(&comic, id)
 
 	return comic
-}
-
-func newComicWithIsFavorite(id int) entity.ComicWithIsFavorite {
-	comic := entity.ComicWithIsFavorite{
-		Comic:      newComic(id),
-		IsFavorite: false,
-	}
-	util.FillDummyString(&comic, id)
-	return comic
-}
-
-func newQueryComic(id int) *entity.ComicDetail {
-	return &entity.ComicDetail{
-		ComicWithIsFavorite: newComicWithIsFavorite(id),
-		User:                newUser(userID),
-	}
 }

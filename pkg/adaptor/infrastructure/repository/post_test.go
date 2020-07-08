@@ -77,6 +77,7 @@ func newPost(id int, bodies []string, areaCategoryIDs []int, themeCategoryIDs []
 		UserID:        userID,
 		FavoriteCount: id,
 		FacebookCount: id,
+		EditedAt:      time.Now().Truncate(time.Second),
 	}
 	util.FillDummyString(&post, id)
 	p := entity.NewPost(post, bodies, areaCategoryIDs, themeCategoryIDs, hashtagIDs)

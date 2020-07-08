@@ -99,6 +99,7 @@ func (s *WordpressServiceImpl) PatchPost(post *entity.Post, wpPost *wordpress.Po
 	post.HideAds = wpPost.Meta.IsAdsRemovedInPage
 	post.SEOTitle = wpPost.Meta.SEOTitle
 	post.SEODescription = wpPost.Meta.MetaDescription
+	post.EditedAt = time.Time(wpPost.Modified)
 	post.CreatedAt = time.Time(wpPost.Date)
 	post.SetBodies(bodies)
 	post.SetAreaCategories(areaCategoryIDs)
@@ -152,6 +153,7 @@ func (s *WordpressServiceImpl) PatchTouristSpot(touristSpot *entity.TouristSpot,
 	touristSpot.Price = wpLocation.Attributes.Price
 	touristSpot.InstagramURL = wpLocation.Attributes.Instagram
 	touristSpot.SearchInnURL = wpLocation.Attributes.Inn
+	touristSpot.EditedAt = time.Time(wpLocation.Modified)
 	touristSpot.CreatedAt = time.Time(wpLocation.Date)
 	touristSpot.SetAreaCategories(areaCategoryIDs)
 	touristSpot.SetThemeCategories(themeCategoryIDs)
@@ -306,6 +308,7 @@ func (s *WordpressServiceImpl) PatchVlog(vlog *entity.Vlog, wpVlog *wordpress.Vl
 	vlog.YearMonth = wpVlog.Attributes.YearMonth
 	vlog.PlayTime = wpVlog.Attributes.RunTime
 	vlog.Timeline = wpVlog.Attributes.MovieTimeline
+	vlog.EditedAt = time.Time(wpVlog.Modified)
 	vlog.CreatedAt = time.Time(wpVlog.Date)
 	vlog.SetTouristSpots(wpVlog.Attributes.MovieLocation)
 	vlog.SetAreaCategories(areaCategoryIDs)
@@ -337,6 +340,7 @@ func (s *WordpressServiceImpl) PatchFeature(feature *entity.Feature, wpFeature *
 	feature.Thumbnail = thumbnail
 	feature.Title = wpFeature.Title.Rendered
 	feature.Body = wpFeature.Content.Rendered
+	feature.EditedAt = time.Time(wpFeature.Modified)
 	feature.CreatedAt = time.Time(wpFeature.Date)
 	feature.SetPosts(postIDs)
 
@@ -360,6 +364,7 @@ func (s *WordpressServiceImpl) PatchComic(comic *entity.Comic, wpComic *wordpres
 	comic.Thumbnail = thumbnail
 	comic.Title = wpComic.Title.Rendered
 	comic.Body = wpComic.Content.Rendered
+	comic.EditedAt = time.Time(wpComic.Modified)
 	comic.CreatedAt = time.Time(wpComic.Date)
 
 	return nil

@@ -16,6 +16,7 @@ type (
 		Views           int                `json:"views"`
 		HideAds         bool               `json:"hideAds"`
 		IsFavorite      bool               `json:"isFavorite"`
+		EditedAt        model.TimeResponse `json:"editedAt"`
 		CreatedAt       model.TimeResponse `json:"createdAt"`
 		UpdatedAt       model.TimeResponse `json:"updatedAt"`
 	}
@@ -33,6 +34,7 @@ type (
 		Views           int                    `json:"views"`
 		HideAds         bool                   `json:"hideAds"`
 		IsFavorite      bool                   `json:"isFavorite"`
+		EditedAt        model.TimeResponse     `json:"editedAt"`
 		CreatedAt       model.TimeResponse     `json:"createdAt"`
 		UpdatedAt       model.TimeResponse     `json:"updatedAt"`
 	}
@@ -66,6 +68,7 @@ type (
 		AreaCategories  []*AreaCategoryDetail  `json:"areaCategories"`
 		ThemeCategories []*ThemeCategoryDetail `json:"themeCategories"`
 		Hashtags        []*Hashtag             `json:"hashtags"`
+		EditedAt        model.TimeResponse     `json:"editedAt"`
 		UpdatedAt       model.TimeResponse     `json:"updatedAt"`
 		CreatedAt       model.TimeResponse     `json:"createdAt"`
 	}
