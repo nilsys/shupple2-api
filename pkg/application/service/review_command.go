@@ -164,10 +164,19 @@ func (s *ReviewCommandServiceImpl) FavoriteReviewComment(user *entity.User, revi
 }
 
 func (s *ReviewCommandServiceImpl) DeleteReview(review *entity.Review) error {
-	if err := s.ReviewCommandRepository.DeleteReview(context.TODO(), review); err != nil {
-		return errors.Wrap(err, "failed to delete delete")
-	}
-	return nil
+	return s.TransactionService.Do(func(ctx context.Context) error {
+		if err := s.ReviewCommandRepository.DeleteReview(ctx, review); err != nil {
+			return errors.Wrap(err, "failed to delete delete")
+		}
+
+		if review.TouristSpotID.Valid {
+			if err := s.TouristSpotCommandRepository.UpdateScoreByID(ctx, review.TouristSpotID.Int64); err != nil {
+				return errors.Wrap(err, "filed update tourist_spot.score")
+			}
+		}
+
+		return nil
+	})
 }
 
 // TODO: lock取る
