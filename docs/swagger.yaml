@@ -2219,6 +2219,24 @@ paths:
       responses:
         "200":
           description: OK
+  /payments/{id}/reserve:
+    post:
+      tags:
+        - payment
+      summary: 宿泊予約券予約リクエスト
+      description: |
+        購入した宿泊予約券を用いて予約
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/CfReserveRequest"
+      responses:
+        "204":
+          description: nocontent
   /projects:
     get:
       tags:
@@ -2501,6 +2519,11 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ReportRequest"
+    CfReserveRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CfReserveRequest"
   securitySchemes:
     iDPCognito:
       in: header
@@ -2899,6 +2922,47 @@ components:
         amount:
           type: integer
           description: 数量
+    CfReserveRequest:
+      type: object
+      required:
+        - cfReturnGiftId
+        - firstName
+        - lastName
+        - firstNameKana
+        - lastNameKana
+        - email
+        - phoneNumber
+        - checkin
+        - checkout
+        - stayDays
+        - adultMemberCount
+        - childMemberCount
+      properties:
+        cfReturnGiftId:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        firstNameKana:
+          type: string
+        lastNameKana:
+          type: string
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+        checkin:
+          type: string
+        checkout:
+          type: string
+        stayDays:
+          type: integer
+        adultMemberCount:
+          type: integer
+        childMemberCount:
+          type: integer
     NoticeList:
       type: object
       properties:

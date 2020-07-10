@@ -248,57 +248,49 @@ func (x *CfProjectSortBy) UnmarshalText(text []byte) error {
 }
 
 const (
-	// CfReturnGiftReserveStatusUndefined is a CfReturnGiftReserveStatus of type Undefined
-	CfReturnGiftReserveStatusUndefined CfReturnGiftReserveStatus = iota
-	// CfReturnGiftReserveStatusUnreserved is a CfReturnGiftReserveStatus of type Unreserved
-	CfReturnGiftReserveStatusUnreserved
-	// CfReturnGiftReserveStatusReserved is a CfReturnGiftReserveStatus of type Reserved
-	CfReturnGiftReserveStatusReserved
-	// CfReturnGiftReserveStatusInvalid is a CfReturnGiftReserveStatus of type Invalid
-	CfReturnGiftReserveStatusInvalid
+	// CfReturnGiftTypeReservedTicket is a CfReturnGiftType of type ReservedTicket
+	CfReturnGiftTypeReservedTicket CfReturnGiftType = iota + 1
+	// CfReturnGiftTypeOther is a CfReturnGiftType of type Other
+	CfReturnGiftTypeOther
 )
 
-const _CfReturnGiftReserveStatusName = "UndefinedUnreservedReservedInvalid"
+const _CfReturnGiftTypeName = "ReservedTicketOther"
 
-var _CfReturnGiftReserveStatusMap = map[CfReturnGiftReserveStatus]string{
-	0: _CfReturnGiftReserveStatusName[0:9],
-	1: _CfReturnGiftReserveStatusName[9:19],
-	2: _CfReturnGiftReserveStatusName[19:27],
-	3: _CfReturnGiftReserveStatusName[27:34],
+var _CfReturnGiftTypeMap = map[CfReturnGiftType]string{
+	1: _CfReturnGiftTypeName[0:14],
+	2: _CfReturnGiftTypeName[14:19],
 }
 
 // String implements the Stringer interface.
-func (x CfReturnGiftReserveStatus) String() string {
-	if str, ok := _CfReturnGiftReserveStatusMap[x]; ok {
+func (x CfReturnGiftType) String() string {
+	if str, ok := _CfReturnGiftTypeMap[x]; ok {
 		return str
 	}
-	return fmt.Sprintf("CfReturnGiftReserveStatus(%d)", x)
+	return fmt.Sprintf("CfReturnGiftType(%d)", x)
 }
 
-var _CfReturnGiftReserveStatusValue = map[string]CfReturnGiftReserveStatus{
-	_CfReturnGiftReserveStatusName[0:9]:   0,
-	_CfReturnGiftReserveStatusName[9:19]:  1,
-	_CfReturnGiftReserveStatusName[19:27]: 2,
-	_CfReturnGiftReserveStatusName[27:34]: 3,
+var _CfReturnGiftTypeValue = map[string]CfReturnGiftType{
+	_CfReturnGiftTypeName[0:14]:  1,
+	_CfReturnGiftTypeName[14:19]: 2,
 }
 
-// ParseCfReturnGiftReserveStatus attempts to convert a string to a CfReturnGiftReserveStatus
-func ParseCfReturnGiftReserveStatus(name string) (CfReturnGiftReserveStatus, error) {
-	if x, ok := _CfReturnGiftReserveStatusValue[name]; ok {
+// ParseCfReturnGiftType attempts to convert a string to a CfReturnGiftType
+func ParseCfReturnGiftType(name string) (CfReturnGiftType, error) {
+	if x, ok := _CfReturnGiftTypeValue[name]; ok {
 		return x, nil
 	}
-	return CfReturnGiftReserveStatus(0), fmt.Errorf("%s is not a valid CfReturnGiftReserveStatus", name)
+	return CfReturnGiftType(0), fmt.Errorf("%s is not a valid CfReturnGiftType", name)
 }
 
 // MarshalText implements the text marshaller method
-func (x CfReturnGiftReserveStatus) MarshalText() ([]byte, error) {
+func (x CfReturnGiftType) MarshalText() ([]byte, error) {
 	return []byte(x.String()), nil
 }
 
 // UnmarshalText implements the text unmarshaller method
-func (x *CfReturnGiftReserveStatus) UnmarshalText(text []byte) error {
+func (x *CfReturnGiftType) UnmarshalText(text []byte) error {
 	name := string(text)
-	tmp, err := ParseCfReturnGiftReserveStatus(name)
+	tmp, err := ParseCfReturnGiftType(name)
 	if err != nil {
 		return err
 	}
@@ -409,57 +401,6 @@ func (x *Gender) UnmarshalText(text []byte) error {
 }
 
 const (
-	// GiftTypeReservedTicket is a GiftType of type ReservedTicket
-	GiftTypeReservedTicket GiftType = iota + 1
-	// GiftTypeOther is a GiftType of type Other
-	GiftTypeOther
-)
-
-const _GiftTypeName = "ReservedTicketOther"
-
-var _GiftTypeMap = map[GiftType]string{
-	1: _GiftTypeName[0:14],
-	2: _GiftTypeName[14:19],
-}
-
-// String implements the Stringer interface.
-func (x GiftType) String() string {
-	if str, ok := _GiftTypeMap[x]; ok {
-		return str
-	}
-	return fmt.Sprintf("GiftType(%d)", x)
-}
-
-var _GiftTypeValue = map[string]GiftType{
-	_GiftTypeName[0:14]:  1,
-	_GiftTypeName[14:19]: 2,
-}
-
-// ParseGiftType attempts to convert a string to a GiftType
-func ParseGiftType(name string) (GiftType, error) {
-	if x, ok := _GiftTypeValue[name]; ok {
-		return x, nil
-	}
-	return GiftType(0), fmt.Errorf("%s is not a valid GiftType", name)
-}
-
-// MarshalText implements the text marshaller method
-func (x GiftType) MarshalText() ([]byte, error) {
-	return []byte(x.String()), nil
-}
-
-// UnmarshalText implements the text unmarshaller method
-func (x *GiftType) UnmarshalText(text []byte) error {
-	name := string(text)
-	tmp, err := ParseGiftType(name)
-	if err != nil {
-		return err
-	}
-	*x = tmp
-	return nil
-}
-
-const (
 	// InterestGroupUndefined is a InterestGroup of type Undefined
 	InterestGroupUndefined InterestGroup = iota
 	// InterestGroupStyle is a InterestGroup of type Style
@@ -533,12 +474,15 @@ func (x *InterestGroup) UnmarshalText(text []byte) error {
 const (
 	// MailTemplateNameThanksPurchase is a MailTemplateName of type ThanksPurchase
 	MailTemplateNameThanksPurchase MailTemplateName = iota + 1
+	// MailTemplateNameReserveRequestForOwner is a MailTemplateName of type ReserveRequestForOwner
+	MailTemplateNameReserveRequestForOwner
 )
 
-const _MailTemplateNameName = "ThanksPurchase"
+const _MailTemplateNameName = "ThanksPurchaseReserveRequestForOwner"
 
 var _MailTemplateNameMap = map[MailTemplateName]string{
 	1: _MailTemplateNameName[0:14],
+	2: _MailTemplateNameName[14:36],
 }
 
 // String implements the Stringer interface.
@@ -550,7 +494,8 @@ func (x MailTemplateName) String() string {
 }
 
 var _MailTemplateNameValue = map[string]MailTemplateName{
-	_MailTemplateNameName[0:14]: 1,
+	_MailTemplateNameName[0:14]:  1,
+	_MailTemplateNameName[14:36]: 2,
 }
 
 // ParseMailTemplateName attempts to convert a string to a MailTemplateName
@@ -759,6 +704,120 @@ func (x NoticeActionType) MarshalText() ([]byte, error) {
 func (x *NoticeActionType) UnmarshalText(text []byte) error {
 	name := string(text)
 	tmp, err := ParseNoticeActionType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
+	// PaymentCfReturnGiftOtherTypeStatusUndefined is a PaymentCfReturnGiftOtherTypeStatus of type Undefined
+	PaymentCfReturnGiftOtherTypeStatusUndefined PaymentCfReturnGiftOtherTypeStatus = iota
+	// PaymentCfReturnGiftOtherTypeStatusOwnerUnconfirmed is a PaymentCfReturnGiftOtherTypeStatus of type OwnerUnconfirmed
+	PaymentCfReturnGiftOtherTypeStatusOwnerUnconfirmed
+	// PaymentCfReturnGiftOtherTypeStatusOwnerConfirmed is a PaymentCfReturnGiftOtherTypeStatus of type OwnerConfirmed
+	PaymentCfReturnGiftOtherTypeStatusOwnerConfirmed
+	// PaymentCfReturnGiftOtherTypeStatusCanceled is a PaymentCfReturnGiftOtherTypeStatus of type Canceled
+	PaymentCfReturnGiftOtherTypeStatusCanceled
+)
+
+const _PaymentCfReturnGiftOtherTypeStatusName = "UndefinedOwnerUnconfirmedOwnerConfirmedCanceled"
+
+var _PaymentCfReturnGiftOtherTypeStatusMap = map[PaymentCfReturnGiftOtherTypeStatus]string{
+	0: _PaymentCfReturnGiftOtherTypeStatusName[0:9],
+	1: _PaymentCfReturnGiftOtherTypeStatusName[9:25],
+	2: _PaymentCfReturnGiftOtherTypeStatusName[25:39],
+	3: _PaymentCfReturnGiftOtherTypeStatusName[39:47],
+}
+
+// String implements the Stringer interface.
+func (x PaymentCfReturnGiftOtherTypeStatus) String() string {
+	if str, ok := _PaymentCfReturnGiftOtherTypeStatusMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("PaymentCfReturnGiftOtherTypeStatus(%d)", x)
+}
+
+var _PaymentCfReturnGiftOtherTypeStatusValue = map[string]PaymentCfReturnGiftOtherTypeStatus{
+	_PaymentCfReturnGiftOtherTypeStatusName[0:9]:   0,
+	_PaymentCfReturnGiftOtherTypeStatusName[9:25]:  1,
+	_PaymentCfReturnGiftOtherTypeStatusName[25:39]: 2,
+	_PaymentCfReturnGiftOtherTypeStatusName[39:47]: 3,
+}
+
+// ParsePaymentCfReturnGiftOtherTypeStatus attempts to convert a string to a PaymentCfReturnGiftOtherTypeStatus
+func ParsePaymentCfReturnGiftOtherTypeStatus(name string) (PaymentCfReturnGiftOtherTypeStatus, error) {
+	if x, ok := _PaymentCfReturnGiftOtherTypeStatusValue[name]; ok {
+		return x, nil
+	}
+	return PaymentCfReturnGiftOtherTypeStatus(0), fmt.Errorf("%s is not a valid PaymentCfReturnGiftOtherTypeStatus", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x PaymentCfReturnGiftOtherTypeStatus) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *PaymentCfReturnGiftOtherTypeStatus) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParsePaymentCfReturnGiftOtherTypeStatus(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
+	// PaymentCfReturnGiftReservedTicketTypeStatusUndefined is a PaymentCfReturnGiftReservedTicketTypeStatus of type Undefined
+	PaymentCfReturnGiftReservedTicketTypeStatusUndefined PaymentCfReturnGiftReservedTicketTypeStatus = iota
+	// PaymentCfReturnGiftReservedTicketTypeStatusUnreserved is a PaymentCfReturnGiftReservedTicketTypeStatus of type Unreserved
+	PaymentCfReturnGiftReservedTicketTypeStatusUnreserved
+	// PaymentCfReturnGiftReservedTicketTypeStatusReserved is a PaymentCfReturnGiftReservedTicketTypeStatus of type Reserved
+	PaymentCfReturnGiftReservedTicketTypeStatusReserved
+)
+
+const _PaymentCfReturnGiftReservedTicketTypeStatusName = "UndefinedUnreservedReserved"
+
+var _PaymentCfReturnGiftReservedTicketTypeStatusMap = map[PaymentCfReturnGiftReservedTicketTypeStatus]string{
+	0: _PaymentCfReturnGiftReservedTicketTypeStatusName[0:9],
+	1: _PaymentCfReturnGiftReservedTicketTypeStatusName[9:19],
+	2: _PaymentCfReturnGiftReservedTicketTypeStatusName[19:27],
+}
+
+// String implements the Stringer interface.
+func (x PaymentCfReturnGiftReservedTicketTypeStatus) String() string {
+	if str, ok := _PaymentCfReturnGiftReservedTicketTypeStatusMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("PaymentCfReturnGiftReservedTicketTypeStatus(%d)", x)
+}
+
+var _PaymentCfReturnGiftReservedTicketTypeStatusValue = map[string]PaymentCfReturnGiftReservedTicketTypeStatus{
+	_PaymentCfReturnGiftReservedTicketTypeStatusName[0:9]:   0,
+	_PaymentCfReturnGiftReservedTicketTypeStatusName[9:19]:  1,
+	_PaymentCfReturnGiftReservedTicketTypeStatusName[19:27]: 2,
+}
+
+// ParsePaymentCfReturnGiftReservedTicketTypeStatus attempts to convert a string to a PaymentCfReturnGiftReservedTicketTypeStatus
+func ParsePaymentCfReturnGiftReservedTicketTypeStatus(name string) (PaymentCfReturnGiftReservedTicketTypeStatus, error) {
+	if x, ok := _PaymentCfReturnGiftReservedTicketTypeStatusValue[name]; ok {
+		return x, nil
+	}
+	return PaymentCfReturnGiftReservedTicketTypeStatus(0), fmt.Errorf("%s is not a valid PaymentCfReturnGiftReservedTicketTypeStatus", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x PaymentCfReturnGiftReservedTicketTypeStatus) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *PaymentCfReturnGiftReservedTicketTypeStatus) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParsePaymentCfReturnGiftReservedTicketTypeStatus(name)
 	if err != nil {
 		return err
 	}

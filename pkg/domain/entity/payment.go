@@ -7,7 +7,7 @@ import (
 )
 
 type (
-	Payment struct {
+	PaymentTiny struct {
 		ID                int `gorm:"primary_key"`
 		UserID            int
 		ProjectOwnerID    int
@@ -18,23 +18,33 @@ type (
 		Times
 	}
 
-	PaymentCfReturnGift struct {
-		PaymentID              int `gorm:"primary_key"`
-		CfReturnGiftID         int `gorm:"primary_key"`
-		CfReturnGiftSnapshotID int
-		CfProjectID            int
-		CfProjectSnapshotID    int
-		Amount                 int
-		IsCanceled             bool
-		IsOwnerConfirmed       bool
-		OwnerConfirmedAt       *time.Time
-		UserReservedStatus     model.CfReturnGiftReserveStatus
+	PaymentCfReturnGiftTiny struct {
+		PaymentID                    int `gorm:"primary_key"`
+		CfReturnGiftID               int `gorm:"primary_key"`
+		CfReturnGiftSnapshotID       int
+		CfProjectID                  int
+		CfProjectSnapshotID          int
+		Amount                       int
+		OwnerConfirmedAt             *time.Time
+		GiftTypeOtherStatus          model.PaymentCfReturnGiftOtherTypeStatus
+		GiftTypeReservedTicketStatus model.PaymentCfReturnGiftReservedTicketTypeStatus
 		TimesWithoutDeletedAt
+	}
+
+	PaymentCfReturnGift struct {
+		PaymentCfReturnGiftTiny
+		CfReturnGift         *CfReturnGiftTiny         `gorm:"foreignkey:ID;association_foreignkey:CfReturnGiftID"`
+		CfReturnGiftSnapshot *CfReturnGiftSnapshotTiny `gorm:"foreignkey:ID;association_foreignkey:CfReturnGiftSnapshotID"`
+	}
+
+	Payment struct {
+		PaymentTiny
+		Owner *User `gorm:"foreignkey:ID;association_foreignkey:ProjectOwnerID"`
 	}
 )
 
-func NewPayment(userID, projectOwnerID, cardID, addressID int, chargeID string, price int) *Payment {
-	return &Payment{
+func NewPayment(userID, projectOwnerID, cardID, addressID int, chargeID string, price int) *PaymentTiny {
+	return &PaymentTiny{
 		UserID:            userID,
 		ProjectOwnerID:    projectOwnerID,
 		CardID:            cardID,
@@ -45,8 +55,8 @@ func NewPayment(userID, projectOwnerID, cardID, addressID int, chargeID string, 
 }
 
 // PaymentIDが先に取得できない為、後でいれる想定
-func NewPaymentReturnGift(giftID, giftSnapshotID, projectID, projectSnapshotID, amount int) *PaymentCfReturnGift {
-	return &PaymentCfReturnGift{
+func NewPaymentReturnGiftForOther(giftID, giftSnapshotID, projectID, projectSnapshotID, amount int) *PaymentCfReturnGiftTiny {
+	return &PaymentCfReturnGiftTiny{
 		CfReturnGiftID:         giftID,
 		CfReturnGiftSnapshotID: giftSnapshotID,
 		CfProjectID:            projectID,
@@ -55,16 +65,16 @@ func NewPaymentReturnGift(giftID, giftSnapshotID, projectID, projectSnapshotID, 
 	}
 }
 
-func NewPaymentReturnGiftForReservedTicket(giftID, giftSnapshotID, projectID, projectSnapshotID, amount int) *PaymentCfReturnGift {
+// PaymentIDが先に取得できない為、後でいれる想定
+func NewPaymentReturnGiftForReservedTicket(giftID, giftSnapshotID, projectID, projectSnapshotID, amount int) *PaymentCfReturnGiftTiny {
 	now := time.Now()
-	return &PaymentCfReturnGift{
-		CfReturnGiftID:         giftID,
-		CfReturnGiftSnapshotID: giftSnapshotID,
-		CfProjectID:            projectID,
-		CfProjectSnapshotID:    projectSnapshotID,
-		Amount:                 amount,
-		IsOwnerConfirmed:       true,
-		OwnerConfirmedAt:       &now,
-		UserReservedStatus:     model.CfReturnGiftReserveStatusUnreserved,
+	return &PaymentCfReturnGiftTiny{
+		CfReturnGiftID:               giftID,
+		CfReturnGiftSnapshotID:       giftSnapshotID,
+		CfProjectID:                  projectID,
+		CfProjectSnapshotID:          projectSnapshotID,
+		Amount:                       amount,
+		OwnerConfirmedAt:             &now,
+		GiftTypeReservedTicketStatus: model.PaymentCfReturnGiftReservedTicketTypeStatusUnreserved,
 	}
 }

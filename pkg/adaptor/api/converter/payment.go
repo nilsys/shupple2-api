@@ -2,6 +2,7 @@ package converter
 
 import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 )
 
@@ -24,4 +25,20 @@ func (c Converters) ConvertPaymentsToCmd(payments *input.CaptureCharge) *command
 	}
 
 	return &command.PaymentList{List: result, Body: payments.SupportCommentBody}
+}
+
+func (c Converters) ConvertReserveRequestToEntity(reserveReq *input.CfReserveRequest) *entity.CfReserveRequest {
+	return &entity.CfReserveRequest{
+		FirstName:        reserveReq.FirstName,
+		LastName:         reserveReq.LastName,
+		FirstNameKana:    reserveReq.FirstNameKana,
+		LastNameKana:     reserveReq.LastNameKana,
+		Email:            reserveReq.Email,
+		PhoneNumber:      reserveReq.PhoneNumber,
+		Checkin:          reserveReq.Checkin,
+		Checkout:         reserveReq.Checkout,
+		StayDays:         reserveReq.StayDays,
+		AdultMemberCount: reserveReq.AdultMemberCount,
+		ChildMemberCount: reserveReq.ChildMemberCount,
+	}
 }

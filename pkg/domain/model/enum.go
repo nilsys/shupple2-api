@@ -92,14 +92,21 @@ type CfProjectSortBy int
 /*
 ENUM(ReservedTicket = 1, Other)
 */
-type GiftType int
+type CfReturnGiftType int
 
 /*
-ENUM(Undefined, Unreserved, Reserved, Invalid)
-*/
-type CfReturnGiftReserveStatus int
-
-/*
-ENUM(ThanksPurchase = 1)
+ENUM(ThanksPurchase = 1, ReserveRequestForOwner)
 */
 type MailTemplateName int
+
+/*
+ENUM(Undefined, OwnerUnconfirmed, OwnerConfirmed, Canceled)
+宿泊券の場合はUndefined
+*/
+type PaymentCfReturnGiftOtherTypeStatus int
+
+/*
+ENUM(Undefined, Unreserved, Reserved)
+宿泊券以外の場合はUndefined
+*/
+type PaymentCfReturnGiftReservedTicketTypeStatus int

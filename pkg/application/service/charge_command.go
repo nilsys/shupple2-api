@@ -51,7 +51,7 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 			return errors.Wrap(err, "failed find latest")
 		}
 
-		paymentReturnGifts := make([]*entity.PaymentCfReturnGift, len(cmd.List))
+		paymentReturnGifts := make([]*entity.PaymentCfReturnGiftTiny, len(cmd.List))
 
 		gifts, err := s.CfReturnGiftQueryRepository.LockCfReturnGiftList(c, cmd.ReturnIDs())
 		if err != nil {
@@ -92,11 +92,11 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 			// 金額x数量
 			price += giftIDMap[payment.ReturnGiftID].Snapshot.Price * payment.Amount
 			gift := giftIDMap[payment.ReturnGiftID]
-			if gift.CfReturnGiftTable.GiftType == model.GiftTypeReservedTicket {
+			if gift.CfReturnGiftTiny.GiftType == model.CfReturnGiftTypeReservedTicket {
 				paymentReturnGifts[i] = entity.NewPaymentReturnGiftForReservedTicket(payment.ReturnGiftID, gift.LatestCfReturnGiftSnapshotID, gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount)
 				continue
 			}
-			paymentReturnGifts[i] = entity.NewPaymentReturnGift(payment.ReturnGiftID, gift.LatestCfReturnGiftSnapshotID, gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount)
+			paymentReturnGifts[i] = entity.NewPaymentReturnGiftForOther(payment.ReturnGiftID, gift.LatestCfReturnGiftSnapshotID, gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount)
 		}
 
 		// 最新のカードidを取得

@@ -84,6 +84,7 @@ var RepositoriesSet = wire.NewSet(
 	TouristSpotQueryRepositorySet,
 	ShippingQueryRepositorySet,
 	ShippingCommandRepositorySet,
+	PaymentQueryRepositorySet,
 	PaymentCommandRepositorySet,
 	payjp2.CustomerQueryRepositorySet,
 	payjp2.CustomerCommandRepositorySet,

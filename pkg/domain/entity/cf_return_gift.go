@@ -9,17 +9,17 @@ import (
 )
 
 type (
-	CfReturnGiftTable struct {
+	CfReturnGiftTiny struct {
 		ID                           int `gorm:"primary_key"`
 		CfProjectID                  int
 		LatestCfReturnGiftSnapshotID int
 		Thumbnail                    string
 		SortOrder                    int
-		GiftType                     model.GiftType
+		GiftType                     model.CfReturnGiftType
 		Times
 	}
 
-	CfReturnGiftSnapshotTable struct {
+	CfReturnGiftSnapshotTiny struct {
 		ID             int `gorm:"primary_key"`
 		CfReturnGiftID int
 		Thumbnail      string
@@ -33,8 +33,8 @@ type (
 	}
 
 	CfReturnGift struct {
-		CfReturnGiftTable
-		Snapshot *CfReturnGiftSnapshotTable `gorm:"foreignkey:ID;association_foreignkey:LatestCfReturnGiftSnapshotID"`
+		CfReturnGiftTiny
+		Snapshot *CfReturnGiftSnapshotTiny `gorm:"foreignkey:ID;association_foreignkey:LatestCfReturnGiftSnapshotID"`
 		Times
 	}
 
@@ -102,10 +102,10 @@ func (r *CfReturnGiftSoldCountList) GetSoldCount(id int) int {
          TableName
 ***************************/
 
-func (c *CfReturnGiftTable) TableName() string {
+func (c *CfReturnGiftTiny) TableName() string {
 	return "cf_return_gift"
 }
 
-func (c *CfReturnGiftSnapshotTable) TableName() string {
+func (c *CfReturnGiftSnapshotTiny) TableName() string {
 	return "cf_return_gift_snapshot"
 }
