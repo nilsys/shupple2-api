@@ -20,12 +20,12 @@ type (
 
 	// ユーザーランキングで返すレスポンス型
 	RankinUser struct {
-		ID        int      `json:"id"`
-		UID       string   `json:"uid"`
-		Name      string   `json:"name"`
-		Profile   string   `json:"profile"`
-		Thumbnail string   `json:"iconUrl"`
-		Interests []string `json:"interests"`
+		ID        int        `json:"id"`
+		UID       string     `json:"uid"`
+		Name      string     `json:"name"`
+		Profile   string     `json:"profile"`
+		Thumbnail string     `json:"iconUrl"`
+		Interests []Interest `json:"interests"`
 	}
 
 	UserSummary struct {
@@ -54,8 +54,14 @@ type (
 		PostCount      int          `json:"postCount"`
 		FollowingCount int          `json:"followingCount"`
 		FollowedCount  int          `json:"followedCount"`
-		Interests      []string     `json:"interests"`
+		Interests      []Interest   `json:"interests"`
 		IsFollow       bool         `json:"isFollow"`
+	}
+
+	Interest struct {
+		ID            int                 `json:"id"`
+		Name          string              `json:"name"`
+		InterestGroup model.InterestGroup `json:"interestGroup"`
 	}
 )
 

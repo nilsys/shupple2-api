@@ -131,9 +131,9 @@ func (c Converters) convertUserTableToOutput(user *entity.UserTable) *output.Use
 
 // UserDetailをランキング一覧で返す型にコンバート
 func (c Converters) ConvertUserDetailToOutput(user *entity.UserDetail) *output.RankinUser {
-	interests := make([]string, len(user.Interests))
+	interests := make([]output.Interest, len(user.Interests))
 	for i, interest := range user.Interests {
-		interests[i] = interest.Name
+		interests[i] = c.InterestToOutput(interest)
 	}
 
 	return &output.RankinUser{
@@ -147,9 +147,9 @@ func (c Converters) ConvertUserDetailToOutput(user *entity.UserDetail) *output.R
 }
 
 func (c Converters) ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWithMediaCount) *output.MyPageUser {
-	interests := make([]string, len(user.Interests))
+	interests := make([]output.Interest, len(user.Interests))
 	for i, interest := range user.Interests {
-		interests[i] = interest.Name
+		interests[i] = c.InterestToOutput(interest)
 	}
 
 	return &output.MyPageUser{
@@ -173,6 +173,14 @@ func (c Converters) ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWi
 		FollowedCount:  user.FollowedCount,
 		Interests:      interests,
 		IsFollow:       user.IsFollow,
+	}
+}
+
+func (c Converters) InterestToOutput(interest *entity.Interest) output.Interest {
+	return output.Interest{
+		ID:            interest.ID,
+		Name:          interest.Name,
+		InterestGroup: interest.InterestGroup,
 	}
 }
 
