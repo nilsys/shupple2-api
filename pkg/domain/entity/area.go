@@ -14,14 +14,11 @@ AreaCategoryはかなり正規化を崩した構造になっているのでス�
 type (
 	AreaCategory struct {
 		CategoryBase
-		Type                   model.AreaCategoryType
-		AreaGroup              model.AreaGroup
-		AreaID                 int
-		SubAreaID              null.Int
-		SubSubAreaID           null.Int
-		MetasearchAreaID       int
-		MetasearchSubAreaID    int
-		MetasearchSubSubAreaID int
+		Type         model.AreaCategoryType
+		AreaGroup    model.AreaGroup
+		AreaID       int
+		SubAreaID    null.Int
+		SubSubAreaID null.Int
 		TimesWithoutDeletedAt
 	}
 

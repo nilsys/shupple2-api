@@ -17,7 +17,7 @@ type (
 
 	InnQueryServiceImpl struct {
 		repository.InnQueryRepository
-		repository.AreaCategoryQueryRepository
+		repository.MetasearchAreaQueryRepository
 		repository.TouristSpotQueryRepository
 	}
 )
@@ -32,25 +32,25 @@ func (s *InnQueryServiceImpl) ListInnByParams(areaID, subAreaID, subSubAreaID, t
 	q := &query.FindInn{}
 
 	if areaID != 0 {
-		area, err := s.AreaCategoryQueryRepository.FindByIDAndType(areaID, model.AreaCategoryTypeArea)
+		metasearchAreas, err := s.MetasearchAreaQueryRepository.FindByAreaCategoryID(areaID, model.AreaCategoryTypeArea)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get area")
 		}
-		q.SetMetaserachID(area.MetasearchAreaID, area.MetasearchSubAreaID, area.MetasearchSubSubAreaID)
+		q.SetMetaserachID(metasearchAreas)
 	}
 	if subAreaID != 0 {
-		subArea, err := s.AreaCategoryQueryRepository.FindByIDAndType(subAreaID, model.AreaCategoryTypeSubArea)
+		metasearchAreas, err := s.MetasearchAreaQueryRepository.FindByAreaCategoryID(subAreaID, model.AreaCategoryTypeSubArea)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get sub area")
 		}
-		q.SetMetaserachID(subArea.MetasearchAreaID, subArea.MetasearchSubAreaID, subArea.MetasearchSubSubAreaID)
+		q.SetMetaserachID(metasearchAreas)
 	}
 	if subSubAreaID != 0 {
-		subSubArea, err := s.AreaCategoryQueryRepository.FindByIDAndType(subSubAreaID, model.AreaCategoryTypeSubSubArea)
+		metasearchAreas, err := s.MetasearchAreaQueryRepository.FindByAreaCategoryID(subSubAreaID, model.AreaCategoryTypeSubSubArea)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get sub sub area")
 		}
-		q.SetMetaserachID(subSubArea.MetasearchAreaID, subSubArea.MetasearchSubAreaID, subSubArea.MetasearchSubSubAreaID)
+		q.SetMetaserachID(metasearchAreas)
 	}
 	if touristSpotID != 0 {
 		touristSpot, err := s.TouristSpotQueryRepository.FindByID(touristSpotID)

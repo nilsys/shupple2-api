@@ -40,6 +40,7 @@ type Test struct {
 	*ReviewCommandRepositoryImpl
 	*ReviewQueryRepositoryImpl
 	*WordpressQueryRepositoryImpl
+	*MetasearchAreaQueryRepositoryImpl
 }
 
 func InitializeTest(configFilePath config.FilePath) (*Test, error) {

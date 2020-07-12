@@ -197,10 +197,13 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		MetasearchConfig: staywayMetasearch,
 		Client:           clientClient,
 	}
+	metasearchAreaQueryRepositoryImpl := &repository.MetasearchAreaQueryRepositoryImpl{
+		DB: db,
+	}
 	reviewQueryServiceImpl := &service.ReviewQueryServiceImpl{
-		ReviewQueryRepository:       reviewQueryRepositoryImpl,
-		InnQueryRepository:          innQueryRepositoryImpl,
-		AreaCategoryQueryRepository: areaCategoryQueryRepositoryImpl,
+		ReviewQueryRepository:         reviewQueryRepositoryImpl,
+		InnQueryRepository:            innQueryRepositoryImpl,
+		MetasearchAreaQueryRepository: metasearchAreaQueryRepositoryImpl,
 	}
 	reviewCommandRepositoryImpl := &repository.ReviewCommandRepositoryImpl{
 		DAO:        dao,

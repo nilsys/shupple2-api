@@ -124,6 +124,7 @@ var RepositoriesSet = wire.NewSet(
 	SlackRepositorySet,
 	ProvideAWSSession,
 	ProvidePayjp,
+	MetasearchAreaQueryRepositorySet,
 	ProvideMailer,
 )
 

@@ -16,6 +16,7 @@ const (
 	shippingAddressID  = 221
 	cfProjectID        = 231
 	cfProjectCommentID = 241
+	metasearchAreaID   = 251
 )
 
 var (

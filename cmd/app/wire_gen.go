@@ -272,10 +272,13 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		MetasearchConfig: staywayMetasearch,
 		Client:           clientClient,
 	}
+	metasearchAreaQueryRepositoryImpl := &repository.MetasearchAreaQueryRepositoryImpl{
+		DB: db,
+	}
 	reviewQueryServiceImpl := &service.ReviewQueryServiceImpl{
-		ReviewQueryRepository:       reviewQueryRepositoryImpl,
-		InnQueryRepository:          innQueryRepositoryImpl,
-		AreaCategoryQueryRepository: areaCategoryQueryRepositoryImpl,
+		ReviewQueryRepository:         reviewQueryRepositoryImpl,
+		InnQueryRepository:            innQueryRepositoryImpl,
+		MetasearchAreaQueryRepository: metasearchAreaQueryRepositoryImpl,
 	}
 	reviewQueryController := api.ReviewQueryController{
 		Converters:         converters,
@@ -597,9 +600,9 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		AreaQueryService: areaQueryServiceImpl,
 	}
 	innQueryServiceImpl := &service.InnQueryServiceImpl{
-		InnQueryRepository:          innQueryRepositoryImpl,
-		AreaCategoryQueryRepository: areaCategoryQueryRepositoryImpl,
-		TouristSpotQueryRepository:  touristSpotQueryRepositoryImpl,
+		InnQueryRepository:            innQueryRepositoryImpl,
+		MetasearchAreaQueryRepository: metasearchAreaQueryRepositoryImpl,
+		TouristSpotQueryRepository:    touristSpotQueryRepositoryImpl,
 	}
 	innQueryController := api.InnQueryController{
 		Converters:      converters,

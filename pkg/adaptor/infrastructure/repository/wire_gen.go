@@ -117,6 +117,9 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 		DB: db,
 	}
 	wordpressQueryRepositoryImpl := NewWordpressQueryRepositoryImpl(configConfig)
+	metasearchAreaQueryRepositoryImpl := &MetasearchAreaQueryRepositoryImpl{
+		DB: db,
+	}
 	test := &Test{
 		Config:                             configConfig,
 		DB:                                 db,
@@ -147,6 +150,7 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 		ReviewCommandRepositoryImpl:        reviewCommandRepositoryImpl,
 		ReviewQueryRepositoryImpl:          reviewQueryRepositoryImpl,
 		WordpressQueryRepositoryImpl:       wordpressQueryRepositoryImpl,
+		MetasearchAreaQueryRepositoryImpl:  metasearchAreaQueryRepositoryImpl,
 	}
 	return test, nil
 }
@@ -183,4 +187,5 @@ type Test struct {
 	*ReviewCommandRepositoryImpl
 	*ReviewQueryRepositoryImpl
 	*WordpressQueryRepositoryImpl
+	*MetasearchAreaQueryRepositoryImpl
 }

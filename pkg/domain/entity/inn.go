@@ -73,3 +73,12 @@ type (
 		HasNext bool  `json:"hasNext"`
 	}
 )
+
+func (inns Inns) IDs() []int {
+	res := make([]int, len(inns.Inns))
+	for i, inn := range inns.Inns {
+		res[i] = inn.ID
+	}
+
+	return res
+}
