@@ -8,13 +8,14 @@ import (
 
 type (
 	PaymentTiny struct {
-		ID                int `gorm:"primary_key"`
-		UserID            int
-		ProjectOwnerID    int
-		CardID            int
-		ChargeID          string
-		ShippingAddressID int
-		TotalPrice        int
+		ID                      int `gorm:"primary_key"`
+		UserID                  int
+		ProjectOwnerID          int
+		CardID                  int
+		ChargeID                string
+		ShippingAddressID       int
+		TotalPrice              int
+		OwnerDepositRequestedAt *time.Time
 		Times
 	}
 

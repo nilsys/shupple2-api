@@ -10,7 +10,7 @@ func (x PaymentCfReturnGiftReservedTicketTypeStatus) allowedTransit() map[Paymen
 	switch x {
 	case PaymentCfReturnGiftReservedTicketTypeStatusUnreserved:
 		return map[PaymentCfReturnGiftReservedTicketTypeStatus]struct{}{
-			PaymentCfReturnGiftReservedTicketTypeStatusReserved: struct{}{},
+			PaymentCfReturnGiftReservedTicketTypeStatusReserved: {},
 		}
 	case PaymentCfReturnGiftReservedTicketTypeStatusReserved:
 		return map[PaymentCfReturnGiftReservedTicketTypeStatus]struct{}{}
@@ -29,12 +29,12 @@ func (x PaymentCfReturnGiftOtherTypeStatus) allowedTransit() map[PaymentCfReturn
 	switch x {
 	case PaymentCfReturnGiftOtherTypeStatusOwnerUnconfirmed:
 		return map[PaymentCfReturnGiftOtherTypeStatus]struct{}{
-			PaymentCfReturnGiftOtherTypeStatusOwnerConfirmed: struct{}{},
-			PaymentCfReturnGiftOtherTypeStatusCanceled:       struct{}{},
+			PaymentCfReturnGiftOtherTypeStatusOwnerConfirmed: {},
+			PaymentCfReturnGiftOtherTypeStatusCanceled:       {},
 		}
 	case PaymentCfReturnGiftOtherTypeStatusOwnerConfirmed:
 		return map[PaymentCfReturnGiftOtherTypeStatus]struct{}{
-			PaymentCfReturnGiftOtherTypeStatusOwnerUnconfirmed: struct{}{},
+			PaymentCfReturnGiftOtherTypeStatusOwnerUnconfirmed: {},
 		}
 	case PaymentCfReturnGiftOtherTypeStatusCanceled:
 		return map[PaymentCfReturnGiftOtherTypeStatus]struct{}{}
