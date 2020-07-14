@@ -29,6 +29,10 @@ var TouristSpotCommandServiceSet = wire.NewSet(
 	wire.Bind(new(TouristSpotCommandService), new(*TouristSpotCommandServiceImpl)),
 )
 
+const (
+	initializeRate = 3
+)
+
 func (r *TouristSpotCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.TouristSpot, error) {
 	wpTouristSpot, err := r.WordpressQueryRepository.FindLocationByID(id)
 	if err != nil {
@@ -55,6 +59,8 @@ func (r *TouristSpotCommandServiceImpl) ImportFromWordpressByID(id int) (*entity
 				return errors.Wrap(err, "failed to get touristSpot")
 			}
 			touristSpot = &entity.TouristSpot{}
+			touristSpot.Rate = initializeRate
+			touristSpot.VendorRate = initializeRate
 		}
 
 		if err := r.WordpressService.PatchTouristSpot(touristSpot, wpTouristSpot); err != nil {
