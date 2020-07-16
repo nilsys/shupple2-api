@@ -42,12 +42,13 @@ type (
 	}
 
 	CfReturnGiftAttributes struct {
-		CfProject    int       `json:"cf_project"`
-		SortOrder    IntString `json:"sort_order"`
-		GiftType     GiftType  `json:"gift_type"`
-		Price        IntString `json:"price"`
-		FullAmount   IntString `json:"full_amount"`
-		DeliveryDate string    `json:"delivery_date"`
-		IsCancelable bool      `json:"is_cancelable"`
+		CfProject    int             `json:"cf_project"`
+		SortOrder    IntString       `json:"sort_order"`
+		GiftType     GiftType        `json:"gift_type"`
+		Price        IntString       `json:"price"`
+		FullAmount   IntString       `json:"full_amount"`
+		Deadline     NullableJSTDate `json:"deadline"`
+		DeliveryDate string          `json:"delivery_date"`
+		IsCancelable bool            `json:"is_cancelable"`
 	}
 )

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
+	"gopkg.in/guregu/null.v3"
 )
 
 const (
@@ -40,9 +41,10 @@ type (
 
 	IntString int
 
-	JSTTime time.Time
-	UTCTime time.Time
-	JSTDate time.Time
+	JSTTime         time.Time
+	UTCTime         time.Time
+	JSTDate         time.Time
+	NullableJSTDate null.Time
 )
 
 func (s *URLEscapedString) UnmarshalText(data []byte) error {
@@ -78,5 +80,15 @@ func (t *UTCTime) UnmarshalText(data []byte) error {
 func (t *JSTDate) UnmarshalText(data []byte) error {
 	parsed, err := time.ParseInLocation(dateJSONFormat, string(data), util.JSTLoc)
 	*t = JSTDate(parsed)
+	return err
+}
+
+func (t *NullableJSTDate) UnmarshalText(data []byte) error {
+	if len(data) == 0 {
+		*t = NullableJSTDate(null.Time{})
+	}
+
+	parsed, err := time.ParseInLocation(dateJSONFormat, string(data), util.JSTLoc)
+	*t = NullableJSTDate(null.TimeFrom(parsed))
 	return err
 }

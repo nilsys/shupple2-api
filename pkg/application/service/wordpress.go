@@ -434,6 +434,7 @@ func (s *WordpressServiceImpl) NewCfReturnGift(wpCfReturnGift *wordpress.CfRetur
 		Price:          int(wpCfReturnGift.Attributes.Price),
 		FullAmount:     int(wpCfReturnGift.Attributes.FullAmount),
 		DeliveryDate:   wpCfReturnGift.Attributes.DeliveryDate,
+		Deadline:       null.Time(wpCfReturnGift.Attributes.Deadline),
 		SortOrder:      int(wpCfReturnGift.Attributes.SortOrder),
 	}
 
