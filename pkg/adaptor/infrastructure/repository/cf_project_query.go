@@ -26,8 +26,8 @@ var CfProjectQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.CfProjectQueryRepository), new(*CfProjectQueryRepositoryImpl)),
 )
 
-func (r *CfProjectQueryRepositoryImpl) FindByID(id int) (*entity.CfProject, error) {
-	var row entity.CfProject
+func (r *CfProjectQueryRepositoryImpl) FindByID(id int) (*entity.CfProjectDetail, error) {
+	var row entity.CfProjectDetail
 
 	if err := r.DB(context.Background()).Find(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "cf_project(id=%d)", id)
@@ -36,28 +36,12 @@ func (r *CfProjectQueryRepositoryImpl) FindByID(id int) (*entity.CfProject, erro
 	return &row, nil
 }
 
-func (r *CfProjectQueryRepositoryImpl) FindListByQuery(query *query.FindCfProjectQuery) (*entity.CfProjectList, error) {
-	var rows entity.CfProjectList
+func (r *CfProjectQueryRepositoryImpl) FindListByQuery(query *query.FindCfProjectQuery) (*entity.CfProjectDetailList, error) {
+	var rows entity.CfProjectDetailList
 
 	q := r.buildFindList(query)
 	if err := q.Joins("JOIN cf_project_snapshot ON cf_project.latest_snapshot_id = cf_project_snapshot.id").Order(query.SortBy.GetCfProjectOrderQuery()).Find(&rows.List).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find cf_project")
-	}
-	return &rows, nil
-}
-
-func (r *CfProjectQueryRepositoryImpl) LockCfProjectListByIDs(c context.Context, ids []int) (*entity.CfProjectList, error) {
-	var rows entity.CfProjectList
-	if err := r.LockDB(c).Where("id IN (?)", ids).Find(&rows.List).Error; err != nil {
-		return nil, errors.Wrap(err, "failed find cf_project")
-	}
-	return &rows, nil
-}
-
-func (r *CfProjectQueryRepositoryImpl) Lock(c context.Context, id int) (*entity.CfProject, error) {
-	var rows entity.CfProject
-	if err := r.LockDB(c).Find(&rows, id).Error; err != nil {
-		return nil, ErrorToFindSingleRecord(err, "cf_project(id=%d)", id)
 	}
 	return &rows, nil
 }

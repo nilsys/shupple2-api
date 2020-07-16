@@ -22,6 +22,8 @@ type (
 		PostCommandService
 		TouristSpotCommandService
 		VlogCommandService
+		CfProjectCommandService
+		CfReturnGiftCommandService
 	}
 )
 
@@ -49,6 +51,10 @@ func (s *WordpressCallbackServiceImpl) Import(entityType wordpress.EntityType, i
 		err = s.CategoryCommandService.ImportFromWordpressByID(id)
 	case wordpress.EntityTypeLocationCat:
 		err = s.SpotCategoryCommandService.ImportFromWordpressByID(id)
+	case wordpress.EntityTypeCfProject:
+		err = s.CfProjectCommandService.ImportFromWordpressByID(id)
+	case wordpress.EntityTypeCfReturnGift:
+		err = s.CfReturnGiftCommandService.ImportFromWordpressByID(id)
 	case wordpress.EntityTypeRevision:
 		// nop
 	default:

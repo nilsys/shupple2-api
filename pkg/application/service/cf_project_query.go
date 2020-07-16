@@ -10,8 +10,8 @@ import (
 type (
 	CfProjectQueryService interface {
 		ListSupportComment(projectID, limit int) ([]*entity.CfProjectSupportComment, error)
-		Show(id int) (*entity.CfProject, error)
-		List(query *query.FindCfProjectQuery) (*entity.CfProjectList, error)
+		Show(id int) (*entity.CfProjectDetail, error)
+		List(query *query.FindCfProjectQuery) (*entity.CfProjectDetailList, error)
 	}
 
 	CfProjectQueryServiceImpl struct {
@@ -28,10 +28,10 @@ func (s *CfProjectQueryServiceImpl) ListSupportComment(projectID, limit int) ([]
 	return s.CfProjectQueryRepository.FindSupportCommentListByCfProjectID(projectID, limit)
 }
 
-func (s *CfProjectQueryServiceImpl) Show(id int) (*entity.CfProject, error) {
+func (s *CfProjectQueryServiceImpl) Show(id int) (*entity.CfProjectDetail, error) {
 	return s.CfProjectQueryRepository.FindByID(id)
 }
 
-func (s *CfProjectQueryServiceImpl) List(query *query.FindCfProjectQuery) (*entity.CfProjectList, error) {
+func (s *CfProjectQueryServiceImpl) List(query *query.FindCfProjectQuery) (*entity.CfProjectDetailList, error) {
 	return s.CfProjectQueryRepository.FindListByQuery(query)
 }

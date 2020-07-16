@@ -294,7 +294,7 @@ func newReview(id, userID, touristSpotID, innID int) *entity.Review {
 		MediaCount:    id,
 		Body:          "dummy",
 		FavoriteCount: id,
-		TravelDate:    time.Date(2020, 7, 7, 0, 0, 0, 0, time.Local),
+		TravelDate:    sampleTime,
 		Accompanying:  model.AccompanyingTypeBUSINESS,
 		Medias:        []*entity.ReviewMedia{},
 		HashtagIDs:    []*entity.ReviewHashtag{},

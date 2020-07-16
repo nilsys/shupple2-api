@@ -32,6 +32,8 @@ type (
 		PatchVlog(*entity.Vlog, *wordpress.Vlog) error
 		PatchFeature(*entity.Feature, *wordpress.Feature) error
 		PatchComic(*entity.Comic, *wordpress.Comic) error
+		NewCfProject(*wordpress.CfProject) (*entity.CfProject, error)
+		NewCfReturnGift(*wordpress.CfReturnGift) (*entity.CfReturnGift, error)
 	}
 
 	WordpressServiceImpl struct {
@@ -368,6 +370,74 @@ func (s *WordpressServiceImpl) PatchComic(comic *entity.Comic, wpComic *wordpres
 	comic.CreatedAt = time.Time(wpComic.Date)
 
 	return nil
+}
+
+func (s *WordpressServiceImpl) NewCfProject(wpCfProject *wordpress.CfProject) (*entity.CfProject, error) {
+	user, err := s.UserQueryRepository.FindByWordpressID(wpCfProject.Author)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get user corresponding to wordpress user")
+	}
+
+	thumbnails := make([]string, 0)
+	for _, gallaryItems := range wpCfProject.Attributes.PhotoGallery.Thumbnails {
+		for _, gallaryItem := range gallaryItems {
+			thumbnails = append(thumbnails, gallaryItem.FullImageURL)
+		}
+	}
+
+	areaCategoryIDs, themeCategoryIDs, err := s.splitCategories(wpCfProject.Categories)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to split post categories")
+	}
+
+	var cfProject entity.CfProject
+
+	cfProject.CfProjectTable = entity.CfProjectTable{
+		ID:     wpCfProject.ID,
+		UserID: user.ID,
+	}
+
+	cfProject.Snapshot.CfProjectSnapshotTable = entity.CfProjectSnapshotTable{
+		CfProjectID: wpCfProject.ID,
+		UserID:      user.ID,
+		Title:       wpCfProject.Title.Rendered,
+		Summary:     wpCfProject.Attributes.Summary,
+		Body:        wpCfProject.Content.Rendered,
+		GoalPrice:   int(wpCfProject.Attributes.GoalPrice),
+		Deadline:    time.Time(wpCfProject.Attributes.Deadline),
+		// IsAttention: wpCfProject.Attributes.IsAttention,
+	}
+	cfProject.Snapshot.SetThumbnails(thumbnails)
+	cfProject.Snapshot.SetAreaCategories(areaCategoryIDs)
+	cfProject.Snapshot.SetThemeCategories(themeCategoryIDs)
+
+	return &cfProject, nil
+}
+
+func (s *WordpressServiceImpl) NewCfReturnGift(wpCfReturnGift *wordpress.CfReturnGift) (*entity.CfReturnGift, error) {
+	thumbnail, err := s.getThumbnail(wpCfReturnGift.FeaturedMedia)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get thumbnail")
+	}
+
+	var cfReturnGift entity.CfReturnGift
+	cfReturnGift.CfReturnGiftTiny = entity.CfReturnGiftTiny{
+		ID:          wpCfReturnGift.ID,
+		CfProjectID: wpCfReturnGift.Attributes.CfProject,
+		GiftType:    model.CfReturnGiftType(wpCfReturnGift.Attributes.GiftType),
+	}
+
+	cfReturnGift.Snapshot = &entity.CfReturnGiftSnapshotTiny{
+		CfReturnGiftID: wpCfReturnGift.ID,
+		Thumbnail:      thumbnail,
+		Body:           wpCfReturnGift.Content.Rendered,
+		Price:          int(wpCfReturnGift.Attributes.Price),
+		FullAmount:     int(wpCfReturnGift.Attributes.FullAmount),
+		DeliveryDate:   wpCfReturnGift.Attributes.DeliveryDate,
+		SortOrder:      int(wpCfReturnGift.Attributes.SortOrder),
+	}
+
+	return &cfReturnGift, nil
 }
 
 func (s *WordpressServiceImpl) extractTOC(wpPost *wordpress.Post) (string, error) {

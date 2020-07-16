@@ -36,6 +36,8 @@ const (
 	comicPath              = "/wp-json/wp/v2/comic/"
 	featurePath            = "/wp-json/wp/v2/features/"
 	vlogPath               = "/wp-json/wp/v2/vlog/"
+	cfProjectPath          = "/wp-json/wp/v2/cf_project/"
+	cfReturnGiftPath       = "/wp-json/wp/v2/cf_return_gift/"
 	mediaPath              = "/wp-json/wp/v2/media/"
 
 	maxPerPage = 100
@@ -120,6 +122,16 @@ func (r *WordpressQueryRepositoryImpl) FindFeatureByID(id int) (*wordpress.Featu
 func (r *WordpressQueryRepositoryImpl) FindVlogByID(id int) (*wordpress.Vlog, error) {
 	var res wordpress.Vlog
 	return &res, r.getSingleResource(vlogPath, id, &res)
+}
+
+func (r *WordpressQueryRepositoryImpl) FindCfProjectByID(id int) (*wordpress.CfProject, error) {
+	var res wordpress.CfProject
+	return &res, r.getSingleResource(cfProjectPath, id, &res)
+}
+
+func (r *WordpressQueryRepositoryImpl) FindCfReturnGiftByID(id int) (*wordpress.CfReturnGift, error) {
+	var res wordpress.CfReturnGift
+	return &res, r.getSingleResource(cfReturnGiftPath, id, &res)
 }
 
 func (r *WordpressQueryRepositoryImpl) FindMediaByID(id int) (*wordpress.Media, error) {

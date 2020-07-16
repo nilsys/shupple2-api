@@ -33,7 +33,7 @@ func (c *CfProjectQueryController) List(ctx echo.Context) error {
 		return errors.Wrap(err, "failed list cf_project")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertCfProjectListToOutput(projects))
+	return ctx.JSON(http.StatusOK, c.ConvertCfProjectDetailListToOutput(projects))
 }
 
 func (c *CfProjectQueryController) Show(ctx echo.Context) error {
@@ -46,7 +46,7 @@ func (c *CfProjectQueryController) Show(ctx echo.Context) error {
 		return errors.Wrap(err, "failed show cf_project")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertCfProjectToOutput(project))
+	return ctx.JSON(http.StatusOK, c.ConvertCfProjectDetailToOutput(project))
 
 }
 

@@ -107,6 +107,7 @@ var RepositoriesSet = wire.NewSet(
 	VlogFavoriteQueryRepositorySet,
 	WordpressQueryRepositorySet,
 	CfReturnGiftQueryRepositorySet,
+	CfReturnGiftCommandRepositorySet,
 	ReviewQueryRepositorySet,
 	ReviewCommandRepositorySet,
 	ReviewFavoriteQueryRepositorySet,

@@ -1,5 +1,7 @@
 package repository
 
+import "time"
+
 const (
 	userID             = 101
 	postID             = 111
@@ -16,10 +18,12 @@ const (
 	shippingAddressID  = 221
 	cfProjectID        = 231
 	cfProjectCommentID = 241
-	metasearchAreaID   = 251
+	cfReturnGiftID     = 251
+	metasearchAreaID   = 261
 )
 
 var (
+	sampleTime          = time.Date(2020, 7, 7, 0, 0, 0, 0, time.Local)
 	areaCategoryIDs     = []int{1401, 1402}
 	addedAreaCategoryID = 1403
 
@@ -43,4 +47,6 @@ var (
 
 	userIDs     = []int{2101, 2102}
 	addedUserID = 2103
+
+	thumbnails = []string{"thumbnail1", "thumbnail2"}
 )

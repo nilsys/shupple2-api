@@ -2,121 +2,166 @@ package repository
 
 import (
 	"context"
-	"time"
-
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
-var _ = Describe("", func() {
+var _ = Describe("CfProjectRepositoryImpl", func() {
 	var (
-		queryRepo   *CfProjectQueryRepositoryImpl
 		commandRepo *CfProjectCommandRepositoryImpl
-		saved       *entity.CfProject
+		base        *entity.CfProject
 	)
+	findCfProjectByID := func(id int) (*entity.CfProject, error) {
+		var cfProject entity.CfProject
+		return &cfProject, db.Find(&cfProject, id).Error
+	}
+
 	BeforeEach(func() {
-		queryRepo = tests.CfProjectQueryRepositoryImpl
 		commandRepo = tests.CfProjectCommandRepositoryImpl
 		truncate(db)
 		Expect(db.Save(newUser(userID)).Error).To(Succeed())
-		Expect(db.Save(newCfProjectTable(cfProjectID, userID)).Error).To(Succeed())
-		saved = newCfProject(cfProjectID, userID)
+
+		for _, cat := range append(areaCategoryIDs, addedAreaCategoryID) {
+			Expect(db.Save(newAreaCategory(cat)).Error).To(Succeed())
+		}
+
+		for _, cat := range append(themeCategoryIDs, addedThemeCategoryID) {
+			Expect(db.Save(newThemeCategory(cat)).Error).To(Succeed())
+		}
+
+		base = newCfProject(cfProjectID, userID, thumbnails, areaCategoryIDs, themeCategoryIDs)
+		Expect(db.Save(base).Error).To(Succeed())
 	})
 
-	It("Lock: 正常系", func() {
-		actual, err := queryRepo.Lock(context.WithValue(context.Background(), model.ContextKeyTransaction, db), cfProjectID)
-		Expect(err).To(Succeed())
+	Describe("Store", func() {
+		Context("新規作成時", func() {
+			It("cf_projectとcf_project_snapshotが作成される", func() {
+				const newInsertedID = cfProjectID + 1
+				newInserted := newCfProject(newInsertedID, userID, nil, nil, nil)
+				Expect(commandRepo.Store(newInserted)).To(Succeed())
 
-		Expect(actual.CreatedAt).NotTo(BeZero())
-		Expect(actual.UpdatedAt).NotTo(BeZero())
-		Expect(actual.User.CreatedAt).NotTo(BeZero())
-		Expect(actual.User.UpdatedAt).NotTo(BeZero())
-		actual.CreatedAt = time.Time{}
-		actual.UpdatedAt = time.Time{}
-		actual.User.CreatedAt = time.Time{}
-		actual.User.UpdatedAt = time.Time{}
+				var count int
+				Expect(db.Model(&entity.CfProjectTable{}).Count(&count).Error).To(Succeed())
+				Expect(count).To(Equal(2))
+				Expect(db.Model(&entity.CfProjectSnapshotTable{}).Count(&count).Error).To(Succeed())
+				Expect(count).To(Equal(2))
 
-		Expect(actual).To(Equal(saved))
+				actual, err := findCfProjectByID(newInsertedID)
+				Expect(err).To(Succeed())
+
+				newInserted.LatestSnapshotID = actual.LatestSnapshotID
+				Expect(actual).To(entity.EqualEntity(newInserted))
+			})
+		})
+
+		Context("更新時", func() {
+			const achievedPrice = 100
+			BeforeEach(func() {
+				Expect(commandRepo.IncrementSupportCommentCount(context.Background(), cfProjectID)).To(Succeed())
+				Expect(commandRepo.IncrementAchievedPrice(context.Background(), cfProjectID, achievedPrice)).To(Succeed())
+				Expect(commandRepo.IncrementFavoriteCountByID(context.Background(), cfProjectID)).To(Succeed())
+			})
+
+			It("cf_projectのカラムは更新されず、cf_project_snapshotが挿入される。cf_project.latest_snapshot_idが更新される。", func() {
+				Expect(commandRepo.Store(base)).To(Succeed())
+
+				var count int
+				Expect(db.Model(&entity.CfProjectTable{}).Count(&count).Error).To(Succeed())
+				Expect(count).To(Equal(1))
+				Expect(db.Model(&entity.CfProjectSnapshotTable{}).Count(&count).Error).To(Succeed())
+				Expect(count).To(Equal(2))
+
+				actual, err := findCfProjectByID(cfProjectID)
+				Expect(err).To(Succeed())
+
+				var latestSnapshotID int
+				Expect(db.Raw("SELECT MAX(id) FROM cf_project_snapshot").Row().Scan(&latestSnapshotID)).To(Succeed())
+				Expect(int(actual.LatestSnapshotID.Int64)).To(Equal(latestSnapshotID))
+				Expect(actual.Snapshot.SnapshotID).To(Equal(latestSnapshotID))
+
+				base.FavoriteCount = 1
+				base.SupportCommentCount = 1
+				base.AchievedPrice = achievedPrice
+				base.LatestSnapshotID = actual.LatestSnapshotID
+				base.Snapshot.SnapshotID = actual.Snapshot.SnapshotID
+				Expect(actual).To(entity.EqualEntity(base))
+			})
+		})
 	})
 
-	It("StoreSupportComment: 正常系", func() {
-		err := commandRepo.StoreSupportComment(context.Background(), newSupportComment(cfProjectCommentID, userID, cfProjectID))
-		Expect(err).To(Succeed())
-
-		expect := newSupportComment(cfProjectCommentID, userID, cfProjectID)
-
-		var actual entity.CfProjectSupportCommentTable
-		err = db.Find(&actual, cfProjectCommentID).Error
-		Expect(err).To(Succeed())
-
-		Expect(actual.CreatedAt).NotTo(BeZero())
-		Expect(actual.UpdatedAt).NotTo(BeZero())
-		actual.CreatedAt = time.Time{}
-		actual.UpdatedAt = time.Time{}
-
-		Expect(&actual).To(Equal(expect))
+	Describe("Lock", func() {
+		It("正常系", func() {
+			actual, err := commandRepo.Lock(context.WithValue(context.Background(), model.ContextKeyTransaction, db), cfProjectID)
+			Expect(err).To(Succeed())
+			Expect(actual).To(entity.EqualEntity(base))
+		})
 	})
 
-	It("IncrementSupportCommentCount: 正常系", func() {
-		err := commandRepo.IncrementSupportCommentCount(context.Background(), cfProjectID)
-		Expect(err).To(Succeed())
+	Describe("StoreSupportComment", func() {
+		It("正常系", func() {
+			err := commandRepo.StoreSupportComment(context.Background(), newSupportComment(cfProjectCommentID, userID, cfProjectID))
+			Expect(err).To(Succeed())
 
-		saved.SupportCommentCount++
+			expect := newSupportComment(cfProjectCommentID, userID, cfProjectID)
 
-		actual, err := queryRepo.Lock(context.WithValue(context.Background(), model.ContextKeyTransaction, db), cfProjectID)
-		Expect(err).To(Succeed())
+			var actual entity.CfProjectSupportCommentTable
+			err = db.Find(&actual, cfProjectCommentID).Error
+			Expect(err).To(Succeed())
 
-		Expect(actual.CreatedAt).NotTo(BeZero())
-		Expect(actual.UpdatedAt).NotTo(BeZero())
-		Expect(actual.User.CreatedAt).NotTo(BeZero())
-		Expect(actual.User.UpdatedAt).NotTo(BeZero())
-		actual.CreatedAt = time.Time{}
-		actual.UpdatedAt = time.Time{}
-		actual.User.CreatedAt = time.Time{}
-		actual.User.UpdatedAt = time.Time{}
-
-		Expect(actual).To(Equal(saved))
+			Expect(&actual).To(entity.EqualEntity(expect))
+		})
 	})
 
-	It("IncrementAchievedPrice: 正常系", func() {
-		err := commandRepo.IncrementAchievedPrice(context.Background(), cfProjectID, 100)
-		Expect(err).To(Succeed())
+	Describe("IncrementSupportCommentCount", func() {
+		It("正常系", func() {
+			err := commandRepo.IncrementSupportCommentCount(context.Background(), cfProjectID)
+			Expect(err).To(Succeed())
 
-		saved.AchievedPrice += 100
+			base.SupportCommentCount++
 
-		actual, err := queryRepo.Lock(context.WithValue(context.Background(), model.ContextKeyTransaction, db), cfProjectID)
-		Expect(err).To(Succeed())
+			actual, err := findCfProjectByID(cfProjectID)
+			Expect(err).To(Succeed())
 
-		Expect(actual.CreatedAt).NotTo(BeZero())
-		Expect(actual.UpdatedAt).NotTo(BeZero())
-		Expect(actual.User.CreatedAt).NotTo(BeZero())
-		Expect(actual.User.UpdatedAt).NotTo(BeZero())
-		actual.CreatedAt = time.Time{}
-		actual.UpdatedAt = time.Time{}
-		actual.User.CreatedAt = time.Time{}
-		actual.User.UpdatedAt = time.Time{}
+			Expect(actual).To(entity.EqualEntity(base))
+		})
+	})
 
-		Expect(actual).To(Equal(saved))
+	Describe("IncrementAchievedPrice", func() {
+		It("正常系", func() {
+			err := commandRepo.IncrementAchievedPrice(context.Background(), cfProjectID, 100)
+			Expect(err).To(Succeed())
+
+			base.AchievedPrice += 100
+
+			actual, err := findCfProjectByID(cfProjectID)
+			Expect(err).To(Succeed())
+
+			Expect(actual).To(entity.EqualEntity(base))
+		})
 	})
 })
 
-func newCfProjectTable(id, userID int) entity.CfProjectTable {
-	return entity.CfProjectTable{
-		ID:     id,
-		UserID: userID,
-	}
-}
-
-func newCfProject(id, userID int) *entity.CfProject {
+func newCfProject(id, userID int, thumbnails []string, areaCategoryIDs []int, themeCategoryIDs []int) *entity.CfProject {
 	cfProject := &entity.CfProject{
-		CfProjectTable: newCfProjectTable(id, userID),
-		User:           newUser(userID),
+		CfProjectTable: entity.CfProjectTable{
+			ID:     id,
+			UserID: userID,
+		},
+		Snapshot: entity.CfProjectSnapshot{
+			CfProjectSnapshotTable: entity.CfProjectSnapshotTable{
+				CfProjectID: id,
+				Deadline:    sampleTime,
+			},
+		},
 	}
 	util.FillDummyString(cfProject, id)
+	cfProject.Snapshot.SetThumbnails(thumbnails)
+	cfProject.Snapshot.SetAreaCategories(areaCategoryIDs)
+	cfProject.Snapshot.SetThemeCategories(themeCategoryIDs)
 	return cfProject
 }
 

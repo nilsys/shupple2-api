@@ -86,6 +86,7 @@ var serviceSet = wire.NewSet(
 	service.CategoryQueryServiceSet,
 	service.CategoryCommandServiceSet,
 	service.CfReturnGiftQueryServiceSet,
+	service.CfReturnGiftCommandServiceSet,
 	service.AreaCategoryQueryServiceSet,
 	service.AreaCategoryCommandServiceSet,
 	service.ThemeCategoryQueryServiceSet,

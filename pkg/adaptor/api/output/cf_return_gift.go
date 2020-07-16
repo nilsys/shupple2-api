@@ -11,7 +11,7 @@ type (
 		Body         string                 `json:"body"`
 		Price        string                 `json:"price"`
 		IsCancelable bool                   `json:"isCancelable"`
-		Deadline     model.Date             `json:"deadline"`
+		Deadline     *model.Date            `json:"deadline"`
 		SoldCount    int                    `json:"soldCount"`
 	}
 )

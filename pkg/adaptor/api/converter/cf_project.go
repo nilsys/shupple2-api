@@ -17,10 +17,10 @@ func (c *Converters) ConvertCfProjectSupportCommentListToOutput(comments []*enti
 	return response
 }
 
-func (c *Converters) ConvertCfProjectListToOutput(list *entity.CfProjectList) []*output.CfProject {
+func (c *Converters) ConvertCfProjectDetailListToOutput(list *entity.CfProjectDetailList) []*output.CfProject {
 	response := make([]*output.CfProject, len(list.List))
 	for i, project := range list.List {
-		response[i] = c.ConvertCfProjectToOutput(project)
+		response[i] = c.ConvertCfProjectDetailToOutput(project)
 	}
 	return response
 }
@@ -43,14 +43,14 @@ func (c *Converters) ConvertCfProjectListInputToQuery(i *input.ListCfProject) *q
 	}
 }
 
-func (c *Converters) ConvertCfProjectToOutput(project *entity.CfProject) *output.CfProject {
+func (c *Converters) ConvertCfProjectDetailToOutput(project *entity.CfProjectDetail) *output.CfProject {
 	// TODO
 	if project.Snapshot == nil {
-		project.Snapshot = &entity.CfProjectSnapshot{}
+		project.Snapshot = &entity.CfProjectSnapshotDetail{}
 	}
 
-	thumbnails := make([]*output.CfProjectThumbnail, len(project.Thumbnails))
-	for i, thumbnail := range project.Thumbnails {
+	thumbnails := make([]*output.CfProjectThumbnail, len(project.Snapshot.Thumbnails))
+	for i, thumbnail := range project.Snapshot.Thumbnails {
 		thumbnails[i] = &output.CfProjectThumbnail{
 			Priority:  thumbnail.Priority,
 			Thumbnail: thumbnail.Thumbnail,
@@ -58,7 +58,7 @@ func (c *Converters) ConvertCfProjectToOutput(project *entity.CfProject) *output
 	}
 	return &output.CfProject{
 		ID:              project.ID,
-		SnapshotID:      project.Snapshot.ID,
+		SnapshotID:      project.Snapshot.SnapshotID,
 		Title:           project.Snapshot.Title,
 		Summary:         project.Snapshot.Summary,
 		Body:            project.Snapshot.Body,

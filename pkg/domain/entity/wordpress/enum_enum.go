@@ -85,20 +85,26 @@ const (
 	EntityTypeLocationCat
 	// EntityTypeRevision is a EntityType of type Revision
 	EntityTypeRevision
+	// EntityTypeCfProject is a EntityType of type Cf_project
+	EntityTypeCfProject
+	// EntityTypeCfReturnGift is a EntityType of type Cf_return_gift
+	EntityTypeCfReturnGift
 )
 
-const _EntityTypeName = "userpostlocationmoviecomicfeaturecategorylocation__catrevision"
+const _EntityTypeName = "userpostlocationmoviecomicfeaturecategorylocation__catrevisioncf_projectcf_return_gift"
 
 var _EntityTypeMap = map[EntityType]string{
-	1: _EntityTypeName[0:4],
-	2: _EntityTypeName[4:8],
-	3: _EntityTypeName[8:16],
-	4: _EntityTypeName[16:21],
-	5: _EntityTypeName[21:26],
-	6: _EntityTypeName[26:33],
-	7: _EntityTypeName[33:41],
-	8: _EntityTypeName[41:54],
-	9: _EntityTypeName[54:62],
+	1:  _EntityTypeName[0:4],
+	2:  _EntityTypeName[4:8],
+	3:  _EntityTypeName[8:16],
+	4:  _EntityTypeName[16:21],
+	5:  _EntityTypeName[21:26],
+	6:  _EntityTypeName[26:33],
+	7:  _EntityTypeName[33:41],
+	8:  _EntityTypeName[41:54],
+	9:  _EntityTypeName[54:62],
+	10: _EntityTypeName[62:72],
+	11: _EntityTypeName[72:86],
 }
 
 // String implements the Stringer interface.
@@ -119,6 +125,8 @@ var _EntityTypeValue = map[string]EntityType{
 	_EntityTypeName[33:41]: 7,
 	_EntityTypeName[41:54]: 8,
 	_EntityTypeName[54:62]: 9,
+	_EntityTypeName[62:72]: 10,
+	_EntityTypeName[72:86]: 11,
 }
 
 // ParseEntityType attempts to convert a string to a EntityType
@@ -138,6 +146,57 @@ func (x EntityType) MarshalText() ([]byte, error) {
 func (x *EntityType) UnmarshalText(text []byte) error {
 	name := string(text)
 	tmp, err := ParseEntityType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
+	// GiftTypeReservedTicket is a GiftType of type ReservedTicket
+	GiftTypeReservedTicket GiftType = iota + 1
+	// GiftTypeOther is a GiftType of type Other
+	GiftTypeOther
+)
+
+const _GiftTypeName = "ReservedTicketOther"
+
+var _GiftTypeMap = map[GiftType]string{
+	1: _GiftTypeName[0:14],
+	2: _GiftTypeName[14:19],
+}
+
+// String implements the Stringer interface.
+func (x GiftType) String() string {
+	if str, ok := _GiftTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("GiftType(%d)", x)
+}
+
+var _GiftTypeValue = map[string]GiftType{
+	_GiftTypeName[0:14]:  1,
+	_GiftTypeName[14:19]: 2,
+}
+
+// ParseGiftType attempts to convert a string to a GiftType
+func ParseGiftType(name string) (GiftType, error) {
+	if x, ok := _GiftTypeValue[name]; ok {
+		return x, nil
+	}
+	return GiftType(0), fmt.Errorf("%s is not a valid GiftType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x GiftType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *GiftType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseGiftType(name)
 	if err != nil {
 		return err
 	}

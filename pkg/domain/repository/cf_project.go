@@ -10,6 +10,11 @@ import (
 
 type (
 	CfProjectCommandRepository interface {
+		Store(*entity.CfProject) error
+		Lock(c context.Context, id int) (*entity.CfProject, error)
+		UndeleteByID(c context.Context, id int) error
+		DeleteByID(id int) error
+
 		StoreUserFavoriteCfProject(c context.Context, fav *entity.UserFavoriteCfProject) error
 		DeleteUserFavoriteCfProject(c context.Context, fav *entity.UserFavoriteCfProject) error
 		IncrementFavoriteCountByID(c context.Context, projectID int) error
@@ -20,10 +25,8 @@ type (
 	}
 
 	CfProjectQueryRepository interface {
-		FindByID(id int) (*entity.CfProject, error)
-		FindListByQuery(query *query.FindCfProjectQuery) (*entity.CfProjectList, error)
-		Lock(c context.Context, id int) (*entity.CfProject, error)
-		LockCfProjectListByIDs(c context.Context, ids []int) (*entity.CfProjectList, error)
+		FindByID(id int) (*entity.CfProjectDetail, error)
+		FindListByQuery(query *query.FindCfProjectQuery) (*entity.CfProjectDetailList, error)
 		FindSupportCommentListByCfProjectID(projectID, limit int) ([]*entity.CfProjectSupportComment, error)
 	}
 )

@@ -30,6 +30,8 @@ type (
 		repository.CfProjectQueryRepository
 		payjp.ChargeCommandRepository
 		repository.CfReturnGiftQueryRepository
+		repository.UserQueryRepository
+		repository.CfReturnGiftCommandRepository
 		repository.ShippingQueryRepository
 		repository.CfProjectCommandRepository
 		repository.MailCommandRepository
@@ -53,7 +55,7 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 
 		paymentReturnGifts := make([]*entity.PaymentCfReturnGiftTiny, len(cmd.List))
 
-		gifts, err := s.CfReturnGiftQueryRepository.LockCfReturnGiftList(c, cmd.ReturnIDs())
+		gifts, err := s.CfReturnGiftCommandRepository.LockByIDs(c, cmd.ReturnIDs())
 		if err != nil {
 			return errors.Wrap(err, "failed lock return_gift")
 		}
@@ -64,9 +66,14 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 			return serror.New(nil, serror.CodeInvalidParam, "need gift's project is unique")
 		}
 
-		project, err := s.CfProjectQueryRepository.Lock(c, projectID)
+		project, err := s.CfProjectCommandRepository.Lock(c, projectID)
 		if err != nil {
 			return errors.Wrap(err, "failed lock cf_project")
+		}
+
+		projectOwner, err := s.UserQueryRepository.FindByID(project.UserID)
+		if err != nil {
+			return errors.Wrap(err, "failed to get project owner")
 		}
 
 		soldCountList, err := s.CfReturnGiftQueryRepository.FindSoldCountByReturnGiftIDs(c, cmd.ReturnIDs())
@@ -79,7 +86,7 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 		var price int
 		for i, payment := range cmd.List {
 			// 商品情報が更新されている時
-			if payment.ReturnGiftSnapshotID != giftIDMap[payment.ReturnGiftID].LatestCfReturnGiftSnapshotID {
+			if payment.ReturnGiftSnapshotID != int(giftIDMap[payment.ReturnGiftID].LatestSnapshotID.Int64) {
 				return serror.New(nil, serror.CodeInvalidParam, "return_gift updated")
 			}
 
@@ -93,10 +100,10 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 			price += giftIDMap[payment.ReturnGiftID].Snapshot.Price * payment.Amount
 			gift := giftIDMap[payment.ReturnGiftID]
 			if gift.CfReturnGiftTiny.GiftType == model.CfReturnGiftTypeReservedTicket {
-				paymentReturnGifts[i] = entity.NewPaymentReturnGiftForReservedTicket(payment.ReturnGiftID, gift.LatestCfReturnGiftSnapshotID, gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount)
+				paymentReturnGifts[i] = entity.NewPaymentReturnGiftForReservedTicket(payment.ReturnGiftID, int(gift.LatestSnapshotID.Int64), gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount)
 				continue
 			}
-			paymentReturnGifts[i] = entity.NewPaymentReturnGiftForOther(payment.ReturnGiftID, gift.LatestCfReturnGiftSnapshotID, gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount)
+			paymentReturnGifts[i] = entity.NewPaymentReturnGiftForOther(payment.ReturnGiftID, int(gift.LatestSnapshotID.Int64), gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount)
 		}
 
 		// 最新のカードidを取得
@@ -145,7 +152,7 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 		}
 
 		// 決済確定メール送信
-		template := entity.NewThanksPurchaseTemplate(project.User.Name, gifts.OnEmailDescription(), charge.ID, util.WithComma(price), address.Email, address.FullAddress(), user.Name)
+		template := entity.NewThanksPurchaseTemplate(projectOwner.Name, gifts.OnEmailDescription(), charge.ID, util.WithComma(price), address.Email, address.FullAddress(), user.Name)
 		if err := s.MailCommandRepository.SendTemplateMail(address.Email, template); err != nil {
 			return errors.Wrap(err, "failed send email from ses")
 		}

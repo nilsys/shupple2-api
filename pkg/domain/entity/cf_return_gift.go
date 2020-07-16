@@ -2,40 +2,38 @@ package entity
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
+	null "gopkg.in/guregu/null.v3"
 )
 
 type (
 	CfReturnGiftTiny struct {
-		ID                           int `gorm:"primary_key"`
-		CfProjectID                  int
-		LatestCfReturnGiftSnapshotID int
-		Thumbnail                    string
-		SortOrder                    int
-		GiftType                     model.CfReturnGiftType
+		ID               int `gorm:"primary_key"`
+		CfProjectID      int
+		LatestSnapshotID null.Int
+		GiftType         model.CfReturnGiftType
 		Times
 	}
 
 	CfReturnGiftSnapshotTiny struct {
-		ID             int `gorm:"primary_key"`
+		SnapshotID     int `gorm:"column:id;primary_key"`
 		CfReturnGiftID int
 		Thumbnail      string
 		Body           string
 		Price          int
 		FullAmount     int
+		DeliveryDate   string
 		IsCancelable   bool
-		Deadline       time.Time
-		DeliveryDate   time.Time
+		Deadline       null.Time
+		SortOrder      int
 		Times
 	}
 
 	CfReturnGift struct {
 		CfReturnGiftTiny
-		Snapshot *CfReturnGiftSnapshotTiny `gorm:"foreignkey:ID;association_foreignkey:LatestCfReturnGiftSnapshotID"`
-		Times
+		Snapshot *CfReturnGiftSnapshotTiny // `gorm:"foreignkey:ID;association_foreignkey:LatestCfReturnGiftSnapshotID"`
 	}
 
 	CfReturnGiftList struct {
