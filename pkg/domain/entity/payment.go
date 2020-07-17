@@ -3,6 +3,8 @@ package entity
 import (
 	"time"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
 
@@ -32,17 +34,40 @@ type (
 		TimesWithoutDeletedAt
 	}
 
+	Payment struct {
+		PaymentTiny
+		ShippingAddress     *ShippingAddress       `gorm:"foreignkey:ID;association_foreignkey:ShippingAddressID"`
+		Card                *Card                  `gorm:"foreignkey:ID;association_foreignkey:CardID"`
+		PaymentCfReturnGift []*PaymentCfReturnGift `gorm:"foreignkey:PaymentID;association_foreignkey:ID"`
+		Owner               *User                  `gorm:"foreignkey:ID;association_foreignkey:ProjectOwnerID"`
+	}
+
 	PaymentCfReturnGift struct {
 		PaymentCfReturnGiftTiny
 		CfReturnGift         *CfReturnGiftTiny         `gorm:"foreignkey:ID;association_foreignkey:CfReturnGiftID"`
 		CfReturnGiftSnapshot *CfReturnGiftSnapshotTiny `gorm:"foreignkey:ID;association_foreignkey:CfReturnGiftSnapshotID"`
 	}
 
-	Payment struct {
-		PaymentTiny
-		Owner *User `gorm:"foreignkey:ID;association_foreignkey:ProjectOwnerID"`
+	PaymentList struct {
+		List []*Payment
 	}
 )
+
+func (p *PaymentTiny) TableName() string {
+	return "payment"
+}
+
+func (p *PaymentCfReturnGiftTiny) TableName() string {
+	return "payment_cf_return_gift"
+}
+
+func (p *PaymentList) CardIDs() []string {
+	ids := make([]string, len(p.List))
+	for i, tiny := range p.List {
+		ids[i] = tiny.Card.CardID
+	}
+	return util.RemoveDuplicatesFromStringSlice(ids)
+}
 
 func NewPayment(userID, projectOwnerID, cardID, addressID int, chargeID string, price int) *PaymentTiny {
 	return &PaymentTiny{

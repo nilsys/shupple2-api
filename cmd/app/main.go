@@ -35,6 +35,7 @@ type App struct {
 	CardQueryController             api.CardQueryController
 	ChargeCommandController         api.ChargeCommandController
 	CardCommandController           api.CardCommandController
+	PaymentQueryController          api.PaymentQueryController
 	PaymentCommandController        api.PaymentCommandController
 	PostQueryController             api.PostQueryController
 	PostFavoriteCommandController   api.PostFavoriteCommandController
@@ -241,6 +242,7 @@ func setRoutes(app *App) {
 
 	{
 		payment := api.Group("/payments")
+		payment.GET("", auth.Require(app.PaymentQueryController.List))
 		payment.POST("/charge", auth.Require(app.ChargeCommandController.CaptureCharge))
 		payment.POST("/card", auth.Require(app.CardCommandController.Register))
 		payment.GET("/card", auth.Require(app.CardQueryController.ShowCard))

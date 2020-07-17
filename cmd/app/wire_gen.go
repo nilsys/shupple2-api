@@ -208,6 +208,14 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	paymentQueryRepositoryImpl := &repository.PaymentQueryRepositoryImpl{
 		DB: db,
 	}
+	paymentQueryServiceImpl := &service.PaymentQueryServiceImpl{
+		PaymentQueryRepository:   paymentQueryRepositoryImpl,
+		PayjpCardQueryRepository: payjpCardQueryRepositoryImpl,
+	}
+	paymentQueryController := api.PaymentQueryController{
+		Converters:          converters,
+		PaymentQueryService: paymentQueryServiceImpl,
+	}
 	paymentCommandServiceImpl := &service.PaymentCommandServiceImpl{
 		PaymentCommandRepository: paymentCommandRepositoryImpl,
 		PaymentQueryRepository:   paymentQueryRepositoryImpl,
@@ -709,6 +717,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		CardQueryController:             cardQueryController,
 		ChargeCommandController:         chargeCommandController,
 		CardCommandController:           cardCommandController,
+		PaymentQueryController:          paymentQueryController,
 		PaymentCommandController:        paymentCommandController,
 		PostQueryController:             postQueryController,
 		PostFavoriteCommandController:   postFavoriteCommandController,
@@ -748,12 +757,12 @@ var (
 
 // wire.go:
 
-var controllerSet = wire.NewSet(converter.ConvertersSet, api.ShippingQueryControllerSet, api.ShippingCommandControllerSet, api.ChargeCommandControllerSet, api.CardQueryControllerSet, api.CardCommandControllerSet, api.PostQueryControllerSet, api.PostFavoriteCommandControllerSet, api.CfProjectQueryControllerSet, api.CfReturnGiftQueryControllerSet, api.CategoryQueryControllerSet, api.CfProjectCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.RSSControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.ThemeQueryControllerSet, api.WordpressCallbackControllerSet, api.SitemapControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet, api.AreaQueryControllerSet, api.InnQueryControllerSet, api.NoticeQueryControllerSet, api.PaymentCommandControllerSet, api.ReportCommandControllerSet, api.ComicFavoriteCommandControllerSet, api.VlogFavoriteCommandControllerSet)
+var controllerSet = wire.NewSet(converter.ConvertersSet, api.ShippingQueryControllerSet, api.ShippingCommandControllerSet, api.ChargeCommandControllerSet, api.CardQueryControllerSet, api.CardCommandControllerSet, api.PostQueryControllerSet, api.PostFavoriteCommandControllerSet, api.CfProjectQueryControllerSet, api.CfReturnGiftQueryControllerSet, api.CategoryQueryControllerSet, api.CfProjectCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.RSSControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.ThemeQueryControllerSet, api.WordpressCallbackControllerSet, api.SitemapControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet, api.AreaQueryControllerSet, api.InnQueryControllerSet, api.NoticeQueryControllerSet, api.PaymentQueryControllerSet, api.PaymentCommandControllerSet, api.ReportCommandControllerSet, api.ComicFavoriteCommandControllerSet, api.VlogFavoriteCommandControllerSet)
 
 var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.PostQueryScenarioSet, scenario.FeatureQueryScenarioSet, scenario.VlogQueryScenarioSet, scenario.TouristSpotQueryScenarioSet)
 
 var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
 
-var serviceSet = wire.NewSet(service.ShippingQueryServiceSet, service.ShippingCommandServiceSet, service.CfProjectCommandServiceSet, service.CfProjectQueryServiceSet, service.ChargeCommandServiceSet, service.CardCommandServiceSet, service.CardQueryServiceSet, service.PaymentCommandServiceSet, service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.CfReturnGiftQueryServiceSet, service.CfReturnGiftCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryQueryServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.RssServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.SpotCategoryCommandServiceSet, service.SitemapServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet, service.NoticeQueryServiceSet, service.ReportCommandServiceSet, service.ComicFavoriteCommandServiceSet, service.VlogFavoriteCommandServiceSet)
+var serviceSet = wire.NewSet(service.ShippingQueryServiceSet, service.ShippingCommandServiceSet, service.CfProjectCommandServiceSet, service.CfProjectQueryServiceSet, service.ChargeCommandServiceSet, service.CardCommandServiceSet, service.CardQueryServiceSet, service.PaymentQueryServiceSet, service.PaymentCommandServiceSet, service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.CfReturnGiftQueryServiceSet, service.CfReturnGiftCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryQueryServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.RssServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.SpotCategoryCommandServiceSet, service.SitemapServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet, service.NoticeQueryServiceSet, service.ReportCommandServiceSet, service.ComicFavoriteCommandServiceSet, service.VlogFavoriteCommandServiceSet)
 
 var factorySet = wire.NewSet(factory.S3SignatureFactorySet, factory.CategoryIDMapFactorySet)

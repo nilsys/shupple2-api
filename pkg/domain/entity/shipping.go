@@ -4,19 +4,19 @@ import "fmt"
 
 type (
 	ShippingAddress struct {
-		ID            int    `gorm:"primary_key"`
-		UserID        int    `json:"-"`
-		FirstName     string `json:"firstName"`
-		LastName      string `json:"lastName"`
-		FirstNameKana string `json:"firstNameKana"`
-		LastNameKana  string `json:"lastNameKana"`
-		PhoneNumber   string `json:"phoneNumber"`
-		PostalNumber  string `json:"postalNumber"`
-		Prefecture    string `json:"prefecture"`
-		City          string `json:"city"`
-		Address       string `json:"address"`
-		Building      string `json:"building"`
-		Email         string `json:"email"`
+		ID            int `gorm:"primary_key"`
+		UserID        int
+		FirstName     string
+		LastName      string
+		FirstNameKana string
+		LastNameKana  string
+		PhoneNumber   string
+		PostalNumber  string
+		Prefecture    string
+		City          string
+		Address       string
+		Building      string
+		Email         string
 		Times
 	}
 )

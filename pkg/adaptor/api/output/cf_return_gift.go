@@ -13,5 +13,6 @@ type (
 		IsCancelable bool                   `json:"isCancelable"`
 		Deadline     *model.Date            `json:"deadline"`
 		SoldCount    int                    `json:"soldCount"`
+		DeliveryDate string                 `json:"deliveryDate"`
 	}
 )

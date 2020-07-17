@@ -83,7 +83,6 @@ type (
 
 	ListFavoriteMediaUser struct {
 		IDParam
-
 		PerPage int `query:"perPage"`
 		Page    int `query:"page"`
 	}

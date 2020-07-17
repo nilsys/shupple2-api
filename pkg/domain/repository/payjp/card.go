@@ -12,5 +12,6 @@ type (
 
 	CardQueryRepository interface {
 		Find(customerID, cardID string) (*payjp.CardResponse, error)
+		FindList(customerID string, cardID []string) ([]*payjp.CardResponse, error)
 	}
 )

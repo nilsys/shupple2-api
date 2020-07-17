@@ -45,3 +45,12 @@ func RemoveDuplicatesAndZeroFromIntSlice(val []int) []int {
 
 	return results
 }
+
+func ContainsFromStrSlice(val []string, key string) bool {
+	for _, v := range val {
+		if v == key {
+			return true
+		}
+	}
+	return false
+}

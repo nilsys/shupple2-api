@@ -3,7 +3,9 @@ package repository
 import (
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
@@ -15,6 +17,14 @@ var PaymentQueryRepositorySet = wire.NewSet(
 	wire.Struct(new(PaymentQueryRepositoryImpl), "*"),
 	wire.Bind(new(repository.PaymentQueryRepository), new(*PaymentQueryRepositoryImpl)),
 )
+
+func (r *PaymentQueryRepositoryImpl) FindByUserID(userID int, query *query.FindListPaginationQuery) (*entity.PaymentList, error) {
+	var rows entity.PaymentList
+	if err := r.DB.Where("user_id = ?", userID).Offset(query.Offset).Limit(query.Limit).Find(&rows.List).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find payment.user_id")
+	}
+	return &rows, nil
+}
 
 func (r *PaymentQueryRepositoryImpl) FindByID(id int) (*entity.Payment, error) {
 	var row entity.Payment

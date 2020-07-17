@@ -34,5 +34,6 @@ func (c *Converters) convertCfReturnGiftToOutput(gift *entity.CfReturnGift, sold
 		IsCancelable: gift.Snapshot.IsCancelable,
 		Deadline:     deadline,
 		SoldCount:    soldCount,
+		DeliveryDate: gift.Snapshot.DeliveryDate,
 	}
 }

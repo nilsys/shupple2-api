@@ -2219,6 +2219,31 @@ paths:
       responses:
         "200":
           description: OK
+  /payments:
+    get:
+      tags:
+        - payment
+      summary: 購入一覧
+      security:
+        - iDPCognito: []
+      parameters:
+        - name: perPage
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentList"
   /payments/{id}/reserve:
     post:
       tags:
@@ -2922,6 +2947,47 @@ components:
         amount:
           type: integer
           description: 数量
+    PaymentList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Payment"
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+        shippingAddress:
+          $ref: "#/components/schemas/ShippingAddress"
+        totalPrice:
+          type: string
+          example: 1,000
+        chargeId:
+          type: string
+          example: ch_oiwr3o1023
+        orderedAt:
+          type: string
+          format: date-time
+        card:
+          $ref: "#/components/schemas/Card"
+        paymentCfReturnGifts:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentCfReturnGift"
+    PaymentCfReturnGift:
+      type: object
+      properties:
+        cfReturnGift:
+          $ref: "#/components/schemas/CfReturnGift"
+        amount:
+          type: integer
+          example: 2
+        giftTypeOtherStatus:
+          $ref: "#/components/schemas/CfReturnGiftTypeOtherStatus"
+        giftTypeReservedTicketStatus:
+          $ref: "#/components/schemas/CfReturnGiftTypeReservedTicketStatus"
+        ownerConfirmedAt:
+          type: string
+          format: date-time
     CfReserveRequest:
       type: object
       required:
@@ -4529,7 +4595,6 @@ components:
           type: integer
         deliveryDate:
           type: string
-          format: date
     ReportReasonType:
       type: string
       enum:
@@ -4590,6 +4655,27 @@ components:
         - LargeAmount
         - Push
         - Attention
+    CfReturnGiftTypeOtherStatus:
+      type: string
+      enum:
+        - Undefined
+        - OwnerUnconfirmed
+        - OwnerConfirmed
+        - Canceled
+      default: Undefined
+      description: |
+        giftTypeがOtherの場合有効
+        Other以外の場合Undefined
+    CfReturnGiftTypeReservedTicketStatus:
+      type: string
+      enum:
+        - Undefined
+        - Unreserved
+        - Reserved
+      default: Undefined
+      description: |
+        giftTypeがReservedTicketの場合有効
+        ReservedTicket以外の場合Undefined
     Error:
       type: object
       properties:

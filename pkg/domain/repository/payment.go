@@ -3,11 +3,14 @@ package repository
 import (
 	"context"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 )
 
 type (
 	PaymentQueryRepository interface {
+		FindByUserID(userID int, query *query.FindListPaginationQuery) (*entity.PaymentList, error)
 		FindByID(id int) (*entity.Payment, error)
 		FindTinyByID(id int) (*entity.PaymentTiny, error)
 		FindPaymentCfReturnGiftByPaymentIDAndCfReturnGift(paymentID, cfReturnGiftID int) (*entity.PaymentCfReturnGift, error)
