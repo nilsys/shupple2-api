@@ -23,7 +23,7 @@ type (
 		} `json:"photo_gallery"`
 		Summary   string    `json:"summary"`
 		GoalPrice IntString `json:"goal_price"`
-		Deadline  JSTDate   `json:"deadline"`
+		Deadline  JSTTime   `json:"deadline"`
 	}
 
 	CfReturnGift struct {
@@ -47,7 +47,7 @@ type (
 		GiftType     GiftType        `json:"gift_type"`
 		Price        IntString       `json:"price"`
 		FullAmount   IntString       `json:"full_amount"`
-		Deadline     NullableJSTDate `json:"deadline"`
+		Deadline     NullableJSTTime `json:"deadline"`
 		DeliveryDate string          `json:"delivery_date"`
 		IsCancelable bool            `json:"is_cancelable"`
 	}

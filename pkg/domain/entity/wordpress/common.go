@@ -11,7 +11,6 @@ import (
 
 const (
 	timeJSONFormat = `2006-01-02T15:04:05`
-	dateJSONFormat = `2006-01-02`
 )
 
 var (
@@ -41,10 +40,10 @@ type (
 
 	IntString int
 
-	JSTTime         time.Time
-	UTCTime         time.Time
-	JSTDate         time.Time
-	NullableJSTDate null.Time
+	JSTTime time.Time
+	UTCTime time.Time
+
+	NullableJSTTime null.Time
 )
 
 func (s *URLEscapedString) UnmarshalText(data []byte) error {
@@ -77,18 +76,12 @@ func (t *UTCTime) UnmarshalText(data []byte) error {
 	return err
 }
 
-func (t *JSTDate) UnmarshalText(data []byte) error {
-	parsed, err := time.ParseInLocation(dateJSONFormat, string(data), util.JSTLoc)
-	*t = JSTDate(parsed)
-	return err
-}
-
-func (t *NullableJSTDate) UnmarshalText(data []byte) error {
+func (t *NullableJSTTime) UnmarshalText(data []byte) error {
 	if len(data) == 0 {
-		*t = NullableJSTDate(null.Time{})
+		*t = NullableJSTTime(null.Time{})
 	}
 
-	parsed, err := time.ParseInLocation(dateJSONFormat, string(data), util.JSTLoc)
-	*t = NullableJSTDate(null.TimeFrom(parsed))
+	parsed, err := time.ParseInLocation(timeJSONFormat, string(data), util.JSTLoc)
+	*t = NullableJSTTime(null.TimeFrom(parsed))
 	return err
 }
