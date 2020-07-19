@@ -39,7 +39,8 @@ func (r *PaymentCommandRepositoryImpl) StorePaymentReturnGiftList(c context.Cont
 }
 
 func (r *PaymentCommandRepositoryImpl) MarkPaymentCfReturnGiftAsReserved(c context.Context, paymentID, cfReturnGiftID int) error {
-	if err := r.DB(c).Exec("UPDATE payment_cf_return_gift SET gift_type_reserved_ticket_status = ? WHERE payment_id = ? AND cf_return_gift_id = ?", model.PaymentCfReturnGiftReservedTicketTypeStatusReserved, paymentID, cfReturnGiftID).Error; err != nil {
+	if err := r.DB(c).Exec("UPDATE payment_cf_return_gift SET gift_type_reserved_ticket_status = ?, user_reserve_requested_at = NOW() WHERE payment_id = ? AND cf_return_gift_id = ? AND gift_type_other_status = ?",
+		model.PaymentCfReturnGiftReservedTicketTypeStatusReserved, paymentID, cfReturnGiftID, model.PaymentCfReturnGiftOtherTypeStatusUndefined).Error; err != nil {
 		return errors.Wrap(err, "failed update payment_cf_return_gift.gift_type_reserved_ticket_status")
 	}
 	return nil

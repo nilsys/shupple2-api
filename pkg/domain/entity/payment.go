@@ -29,6 +29,7 @@ type (
 		CfProjectSnapshotID          int
 		Amount                       int
 		OwnerConfirmedAt             *time.Time
+		UserReserveRequestedAt       *time.Time
 		GiftTypeOtherStatus          model.PaymentCfReturnGiftOtherTypeStatus
 		GiftTypeReservedTicketStatus model.PaymentCfReturnGiftReservedTicketTypeStatus
 		TimesWithoutDeletedAt
