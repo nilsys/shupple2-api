@@ -40,7 +40,7 @@ type PostEntry struct {
 type TaxonomyEntry struct {
 	Taxonomy string
 	Getter   func(parentID int) ([]*IDContainer, error)
-	Importer func(id int) error
+	Importer func(id int, termDeleted bool) error
 }
 
 type Config struct {
@@ -216,7 +216,7 @@ func (s Script) importPostData(wordpressDB *gorm.DB, entry PostEntry) error {
 
 		for _, id := range ids {
 			rImporter := reflect.ValueOf(entry.Importer)
-			importerResults := rImporter.Call([]reflect.Value{reflect.ValueOf(id)})
+			importerResults := rImporter.Call([]reflect.Value{reflect.ValueOf(id), reflect.ValueOf(false)})
 			err := importerResults[1]
 			if !err.IsNil() {
 				logger.Error(fmt.Sprintf("failed to import; id = %d ", id), zap.Error(err.Interface().(error)))
@@ -247,7 +247,7 @@ func (s Script) importCategorySub(wordpressDB *gorm.DB, entry TaxonomyEntry, par
 	}
 
 	for _, id := range ids {
-		if err := entry.Importer(id.ID); err != nil {
+		if err := entry.Importer(id.ID, false); err != nil {
 			return errors.Wrapf(err, "failed to import wordpress %s; id=%d", entry.Taxonomy, id.ID)
 		}
 

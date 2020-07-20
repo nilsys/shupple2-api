@@ -14,6 +14,7 @@ import (
 type (
 	AreaCategoryCommandService interface {
 		ImportFromWordpress(wpCategory *wordpress.Category) (*entity.AreaCategory, error)
+		Delete(id int) error
 	}
 
 	AreaCategoryCommandServiceImpl struct {
@@ -29,6 +30,10 @@ var AreaCategoryCommandServiceSet = wire.NewSet(
 	wire.Struct(new(AreaCategoryCommandServiceImpl), "*"),
 	wire.Bind(new(AreaCategoryCommandService), new(*AreaCategoryCommandServiceImpl)),
 )
+
+func (r *AreaCategoryCommandServiceImpl) Delete(id int) error {
+	return r.AreaCategoryCommandRepository.DeleteByID(id)
+}
 
 func (r *AreaCategoryCommandServiceImpl) ImportFromWordpress(wpCategory *wordpress.Category) (*entity.AreaCategory, error) {
 	isAreaCategory, err := r.isAreaCategory(wpCategory)

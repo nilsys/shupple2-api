@@ -29,3 +29,9 @@ func (r *SpotCategoryCommandRepositoryImpl) Lock(c context.Context, id int) (*en
 func (r *SpotCategoryCommandRepositoryImpl) Store(c context.Context, spotCategory *entity.SpotCategory) error {
 	return errors.Wrap(r.DB(c).Save(spotCategory).Error, "failed to save spotCategory")
 }
+
+func (r *SpotCategoryCommandRepositoryImpl) DeleteByID(id int) error {
+	e := &entity.SpotCategory{}
+	e.ID = id
+	return errors.Wrapf(r.DB(context.Background()).Delete(e).Error, "failed to delete spot_category(id=%d)", id)
+}

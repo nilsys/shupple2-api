@@ -35,7 +35,7 @@ func (b *Batch) importWordpress(typ wordpress.EntityType) func(c *cli.Context) e
 				return errors.Wrap(err, "invalid id")
 			}
 
-			if err := b.WordpressCallbackService.Import(typ, id); err != nil {
+			if err := b.WordpressCallbackService.Import(typ, id, false); err != nil {
 				return errors.Wrapf(err, "failed to import %s(id=%d)", typ, id)
 			}
 		}

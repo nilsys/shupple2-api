@@ -11,6 +11,7 @@ type (
 	AreaCategoryCommandRepository interface {
 		Lock(c context.Context, id int) (*entity.AreaCategory, error)
 		Store(c context.Context, category *entity.AreaCategory) error
+		DeleteByID(id int) error
 	}
 
 	AreaCategoryQueryRepository interface {

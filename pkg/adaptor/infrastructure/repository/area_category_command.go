@@ -29,3 +29,9 @@ func (r *AreaCategoryCommandRepositoryImpl) Lock(c context.Context, id int) (*en
 func (r *AreaCategoryCommandRepositoryImpl) Store(c context.Context, areaCategory *entity.AreaCategory) error {
 	return errors.Wrap(r.DB(c).Save(areaCategory).Error, "failed to save areaCategory")
 }
+
+func (r *AreaCategoryCommandRepositoryImpl) DeleteByID(id int) error {
+	e := &entity.AreaCategory{}
+	e.ID = id
+	return errors.Wrapf(r.DB(context.Background()).Delete(e).Error, "failed to delete area_category(id=%d)", id)
+}

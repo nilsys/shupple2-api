@@ -9,13 +9,12 @@ import (
 
 type (
 	CategoryCommandService interface {
-		ImportFromWordpressByID(wordpressCategoryID int) error
+		ImportFromWordpressByID(wordpressCategoryID int, deleted bool) error
 	}
 
 	CategoryCommandServiceImpl struct {
 		AreaCategoryCommandService
 		ThemeCategoryCommandService
-		repository.AreaCategoryCommandRepository
 		repository.WordpressQueryRepository
 	}
 )
@@ -25,7 +24,17 @@ var CategoryCommandServiceSet = wire.NewSet(
 	wire.Bind(new(CategoryCommandService), new(*CategoryCommandServiceImpl)),
 )
 
-func (r *CategoryCommandServiceImpl) ImportFromWordpressByID(id int) error {
+func (r *CategoryCommandServiceImpl) ImportFromWordpressByID(id int, deleted bool) error {
+	if deleted {
+		if err := r.AreaCategoryCommandService.Delete(id); err != nil {
+			return errors.Wrap(err, "failed to delete wordpress category")
+		}
+		if err := r.ThemeCategoryCommandService.Delete(id); err != nil {
+			return errors.Wrap(err, "failed to delete wordpress category")
+		}
+		return nil
+	}
+
 	wpCategory, err := r.WordpressQueryRepository.FindCategoryByID(id)
 	if err != nil {
 		return errors.Wrapf(err, "failed to get wordpress category(id=%d)", id)

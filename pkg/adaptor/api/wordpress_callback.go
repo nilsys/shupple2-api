@@ -26,7 +26,7 @@ func (c *WordpressCallbackController) Import(ctx echo.Context) error {
 		return errors.Wrap(err, "invalid import wordpress entity input")
 	}
 
-	if err := c.WordpressCallbackService.Import(param.EntityType, param.ID); err != nil {
+	if err := c.WordpressCallbackService.Import(param.EntityType, param.ID, param.TermDeleted); err != nil {
 		return errors.Wrap(err, "failed to import wordpress entity")
 	}
 

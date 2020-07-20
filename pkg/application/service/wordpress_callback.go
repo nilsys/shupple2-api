@@ -7,10 +7,11 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 )
 
-// WordpressServiceに生やすとserviceの相互依存が発生し分かりにくそうなのでsreviceを分けた
+// WordpressServiceに生やすとserviceの相互依存が発生し分かりにくそうなのでserviceを分けた
 type (
 	WordpressCallbackService interface {
-		Import(entityType wordpress.EntityType, id int) error
+		// taxonomyのtermをdeleteする時は物理削除になるようで、削除後には削除したことすらわからなくなってしまうのでcallback引数で判定する
+		Import(entityType wordpress.EntityType, id int, termDeleted bool) error
 	}
 
 	WordpressCallbackServiceImpl struct {
@@ -32,7 +33,7 @@ var WordpressCallbackServiceSet = wire.NewSet(
 	wire.Bind(new(WordpressCallbackService), new(*WordpressCallbackServiceImpl)),
 )
 
-func (s *WordpressCallbackServiceImpl) Import(entityType wordpress.EntityType, id int) error {
+func (s *WordpressCallbackServiceImpl) Import(entityType wordpress.EntityType, id int, termDeleted bool) error {
 	var err error
 	switch entityType {
 	case wordpress.EntityTypeUser:
@@ -48,9 +49,9 @@ func (s *WordpressCallbackServiceImpl) Import(entityType wordpress.EntityType, i
 	case wordpress.EntityTypeFeature:
 		_, err = s.FeatureCommandService.ImportFromWordpressByID(id)
 	case wordpress.EntityTypeCategory:
-		err = s.CategoryCommandService.ImportFromWordpressByID(id)
+		err = s.CategoryCommandService.ImportFromWordpressByID(id, termDeleted)
 	case wordpress.EntityTypeLocationCat:
-		err = s.SpotCategoryCommandService.ImportFromWordpressByID(id)
+		err = s.SpotCategoryCommandService.ImportFromWordpressByID(id, termDeleted)
 	case wordpress.EntityTypeCfProject:
 		err = s.CfProjectCommandService.ImportFromWordpressByID(id)
 	case wordpress.EntityTypeCfReturnGift:

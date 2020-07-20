@@ -490,10 +490,9 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		TransactionService:             transactionServiceImpl,
 	}
 	categoryCommandServiceImpl := &service.CategoryCommandServiceImpl{
-		AreaCategoryCommandService:    areaCategoryCommandServiceImpl,
-		ThemeCategoryCommandService:   themeCategoryCommandServiceImpl,
-		AreaCategoryCommandRepository: areaCategoryCommandRepositoryImpl,
-		WordpressQueryRepository:      wordpressQueryRepositoryImpl,
+		AreaCategoryCommandService:  areaCategoryCommandServiceImpl,
+		ThemeCategoryCommandService: themeCategoryCommandServiceImpl,
+		WordpressQueryRepository:    wordpressQueryRepositoryImpl,
 	}
 	comicCommandRepositoryImpl := &repository.ComicCommandRepositoryImpl{
 		DAO: dao,

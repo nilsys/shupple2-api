@@ -35,6 +35,8 @@ var serviceSet = wire.NewSet(
 	service.UserQueryServiceSet,
 	service.UserCommandServiceSet,
 	service.ProvideAuthService,
+	service.CfProjectCommandServiceSet,
+	service.CfReturnGiftCommandServiceSet,
 )
 
 var domainServiceSet = wire.NewSet(

@@ -10,6 +10,7 @@ type (
 	SpotCategoryCommandRepository interface {
 		Lock(c context.Context, id int) (*entity.SpotCategory, error)
 		Store(c context.Context, spotCategory *entity.SpotCategory) error
+		DeleteByID(id int) error
 	}
 
 	SpotCategoryQueryRepository interface {

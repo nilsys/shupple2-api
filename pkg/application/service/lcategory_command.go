@@ -12,7 +12,7 @@ import (
 
 type (
 	SpotCategoryCommandService interface {
-		ImportFromWordpressByID(wordpressSpotCategoryID int) error
+		ImportFromWordpressByID(wordpressSpotCategoryID int, deleted bool) error
 	}
 
 	SpotCategoryCommandServiceImpl struct {
@@ -28,7 +28,11 @@ var SpotCategoryCommandServiceSet = wire.NewSet(
 	wire.Bind(new(SpotCategoryCommandService), new(*SpotCategoryCommandServiceImpl)),
 )
 
-func (r *SpotCategoryCommandServiceImpl) ImportFromWordpressByID(id int) error {
+func (r *SpotCategoryCommandServiceImpl) ImportFromWordpressByID(id int, deleted bool) error {
+	if deleted {
+		return errors.Wrap(r.SpotCategoryCommandRepository.DeleteByID(id), "failed to delete spot_category")
+	}
+
 	wpSpotCategory, err := r.WordpressQueryRepository.FindLocationCategoryByID(id)
 	if err != nil {
 		return errors.Wrapf(err, "failed to get wordpress spotCategory(id=%d)", id)

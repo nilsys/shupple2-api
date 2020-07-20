@@ -124,10 +124,9 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		TransactionService:             transactionServiceImpl,
 	}
 	categoryCommandServiceImpl := &service.CategoryCommandServiceImpl{
-		AreaCategoryCommandService:    areaCategoryCommandServiceImpl,
-		ThemeCategoryCommandService:   themeCategoryCommandServiceImpl,
-		AreaCategoryCommandRepository: areaCategoryCommandRepositoryImpl,
-		WordpressQueryRepository:      wordpressQueryRepositoryImpl,
+		AreaCategoryCommandService:  areaCategoryCommandServiceImpl,
+		ThemeCategoryCommandService: themeCategoryCommandServiceImpl,
+		WordpressQueryRepository:    wordpressQueryRepositoryImpl,
 	}
 	comicCommandRepositoryImpl := &repository.ComicCommandRepositoryImpl{
 		DAO: dao,
@@ -184,6 +183,24 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		WordpressService:         wordpressServiceImpl,
 		TransactionService:       transactionServiceImpl,
 	}
+	cfProjectCommandRepositoryImpl := &repository.CfProjectCommandRepositoryImpl{
+		DAO: dao,
+	}
+	cfProjectCommandServiceImpl := &service.CfProjectCommandServiceImpl{
+		CfProjectCommandRepository: cfProjectCommandRepositoryImpl,
+		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
+		WordpressService:           wordpressServiceImpl,
+		TransactionService:         transactionServiceImpl,
+	}
+	cfReturnGiftCommandRepositoryImpl := &repository.CfReturnGiftCommandRepositoryImpl{
+		DAO: dao,
+	}
+	cfReturnGiftCommandServiceImpl := &service.CfReturnGiftCommandServiceImpl{
+		CfReturnGiftCommandRepository: cfReturnGiftCommandRepositoryImpl,
+		WordpressQueryRepository:      wordpressQueryRepositoryImpl,
+		WordpressService:              wordpressServiceImpl,
+		TransactionService:            transactionServiceImpl,
+	}
 	wordpressCallbackServiceImpl := &service.WordpressCallbackServiceImpl{
 		UserCommandService:         userCommandServiceImpl,
 		CategoryCommandService:     categoryCommandServiceImpl,
@@ -193,6 +210,8 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		PostCommandService:         postCommandServiceImpl,
 		TouristSpotCommandService:  touristSpotCommandServiceImpl,
 		VlogCommandService:         vlogCommandServiceImpl,
+		CfProjectCommandService:    cfProjectCommandServiceImpl,
+		CfReturnGiftCommandService: cfReturnGiftCommandServiceImpl,
 	}
 	postQueryRepositoryImpl := &repository.PostQueryRepositoryImpl{
 		DB: db,
@@ -228,6 +247,6 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.SpotCategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.ProvideAuthService)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.SpotCategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.ProvideAuthService, service.CfProjectCommandServiceSet, service.CfReturnGiftCommandServiceSet)
 
 var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)

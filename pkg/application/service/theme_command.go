@@ -14,6 +14,7 @@ import (
 type (
 	ThemeCategoryCommandService interface {
 		ImportFromWordpress(wpCategory *wordpress.Category) (*entity.ThemeCategory, error)
+		Delete(id int) error
 	}
 
 	ThemeCategoryCommandServiceImpl struct {
@@ -29,6 +30,10 @@ var ThemeCategoryCommandServiceSet = wire.NewSet(
 	wire.Struct(new(ThemeCategoryCommandServiceImpl), "*"),
 	wire.Bind(new(ThemeCategoryCommandService), new(*ThemeCategoryCommandServiceImpl)),
 )
+
+func (r *ThemeCategoryCommandServiceImpl) Delete(id int) error {
+	return r.ThemeCategoryCommandRepository.DeleteByID(id)
+}
 
 func (r *ThemeCategoryCommandServiceImpl) ImportFromWordpress(wpCategory *wordpress.Category) (*entity.ThemeCategory, error) {
 	isThemeCategory, err := r.isThemeCategory(wpCategory)
