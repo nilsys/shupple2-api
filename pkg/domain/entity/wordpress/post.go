@@ -25,6 +25,7 @@ type Post struct {
 	Meta          PostMeta         `json:"meta"`
 	Categories    []int            `json:"categories"`
 	Tags          []int            `json:"tags"`
+	Attributes    PostAttributes   `json:"acf"`
 }
 
 type PostMeta struct {
@@ -33,11 +34,24 @@ type PostMeta struct {
 	IsAdsRemovedInPage bool   `json:"is_ads_removed_in_page"`
 }
 
+type PostAttributes struct {
+	CfProject *RelatedPost `json:"cf_project"`
+}
+
 func (p *PostMeta) UnmarshalJSON(body []byte) error {
 	if bytes.Equal(body, arrayJSONBytes) {
 		return nil
 	}
 
 	type Alias PostMeta
+	return errors.WithStack(json.Unmarshal(body, (*Alias)(p)))
+}
+
+func (p *PostAttributes) UnmarshalJSON(body []byte) error {
+	if bytes.Equal(body, arrayJSONBytes) {
+		return nil
+	}
+
+	type Alias PostAttributes
 	return errors.WithStack(json.Unmarshal(body, (*Alias)(p)))
 }

@@ -91,12 +91,18 @@ func (s *WordpressServiceImpl) PatchPost(post *entity.Post, wpPost *wordpress.Po
 		return errors.Wrap(err, "failed to split post categories")
 	}
 
+	var cfProjectID null.Int
+	if wpPost.Attributes.CfProject != nil {
+		cfProjectID = null.IntFrom(int64(wpPost.Attributes.CfProject.ID))
+	}
+
 	post.ID = wpPost.ID
 	post.UserID = user.ID
 	post.Slug = string(wpPost.Slug)
 	post.Thumbnail = thumbnail
 	post.Title = wpPost.Title.Rendered
 	post.TOC = toc
+	post.CfProjectID = cfProjectID
 	post.IsSticky = wpPost.Sticky
 	post.HideAds = wpPost.Meta.IsAdsRemovedInPage
 	post.SEOTitle = wpPost.Meta.SEOTitle

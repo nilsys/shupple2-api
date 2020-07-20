@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
+	"gopkg.in/guregu/null.v3"
 )
 
 type (
@@ -14,6 +15,7 @@ type (
 		Thumbnail      string
 		Title          string
 		TOC            string
+		CfProjectID    null.Int
 		IsSticky       bool
 		HideAds        bool
 		FavoriteCount  int
