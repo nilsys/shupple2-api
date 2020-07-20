@@ -36,6 +36,10 @@ type (
 		Href string `json:"href"`
 	}
 
+	RelatedPost struct {
+		ID int `json:"ID"`
+	}
+
 	URLEscapedString string
 
 	IntString int

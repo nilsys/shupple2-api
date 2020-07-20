@@ -20,6 +20,7 @@ func main() {
 	if err := run(); err != nil {
 		log.Fatal(err)
 	}
+	log.Println("teminated.")
 }
 
 type App struct {

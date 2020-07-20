@@ -42,7 +42,7 @@ type (
 	}
 
 	CfReturnGiftAttributes struct {
-		CfProject    int             `json:"cf_project"`
+		CfProject    RelatedPost     `json:"cf_project"`
 		SortOrder    IntString       `json:"sort_order"`
 		GiftType     GiftType        `json:"gift_type"`
 		Price        IntString       `json:"price"`

@@ -423,7 +423,7 @@ func (s *WordpressServiceImpl) NewCfReturnGift(wpCfReturnGift *wordpress.CfRetur
 	var cfReturnGift entity.CfReturnGift
 	cfReturnGift.CfReturnGiftTiny = entity.CfReturnGiftTiny{
 		ID:          wpCfReturnGift.ID,
-		CfProjectID: wpCfReturnGift.Attributes.CfProject,
+		CfProjectID: wpCfReturnGift.Attributes.CfProject.ID,
 		GiftType:    model.CfReturnGiftType(wpCfReturnGift.Attributes.GiftType),
 	}
 
