@@ -56,6 +56,17 @@ func (r *CfProjectQueryRepositoryImpl) FindSupportCommentListByCfProjectID(proje
 	return rows, nil
 }
 
+func (r *CfProjectQueryRepositoryImpl) FindNotSentAchievementNoticeMailAndAchievedListByLastID(lastID, limit int) (*entity.CfProjectDetailList, error) {
+	var rows entity.CfProjectDetailList
+	if err := r.DB(context.Background()).
+		Joins("INNER JOIN cf_project_snapshot ON cf_project.latest_snapshot_id = cf_project_snapshot.id").
+		Where("cf_project.id > ? AND cf_project_snapshot.goal_price <= cf_project.achieved_price AND cf_project.is_sent_achievement_mail = false", lastID).
+		Find(&rows.List).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find cf_project")
+	}
+	return &rows, nil
+}
+
 func (r *CfProjectQueryRepositoryImpl) buildFindList(query *query.FindCfProjectQuery) *gorm.DB {
 	q := r.DB(context.Background())
 

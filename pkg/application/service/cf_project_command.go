@@ -17,10 +17,13 @@ type (
 		ImportFromWordpressByID(id int) error
 		Favorite(user *entity.User, projectID int) error
 		Unfavorite(user *entity.User, projectID int) error
+		SendAchievementMailToSupporter(project *entity.CfProjectDetail) error
 	}
 
 	CfProjectCommandServiceImpl struct {
 		repository.CfProjectCommandRepository
+		repository.UserQueryRepository
+		repository.MailCommandRepository
 		repository.WordpressQueryRepository
 		WordpressService
 		TransactionService
@@ -81,6 +84,24 @@ func (s *CfProjectCommandServiceImpl) Unfavorite(user *entity.User, projectID in
 
 		if err := s.CfProjectCommandRepository.DecrementFavoriteCountByID(c, projectID); err != nil {
 			return errors.Wrap(err, "failed decrement favorite_count")
+		}
+
+		return nil
+	})
+}
+
+func (s *CfProjectCommandServiceImpl) SendAchievementMailToSupporter(project *entity.CfProjectDetail) error {
+	users, err := s.UserQueryRepository.FindCfProjectSupporterByCfProjectID(project.ID)
+	if err != nil {
+		return errors.Wrap(err, "failed find cf_project supporter")
+	}
+	return s.TransactionService.Do(func(ctx context.Context) error {
+		if err := s.CfProjectCommandRepository.MarkAsIsSentAchievementNoticeMail(project.ID); err != nil {
+			return errors.Wrap(err, "failed mark as sent")
+		}
+
+		if err := s.MailCommandRepository.SendTemplateMail(users.Emails(), entity.NewCfProjectAchievementNoticeForSupporter(project.ID, project.Snapshot.Title, project.User.Email)); err != nil {
+			return errors.Wrap(err, "failed send email from ses")
 		}
 
 		return nil

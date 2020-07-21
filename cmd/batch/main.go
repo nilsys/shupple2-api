@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/application/facade"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
@@ -20,16 +22,22 @@ const (
 )
 
 type Batch struct {
-	Config                   *config.Config
-	WordpressCallbackService service.WordpressCallbackService
-	PostQueryRepository      repository.PostQueryRepository
-	PostCommandRepository    repository.PostCommandRepository
-	ReviewQueryRepository    repository.ReviewQueryRepository
-	ReviewCommandRepository  repository.ReviewCommandRepository
-	VlogQueryRepository      repository.VlogQueryRepository
-	VlogCommandRepository    repository.VlogCommandRepository
-	FeatureQueryRepository   repository.FeatureQueryRepository
-	FeatureCommandRepository repository.FeatureCommandRepository
+	Config                     *config.Config
+	WordpressCallbackService   service.WordpressCallbackService
+	PostQueryRepository        repository.PostQueryRepository
+	PostCommandRepository      repository.PostCommandRepository
+	ReviewQueryRepository      repository.ReviewQueryRepository
+	ReviewCommandRepository    repository.ReviewCommandRepository
+	VlogQueryRepository        repository.VlogQueryRepository
+	VlogCommandRepository      repository.VlogCommandRepository
+	FeatureQueryRepository     repository.FeatureQueryRepository
+	FeatureCommandRepository   repository.FeatureCommandRepository
+	CfProjectQueryRepository   repository.CfProjectQueryRepository
+	CfProjectCommandRepository repository.CfProjectCommandRepository
+	UserQueryRepository        repository.UserQueryRepository
+	MailCommandRepository      repository.MailCommandRepository
+	CfProjectCommandService    service.CfProjectCommandService
+	CfProjectFacade            facade.CfProjectFacade
 }
 
 func main() {
@@ -58,6 +66,7 @@ func (b *Batch) Run(args []string) error {
 	app.Commands = []cli.Command{
 		b.cliImportWordpress(),
 		b.cliImportViews(),
+		b.cliCfProjectAchievementMail(),
 	}
 
 	return app.Run(args)

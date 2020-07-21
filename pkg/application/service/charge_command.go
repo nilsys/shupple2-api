@@ -133,7 +133,7 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 		}
 
 		// 応援コメントを保存
-		comment := entity.NewCfProjectSupportTable(user.ID, project.ID, cmd.Body)
+		comment := entity.NewCfProjectSupportTiny(user.ID, project.ID, cmd.Body)
 		if err := s.CfProjectCommandRepository.StoreSupportComment(c, comment); err != nil {
 			return errors.Wrap(err, "failed store support_comment")
 		}
@@ -152,8 +152,8 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 		}
 
 		// 決済確定メール送信
-		template := entity.NewThanksPurchaseTemplate(projectOwner.Name, gifts.OnEmailDescription(), charge.ID, util.WithComma(price), address.Email, address.FullAddress(), user.Name)
-		if err := s.MailCommandRepository.SendTemplateMail(address.Email, template); err != nil {
+		template := entity.NewThanksPurchaseTemplate(projectOwner.Email, gifts.OnEmailDescription(), charge.ID, util.WithComma(price), address.Email, address.FullAddress(), user.Name)
+		if err := s.MailCommandRepository.SendTemplateMail([]string{address.Email}, template); err != nil {
 			return errors.Wrap(err, "failed send email from ses")
 		}
 

@@ -93,7 +93,7 @@ func (c Converters) ConvertListFavoriteMediaUserToQuery(param *input.ListFavorit
  * i -> o
  */
 
-func (c Converters) ConvertUserTableListToOutput(users []*entity.UserTable) []*output.UserSummary {
+func (c Converters) ConvertUserTableListToOutput(users []*entity.UserTiny) []*output.UserSummary {
 	res := make([]*output.UserSummary, len(users))
 
 	for i, user := range users {
@@ -120,7 +120,7 @@ func (c Converters) ConvertUsersToUserSummaryList(users []*entity.User) []*outpu
 	return followUsers
 }
 
-func (c Converters) convertUserTableToOutput(user *entity.UserTable) *output.UserSummary {
+func (c Converters) convertUserTableToOutput(user *entity.UserTiny) *output.UserSummary {
 	return &output.UserSummary{
 		ID:      user.ID,
 		UID:     user.UID,

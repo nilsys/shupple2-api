@@ -74,6 +74,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	cfProjectCommandRepositoryImpl := &repository.CfProjectCommandRepositoryImpl{
 		DAO: dao,
 	}
+	mailCommandRepository := repository.ProvideMailer(configConfig, session)
 	wordpressQueryRepositoryImpl := repository.NewWordpressQueryRepositoryImpl(configConfig)
 	areaCategoryQueryRepositoryImpl := &repository.AreaCategoryQueryRepositoryImpl{
 		DB: db,
@@ -107,6 +108,8 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	}
 	cfProjectCommandServiceImpl := &service.CfProjectCommandServiceImpl{
 		CfProjectCommandRepository: cfProjectCommandRepositoryImpl,
+		UserQueryRepository:        userQueryRepositoryImpl,
+		MailCommandRepository:      mailCommandRepository,
 		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
 		WordpressService:           wordpressServiceImpl,
 		TransactionService:         transactionServiceImpl,
@@ -171,7 +174,6 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	cfReturnGiftCommandRepositoryImpl := &repository.CfReturnGiftCommandRepositoryImpl{
 		DAO: dao,
 	}
-	mailCommandRepository := repository.ProvideMailer(configConfig, session)
 	chargeCommandServiceImpl := &service.ChargeCommandServiceImpl{
 		PaymentCommandRepository:      paymentCommandRepositoryImpl,
 		CardQueryRepository:           cardQueryRepositoryImpl,

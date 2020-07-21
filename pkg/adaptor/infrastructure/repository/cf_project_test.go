@@ -45,9 +45,9 @@ var _ = Describe("CfProjectRepositoryImpl", func() {
 				Expect(commandRepo.Store(newInserted)).To(Succeed())
 
 				var count int
-				Expect(db.Model(&entity.CfProjectTable{}).Count(&count).Error).To(Succeed())
+				Expect(db.Model(&entity.CfProjectTiny{}).Count(&count).Error).To(Succeed())
 				Expect(count).To(Equal(2))
-				Expect(db.Model(&entity.CfProjectSnapshotTable{}).Count(&count).Error).To(Succeed())
+				Expect(db.Model(&entity.CfProjectSnapshotTiny{}).Count(&count).Error).To(Succeed())
 				Expect(count).To(Equal(2))
 
 				actual, err := findCfProjectByID(newInsertedID)
@@ -70,9 +70,9 @@ var _ = Describe("CfProjectRepositoryImpl", func() {
 				Expect(commandRepo.Store(base)).To(Succeed())
 
 				var count int
-				Expect(db.Model(&entity.CfProjectTable{}).Count(&count).Error).To(Succeed())
+				Expect(db.Model(&entity.CfProjectTiny{}).Count(&count).Error).To(Succeed())
 				Expect(count).To(Equal(1))
-				Expect(db.Model(&entity.CfProjectSnapshotTable{}).Count(&count).Error).To(Succeed())
+				Expect(db.Model(&entity.CfProjectSnapshotTiny{}).Count(&count).Error).To(Succeed())
 				Expect(count).To(Equal(2))
 
 				actual, err := findCfProjectByID(cfProjectID)
@@ -108,7 +108,7 @@ var _ = Describe("CfProjectRepositoryImpl", func() {
 
 			expect := newSupportComment(cfProjectCommentID, userID, cfProjectID)
 
-			var actual entity.CfProjectSupportCommentTable
+			var actual entity.CfProjectSupportCommentTiny
 			err = db.Find(&actual, cfProjectCommentID).Error
 			Expect(err).To(Succeed())
 
@@ -147,12 +147,12 @@ var _ = Describe("CfProjectRepositoryImpl", func() {
 
 func newCfProject(id, userID int, thumbnails []string, areaCategoryIDs []int, themeCategoryIDs []int) *entity.CfProject {
 	cfProject := &entity.CfProject{
-		CfProjectTable: entity.CfProjectTable{
+		CfProjectTiny: entity.CfProjectTiny{
 			ID:     id,
 			UserID: userID,
 		},
 		Snapshot: entity.CfProjectSnapshot{
-			CfProjectSnapshotTable: entity.CfProjectSnapshotTable{
+			CfProjectSnapshotTiny: entity.CfProjectSnapshotTiny{
 				CfProjectID: id,
 				Deadline:    sampleTime,
 			},
@@ -165,8 +165,8 @@ func newCfProject(id, userID int, thumbnails []string, areaCategoryIDs []int, th
 	return cfProject
 }
 
-func newSupportComment(id, userID, projectID int) *entity.CfProjectSupportCommentTable {
-	return &entity.CfProjectSupportCommentTable{
+func newSupportComment(id, userID, projectID int) *entity.CfProjectSupportCommentTiny {
+	return &entity.CfProjectSupportCommentTiny{
 		ID:          id,
 		UserID:      userID,
 		CfProjectID: projectID,

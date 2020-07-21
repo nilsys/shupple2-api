@@ -7,17 +7,18 @@ import (
 )
 
 type (
-	CfProjectTable struct {
-		ID                  int `gorm:"primary_key"`
-		UserID              int
-		LatestSnapshotID    null.Int
-		SupportCommentCount int // == SupporterCount
-		FavoriteCount       int
-		AchievedPrice       int
+	CfProjectTiny struct {
+		ID                     int `gorm:"primary_key"`
+		UserID                 int
+		LatestSnapshotID       null.Int
+		SupportCommentCount    int // == SupporterCount
+		FavoriteCount          int
+		AchievedPrice          int
+		IsSentAchievementEmail bool
 		Times
 	}
 
-	CfProjectSnapshotTable struct {
+	CfProjectSnapshotTiny struct {
 		SnapshotID  int `gorm:"column:id;primary_key"`
 		CfProjectID int
 		UserID      int
@@ -50,13 +51,13 @@ type (
 	}
 
 	CfProjectSnapshot struct {
-		CfProjectSnapshotTable
+		CfProjectSnapshotTiny
 		Thumbnails       []*CfProjectSnapshotThumbnail     `gorm:"foreignkey:CfProjectSnapshotID;association_foreignkey:SnapshotID"`
 		AreaCategoryIDs  []*CfProjectSnapshotAreaCategory  `gorm:"foreignkey:CfProjectSnapshotID;association_foreignkey:SnapshotID"`
 		ThemeCategoryIDs []*CfProjectSnapshotThemeCategory `gorm:"foreignkey:CfProjectSnapshotID;association_foreignkey:SnapshotID"`
 	}
 
-	CfProjectSupportCommentTable struct {
+	CfProjectSupportCommentTiny struct {
 		ID          int `gorm:"primary_key"`
 		UserID      int
 		CfProjectID int
@@ -65,25 +66,25 @@ type (
 	}
 
 	CfProject struct {
-		CfProjectTable
+		CfProjectTiny
 		Snapshot CfProjectSnapshot
 	}
 
 	CfProjectDetail struct {
-		CfProjectTable
+		CfProjectTiny
 		Snapshot *CfProjectSnapshotDetail `gorm:"foreignkey:ID;association_foreignkey:LatestSnapshotID"`
 		User     *User                    `gorm:"foreignkey:ID;association_foreignkey:UserID"`
 	}
 
 	CfProjectSnapshotDetail struct {
-		CfProjectSnapshotTable
+		CfProjectSnapshotTiny
 		Thumbnails      []*CfProjectSnapshotThumbnail `gorm:"foreignkey:CfProjectSnapshotID;association_foreignkey:SnapshotID"`
 		AreaCategories  []*AreaCategory               `gorm:"many2many:cf_project_snapshot_area_category;jointable_foreignkey:cf_project_snapshot_id;"`
 		ThemeCategories []*ThemeCategory              `gorm:"many2many:cf_project_snapshot_theme_category;jointable_foreignkey:cf_project_snapshot_id;"`
 	}
 
 	CfProjectSupportComment struct {
-		CfProjectSupportCommentTable
+		CfProjectSupportCommentTiny
 		User *User `gorm:"foreignkey:ID;association_foreignkey:UserID"`
 	}
 
@@ -106,9 +107,8 @@ func (c *CfProjectDetailList) ToIDMap() map[int]*CfProjectDetail {
 	return result
 }
 
-// 名前おかしい(そもそもentityの名前がおかしい)
-func NewCfProjectSupportTable(userID, projectID int, body string) *CfProjectSupportCommentTable {
-	return &CfProjectSupportCommentTable{
+func NewCfProjectSupportTiny(userID, projectID int, body string) *CfProjectSupportCommentTiny {
+	return &CfProjectSupportCommentTiny{
 		UserID:      userID,
 		CfProjectID: projectID,
 		Body:        body,
@@ -122,11 +122,11 @@ func NewUserFavoriteCfProject(userID, projectID int) *UserFavoriteCfProject {
 	}
 }
 
-func (c *CfProjectTable) TableName() string {
+func (c *CfProjectTiny) TableName() string {
 	return "cf_project"
 }
 
-func (c *CfProjectSnapshotTable) TableName() string {
+func (c *CfProjectSnapshotTiny) TableName() string {
 	return "cf_project_snapshot"
 }
 
@@ -141,7 +141,7 @@ func (p *CfProjectSnapshot) SetThumbnails(thumbnails []string) {
 	}
 }
 
-func (c *CfProjectSupportCommentTable) TableName() string {
+func (c *CfProjectSupportCommentTiny) TableName() string {
 	return "cf_project_support_comment"
 }
 

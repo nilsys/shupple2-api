@@ -36,7 +36,7 @@ type (
 		Times
 	}
 
-	UserTable struct {
+	UserTiny struct {
 		ID              int `gorm:"primary_key"`
 		UID             string
 		CognitoID       null.String
@@ -57,6 +57,10 @@ type (
 		YoutubeURL      string
 		LivingArea      string
 		Times
+	}
+
+	UserTinyList struct {
+		List []*UserTiny
 	}
 
 	OptionalUser struct {
@@ -152,7 +156,7 @@ func (u *User) HeaderURL(filesURL config.URL) string {
 	return filesURL.String()
 }
 
-func (u *UserTable) AvatarURL(filesURL config.URL) string {
+func (u *UserTiny) AvatarURL(filesURL config.URL) string {
 	if u.HeaderUUID == "" {
 		return ""
 	}
@@ -162,6 +166,14 @@ func (u *UserTable) AvatarURL(filesURL config.URL) string {
 
 func (u *User) IsSelfID(id int) bool {
 	return u.ID == id
+}
+
+func (u *UserTinyList) Emails() []string {
+	resolve := make([]string, len(u.List))
+	for i, user := range u.List {
+		resolve[i] = user.Email
+	}
+	return resolve
 }
 
 func NewUserFollowing(userID, targetID int) *UserFollowing {
@@ -185,7 +197,7 @@ func NewUserFollowHashtag(userID, hashtagID int) *UserFollowHashtag {
 	}
 }
 
-func (u *UserTable) TableName() string {
+func (u *UserTiny) TableName() string {
 	return "user"
 }
 

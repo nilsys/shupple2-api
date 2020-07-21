@@ -95,7 +95,7 @@ ENUM(ReservedTicket = 1, Other)
 type CfReturnGiftType int
 
 /*
-ENUM(ThanksPurchase = 1, ReserveRequestForOwner)
+ENUM(ThanksPurchase = 1, ReserveRequestForOwner, CfProjectAchievementNoticeForSupporter)
 */
 type MailTemplateName int
 

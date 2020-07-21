@@ -21,7 +21,7 @@ type (
 	}
 )
 
-func (r *MailCommandRepositoryImpl) SendTemplateMail(toEmail string, template entity.MailTemplate) error {
+func (r *MailCommandRepositoryImpl) SendTemplateMail(toEmails []string, template entity.MailTemplate) error {
 	data, err := template.ToJSON()
 	if err != nil {
 		return errors.Wrap(err, "failed marshal")
@@ -34,7 +34,7 @@ func (r *MailCommandRepositoryImpl) SendTemplateMail(toEmail string, template en
 	destinations := []*ses.BulkEmailDestination{
 		{
 			Destination: &ses.Destination{
-				ToAddresses: aws.StringSlice([]string{toEmail}),
+				ToAddresses: aws.StringSlice(toEmails),
 			},
 			ReplacementTemplateData: aws.String(data),
 		},
@@ -56,12 +56,12 @@ func (r *MailCommandRepositoryImpl) SendTemplateMail(toEmail string, template en
 	return nil
 }
 
-func (r *MailCommandRepositoryForLocalImpl) SendTemplateMail(toEmail string, template entity.MailTemplate) error {
+func (r *MailCommandRepositoryForLocalImpl) SendTemplateMail(toEmails []string, template entity.MailTemplate) error {
 	data, err := template.ToJSON()
 	if err != nil {
 		return errors.Wrap(err, "failed marshal")
 	}
 
-	logger.Info("Email", zap.String("toEmail", toEmail), zap.String("template", template.TemplateName().String()), zap.String("templateData", data))
+	logger.Info("Email", zap.Strings("toEmails", toEmails), zap.String("template", template.TemplateName().String()), zap.String("templateData", data))
 	return nil
 }

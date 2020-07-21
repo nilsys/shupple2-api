@@ -38,6 +38,12 @@ type (
 		AdultMemberCount      string `json:"adultmembercount"`
 		ChildMemberCount      string `json:"childmembercount"`
 	}
+
+	CfProjectAchievementNoticeForSupporter struct {
+		ProjectID         string `json:"projectid"`
+		ProjectTitle      string `json:"projecttitle"`
+		ProjectOwnerEmail string `json:"projectowneremail"`
+	}
 )
 
 func NewThanksPurchaseTemplate(ownerName, returnGiftDesc, chargeID, price, userEmail, userShippingAddress, userName string) *ThanksPurchaseTemplate {
@@ -70,6 +76,14 @@ func NewReserveRequestTemplate(fullName, fullNameKana, email, phonenum, chargeID
 
 func NewReserveRequestTemplateFromCfReserveRequest(req *CfReserveRequest, chargeID, giftDesc string) *ReserveRequestTemplateForOwnerTemplate {
 	return NewReserveRequestTemplate(req.FullNameMailFmt(), req.FullNameKanaMailFmt(), req.Email, req.PhoneNumber, chargeID, giftDesc, req.Checkin, req.Checkout, strconv.Itoa(req.StayDays), strconv.Itoa(req.AdultMemberCount), strconv.Itoa(req.ChildMemberCount))
+}
+
+func NewCfProjectAchievementNoticeForSupporter(cfProjectID int, cfProjectTitle, cfProjectOwnerEmail string) *CfProjectAchievementNoticeForSupporter {
+	return &CfProjectAchievementNoticeForSupporter{
+		ProjectID:         strconv.Itoa(cfProjectID),
+		ProjectTitle:      cfProjectTitle,
+		ProjectOwnerEmail: cfProjectOwnerEmail,
+	}
 }
 
 func (t *ThanksPurchaseTemplate) TemplateName() model.MailTemplateName {
@@ -107,6 +121,27 @@ func (t *ReserveRequestTemplateForOwnerTemplate) DefaultData() (string, error) {
 }
 
 func (t *ReserveRequestTemplateForOwnerTemplate) ToJSON() (string, error) {
+	bytes, err := json.Marshal(t)
+	if err != nil {
+		return "", errors.Wrap(err, "failed marshal")
+	}
+	return string(bytes), nil
+}
+
+func (t *CfProjectAchievementNoticeForSupporter) TemplateName() model.MailTemplateName {
+	return model.MailTemplateNameCfProjectAchievementNoticeForSupporter
+}
+
+func (t *CfProjectAchievementNoticeForSupporter) DefaultData() (string, error) {
+	s := CfProjectAchievementNoticeForSupporter{}
+	bytes, err := json.Marshal(s)
+	if err != nil {
+		return "", errors.Wrap(err, "failed marshal")
+	}
+	return string(bytes), nil
+}
+
+func (t *CfProjectAchievementNoticeForSupporter) ToJSON() (string, error) {
 	bytes, err := json.Marshal(t)
 	if err != nil {
 		return "", errors.Wrap(err, "failed marshal")

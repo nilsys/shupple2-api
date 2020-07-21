@@ -5,6 +5,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
+	"github.com/stayway-corp/stayway-media-api/pkg/application/facade"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	domain_service "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
@@ -34,9 +35,13 @@ var serviceSet = wire.NewSet(
 	service.WordpressCallbackServiceSet,
 	service.UserQueryServiceSet,
 	service.UserCommandServiceSet,
-	service.ProvideAuthService,
 	service.CfProjectCommandServiceSet,
 	service.CfReturnGiftCommandServiceSet,
+	service.ProvideAuthService,
+)
+
+var facadeSet = wire.NewSet(
+	facade.CfProjectFacadeSet,
 )
 
 var domainServiceSet = wire.NewSet(
@@ -50,6 +55,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		config.GetConfig,
 		wire.FieldsOf(new(*config.Config), "AWS"),
 		serviceSet,
+		facadeSet,
 		domainServiceSet,
 		repository.RepositoriesSet,
 		repository.ProvideS3Uploader,

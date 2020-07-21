@@ -9,6 +9,7 @@ import (
 	"github.com/google/wire"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
+	"github.com/stayway-corp/stayway-media-api/pkg/application/facade"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	service2 "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
@@ -186,8 +187,11 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	cfProjectCommandRepositoryImpl := &repository.CfProjectCommandRepositoryImpl{
 		DAO: dao,
 	}
+	mailCommandRepository := repository.ProvideMailer(configConfig, session)
 	cfProjectCommandServiceImpl := &service.CfProjectCommandServiceImpl{
 		CfProjectCommandRepository: cfProjectCommandRepositoryImpl,
+		UserQueryRepository:        userQueryRepositoryImpl,
+		MailCommandRepository:      mailCommandRepository,
 		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
 		WordpressService:           wordpressServiceImpl,
 		TransactionService:         transactionServiceImpl,
@@ -230,23 +234,38 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	featureQueryRepositoryImpl := &repository.FeatureQueryRepositoryImpl{
 		DB: db,
 	}
+	cfProjectQueryRepositoryImpl := &repository.CfProjectQueryRepositoryImpl{
+		DAO: dao,
+	}
+	cfProjectFacadeImpl := &facade.CfProjectFacadeImpl{
+		CfProjectCommandService:  cfProjectCommandServiceImpl,
+		CfProjectQueryRepository: cfProjectQueryRepositoryImpl,
+	}
 	batch := &Batch{
-		Config:                   configConfig,
-		WordpressCallbackService: wordpressCallbackServiceImpl,
-		PostQueryRepository:      postQueryRepositoryImpl,
-		PostCommandRepository:    postCommandRepositoryImpl,
-		ReviewQueryRepository:    reviewQueryRepositoryImpl,
-		ReviewCommandRepository:  reviewCommandRepositoryImpl,
-		VlogQueryRepository:      vlogQueryRepositoryImpl,
-		VlogCommandRepository:    vlogCommandRepositoryImpl,
-		FeatureQueryRepository:   featureQueryRepositoryImpl,
-		FeatureCommandRepository: featureCommandRepositoryImpl,
+		Config:                     configConfig,
+		WordpressCallbackService:   wordpressCallbackServiceImpl,
+		PostQueryRepository:        postQueryRepositoryImpl,
+		PostCommandRepository:      postCommandRepositoryImpl,
+		ReviewQueryRepository:      reviewQueryRepositoryImpl,
+		ReviewCommandRepository:    reviewCommandRepositoryImpl,
+		VlogQueryRepository:        vlogQueryRepositoryImpl,
+		VlogCommandRepository:      vlogCommandRepositoryImpl,
+		FeatureQueryRepository:     featureQueryRepositoryImpl,
+		FeatureCommandRepository:   featureCommandRepositoryImpl,
+		CfProjectQueryRepository:   cfProjectQueryRepositoryImpl,
+		CfProjectCommandRepository: cfProjectCommandRepositoryImpl,
+		UserQueryRepository:        userQueryRepositoryImpl,
+		MailCommandRepository:      mailCommandRepository,
+		CfProjectCommandService:    cfProjectCommandServiceImpl,
+		CfProjectFacade:            cfProjectFacadeImpl,
 	}
 	return batch, nil
 }
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.SpotCategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.ProvideAuthService, service.CfProjectCommandServiceSet, service.CfReturnGiftCommandServiceSet)
+var serviceSet = wire.NewSet(service.PostQueryServiceSet, service.PostCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.CategoryQueryServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.WordpressServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.CategoryCommandServiceSet, service.SpotCategoryCommandServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.CfProjectCommandServiceSet, service.CfReturnGiftCommandServiceSet, service.ProvideAuthService)
+
+var facadeSet = wire.NewSet(facade.CfProjectFacadeSet)
 
 var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)

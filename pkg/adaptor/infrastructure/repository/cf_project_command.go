@@ -23,7 +23,7 @@ var CfProjectCommandRepositorySet = wire.NewSet(
 
 func (r *CfProjectCommandRepositoryImpl) Store(cfProject *entity.CfProject) error {
 	return Transaction(r.DB(context.Background()), func(db *gorm.DB) error {
-		if err := db.Set("gorm:insert_modifier", "IGNORE").Create(&cfProject.CfProjectTable).Error; err != nil {
+		if err := db.Set("gorm:insert_modifier", "IGNORE").Create(&cfProject.CfProjectTiny).Error; err != nil {
 			return errors.Wrap(err, "failed to insert cf_project")
 		}
 
@@ -55,7 +55,7 @@ func (r *CfProjectCommandRepositoryImpl) StoreUserFavoriteCfProject(c context.Co
 	return nil
 }
 
-func (r *CfProjectCommandRepositoryImpl) StoreSupportComment(c context.Context, comment *entity.CfProjectSupportCommentTable) error {
+func (r *CfProjectCommandRepositoryImpl) StoreSupportComment(c context.Context, comment *entity.CfProjectSupportCommentTiny) error {
 	if err := r.DB(c).Save(comment).Error; err != nil {
 		return errors.Wrap(err, "failed store cf_project_support_comment")
 	}
@@ -63,7 +63,7 @@ func (r *CfProjectCommandRepositoryImpl) StoreSupportComment(c context.Context, 
 }
 
 func (r *CfProjectCommandRepositoryImpl) UndeleteByID(c context.Context, id int) error {
-	e := &entity.CfProjectTable{}
+	e := &entity.CfProjectTiny{}
 	e.ID = id
 	return errors.Wrapf(
 		r.DB(c).Unscoped().Model(e).Update("deleted_at", gorm.Expr("NULL")).Error,
@@ -71,7 +71,7 @@ func (r *CfProjectCommandRepositoryImpl) UndeleteByID(c context.Context, id int)
 }
 
 func (r *CfProjectCommandRepositoryImpl) DeleteByID(id int) error {
-	return errors.Wrapf(r.DB(context.Background()).Delete(&entity.CfProjectTable{ID: id}).Error, "failed to delete cfproject(id=%d)", id)
+	return errors.Wrapf(r.DB(context.Background()).Delete(&entity.CfProjectTiny{ID: id}).Error, "failed to delete cfproject(id=%d)", id)
 }
 
 func (r *CfProjectCommandRepositoryImpl) DeleteUserFavoriteCfProject(c context.Context, fav *entity.UserFavoriteCfProject) error {
@@ -105,6 +105,13 @@ func (r *CfProjectCommandRepositoryImpl) IncrementSupportCommentCount(c context.
 func (r *CfProjectCommandRepositoryImpl) IncrementAchievedPrice(c context.Context, id, price int) error {
 	if err := r.DB(c).Exec("UPDATE cf_project SET achieved_price=achieved_price+? WHERE id = ?", price, id).Error; err != nil {
 		return errors.Wrap(err, "failed to increment cf_project.achieved_price")
+	}
+	return nil
+}
+
+func (r *CfProjectCommandRepositoryImpl) MarkAsIsSentAchievementNoticeMail(id int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE cf_project SET is_send_achievement_mail = true WHERE id = ?", id).Error; err != nil {
+		return errors.Wrap(err, "failed update is_send")
 	}
 	return nil
 }

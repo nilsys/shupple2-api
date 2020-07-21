@@ -398,12 +398,12 @@ func (s *WordpressServiceImpl) NewCfProject(wpCfProject *wordpress.CfProject) (*
 
 	var cfProject entity.CfProject
 
-	cfProject.CfProjectTable = entity.CfProjectTable{
+	cfProject.CfProjectTiny = entity.CfProjectTiny{
 		ID:     wpCfProject.ID,
 		UserID: user.ID,
 	}
 
-	cfProject.Snapshot.CfProjectSnapshotTable = entity.CfProjectSnapshotTable{
+	cfProject.Snapshot.CfProjectSnapshotTiny = entity.CfProjectSnapshotTiny{
 		CfProjectID: wpCfProject.ID,
 		UserID:      user.ID,
 		Title:       wpCfProject.Title.Rendered,
