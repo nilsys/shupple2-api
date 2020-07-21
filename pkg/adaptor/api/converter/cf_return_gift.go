@@ -6,7 +6,6 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/output"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
-	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
 func (c *Converters) ConvertCfReturnGiftListToOutput(gifts *entity.CfReturnGiftList, soldCountList *entity.CfReturnGiftSoldCountList) []*output.CfReturnGift {
@@ -30,7 +29,7 @@ func (c *Converters) convertCfReturnGiftToOutput(gift *entity.CfReturnGift, sold
 		Thumbnail:    gift.Snapshot.Thumbnail,
 		GiftType:     gift.GiftType,
 		Body:         gift.Snapshot.Body,
-		Price:        util.WithComma(gift.Snapshot.Price),
+		Price:        gift.Snapshot.Price,
 		IsCancelable: gift.Snapshot.IsCancelable,
 		Deadline:     deadline,
 		SoldCount:    soldCount,

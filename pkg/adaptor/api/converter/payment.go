@@ -8,7 +8,6 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
-	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
 
 func (c Converters) ConvertPaymentsToCmd(payments *input.CaptureCharge) *command.PaymentList {
@@ -52,7 +51,7 @@ func (c Converters) ConvertPaymentToOutput(payment *entity.Payment, card *payjp.
 		ID:                   payment.ID,
 		ShippingAddress:      c.ConvertShippingAddressToOutput(payment.ShippingAddress),
 		Card:                 c.ConvertCardToOutput(card),
-		TotalPrice:           util.WithComma(payment.TotalPrice),
+		TotalPrice:           payment.TotalPrice,
 		ChargeID:             payment.ChargeID,
 		PaymentCfReturnGifts: c.ConvertPaymentCfReturnGiftToOutput(payment.PaymentCfReturnGift),
 		OrderedAt:            model.TimeResponse(payment.CreatedAt),

@@ -9,7 +9,7 @@ type (
 		Thumbnail    string                 `json:"thumbnail"`
 		GiftType     model.CfReturnGiftType `json:"giftType"`
 		Body         string                 `json:"body"`
-		Price        string                 `json:"price"`
+		Price        int                    `json:"price"`
 		IsCancelable bool                   `json:"isCancelable"`
 		Deadline     *model.Date            `json:"deadline"`
 		SoldCount    int                    `json:"soldCount"`

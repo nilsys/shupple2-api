@@ -17,8 +17,8 @@ type (
 		Summary         string                `json:"summary"`
 		Thumbnail       string                `json:"thumbnail"`
 		Body            string                `json:"body"`
-		GoalPrice       string                `json:"goalPrice"`
-		AchievedPrice   string                `json:"achievedPrice"`
+		GoalPrice       int                   `json:"goalPrice"`
+		AchievedPrice   int                   `json:"achievedPrice"`
 		SupporterCount  int                   `json:"supporterCount"`
 		FavoriteCount   int                   `json:"favoriteCount"`
 		Creator         Creator               `json:"creator"`

@@ -2966,8 +2966,7 @@ components:
         shippingAddress:
           $ref: "#/components/schemas/ShippingAddress"
         totalPrice:
-          type: string
-          example: 1,000
+          type: integer
         chargeId:
           type: string
           example: ch_oiwr3o1023
@@ -3657,8 +3656,7 @@ components:
           description: 電話番号
           example: 080-2374-2754
         price:
-          type: string
-          description: 価格
+          type: integer
         instagramUrl:
           type: string
           description: インスタグラムURL
@@ -3750,8 +3748,7 @@ components:
           description: 電話番号
           example: 080-2374-2754
         price:
-          type: string
-          description: 価格
+          type: integer
         instagramUrl:
           type: string
           description: インスタグラムURL
@@ -4530,11 +4527,9 @@ components:
         body:
           type: string
         goalPrice:
-          type: string
-          example: 1,000
+          type: integer
         achievedPrice:
-          type: string
-          example: 1,000
+          type: integer
         deadLine:
           type: string
           format: date-time

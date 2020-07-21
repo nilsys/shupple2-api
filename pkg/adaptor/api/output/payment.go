@@ -9,7 +9,7 @@ type (
 		ID                   int                    `json:"id"`
 		ShippingAddress      *ShippingAddress       `json:"shippingAddress"`
 		Card                 *Card                  `json:"card"`
-		TotalPrice           string                 `json:"totalPrice"`
+		TotalPrice           int                    `json:"totalPrice"`
 		ChargeID             string                 `json:"chargeId"`
 		PaymentCfReturnGifts []*PaymentCfReturnGift `json:"paymentCfReturnGifts"`
 		OrderedAt            model.TimeResponse     `json:"orderedAt"`
