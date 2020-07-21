@@ -29,6 +29,7 @@ func (c Converters) ConvertFindPostListParamToQuery(param *input.ListPostParam) 
 		HashTag:                param.HashTag,
 		SortBy:                 param.SortBy,
 		Keyword:                param.Keyward,
+		CfProjectID:            param.CfProjectID,
 		Limit:                  param.GetLimit(),
 		OffSet:                 param.GetOffSet(),
 	}

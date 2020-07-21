@@ -1081,6 +1081,13 @@ paths:
             いずれか1つ以上必須
           schema:
             type: string
+        - in: query
+          name: cfProjectId
+          description: |
+            CfProjectId
+            いずれか1つ以上必須
+          schema:
+            type: string
         - $ref: "#/components/parameters/SortBy"
         - in: query
           name: q

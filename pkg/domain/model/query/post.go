@@ -21,6 +21,7 @@ type (
 		HashTag                string
 		SortBy                 model.MediaSortBy
 		Keyword                string
+		CfProjectID            int
 		Limit                  int
 		OffSet                 int
 	}

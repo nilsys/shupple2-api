@@ -243,6 +243,10 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))", query.SubSubAreaID)
 	}
 
+	if query.CfProjectID != 0 {
+		q = q.Where("post.cf_project_id  = ?", query.CfProjectID)
+	}
+
 	// 一つ上のエリアに紐づいた記事を返す
 	if query.ChildAreaID != 0 {
 		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT area_group FROM area_category WHERE area_id = ?))", query.ChildAreaID)
