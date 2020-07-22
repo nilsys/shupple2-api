@@ -61,7 +61,7 @@ func (s *ReviewCommandServiceImpl) StoreTouristSpotReview(review *entity.Review)
 
 		// 紐づくtourist_spotの平均値を更新
 		if err := s.TouristSpotCommandRepository.UpdateScoreByID(c, review.TouristSpotID.Int64); err != nil {
-			return errors.Wrap(err, "failed increment hashtag.score")
+			return errors.Wrap(err, "failed tourist_spot.rate")
 		}
 
 		return s.NoticeDomainService.Review(c, review)
@@ -88,6 +88,12 @@ func (s *ReviewCommandServiceImpl) UpdateReview(review *entity.Review, cmd *comm
 
 		if err := s.ReviewCommandRepository.StoreReview(c, review); err != nil {
 			return errors.Wrap(err, "failed store review")
+		}
+
+		if review.TouristSpotID.Valid {
+			if err := s.TouristSpotCommandRepository.UpdateScoreByID(c, review.TouristSpotID.Int64); err != nil {
+				return errors.Wrap(err, "failed update tourist_spot.rate")
+			}
 		}
 
 		// media(写真)に変更があった場合のみ
