@@ -22,7 +22,7 @@ import (
 
 type (
 	ChargeCommandService interface {
-		Capture(user *entity.User, cmd *command.PaymentList) error
+		Capture(user *entity.User, cmd *command.PaymentList) (*entity.CaptureResult, error)
 		Refund(user *entity.User, paymentID, cfReturnGiftID int) error
 	}
 
@@ -55,8 +55,10 @@ const (
 
 // 決済確定
 // 登録されている最新のカードで決済が行われる
-func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.PaymentList) error {
-	return s.TransactionService.Do(func(c context.Context) error {
+func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.PaymentList) (*entity.CaptureResult, error) {
+	resolve := &entity.CaptureResult{}
+
+	err := s.TransactionService.Do(func(c context.Context) error {
 		address, err := s.ShippingQueryRepository.FindLatestShippingAddressByUserID(c, user.ID)
 		if err != nil {
 			return errors.Wrap(err, "failed find latest")
@@ -166,8 +168,17 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 			return errors.Wrap(err, "failed send email from ses")
 		}
 
+		resolve.CfProjectID = project.ID
+		resolve.SupporterCount = project.SupportCommentCount + 1
+		resolve.AchievedPrice = project.AchievedPrice + price
+
 		return nil
 	})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed capture charge")
+	}
+
+	return resolve, nil
 }
 
 func (s *ChargeCommandServiceImpl) Refund(user *entity.User, paymentID, cfReturnGiftID int) error {

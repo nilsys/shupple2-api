@@ -27,11 +27,12 @@ func (c *ChargeCommandController) Capture(ctx echo.Context, user entity.User) er
 		return errors.Wrap(err, "invalid request body")
 	}
 
-	if err := c.ChargeCommandService.Capture(&user, c.ConvertPaymentsToCmd(i)); err != nil {
+	resolve, err := c.ChargeCommandService.Capture(&user, c.ConvertPaymentsToCmd(i))
+	if err != nil {
 		return errors.Wrap(err, "failed capture charge")
 	}
 
-	return ctx.JSON(http.StatusOK, "ok")
+	return ctx.JSON(http.StatusOK, resolve)
 }
 
 func (c *ChargeCommandController) Refund(ctx echo.Context, user entity.User) error {

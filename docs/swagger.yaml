@@ -2226,6 +2226,10 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaptureChargeResult"
   /payments/{id}/charge/refund:
     put:
       tags:
@@ -4006,10 +4010,6 @@ components:
           type: string
           description: 任意のurl
           example: https://www.creator.com
-    CategoryList:
-      type: array
-      items:
-        $ref: "#/components/schemas/Category"
     Category:
       type: object
       required:
@@ -4457,10 +4457,6 @@ components:
           type: boolean
           description: 次のページがあるか
           example: true
-    ShippingAddressList:
-      type: array
-      items:
-        $ref: "#/components/schemas/ShippingAddress"
     ShippingAddress:
       type: object
       properties:
@@ -4631,6 +4627,15 @@ components:
           type: integer
         deliveryDate:
           type: string
+    CaptureChargeResult:
+      type: object
+      properties:
+        cfProjectId:
+          type: integer
+        supporterCount:
+          type: integer
+        achievedPrice:
+          type: integer
     ReportReasonType:
       type: string
       enum:
