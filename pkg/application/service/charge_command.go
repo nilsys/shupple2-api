@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 
@@ -21,11 +22,13 @@ import (
 
 type (
 	ChargeCommandService interface {
-		CaptureCharge(user *entity.User, cmd *command.PaymentList) error
+		Capture(user *entity.User, cmd *command.PaymentList) error
+		Refund(user *entity.User, paymentID, cfReturnGiftID int) error
 	}
 
 	ChargeCommandServiceImpl struct {
 		repository.PaymentCommandRepository
+		repository.PaymentQueryRepository
 		repository.CardQueryRepository
 		repository.CfProjectQueryRepository
 		payjp.ChargeCommandRepository
@@ -44,9 +47,15 @@ var ChargeCommandServiceSet = wire.NewSet(
 	wire.Bind(new(ChargeCommandService), new(*ChargeCommandServiceImpl)),
 )
 
+const (
+	// 24h * 180days = 4230h
+	// https://pay.jp/docs/api/#%E6%94%AF%E6%89%95%E3%81%84%E6%83%85%E5%A0%B1%E3%82%92%E6%9B%B4%E6%96%B0
+	chargeRefundExpiredHour = 4320
+)
+
 // 決済確定
 // 登録されている最新のカードで決済が行われる
-func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command.PaymentList) error {
+func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.PaymentList) error {
 	return s.TransactionService.Do(func(c context.Context) error {
 		address, err := s.ShippingQueryRepository.FindLatestShippingAddressByUserID(c, user.ID)
 		if err != nil {
@@ -86,7 +95,7 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 		var price int
 		for i, payment := range cmd.List {
 			// 商品情報が更新されている時
-			if payment.ReturnGiftSnapshotID != int(giftIDMap[payment.ReturnGiftID].LatestSnapshotID.Int64) {
+			if int64(payment.ReturnGiftSnapshotID) != giftIDMap[payment.ReturnGiftID].LatestSnapshotID.Int64 {
 				return serror.New(nil, serror.CodeInvalidParam, "return_gift updated")
 			}
 
@@ -124,7 +133,7 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 		}
 
 		// 支払い情報を保存
-		payment := entity.NewPayment(user.ID, project.UserID, card.ID, address.ID, charge.ID, price)
+		payment := entity.NewPaymentTiny(user.ID, project.UserID, card.ID, address.ID, charge.ID, price)
 		if err := s.PaymentCommandRepository.Store(c, payment); err != nil {
 			return errors.Wrap(err, "failed store payment")
 		}
@@ -155,6 +164,46 @@ func (s *ChargeCommandServiceImpl) CaptureCharge(user *entity.User, cmd *command
 		template := entity.NewThanksPurchaseTemplate(projectOwner.Email, gifts.OnEmailDescription(), charge.ID, util.WithComma(price), address.Email, address.FullAddress(), user.Name)
 		if err := s.MailCommandRepository.SendTemplateMail([]string{address.Email}, template); err != nil {
 			return errors.Wrap(err, "failed send email from ses")
+		}
+
+		return nil
+	})
+}
+
+func (s *ChargeCommandServiceImpl) Refund(user *entity.User, paymentID, cfReturnGiftID int) error {
+	payment, err := s.PaymentQueryRepository.FindByID(paymentID)
+	if err != nil {
+		return errors.Wrap(err, "failed find payment")
+	}
+	if !user.IsSelfID(payment.UserID) {
+		return serror.New(nil, serror.CodeForbidden, "forbidden")
+	}
+
+	return s.TransactionService.Do(func(ctx context.Context) error {
+		paymentCfReturnGift, err := s.PaymentQueryRepository.LockPaymentCfReturnGift(ctx, payment.ID, cfReturnGiftID)
+		if err != nil {
+			return errors.Wrap(err, "failed find payment_cf_return_gift")
+		}
+
+		if !paymentCfReturnGift.CfReturnGiftSnapshot.IsCancelable || !paymentCfReturnGift.ResolveGiftTypeOtherStatus().CanTransit(model.PaymentCfReturnGiftOtherTypeStatusCanceled) {
+			return serror.New(nil, serror.CodeInvalidParam, "can't cancel")
+		}
+		if paymentCfReturnGift.CreatedAt.Add(chargeRefundExpiredHour * time.Hour).After(time.Now()) {
+			return serror.New(nil, serror.CodeInvalidParam, "expired")
+		}
+
+		if err := s.PaymentCommandRepository.MarkPaymentCfReturnGiftAsCancel(ctx, payment.ID, cfReturnGiftID); err != nil {
+			return errors.Wrap(err, "failed mark as cancel")
+		}
+
+		// projectの達成金額から減算
+		if err := s.CfProjectCommandRepository.DecrementAchievedPrice(ctx, payment.ID, paymentCfReturnGift.TotalPrice()); err != nil {
+			return errors.Wrap(err, "failed decrement achieved_price")
+		}
+
+		// 返金
+		if err := s.ChargeCommandRepository.Refund(payment.ChargeID, paymentCfReturnGift.TotalPrice()); err != nil {
+			return errors.Wrap(err, "failed refund charge")
 		}
 
 		return nil

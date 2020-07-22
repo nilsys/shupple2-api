@@ -17,8 +17,9 @@ const stackTraceDepth = 5
 
 type (
 	ErrorResponse struct {
-		Message string
-		Body    string
+		Status string
+		Error  string
+		Body   string
 	}
 
 	stackTracer interface {
@@ -40,8 +41,9 @@ func ErrorHandler(err error, ctx echo.Context) {
 
 	// TODO: メッセージどうするか
 	resp := ErrorResponse{
-		Message: http.StatusText(code),
-		Body:    err.Error(),
+		Status: http.StatusText(code),
+		Error:  err.(*serror.SError).Code.String(),
+		Body:   err.Error(),
 	}
 	if err := ctx.JSON(code, &resp); err != nil {
 		logger.Error(err.Error(), zap.Error(err))

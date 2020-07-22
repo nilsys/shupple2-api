@@ -168,6 +168,9 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	paymentCommandRepositoryImpl := &repository.PaymentCommandRepositoryImpl{
 		DAO: dao,
 	}
+	paymentQueryRepositoryImpl := &repository.PaymentQueryRepositoryImpl{
+		DAO: dao,
+	}
 	chargeCommandRepositoryImpl := &payjp.ChargeCommandRepositoryImpl{
 		PayjpClient: payjpService,
 	}
@@ -176,6 +179,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	}
 	chargeCommandServiceImpl := &service.ChargeCommandServiceImpl{
 		PaymentCommandRepository:      paymentCommandRepositoryImpl,
+		PaymentQueryRepository:        paymentQueryRepositoryImpl,
 		CardQueryRepository:           cardQueryRepositoryImpl,
 		CfProjectQueryRepository:      cfProjectQueryRepositoryImpl,
 		ChargeCommandRepository:       chargeCommandRepositoryImpl,
@@ -206,9 +210,6 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	cardCommandController := api.CardCommandController{
 		CardCommandService: cardCommandServiceImpl,
 		Converters:         converters,
-	}
-	paymentQueryRepositoryImpl := &repository.PaymentQueryRepositoryImpl{
-		DB: db,
 	}
 	paymentQueryServiceImpl := &service.PaymentQueryServiceImpl{
 		PaymentQueryRepository:   paymentQueryRepositoryImpl,

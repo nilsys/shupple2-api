@@ -12,6 +12,11 @@ type (
 		SupportCommentBody string   `json:"supportCommentBody"`
 	}
 
+	RefundCharge struct {
+		IDParam
+		CfReturnGiftID int `json:"cfReturnGiftId" validate:"required"`
+	}
+
 	ListPayment struct {
 		PerPage int `query:"perPage"`
 		Page    int `query:"page"`

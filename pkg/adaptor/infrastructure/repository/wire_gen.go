@@ -93,6 +93,12 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 	postQueryRepositoryImpl := &PostQueryRepositoryImpl{
 		DB: db,
 	}
+	paymentQueryRepositoryImpl := &PaymentQueryRepositoryImpl{
+		DAO: dao,
+	}
+	paymentCommandRepositoryImpl := &PaymentCommandRepositoryImpl{
+		DAO: dao,
+	}
 	aws := configConfig.AWS
 	userQueryRepositoryImpl := &UserQueryRepositoryImpl{
 		DB:         db,
@@ -147,6 +153,8 @@ func InitializeTest(configFilePath config.FilePath) (*Test, error) {
 		ShippingCommandRepositoryImpl:      shippingCommandRepositoryImpl,
 		PostCommandRepositoryImpl:          postCommandRepositoryImpl,
 		PostQueryRepositoryImpl:            postQueryRepositoryImpl,
+		PaymentQueryRepositoryImpl:         paymentQueryRepositoryImpl,
+		PaymentCommandRepositoryImpl:       paymentCommandRepositoryImpl,
 		UserQueryRepositoryImpl:            userQueryRepositoryImpl,
 		UserCommandRepositoryImpl:          userCommandRepositoryImpl,
 		VlogCommandRepositoryImpl:          vlogCommandRepositoryImpl,
@@ -185,6 +193,8 @@ type Test struct {
 	*ShippingCommandRepositoryImpl
 	*PostCommandRepositoryImpl
 	*PostQueryRepositoryImpl
+	*PaymentQueryRepositoryImpl
+	*PaymentCommandRepositoryImpl
 	*UserQueryRepositoryImpl
 	*UserCommandRepositoryImpl
 	*VlogCommandRepositoryImpl

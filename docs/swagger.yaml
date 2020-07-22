@@ -2226,6 +2226,29 @@ paths:
       responses:
         "200":
           description: OK
+  /payments/{id}/charge/refund:
+    put:
+      tags:
+        - payment
+      summary: 購入キャンセル
+      description: |
+        個数指定はできない
+        返金可能な期限は売上作成より180日以内
+        ＊返金が行われる
+      requestBody:
+        $ref: "#/components/requestBodies/RefundCaptureRequest"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: paymnetId
+          schema:
+            type: integer
+      security:
+        - iDPCognito: []
+      responses:
+        "204":
+          description: nocontent
   /payments:
     get:
       tags:
@@ -2262,6 +2285,7 @@ paths:
         - name: id
           in: path
           required: true
+          description: paymnetId
           schema:
             type: integer
       requestBody:
@@ -2556,6 +2580,11 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CfReserveRequest"
+    RefundCaptureRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CfReturnGiftID"
   securitySchemes:
     iDPCognito:
       in: header
@@ -2942,6 +2971,11 @@ components:
           description: |
             応援コメント
           example: 応援しています！
+    CfReturnGiftID:
+      type: object
+      properties:
+        cfReturnGiftId:
+          type: integer
     PaymentRequest:
       type: object
       properties:

@@ -109,6 +109,13 @@ func (r *CfProjectCommandRepositoryImpl) IncrementAchievedPrice(c context.Contex
 	return nil
 }
 
+func (r *CfProjectCommandRepositoryImpl) DecrementAchievedPrice(c context.Context, id, price int) error {
+	if err := r.DB(c).Exec("UPDATE cf_project SET achieved_price=achieved_price-? WHERE id = ?", price, id).Error; err != nil {
+		return errors.Wrap(err, "failed to decrement cf_project.achieved_price")
+	}
+	return nil
+}
+
 func (r *CfProjectCommandRepositoryImpl) MarkAsIsSentAchievementNoticeMail(id int) error {
 	if err := r.DB(context.Background()).Exec("UPDATE cf_project SET is_sent_achievement_mail = true WHERE id = ?", id).Error; err != nil {
 		return errors.Wrap(err, "failed update is_sent_achievement_mail")

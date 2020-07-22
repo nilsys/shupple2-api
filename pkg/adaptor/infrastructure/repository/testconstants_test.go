@@ -3,23 +3,27 @@ package repository
 import "time"
 
 const (
-	userID             = 101
-	postID             = 111
-	touristSpotID      = 121
-	comicID            = 131
-	vlogID             = 141
-	featureID          = 151
-	areaCategoryID     = 161
-	themeCategoryID    = 171
-	spotCategoryID     = 181
-	reviewID           = 191
-	hashtagID          = 201
-	innID              = 211
-	shippingAddressID  = 221
-	cfProjectID        = 231
-	cfProjectCommentID = 241
-	cfReturnGiftID     = 251
-	metasearchAreaID   = 261
+	userID                 = 101
+	postID                 = 111
+	touristSpotID          = 121
+	comicID                = 131
+	vlogID                 = 141
+	featureID              = 151
+	areaCategoryID         = 161
+	themeCategoryID        = 171
+	spotCategoryID         = 181
+	reviewID               = 191
+	hashtagID              = 201
+	innID                  = 211
+	shippingAddressID      = 221
+	cfProjectID            = 231
+	cfProjectCommentID     = 241
+	metasearchAreaID       = 251
+	cardID                 = 261
+	paymentID              = 271
+	cfReturnGiftID         = 281
+	cfReturnGiftSnapshotID = 291
+	cfProjectSnapshotID    = 301
 )
 
 var (

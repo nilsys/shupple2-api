@@ -21,6 +21,7 @@ type (
 		StoreSupportComment(c context.Context, comment *entity.CfProjectSupportCommentTiny) error
 		IncrementSupportCommentCount(c context.Context, id int) error
 		IncrementAchievedPrice(c context.Context, id, price int) error
+		DecrementAchievedPrice(c context.Context, id, price int) error
 		MarkAsIsSentAchievementNoticeMail(id int) error
 	}
 

@@ -49,10 +49,10 @@ func (s *PaymentCommandServiceImpl) ReservePaymentCfReturnGift(user *entity.User
 		return serror.New(nil, serror.CodeInvalidParam, "not reserved ticket")
 	}
 
-	if deadline := paymentCfReturnGift.CfReturnGiftSnapshot.Deadline; deadline.Valid && deadline.Time.After(time.Now()) {
+	if deadline := paymentCfReturnGift.CfReturnGiftSnapshot.Deadline; deadline.Valid && deadline.Time.Before(time.Now()) {
 		return serror.New(nil, serror.CodeInvalidParam, "expired")
 	}
-	if !paymentCfReturnGift.GiftTypeReservedTicketStatus.CanTransit(model.PaymentCfReturnGiftReservedTicketTypeStatusReserved) {
+	if !paymentCfReturnGift.ResolveGiftTypeReservedTicketStatus().CanTransit(model.PaymentCfReturnGiftReservedTicketTypeStatusReserved) {
 		return serror.New(nil, serror.CodeInvalidParam, "can't transit")
 	}
 

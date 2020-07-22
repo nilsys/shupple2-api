@@ -38,3 +38,12 @@ func (r *ChargeCommandRepositoryImpl) Capture(chargeID string) error {
 
 	return nil
 }
+
+// 部分返金
+func (r *ChargeCommandRepositoryImpl) Refund(chargeID string, amount int) error {
+	_, err := r.PayjpClient.Charge.Refund(chargeID, "customer cancel", amount)
+	if err != nil {
+		return errors.Wrap(err, "failed refund charge")
+	}
+	return nil
+}

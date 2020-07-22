@@ -34,6 +34,8 @@ type Test struct {
 	*ShippingCommandRepositoryImpl
 	*PostCommandRepositoryImpl
 	*PostQueryRepositoryImpl
+	*PaymentQueryRepositoryImpl
+	*PaymentCommandRepositoryImpl
 	*UserQueryRepositoryImpl
 	*UserCommandRepositoryImpl
 	*VlogCommandRepositoryImpl

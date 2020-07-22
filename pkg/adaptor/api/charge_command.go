@@ -21,15 +21,28 @@ var ChargeCommandControllerSet = wire.NewSet(
 	wire.Struct(new(ChargeCommandController), "*"),
 )
 
-func (c *ChargeCommandController) CaptureCharge(ctx echo.Context, user entity.User) error {
+func (c *ChargeCommandController) Capture(ctx echo.Context, user entity.User) error {
 	i := &input.CaptureCharge{}
 	if err := BindAndValidate(ctx, i); err != nil {
 		return errors.Wrap(err, "invalid request body")
 	}
 
-	if err := c.ChargeCommandService.CaptureCharge(&user, c.ConvertPaymentsToCmd(i)); err != nil {
+	if err := c.ChargeCommandService.Capture(&user, c.ConvertPaymentsToCmd(i)); err != nil {
 		return errors.Wrap(err, "failed capture charge")
 	}
 
 	return ctx.JSON(http.StatusOK, "ok")
+}
+
+func (c *ChargeCommandController) Refund(ctx echo.Context, user entity.User) error {
+	i := &input.RefundCharge{}
+	if err := BindAndValidate(ctx, i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	if err := c.ChargeCommandService.Refund(&user, i.ID, i.CfReturnGiftID); err != nil {
+		return errors.Wrap(err, "failed refund charge")
+	}
+
+	return ctx.NoContent(http.StatusNoContent)
 }

@@ -68,8 +68,8 @@ func (c Converters) ConvertPaymentCfReturnGiftToOutput(payment []*entity.Payment
 				// MEMO: ユーザーの購入一覧APIではsoldcount使わないので0入れてる。。
 			}, 0),
 			Amount:                       tiny.Amount,
-			GiftTypeOtherStatus:          tiny.GiftTypeOtherStatus,
-			GiftTypeReservedTicketStatus: tiny.GiftTypeReservedTicketStatus,
+			GiftTypeOtherStatus:          tiny.ResolveGiftTypeOtherStatus(),
+			GiftTypeReservedTicketStatus: tiny.ResolveGiftTypeReservedTicketStatus(),
 			OwnerConfirmedAt:             model.TimeResponse(*tiny.OwnerConfirmedAt),
 		}
 	}

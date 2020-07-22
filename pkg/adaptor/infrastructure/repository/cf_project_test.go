@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -163,6 +164,17 @@ func newCfProject(id, userID int, thumbnails []string, areaCategoryIDs []int, th
 	cfProject.Snapshot.SetAreaCategories(areaCategoryIDs)
 	cfProject.Snapshot.SetThemeCategories(themeCategoryIDs)
 	return cfProject
+}
+
+func newCfProjectSnapshotTiny() *entity.CfProjectSnapshotTiny {
+	snapshot := &entity.CfProjectSnapshotTiny{
+		SnapshotID:  cfProjectSnapshotID,
+		CfProjectID: cfProjectID,
+		UserID:      userID,
+		Deadline:    time.Date(2020, 7, 7, 0, 0, 0, 0, time.Local),
+	}
+	util.FillDummyString(snapshot, cfProjectSnapshotID)
+	return snapshot
 }
 
 func newSupportComment(id, userID, projectID int) *entity.CfProjectSupportCommentTiny {
