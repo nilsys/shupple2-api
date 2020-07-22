@@ -19,6 +19,10 @@ var TouristSpotCommandRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.TouristSpotCommandRepository), new(*TouristSpotCommandRepositoryImpl)),
 )
 
+const (
+	defaultTouristSpotRate = 3
+)
+
 func (r *TouristSpotCommandRepositoryImpl) Lock(c context.Context, id int) (*entity.TouristSpot, error) {
 	var row entity.TouristSpot
 	if err := r.LockDB(c).First(&row, id).Error; err != nil {
@@ -32,7 +36,7 @@ func (r *TouristSpotCommandRepositoryImpl) Store(c context.Context, touristSpot 
 }
 
 func (r *TouristSpotCommandRepositoryImpl) UpdateScoreByID(c context.Context, id int64) error {
-	if err := r.DB(c).Exec("UPDATE  tourist_spot SET rate = IFNULL((select AVG(score) from review where tourist_spot_id = ? AND deleted_at IS NULL), 0) WHERE id = ?;", id, id).Error; err != nil {
+	if err := r.DB(c).Exec("UPDATE tourist_spot SET rate = COALESCE( NULLIF( (select AVG(score) from review where tourist_spot_id = ? AND deleted_at IS NULL), 0), ?) WHERE id = ?;", id, defaultTouristSpotRate, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update tourist spot rate")
 	}
 	return nil
