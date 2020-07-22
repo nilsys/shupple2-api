@@ -32,7 +32,7 @@ func (r *TouristSpotCommandRepositoryImpl) Store(c context.Context, touristSpot 
 }
 
 func (r *TouristSpotCommandRepositoryImpl) UpdateScoreByID(c context.Context, id int64) error {
-	if err := r.DB(c).Exec("UPDATE  tourist_spot SET rate = (select AVG(score) from review where tourist_spot_id = ?) WHERE id = ?;", id, id).Error; err != nil {
+	if err := r.DB(c).Exec("UPDATE  tourist_spot SET rate = IFNULL((select AVG(score) from review where tourist_spot_id = ? AND deleted_at IS NULL), 0) WHERE id = ?;", id, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update tourist spot rate")
 	}
 	return nil

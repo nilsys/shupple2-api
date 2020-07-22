@@ -174,7 +174,6 @@ func (s *ReviewCommandServiceImpl) DeleteReview(review *entity.Review) error {
 				return errors.Wrap(err, "filed update tourist_spot.score")
 			}
 		}
-
 		return nil
 	})
 }
