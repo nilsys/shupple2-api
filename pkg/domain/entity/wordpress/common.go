@@ -83,6 +83,7 @@ func (t *UTCTime) UnmarshalText(data []byte) error {
 func (t *NullableJSTTime) UnmarshalText(data []byte) error {
 	if len(data) == 0 {
 		*t = NullableJSTTime(null.Time{})
+		return nil
 	}
 
 	parsed, err := time.ParseInLocation(timeJSONFormat, string(data), util.JSTLoc)

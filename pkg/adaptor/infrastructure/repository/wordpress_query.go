@@ -129,6 +129,18 @@ func (r *WordpressQueryRepositoryImpl) FindCfProjectByID(id int) (*wordpress.CfP
 	return &res, r.getSingleResource(cfProjectPath, id, &res)
 }
 
+func (r *WordpressQueryRepositoryImpl) FindCfReturnGiftsByCfProjectID(id int) ([]*wordpress.CfReturnGift, error) {
+	wURL := r.BaseURL
+	wURL.Path = path.Join(wURL.Path, cfReturnGiftPath)
+
+	q := wURL.Query()
+	q.Set("meta[cf_project]", fmt.Sprint(id))
+	wURL.RawQuery = q.Encode()
+
+	var result []*wordpress.CfReturnGift
+	return result, errors.Wrap(r.GetJSON(wURL.String(), &result), "failed to get cf_return_gifts associated to cf_project")
+}
+
 func (r *WordpressQueryRepositoryImpl) FindCfReturnGiftByID(id int) (*wordpress.CfReturnGift, error) {
 	var res wordpress.CfReturnGift
 	return &res, r.getSingleResource(cfReturnGiftPath, id, &res)

@@ -43,7 +43,7 @@ var _ = Describe("CfProjectRepositoryImpl", func() {
 			It("cf_projectとcf_project_snapshotが作成される", func() {
 				const newInsertedID = cfProjectID + 1
 				newInserted := newCfProject(newInsertedID, userID, nil, nil, nil)
-				Expect(commandRepo.Store(newInserted)).To(Succeed())
+				Expect(commandRepo.Store(context.Background(), newInserted)).To(Succeed())
 
 				var count int
 				Expect(db.Model(&entity.CfProjectTiny{}).Count(&count).Error).To(Succeed())
@@ -68,7 +68,7 @@ var _ = Describe("CfProjectRepositoryImpl", func() {
 			})
 
 			It("cf_projectのカラムは更新されず、cf_project_snapshotが挿入される。cf_project.latest_snapshot_idが更新される。", func() {
-				Expect(commandRepo.Store(base)).To(Succeed())
+				Expect(commandRepo.Store(context.Background(), base)).To(Succeed())
 
 				var count int
 				Expect(db.Model(&entity.CfProjectTiny{}).Count(&count).Error).To(Succeed())

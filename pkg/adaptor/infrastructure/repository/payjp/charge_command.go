@@ -3,7 +3,6 @@ package payjp
 import (
 	"github.com/google/wire"
 	"github.com/payjp/payjp-go/v1"
-	"github.com/pkg/errors"
 	payjp2 "github.com/stayway-corp/stayway-media-api/pkg/domain/repository/payjp"
 )
 
@@ -24,7 +23,7 @@ func (r *ChargeCommandRepositoryImpl) Create(customerID string, cardID string, a
 		Capture:        false,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "failed create pay")
+		return nil, handleError(err, "failed create pay")
 	}
 
 	return charge, nil
@@ -33,7 +32,7 @@ func (r *ChargeCommandRepositoryImpl) Create(customerID string, cardID string, a
 func (r *ChargeCommandRepositoryImpl) Capture(chargeID string) error {
 	_, err := r.PayjpClient.Charge.Capture(chargeID)
 	if err != nil {
-		return errors.Wrap(err, "failed capture pay")
+		return handleError(err, "failed capture pay")
 	}
 
 	return nil
@@ -43,7 +42,7 @@ func (r *ChargeCommandRepositoryImpl) Capture(chargeID string) error {
 func (r *ChargeCommandRepositoryImpl) Refund(chargeID string, amount int) error {
 	_, err := r.PayjpClient.Charge.Refund(chargeID, "customer cancel", amount)
 	if err != nil {
-		return errors.Wrap(err, "failed refund charge")
+		return handleError(err, "failed refund charge")
 	}
 	return nil
 }

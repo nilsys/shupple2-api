@@ -3,7 +3,6 @@ package payjp
 import (
 	"github.com/google/wire"
 	"github.com/payjp/payjp-go/v1"
-	"github.com/pkg/errors"
 	payjp2 "github.com/stayway-corp/stayway-media-api/pkg/domain/repository/payjp"
 )
 
@@ -22,7 +21,7 @@ func (r *CustomerCommandRepositoryImpl) StoreCustomer(customerID string, email s
 		ID:    customerID,
 	})
 	if err != nil {
-		return errors.Wrap(err, "failed create customer")
+		return handleError(err, "failed create customer")
 	}
 
 	return nil

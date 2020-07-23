@@ -20,23 +20,23 @@ var CfReturnGiftCommandRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.CfReturnGiftCommandRepository), new(*CfReturnGiftCommandRepositoryImpl)),
 )
 
-func (r *CfReturnGiftCommandRepositoryImpl) Store(cfReturnGift *entity.CfReturnGift) error {
-	return Transaction(r.DB(context.Background()), func(db *gorm.DB) error {
-		if err := db.Set("gorm:insert_modifier", "ignore").Create(&cfReturnGift.CfReturnGiftTiny).Error; err != nil {
-			return errors.Wrap(err, "failed to insert cf_return_gift")
-		}
+func (r *CfReturnGiftCommandRepositoryImpl) Store(c context.Context, cfReturnGift *entity.CfReturnGift) error {
+	db := r.DB(c)
 
-		cfReturnGift.Snapshot.SnapshotID = 0
-		if err := db.Create(&cfReturnGift.Snapshot).Error; err != nil {
-			return errors.Wrap(err, "failed to insert cf_return_gift_snapshot")
-		}
+	if err := db.Set("gorm:insert_modifier", "ignore").Create(&cfReturnGift.CfReturnGiftTiny).Error; err != nil {
+		return errors.Wrap(err, "failed to insert cf_return_gift")
+	}
 
-		if err := db.Exec("UPDATE cf_return_gift SET latest_snapshot_id = ? WHERE id = ?", cfReturnGift.Snapshot.SnapshotID, cfReturnGift.ID).Error; err != nil {
-			return errors.Wrap(err, "failed to update latest_snapshot_id")
-		}
+	cfReturnGift.Snapshot.SnapshotID = 0
+	if err := db.Create(&cfReturnGift.Snapshot).Error; err != nil {
+		return errors.Wrap(err, "failed to insert cf_return_gift_snapshot")
+	}
 
-		return nil
-	})
+	if err := db.Exec("UPDATE cf_return_gift SET latest_snapshot_id = ? WHERE id = ?", cfReturnGift.Snapshot.SnapshotID, cfReturnGift.ID).Error; err != nil {
+		return errors.Wrap(err, "failed to update latest_snapshot_id")
+	}
+
+	return nil
 }
 
 func (r *CfReturnGiftCommandRepositoryImpl) LockByIDs(c context.Context, ids []int) (*entity.CfReturnGiftList, error) {

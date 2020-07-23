@@ -54,11 +54,17 @@ func (s *CfProjectCommandServiceImpl) ImportFromWordpressByID(id int) error {
 		return errors.Wrap(err, "failed  to initialize cfProject")
 	}
 
-	if err := s.CfProjectCommandRepository.Store(cfProject); err != nil {
-		return errors.Wrap(err, "failed to store cfProject")
-	}
+	return s.TransactionService.Do(func(c context.Context) error {
+		if err := s.CfProjectCommandRepository.UndeleteByID(c, id); err != nil {
+			return errors.Wrapf(err, "failed to undelete cf_project(id=%d)", id)
+		}
 
-	return nil
+		if err := s.CfProjectCommandRepository.Store(c, cfProject); err != nil {
+			return errors.Wrap(err, "failed to store cfProject")
+		}
+
+		return nil
+	})
 }
 
 func (s *CfProjectCommandServiceImpl) Favorite(user *entity.User, projectID int) error {

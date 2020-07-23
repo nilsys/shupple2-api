@@ -238,8 +238,10 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		DAO: dao,
 	}
 	cfProjectFacadeImpl := &facade.CfProjectFacadeImpl{
-		CfProjectCommandService:  cfProjectCommandServiceImpl,
-		CfProjectQueryRepository: cfProjectQueryRepositoryImpl,
+		CfProjectCommandService:    cfProjectCommandServiceImpl,
+		CfReturnGiftCommandService: cfReturnGiftCommandServiceImpl,
+		CfProjectQueryRepository:   cfProjectQueryRepositoryImpl,
+		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
 	}
 	batch := &Batch{
 		Config:                     configConfig,

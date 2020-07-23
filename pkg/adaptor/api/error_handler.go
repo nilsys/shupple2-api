@@ -42,12 +42,21 @@ func ErrorHandler(err error, ctx echo.Context) {
 	// TODO: メッセージどうするか
 	resp := ErrorResponse{
 		Status: http.StatusText(code),
-		Error:  err.(*serror.SError).Code.String(),
+		Error:  GetErrorString(err),
 		Body:   err.Error(),
 	}
+
 	if err := ctx.JSON(code, &resp); err != nil {
 		logger.Error(err.Error(), zap.Error(err))
 	}
+}
+
+func GetErrorString(err error) string {
+	if serr, ok := err.(*serror.SError); ok {
+		return serr.Code.String()
+	}
+
+	return serror.CodeUndefined.String()
 }
 
 func GetStatusCode(err error) int {

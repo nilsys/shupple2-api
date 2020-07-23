@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -33,7 +35,7 @@ var _ = Describe("CfReturnGiftRepositoryImpl", func() {
 			It("cf_return_giftとcf_return_gift_snapshotが作成される", func() {
 				const newInsertedID = cfReturnGiftID + 1
 				newInserted := newCfReturnGift(newInsertedID, cfProjectID)
-				Expect(commandRepo.Store(newInserted)).To(Succeed())
+				Expect(commandRepo.Store(context.Background(), newInserted)).To(Succeed())
 
 				var count int
 				Expect(db.Model(&entity.CfReturnGiftTiny{}).Count(&count).Error).To(Succeed())
@@ -51,7 +53,7 @@ var _ = Describe("CfReturnGiftRepositoryImpl", func() {
 
 		Context("更新時", func() {
 			It("cf_return_giftのカラムは更新されず、cf_return_gift_snapshotが挿入される。cf_return_gift.latest_snapshot_idが更新される。", func() {
-				Expect(commandRepo.Store(base)).To(Succeed())
+				Expect(commandRepo.Store(context.Background(), base)).To(Succeed())
 
 				var count int
 				Expect(db.Model(&entity.CfReturnGiftTiny{}).Count(&count).Error).To(Succeed())

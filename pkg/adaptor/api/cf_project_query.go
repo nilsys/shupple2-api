@@ -52,6 +52,9 @@ func (c *CfProjectQueryController) Show(ctx echo.Context) error {
 
 func (c *CfProjectQueryController) ListSupportComment(ctx echo.Context) error {
 	i := &input.ListCfProjectSupportComment{}
+	if err := BindAndValidate(ctx, i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
 	comments, err := c.CfProjectQueryService.ListSupportComment(i.ID, i.GetLimit())
 	if err != nil {
 		return errors.Wrap(err, "failed list cf_project_support_comment")

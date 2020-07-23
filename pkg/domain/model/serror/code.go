@@ -5,7 +5,7 @@ import "net/http"
 //go:generate go-enum -f=$GOFILE --marshal
 
 /*
-ENUM(Undefined, InvalidParam, NotFound, ImportDeleted, Unauthorized, Forbidden, InvalidCategoryType, PayAgentError)
+ENUM(Undefined, InvalidParam, NotFound, ImportDeleted, Unauthorized, Forbidden, InvalidCategoryType, PayAgentError, DuplicateCard)
 */
 type Code int
 

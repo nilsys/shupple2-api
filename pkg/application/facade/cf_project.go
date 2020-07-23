@@ -10,11 +10,14 @@ import (
 type (
 	CfProjectFacade interface {
 		SendAchievementMail() error
+		ImportWithGifts(id int) error
 	}
 
 	CfProjectFacadeImpl struct {
 		service.CfProjectCommandService
+		service.CfReturnGiftCommandService
 		repository.CfProjectQueryRepository
+		repository.WordpressQueryRepository
 	}
 )
 
@@ -43,5 +46,24 @@ func (f *CfProjectFacadeImpl) SendAchievementMail() error {
 
 		lastID = cfProjects.List[len(cfProjects.List)-1].ID
 	}
+	return nil
+}
+
+func (f *CfProjectFacadeImpl) ImportWithGifts(id int) error {
+	if err := f.CfProjectCommandService.ImportFromWordpressByID(id); err != nil {
+		return errors.Wrap(err, "failed to import cf_project")
+	}
+
+	gifts, err := f.WordpressQueryRepository.FindCfReturnGiftsByCfProjectID(id)
+	if err != nil {
+		return errors.Wrap(err, "failed to list target cf_return_gifts")
+	}
+
+	for _, gift := range gifts {
+		if err := f.CfReturnGiftCommandService.ImportFromWordpressByID(gift.ID); err != nil {
+			return errors.Wrap(err, "failed to import cf_return_gift")
+		}
+	}
+
 	return nil
 }

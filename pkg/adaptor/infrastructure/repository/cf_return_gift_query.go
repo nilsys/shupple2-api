@@ -19,12 +19,12 @@ var CfReturnGiftQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.CfReturnGiftQueryRepository), new(*CfReturnGiftQueryRepositoryImpl)),
 )
 
-func (r *CfReturnGiftQueryRepositoryImpl) LockCfReturnGiftList(c context.Context, ids []int) (*entity.CfReturnGiftList, error) {
-	var rows entity.CfReturnGiftList
-	if err := r.LockDB(c).Where("id IN (?)", ids).Find(&rows.List).Error; err != nil {
-		return nil, errors.Wrap(err, "failed find cf_return_gift")
+func (r *CfReturnGiftQueryRepositoryImpl) FindByID(id int) (*entity.CfReturnGift, error) {
+	var row entity.CfReturnGift
+	if err := r.DB(context.Background()).First(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "cf_return_gift(id=%d)", id)
 	}
-	return &rows, nil
+	return &row, nil
 }
 
 func (r *CfReturnGiftQueryRepositoryImpl) FindSoldCountByReturnGiftIDs(c context.Context, ids []int) (*entity.CfReturnGiftSoldCountList, error) {

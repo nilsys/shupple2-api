@@ -21,23 +21,23 @@ var CfProjectCommandRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.CfProjectCommandRepository), new(*CfProjectCommandRepositoryImpl)),
 )
 
-func (r *CfProjectCommandRepositoryImpl) Store(cfProject *entity.CfProject) error {
-	return Transaction(r.DB(context.Background()), func(db *gorm.DB) error {
-		if err := db.Set("gorm:insert_modifier", "IGNORE").Create(&cfProject.CfProjectTiny).Error; err != nil {
-			return errors.Wrap(err, "failed to insert cf_project")
-		}
+func (r *CfProjectCommandRepositoryImpl) Store(ctx context.Context, cfProject *entity.CfProject) error {
+	db := r.DB(ctx)
 
-		cfProject.Snapshot.SnapshotID = 0
-		if err := db.Create(&cfProject.Snapshot).Error; err != nil {
-			return errors.Wrap(err, "failed to insert cf_project_snapshot")
-		}
+	if err := db.Set("gorm:insert_modifier", "IGNORE").Create(&cfProject.CfProjectTiny).Error; err != nil {
+		return errors.Wrap(err, "failed to insert cf_project")
+	}
 
-		if err := db.Exec("UPDATE cf_project SET latest_snapshot_id = ? WHERE id = ?", cfProject.Snapshot.SnapshotID, cfProject.ID).Error; err != nil {
-			return errors.Wrap(err, "failed to update latest_snapshot_id")
-		}
+	cfProject.Snapshot.SnapshotID = 0
+	if err := db.Create(&cfProject.Snapshot).Error; err != nil {
+		return errors.Wrap(err, "failed to insert cf_project_snapshot")
+	}
 
-		return nil
-	})
+	if err := db.Exec("UPDATE cf_project SET latest_snapshot_id = ? WHERE id = ?", cfProject.Snapshot.SnapshotID, cfProject.ID).Error; err != nil {
+		return errors.Wrap(err, "failed to update latest_snapshot_id")
+	}
+
+	return nil
 }
 
 func (r *CfProjectCommandRepositoryImpl) Lock(c context.Context, id int) (*entity.CfProject, error) {

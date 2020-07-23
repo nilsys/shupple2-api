@@ -10,7 +10,7 @@ import (
 
 type (
 	CfProjectCommandRepository interface {
-		Store(*entity.CfProject) error
+		Store(context.Context, *entity.CfProject) error
 		Lock(c context.Context, id int) (*entity.CfProject, error)
 		UndeleteByID(c context.Context, id int) error
 		DeleteByID(id int) error

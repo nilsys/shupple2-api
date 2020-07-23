@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/google/wire"
 
 	"github.com/pkg/errors"
@@ -46,9 +48,15 @@ func (s *CfReturnGiftCommandServiceImpl) ImportFromWordpressByID(id int) error {
 		return errors.Wrap(err, "failed  to initialize cfReturnGift")
 	}
 
-	if err := s.CfReturnGiftCommandRepository.Store(cfReturnGift); err != nil {
-		return errors.Wrap(err, "failed to store cfReturnGift")
-	}
+	return s.TransactionService.Do(func(c context.Context) error {
+		if err := s.CfReturnGiftCommandRepository.UndeleteByID(c, id); err != nil {
+			return errors.Wrapf(err, "failed to undelete cf_return_gift(id=%d)", id)
+		}
 
-	return nil
+		if err := s.CfReturnGiftCommandRepository.Store(c, cfReturnGift); err != nil {
+			return errors.Wrap(err, "failed to store cf_return_gift")
+		}
+
+		return nil
+	})
 }

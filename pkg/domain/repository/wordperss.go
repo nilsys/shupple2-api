@@ -16,6 +16,7 @@ type (
 		FindPostTagsByIDs(ids []int) ([]*wordpress.PostTag, error)
 		FindCfProjectByID(id int) (*wordpress.CfProject, error)
 		FindCfReturnGiftByID(id int) (*wordpress.CfReturnGift, error)
+		FindCfReturnGiftsByCfProjectID(id int) ([]*wordpress.CfReturnGift, error)
 		FetchMediaBodyByID(id int) (*wordpress.MediaBody, error)
 		FetchResource(url string) (*wordpress.MediaBody, error)
 	}
