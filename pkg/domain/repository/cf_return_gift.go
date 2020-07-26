@@ -17,6 +17,6 @@ type (
 	CfReturnGiftQueryRepository interface {
 		FindByID(id int) (*entity.CfReturnGift, error)
 		FindSoldCountByReturnGiftIDs(c context.Context, ids []int) (*entity.CfReturnGiftSoldCountList, error)
-		FindByCfProjectID(projectID int) (*entity.CfReturnGiftList, error)
+		FindByCfProjectID(projectID int) (*entity.CfReturnGiftWithCountList, error)
 	}
 )

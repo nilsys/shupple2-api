@@ -8,16 +8,38 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
 
-func (c *Converters) ConvertCfReturnGiftListToOutput(gifts *entity.CfReturnGiftList, soldCountList *entity.CfReturnGiftSoldCountList) []*output.CfReturnGift {
+func (c *Converters) ConvertCfReturnGiftWithCountListToOutput(gifts *entity.CfReturnGiftWithCountList) []*output.CfReturnGift {
 	sort.Slice(gifts.List, func(i, j int) bool { return gifts.List[i].Snapshot.SortOrder < gifts.List[j].Snapshot.SortOrder })
 	response := make([]*output.CfReturnGift, len(gifts.List))
 	for i, gift := range gifts.List {
-		response[i] = c.convertCfReturnGiftToOutput(gift, soldCountList.GetSoldCount(gift.ID))
+		response[i] = c.convertCfReturnGiftWithCountToOutput(gift)
 	}
 	return response
 }
 
-func (c *Converters) convertCfReturnGiftToOutput(gift *entity.CfReturnGift, soldCount int) *output.CfReturnGift {
+func (c *Converters) convertCfReturnGiftWithCountToOutput(gift *entity.CfReturnGiftWithCount) *output.CfReturnGift {
+	var deadline *model.Date
+	if gift.Snapshot.Deadline.Valid {
+		deadline = (*model.Date)(&gift.Snapshot.Deadline.Time)
+	}
+
+	return &output.CfReturnGift{
+		ID:             gift.ID,
+		SnapshotID:     gift.Snapshot.SnapshotID,
+		Thumbnail:      gift.Snapshot.Thumbnail,
+		GiftType:       gift.GiftType,
+		Body:           gift.Snapshot.Body,
+		Price:          gift.Snapshot.Price,
+		IsCancelable:   gift.Snapshot.IsCancelable,
+		Deadline:       deadline,
+		SoldCount:      gift.SoldCount,
+		SupporterCount: gift.SupporterCount,
+		FullAmount:     gift.Snapshot.FullAmount,
+		DeliveryDate:   gift.Snapshot.DeliveryDate,
+	}
+}
+
+func (c *Converters) convertCfReturnGiftToOutput(gift *entity.CfReturnGift) *output.CfReturnGift {
 	var deadline *model.Date
 	if gift.Snapshot.Deadline.Valid {
 		deadline = (*model.Date)(&gift.Snapshot.Deadline.Time)
@@ -32,7 +54,7 @@ func (c *Converters) convertCfReturnGiftToOutput(gift *entity.CfReturnGift, sold
 		Price:        gift.Snapshot.Price,
 		IsCancelable: gift.Snapshot.IsCancelable,
 		Deadline:     deadline,
-		SoldCount:    soldCount,
+		FullAmount:   gift.Snapshot.FullAmount,
 		DeliveryDate: gift.Snapshot.DeliveryDate,
 	}
 }

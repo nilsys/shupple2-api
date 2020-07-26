@@ -33,7 +33,7 @@ type (
 
 	CfReturnGift struct {
 		CfReturnGiftTiny
-		Snapshot *CfReturnGiftSnapshotTiny // `gorm:"foreignkey:ID;association_foreignkey:LatestCfReturnGiftSnapshotID"`
+		Snapshot *CfReturnGiftSnapshotTiny // `gorm:"foreignkey:ID;association_foreignkey:LatestSnapshotID"`
 	}
 
 	CfReturnGiftList struct {
@@ -45,8 +45,19 @@ type (
 		SoldCount      int
 	}
 
+	CfReturnGiftWithCount struct {
+		CfReturnGiftTiny
+		Snapshot       *CfReturnGiftSnapshotTiny `gorm:"foreignkey:ID;association_foreignkey:LatestSnapshotID"`
+		SoldCount      int
+		SupporterCount int
+	}
+
 	CfReturnGiftSoldCountList struct {
 		List []*CfReturnGiftSoldCount
+	}
+
+	CfReturnGiftWithCountList struct {
+		List []*CfReturnGiftWithCount
 	}
 )
 
@@ -106,4 +117,8 @@ func (c *CfReturnGiftTiny) TableName() string {
 
 func (c *CfReturnGiftSnapshotTiny) TableName() string {
 	return "cf_return_gift_snapshot"
+}
+
+func (c *CfReturnGiftWithCount) TableName() string {
+	return "cf_return_gift"
 }

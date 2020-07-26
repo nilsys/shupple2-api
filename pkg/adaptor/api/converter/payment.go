@@ -65,8 +65,7 @@ func (c Converters) ConvertPaymentCfReturnGiftToOutput(payment []*entity.Payment
 			CfReturnGift: c.convertCfReturnGiftToOutput(&entity.CfReturnGift{
 				CfReturnGiftTiny: *tiny.CfReturnGift,
 				Snapshot:         tiny.CfReturnGiftSnapshot,
-				// MEMO: ユーザーの購入一覧APIではsoldcount使わないので0入れてる。。
-			}, 0),
+			}),
 			Amount:                       tiny.Amount,
 			GiftTypeOtherStatus:          tiny.ResolveGiftTypeOtherStatus(),
 			GiftTypeReservedTicketStatus: tiny.ResolveGiftTypeReservedTicketStatus(),

@@ -28,10 +28,10 @@ func (c *CfReturnGiftQueryController) List(ctx echo.Context) error {
 		return errors.Wrap(err, "failed bind input")
 	}
 
-	gifts, soldCountList, err := c.CfReturnGiftQueryService.ListByCfProjectID(i.ID)
+	gifts, err := c.CfReturnGiftQueryService.ListByCfProjectID(i.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed list cf_return_gift")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertCfReturnGiftListToOutput(gifts, soldCountList))
+	return ctx.JSON(http.StatusOK, c.ConvertCfReturnGiftWithCountListToOutput(gifts))
 }

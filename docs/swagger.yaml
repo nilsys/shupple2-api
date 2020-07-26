@@ -4625,6 +4625,10 @@ components:
             ＊宿泊券(giftType:ReservedTicket)の場合のみ
         soldCount:
           type: integer
+        supporterCount:
+          type: integer
+        fullAmount:
+          type: integer
         deliveryDate:
           type: string
     CaptureChargeResult:
