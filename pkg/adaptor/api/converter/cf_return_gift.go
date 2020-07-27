@@ -26,6 +26,7 @@ func (c *Converters) convertCfReturnGiftWithCountToOutput(gift *entity.CfReturnG
 	return &output.CfReturnGift{
 		ID:             gift.ID,
 		SnapshotID:     gift.Snapshot.SnapshotID,
+		CfProjectID:    gift.CfProjectID,
 		Thumbnail:      gift.Snapshot.Thumbnail,
 		GiftType:       gift.GiftType,
 		Body:           gift.Snapshot.Body,
@@ -48,6 +49,7 @@ func (c *Converters) convertCfReturnGiftToOutput(gift *entity.CfReturnGift) *out
 	return &output.CfReturnGift{
 		ID:           gift.ID,
 		SnapshotID:   gift.Snapshot.SnapshotID,
+		CfProjectID:  gift.CfProjectID,
 		Thumbnail:    gift.Snapshot.Thumbnail,
 		GiftType:     gift.GiftType,
 		Body:         gift.Snapshot.Body,

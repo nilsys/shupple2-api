@@ -6,6 +6,7 @@ type (
 	CfReturnGift struct {
 		ID             int                    `json:"id"`
 		SnapshotID     int                    `json:"snapshotId"`
+		CfProjectID    int                    `json:"cfProjectId"`
 		Thumbnail      string                 `json:"thumbnail"`
 		GiftType       model.CfReturnGiftType `json:"giftType"`
 		Body           string                 `json:"body"`

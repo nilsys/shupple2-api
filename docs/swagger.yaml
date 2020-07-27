@@ -4604,6 +4604,9 @@ components:
         snapshotId:
           type: integer
           example: 1
+        cfProjectId:
+          type: integer
+          example: 1
         thumbnail:
           type: string
         giftType:
