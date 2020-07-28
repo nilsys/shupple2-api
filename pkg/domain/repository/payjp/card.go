@@ -9,9 +9,4 @@ type (
 		Register(customerID, cardToken string) (*payjp.CardResponse, error)
 		Delete(customerID, cardID string) error
 	}
-
-	CardQueryRepository interface {
-		Find(customerID, cardID string) (*payjp.CardResponse, error)
-		FindList(customerID string, cardID []string) ([]*payjp.CardResponse, error)
-	}
 )

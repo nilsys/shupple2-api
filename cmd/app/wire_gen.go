@@ -154,12 +154,8 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		DAO:         dao,
 		PayjpClient: payjpService,
 	}
-	payjpCardQueryRepositoryImpl := &payjp.CardQueryRepositoryImpl{
-		PayjpClient: payjpService,
-	}
 	cardQueryServiceImpl := &service.CardQueryServiceImpl{
-		CardQueryRepository:      cardQueryRepositoryImpl,
-		PayjpCardQueryRepository: payjpCardQueryRepositoryImpl,
+		CardQueryRepository: cardQueryRepositoryImpl,
 	}
 	cardQueryController := api.CardQueryController{
 		CardQueryService: cardQueryServiceImpl,
@@ -212,8 +208,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		Converters:         converters,
 	}
 	paymentQueryServiceImpl := &service.PaymentQueryServiceImpl{
-		PaymentQueryRepository:   paymentQueryRepositoryImpl,
-		PayjpCardQueryRepository: payjpCardQueryRepositoryImpl,
+		PaymentQueryRepository: paymentQueryRepositoryImpl,
 	}
 	paymentQueryController := api.PaymentQueryController{
 		Converters:          converters,

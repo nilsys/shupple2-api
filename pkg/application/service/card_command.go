@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+
 	payjp2 "github.com/stayway-corp/stayway-media-api/pkg/domain/repository/payjp"
 
 	"github.com/google/wire"
@@ -37,8 +39,8 @@ func (s *CardCommandServiceImpl) Register(user *entity.User, cardToken string) e
 			return errors.Wrap(err, "failed register card")
 		}
 
-		if err := s.CardCommandRepository.Store(c, entity.NewCard(user.ID, card.ID)); err != nil {
-			return errors.Wrap(err, "failed store credit_card")
+		if err := s.CardCommandRepository.Store(c, entity.NewCard(user.ID, card.ID, card.Last4, model.CardExpiredFromMonthAndYear(card.ExpMonth, card.ExpYear))); err != nil {
+			return errors.Wrap(err, "failed store card")
 		}
 		return nil
 	})

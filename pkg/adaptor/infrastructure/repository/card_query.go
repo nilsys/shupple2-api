@@ -21,7 +21,7 @@ var CardQueryRepositorySet = wire.NewSet(
 
 func (r *CardQueryRepositoryImpl) FindLatestByUserID(c context.Context, userID int) (*entity.Card, error) {
 	var row entity.Card
-	if err := r.DB(c).Where("user_id = ?", userID).Order("created_at desc").First(&row).Error; err != nil {
+	if err := r.DB(c).Where("user_id = ? AND deleted_at IS NULL", userID).Order("created_at desc").First(&row).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "credit_card(user_id=%d)", userID)
 	}
 	return &row, nil

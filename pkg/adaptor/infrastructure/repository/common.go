@@ -92,7 +92,6 @@ var RepositoriesSet = wire.NewSet(
 	CfProjectQueryRepositorySet,
 	CfProjectCommandRepositorySet,
 	CardCommandRepositorySet,
-	payjp2.CardQueryRepositorySet,
 	payjp2.CardCommandRepositorySet,
 	payjp2.ChargeCommandRepositorySet,
 	PostCommandRepositorySet,

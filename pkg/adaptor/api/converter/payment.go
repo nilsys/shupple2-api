@@ -1,7 +1,6 @@
 package converter
 
 import (
-	"github.com/payjp/payjp-go/v1"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/output"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -38,19 +37,19 @@ func (c Converters) ConvertListPaymentToQuery(i *input.ListPayment) *query.FindL
 	}
 }
 
-func (c Converters) ConvertPaymentListToOutput(payments *entity.PaymentList, cardIDMap map[string]*payjp.CardResponse) []*output.Payment {
+func (c Converters) ConvertPaymentListToOutput(payments *entity.PaymentList) []*output.Payment {
 	response := make([]*output.Payment, len(payments.List))
 	for i, tiny := range payments.List {
-		response[i] = c.ConvertPaymentToOutput(tiny, cardIDMap[tiny.Card.CardID])
+		response[i] = c.ConvertPaymentToOutput(tiny)
 	}
 	return response
 }
 
-func (c Converters) ConvertPaymentToOutput(payment *entity.Payment, card *payjp.CardResponse) *output.Payment {
+func (c Converters) ConvertPaymentToOutput(payment *entity.Payment) *output.Payment {
 	return &output.Payment{
 		ID:                   payment.ID,
 		ShippingAddress:      c.ConvertShippingAddressToOutput(payment.ShippingAddress),
-		Card:                 c.ConvertCardToOutput(card),
+		Card:                 c.ConvertCardToOutput(payment.Card),
 		TotalPrice:           payment.TotalPrice,
 		ChargeID:             payment.ChargeID,
 		PaymentCfReturnGifts: c.ConvertPaymentCfReturnGiftToOutput(payment.PaymentCfReturnGift),
