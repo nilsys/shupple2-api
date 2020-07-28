@@ -103,7 +103,7 @@ func (c *UserQueryController) ListRecommendFollowUser(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, c.ConvertUserTableListToOutput(users))
 }
 
-func (c *UserQueryController) ListFollowingUsers(ctx echo.Context) error {
+func (c *UserQueryController) ListFollowingUsers(ctx echo.Context, ouser entity.OptionalUser) error {
 	p := &input.ListFollowUser{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list following user")
@@ -111,14 +111,14 @@ func (c *UserQueryController) ListFollowingUsers(ctx echo.Context) error {
 
 	q := c.ConvertListFollowUserParamToQuery(p)
 
-	users, err := c.UserQueryService.ListFollowing(q)
+	users, err := c.UserQueryService.ListFollowing(q, &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to list user follow")
 	}
-	return ctx.JSON(http.StatusOK, c.ConvertUsersToUserSummaryList(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUserTinyWithIsFavoriteListToUserSummaryList(users))
 }
 
-func (c *UserQueryController) ListFollowedUsers(ctx echo.Context) error {
+func (c *UserQueryController) ListFollowedUsers(ctx echo.Context, ouser entity.OptionalUser) error {
 	p := &input.ListFollowUser{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list follower user")
@@ -126,11 +126,11 @@ func (c *UserQueryController) ListFollowedUsers(ctx echo.Context) error {
 
 	q := c.ConvertListFollowUserParamToQuery(p)
 
-	users, err := c.UserQueryService.ListFollowed(q)
+	users, err := c.UserQueryService.ListFollowed(q, &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to list user follower")
 	}
-	return ctx.JSON(http.StatusOK, c.ConvertUsersToUserSummaryList(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUserTinyWithIsFavoriteListToUserSummaryList(users))
 }
 
 func (c *UserQueryController) ListFavoritePostUser(ctx echo.Context, user entity.OptionalUser) error {

@@ -35,6 +35,11 @@ type (
 		IconURL string `json:"iconUrl"`
 	}
 
+	UserSummaryWithIsFollow struct {
+		UserSummary
+		IsFollow bool `json:"isFollow"`
+	}
+
 	MyPageUser struct {
 		ID             int          `json:"id"`
 		UID            string       `json:"uid"`

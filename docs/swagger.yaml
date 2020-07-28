@@ -247,8 +247,7 @@ paths:
       tags:
         - user
       summary: フォローユーザー取得
-      security:
-        - iDPCognito: []
+      description: optional auth
       parameters:
         - in: path
           name: id
@@ -262,14 +261,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserSummaryList"
+                $ref: "#/components/schemas/UserSummaryWithIsFollowList"
   /users/{id}/followed:
     get:
       tags:
         - user
       summary: フォローワーユーザー取得
-      security:
-        - iDPCognito: []
       parameters:
         - in: path
           name: id
@@ -283,7 +280,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserSummaryList"
+                $ref: "#/components/schemas/UserSummaryWithIsFollowList"
   /users/favorite/reviews/{id}:
     get:
       tags:
@@ -2832,6 +2829,25 @@ components:
           type: string
           format: url
           description: アイコン。userIDから一意に定まる
+    UserSummaryWithIsFollowList:
+      type: array
+      items:
+        $ref: "#/components/schemas/UserSummaryWithIsFollow"
+    UserSummaryWithIsFollow:
+      type: object
+      properties:
+        id:
+          type: integer
+        uid:
+          type: string
+        name:
+          type: string
+        iconUrl:
+          type: string
+          format: url
+          description: アイコン。userIDから一意に定まる
+        isFollow:
+          type: boolean
     ReviewRequest:
       type: object
       description: |

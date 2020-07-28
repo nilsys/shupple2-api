@@ -63,6 +63,11 @@ type (
 		List []*UserTiny
 	}
 
+	UserTinyWithIsFollow struct {
+		UserTiny
+		IsFollow bool
+	}
+
 	OptionalUser struct {
 		User
 		Authenticated bool

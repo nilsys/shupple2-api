@@ -165,12 +165,15 @@ func (r *UserQueryRepositoryImpl) SearchByName(name string) ([]*entity.User, err
 }
 
 // idで指定されたユーザーがフォローしているユーザー
-func (r *UserQueryRepositoryImpl) FindFollowingByID(query *query.FindFollowUser) ([]*entity.User, error) {
-	var rows []*entity.User
+func (r *UserQueryRepositoryImpl) FindFollowingByID(query *query.FindFollowUser) ([]*entity.UserTinyWithIsFollow, error) {
+	var rows []*entity.UserTinyWithIsFollow
 
-	if err := r.DB.Where("id IN (SELECT target_id FROM user_following WHERE user_id = ?)", query.ID).
+	if err := r.DB.
+		Joins("LEFT JOIN user_following ON user.id = user_following.user_id").
+		Where("id IN (SELECT target_id FROM user_following WHERE user_id = ?)", query.ID).
 		Limit(query.Limit).
 		Offset(query.Offset).
+		Order("user_following.created_at DESC").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed find follow user list user_id=%d", query.ID)
 	}
@@ -179,14 +182,51 @@ func (r *UserQueryRepositoryImpl) FindFollowingByID(query *query.FindFollowUser)
 }
 
 // idで指定されたユーザーがフォローされているユーザー
-func (r *UserQueryRepositoryImpl) FindFollowedByID(query *query.FindFollowUser) ([]*entity.User, error) {
-	var rows []*entity.User
+func (r *UserQueryRepositoryImpl) FindFollowedByID(query *query.FindFollowUser) ([]*entity.UserTinyWithIsFollow, error) {
+	var rows []*entity.UserTinyWithIsFollow
 
-	if err := r.DB.Where("id IN (SELECT user_id FROM user_following WHERE target_id = ?)", query.ID).
+	if err := r.DB.
+		Joins("LEFT JOIN user_following ON user.id = user_following.user_id").
+		Where("id IN (SELECT user_id FROM user_following WHERE target_id = ?)", query.ID).
 		Limit(query.Limit).
 		Offset(query.Offset).
+		Order("user_following.created_at DESC").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed find follower user list user_id=%d", query.ID)
+	}
+
+	return rows, nil
+}
+
+func (r *UserQueryRepositoryImpl) FindFollowingWithIsFollowByID(userID int, query *query.FindFollowUser) ([]*entity.UserTinyWithIsFollow, error) {
+	var rows []*entity.UserTinyWithIsFollow
+
+	if err := r.DB.
+		Select("*, CASE WHEN user_following.target_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_follow").
+		Joins("LEFT JOIN user_following ON user.id = user_following.target_id AND user_following.user_id = ?", userID).
+		Where("id IN (SELECT target_id FROM user_following WHERE user_id = ?)", query.ID).
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Order(fmt.Sprintf("id = %d DESC, is_follow DESC, user_following.created_at DESC", userID)).
+		Find(&rows).Error; err != nil {
+		return nil, errors.Wrapf(err, "failed find follow user list user_id=%d", query.ID)
+	}
+
+	return rows, nil
+}
+
+func (r *UserQueryRepositoryImpl) FindFollowedWithIsFollowByID(userID int, query *query.FindFollowUser) ([]*entity.UserTinyWithIsFollow, error) {
+	var rows []*entity.UserTinyWithIsFollow
+
+	if err := r.DB.
+		Select("*, CASE WHEN user_following.target_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_follow").
+		Joins("LEFT JOIN user_following ON user.id = user_following.target_id AND user_following.user_id = ?", userID).
+		Where("id IN (SELECT user_id FROM user_following WHERE target_id = ?)", query.ID).
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Order(fmt.Sprintf("id = %d DESC, is_follow DESC, user_following.created_at DESC", userID)).
+		Find(&rows).Error; err != nil {
+		return nil, errors.Wrapf(err, "failed find follow user list user_id=%d", query.ID)
 	}
 
 	return rows, nil

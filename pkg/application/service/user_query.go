@@ -15,8 +15,8 @@ type (
 		ShowByMigrationCode(code string) (*entity.UserDetailWithMediaCount, error)
 		ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error)
 		ListRecommendFollowUser(interestIDs []int) ([]*entity.UserTiny, error)
-		ListFollowing(query *query.FindFollowUser) ([]*entity.User, error)
-		ListFollowed(query *query.FindFollowUser) ([]*entity.User, error)
+		ListFollowing(query *query.FindFollowUser, ouser *entity.OptionalUser) ([]*entity.UserTinyWithIsFollow, error)
+		ListFollowed(query *query.FindFollowUser, ouser *entity.OptionalUser) ([]*entity.UserTinyWithIsFollow, error)
 		ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error)
 		ListFavoriteReviewUser(reviewID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error)
 		ListFavoriteComicUser(comicID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error)
@@ -76,11 +76,17 @@ func (s *UserQueryServiceImpl) ListRecommendFollowUser(interestIDs []int) ([]*en
 	return s.UserQueryRepository.FindRecommendFollowUserList(interestIDs)
 }
 
-func (s *UserQueryServiceImpl) ListFollowing(query *query.FindFollowUser) ([]*entity.User, error) {
+func (s *UserQueryServiceImpl) ListFollowing(query *query.FindFollowUser, ouser *entity.OptionalUser) ([]*entity.UserTinyWithIsFollow, error) {
+	if ouser.IsAuthorized() {
+		return s.UserQueryRepository.FindFollowingWithIsFollowByID(ouser.ID, query)
+	}
 	return s.UserQueryRepository.FindFollowingByID(query)
 }
 
-func (s *UserQueryServiceImpl) ListFollowed(query *query.FindFollowUser) ([]*entity.User, error) {
+func (s *UserQueryServiceImpl) ListFollowed(query *query.FindFollowUser, ouser *entity.OptionalUser) ([]*entity.UserTinyWithIsFollow, error) {
+	if ouser.IsAuthorized() {
+		return s.UserQueryRepository.FindFollowedWithIsFollowByID(ouser.ID, query)
+	}
 	return s.UserQueryRepository.FindFollowedByID(query)
 }
 

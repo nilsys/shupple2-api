@@ -112,10 +112,10 @@ func (c Converters) ConvertUserRankingToOutput(users []*entity.UserDetail) []*ou
 	return userRanking
 }
 
-func (c Converters) ConvertUsersToUserSummaryList(users []*entity.User) []*output.UserSummary {
-	followUsers := make([]*output.UserSummary, len(users))
+func (c Converters) ConvertUserTinyWithIsFavoriteListToUserSummaryList(users []*entity.UserTinyWithIsFollow) []*output.UserSummaryWithIsFollow {
+	followUsers := make([]*output.UserSummaryWithIsFollow, len(users))
 	for i, user := range users {
-		followUsers[i] = c.NewUserSummaryFromUser(user)
+		followUsers[i] = c.UserTinyWithIsFollowToOutput(user)
 	}
 	return followUsers
 }
@@ -193,4 +193,11 @@ func (c Converters) NewCreatorFromUser(user *entity.User) output.Creator {
 
 func (c Converters) NewUserSummaryFromUser(user *entity.User) *output.UserSummary {
 	return output.NewUserSummary(user.ID, user.UID, user.Name, user.AvatarURL(c.filesURL()))
+}
+
+func (c Converters) UserTinyWithIsFollowToOutput(user *entity.UserTinyWithIsFollow) *output.UserSummaryWithIsFollow {
+	return &output.UserSummaryWithIsFollow{
+		UserSummary: *output.NewUserSummary(user.ID, user.UID, user.Name, user.AvatarURL(c.filesURL())),
+		IsFollow:    user.IsFollow,
+	}
 }
