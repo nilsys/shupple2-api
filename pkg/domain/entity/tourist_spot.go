@@ -1,7 +1,10 @@
 package entity
 
 import (
+	"strings"
 	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/config"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 
@@ -203,4 +206,26 @@ func (t *TouristSpotReviewCountList) IDMap() map[int]*TouristSpotReviewCount {
 	}
 
 	return result
+}
+
+func (t *TouristSpotTiny) HasThumbnail() bool {
+	return t.Thumbnail != ""
+}
+
+func (t *TouristSpotList) IDs() []int {
+	ids := make([]int, len(t.TouristSpots))
+	for i, tiny := range t.TouristSpots {
+		ids[i] = tiny.ID
+	}
+	return ids
+}
+
+// thumbnailに代替画像がセットされているか
+func (t *TouristSpotTiny) HasAlternativeThumbnail() bool {
+	return strings.HasPrefix(t.Thumbnail, "review")
+}
+
+func (t *TouristSpotTiny) AlternativeImageURL(filesURL config.URL) string {
+	filesURL.Path = t.Thumbnail
+	return filesURL.String()
 }

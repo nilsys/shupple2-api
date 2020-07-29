@@ -35,6 +35,11 @@ func (c Converters) ConvertTouristSpotListToOutput(touristSpots *entity.TouristS
 }
 
 func (c Converters) ConvertTouristSpotToOutput(touristSpot *entity.TouristSpotDetail, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.TouristSpot {
+	thumbnail := touristSpot.Thumbnail
+	if touristSpot.HasAlternativeThumbnail() {
+		thumbnail = touristSpot.AlternativeImageURL(c.filesURL())
+	}
+
 	areaCategoriesRes := make([]*output.AreaCategoryDetail, len(touristSpot.AreaCategories))
 	for i, areaCate := range touristSpot.AreaCategories {
 		areaCategoriesRes[i] = c.ConvertAreaCategoryDetailFromAreaCategory(areaCate, areaCategories)
@@ -54,7 +59,7 @@ func (c Converters) ConvertTouristSpotToOutput(touristSpot *entity.TouristSpotDe
 		ID:              touristSpot.ID,
 		Slug:            touristSpot.Slug,
 		Name:            touristSpot.Name,
-		Thumbnail:       touristSpot.Thumbnail,
+		Thumbnail:       thumbnail,
 		URL:             touristSpot.WebsiteURL,
 		City:            touristSpot.City,
 		Address:         touristSpot.Address,

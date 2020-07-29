@@ -358,3 +358,16 @@ func (r *ReviewQueryRepositoryImpl) IsExistReviewCommentReply(id int) (bool, err
 
 	return ErrorToIsExist(err, "review_comment_reply(id=%d)", id)
 }
+
+// tourist_spotに紐づくreviewの中で、mediaを持ち、最新のreviewを取得
+func (r *ReviewQueryRepositoryImpl) FindLatestHasMediaReviewByTouristSpotIDs(touristSpotIDs []int) (*entity.ReviewList, error) {
+	var rows entity.ReviewList
+
+	if err := r.DB.Joins("INNER JOIN (SELECT tourist_spot_id, MAX(created_at) as latestDate FROM review GROUP BY tourist_spot_id) tm ON review.tourist_spot_id = tm.tourist_spot_id AND review.created_at = tm.latestDate").
+		Where("review.id IN (SELECT review_id FROM review_media) AND review.tourist_spot_id IN (?)", touristSpotIDs).
+		Find(&rows.List).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find review")
+	}
+
+	return &rows, nil
+}

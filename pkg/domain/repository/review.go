@@ -30,6 +30,7 @@ type (
 		IsExistReviewCommentFavorite(userID, reviewCommentID int) (bool, error)
 		FindReviewCommentByID(id int) (*entity.ReviewComment, error)
 		FindReviewCommentReplyByID(id int) (*entity.ReviewCommentReply, error)
+		FindLatestHasMediaReviewByTouristSpotIDs(touristSpotID []int) (*entity.ReviewList, error)
 	}
 
 	// Review更新系レポジトリ

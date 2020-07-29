@@ -585,6 +585,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	}
 	touristSpotQueryServiceImpl := &service.TouristSpotQueryServiceImpl{
 		TouristSpotQueryRepository: touristSpotQueryRepositoryImpl,
+		ReviewQueryRepository:      reviewQueryRepositoryImpl,
 		CategoryIDMapFactory:       categoryIDMapFactory,
 	}
 	touristSpotQueryScenarioImpl := &scenario.TouristSpotQueryScenarioImpl{

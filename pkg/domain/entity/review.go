@@ -67,6 +67,10 @@ type (
 		Reviews     []*ReviewDetailWithIsFavorite
 	}
 
+	ReviewList struct {
+		List []*Review
+	}
+
 	ReviewMediaList []*ReviewMedia
 )
 
@@ -113,4 +117,21 @@ func (rdi ReviewDetailWithIsFavorite) TableName() string {
 
 func (list ReviewMediaList) Sort() {
 	sort.Slice(list, func(i, j int) bool { return list[i].Priority < list[j].Priority })
+}
+
+func (r *Review) HighestPriorityS3Path() string {
+	if len(r.Medias) == 0 {
+		return ""
+	}
+	r.Medias.Sort()
+	return r.Medias[0].S3Path()
+}
+
+func (r *ReviewList) TouristSpotAlternativeImage(touristSpotID int) string {
+	for _, review := range r.List {
+		if review.TouristSpotID.Int64 == int64(touristSpotID) {
+			return review.HighestPriorityS3Path()
+		}
+	}
+	return ""
 }
