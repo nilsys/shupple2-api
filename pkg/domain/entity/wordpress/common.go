@@ -1,10 +1,13 @@
 package wordpress
 
 import (
+	"bytes"
+	"encoding/json"
 	"net/url"
 	"strconv"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 	"gopkg.in/guregu/null.v3"
 )
@@ -89,4 +92,13 @@ func (t *NullableJSTTime) UnmarshalText(data []byte) error {
 	parsed, err := time.ParseInLocation(timeJSONFormat, string(data), util.JSTLoc)
 	*t = NullableJSTTime(null.TimeFrom(parsed))
 	return err
+}
+
+func (rp *RelatedPost) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, falseJSONBytes) {
+		return nil
+	}
+
+	type Alias RelatedPost
+	return errors.WithStack(json.Unmarshal(data, (*Alias)(rp)))
 }
