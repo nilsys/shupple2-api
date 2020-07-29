@@ -96,7 +96,7 @@ func (s *Script) Run() error {
 		}
 
 		var areaCategory entity.AreaCategory
-		if err := s.DB.Where("metasearch_area_id = ?", metasearchID).Or("metasearch_sub_area_id = ?", metasearchID).Or("metasearch_sub_sub_area_id = ?", metasearchID).First(&areaCategory).Error; err != nil {
+		if err := s.DB.Where("id = (SELECT area_category_id FROM metasearch_area WHERE metasearch_area_id = ?)", metasearchID).First(&areaCategory).Error; err != nil {
 			logger.Debug(fmt.Sprintf("failed find area_category metasearch_id=%d", metasearchID))
 			continue
 		}
