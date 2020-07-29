@@ -109,7 +109,7 @@ func (nrp *NullableRelatedPost) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	nrp.Valid = false
+	nrp.Valid = true
 	nrp.RelatedPost = rp
 	return nil
 }
