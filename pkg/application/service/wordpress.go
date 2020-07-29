@@ -92,8 +92,8 @@ func (s *WordpressServiceImpl) PatchPost(post *entity.Post, wpPost *wordpress.Po
 	}
 
 	var cfProjectID null.Int
-	if wpPost.Attributes.CfProject != nil {
-		cfProjectID = null.IntFrom(int64(wpPost.Attributes.CfProject.ID))
+	if wpPost.Attributes.CfProject.Valid {
+		cfProjectID = null.IntFrom(int64(wpPost.Attributes.CfProject.RelatedPost.ID))
 	}
 
 	post.ID = wpPost.ID

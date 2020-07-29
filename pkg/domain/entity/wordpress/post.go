@@ -35,7 +35,7 @@ type PostMeta struct {
 }
 
 type PostAttributes struct {
-	CfProject *RelatedPost `json:"cf_project"`
+	CfProject NullableRelatedPost `json:"cf_project"`
 }
 
 func (p *PostMeta) UnmarshalJSON(body []byte) error {

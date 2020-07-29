@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 	"gopkg.in/guregu/null.v3"
 )
@@ -41,6 +40,11 @@ type (
 
 	RelatedPost struct {
 		ID int `json:"ID"`
+	}
+
+	NullableRelatedPost struct {
+		Valid       bool
+		RelatedPost RelatedPost
 	}
 
 	URLEscapedString string
@@ -94,11 +98,18 @@ func (t *NullableJSTTime) UnmarshalText(data []byte) error {
 	return err
 }
 
-func (rp *RelatedPost) UnmarshalJSON(data []byte) error {
+func (nrp *NullableRelatedPost) UnmarshalJSON(data []byte) error {
 	if bytes.Equal(data, falseJSONBytes) {
+		nrp.Valid = false
 		return nil
 	}
 
-	type Alias RelatedPost
-	return errors.WithStack(json.Unmarshal(data, (*Alias)(rp)))
+	var rp RelatedPost
+	if err := json.Unmarshal(data, &rp); err != nil {
+		return err
+	}
+
+	nrp.Valid = false
+	nrp.RelatedPost = rp
+	return nil
 }
