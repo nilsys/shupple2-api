@@ -53,6 +53,10 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		DAO:         dao,
 		PayjpClient: payjpService,
 	}
+	cardQueryRepositoryImpl := &repository.CardQueryRepositoryImpl{
+		DAO:         dao,
+		PayjpClient: payjpService,
+	}
 	payjpCardCommandRepositoryImpl := &payjp.CardCommandRepositoryImpl{
 		PayjpClient: payjpService,
 	}
@@ -61,6 +65,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	}
 	cardCommandServiceImpl := &service.CardCommandServiceImpl{
 		CardCommandRepository:      cardCommandRepositoryImpl,
+		CardQueryRepository:        cardQueryRepositoryImpl,
 		PayjpCardCommandRepository: payjpCardCommandRepositoryImpl,
 		TransactionService:         transactionServiceImpl,
 	}
@@ -69,10 +74,6 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	}
 	paymentQueryRepositoryImpl := &repository.PaymentQueryRepositoryImpl{
 		DAO: dao,
-	}
-	cardQueryRepositoryImpl := &repository.CardQueryRepositoryImpl{
-		DAO:         dao,
-		PayjpClient: payjpService,
 	}
 	cfProjectQueryRepositoryImpl := &repository.CfProjectQueryRepositoryImpl{
 		DAO: dao,

@@ -200,6 +200,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	}
 	cardCommandServiceImpl := &service.CardCommandServiceImpl{
 		CardCommandRepository:      cardCommandRepositoryImpl,
+		CardQueryRepository:        cardQueryRepositoryImpl,
 		PayjpCardCommandRepository: payjpCardCommandRepositoryImpl,
 		TransactionService:         transactionServiceImpl,
 	}

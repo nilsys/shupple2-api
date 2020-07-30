@@ -32,3 +32,16 @@ func (c *CardCommandController) Register(ctx echo.Context, user entity.User) err
 
 	return ctx.JSON(http.StatusOK, "ok")
 }
+
+func (c *CardCommandController) Delete(ctx echo.Context, user entity.User) error {
+	i := &input.IDParam{}
+	if err := BindAndValidate(ctx, i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	if err := c.CardCommandService.Delete(&user, i.ID); err != nil {
+		return errors.Wrap(err, "failed delete card")
+	}
+
+	return ctx.NoContent(http.StatusNoContent)
+}

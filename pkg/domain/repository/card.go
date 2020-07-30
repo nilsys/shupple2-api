@@ -9,9 +9,11 @@ import (
 type (
 	CardCommandRepository interface {
 		Store(c context.Context, card *entity.Card) error
+		Delete(c context.Context, card *entity.Card) error
 	}
 
 	CardQueryRepository interface {
 		FindLatestByUserID(c context.Context, userID int) (*entity.Card, error)
+		FindByID(id int) (*entity.Card, error)
 	}
 )

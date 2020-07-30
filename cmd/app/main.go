@@ -248,6 +248,7 @@ func setRoutes(app *App) {
 		payment.PUT("/:id/charge/refund", auth.Require(app.ChargeCommandController.Refund))
 		payment.POST("/card", auth.Require(app.CardCommandController.Register))
 		payment.GET("/card", auth.Require(app.CardQueryController.ShowCard))
+		payment.DELETE("/card/:id", auth.Require(app.CardCommandController.Delete))
 		payment.GET("/shipping", auth.Require(app.ShippingQueryController.Show))
 		payment.POST("/shipping", auth.Require(app.ShippingCommandController.StoreShippingAddress))
 		payment.POST("/:id/reserve", auth.Require(app.PaymentCommandController.ReservePaymentCfReturnGiftReservedTicket))

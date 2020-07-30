@@ -26,3 +26,10 @@ func (r *CardCommandRepositoryImpl) Store(c context.Context, card *entity.Card) 
 	}
 	return nil
 }
+
+func (r *CardCommandRepositoryImpl) Delete(c context.Context, card *entity.Card) error {
+	if err := r.DB(c).Exec("UPDATE card SET deleted_at = NOW() WHERE id = ?", card.ID).Error; err != nil {
+		return errors.Wrap(err, "failed update deleted_at")
+	}
+	return nil
+}
