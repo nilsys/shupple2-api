@@ -41,6 +41,7 @@ func (c Converters) ConvertStoreUserParamToEntity(param *input.StoreUser) *entit
 	for i, interest := range param.Interests {
 		interests[i] = &entity.UserInterest{InterestID: interest}
 	}
+
 	return &entity.User{
 		UserTiny: entity.UserTiny{
 			CognitoUserName: param.CognitoUserName,

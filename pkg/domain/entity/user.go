@@ -38,6 +38,8 @@ type (
 		YoutubeURL      string
 		LivingArea      string
 		Times
+		// 如何なる場面でも必要な為Userの最小単位に置いておく
+		UserAttributes []*UserAttribute `gorm:"foreignkey:UserID"`
 	}
 
 	UserTinyList struct {
@@ -91,6 +93,11 @@ type (
 		UserID int `gorm:"primary_key"`
 		// フォローされた人
 		TargetID int `gorm:"primary_key"`
+	}
+
+	UserAttribute struct {
+		UserID    int                 `gorm:"primary_key"`
+		Attribute model.UserAttribute `gorm:"primary_key"`
 	}
 )
 
@@ -199,4 +206,10 @@ func (u *OptionalUser) IsAuthorized() bool {
 
 func (u *UserTiny) PayjpCustomerID() string {
 	return fmt.Sprintf("sw_%s", u.UID)
+}
+
+func (u *User) AddAttribute(attr model.UserAttribute) {
+	u.UserAttributes = append(u.UserAttributes, &UserAttribute{
+		Attribute: attr,
+	})
 }

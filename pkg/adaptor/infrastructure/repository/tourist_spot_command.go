@@ -35,6 +35,8 @@ func (r *TouristSpotCommandRepositoryImpl) Store(c context.Context, touristSpot 
 	return errors.Wrap(r.DB(c).Save(touristSpot).Error, "failed to save touristSpot")
 }
 
+// review.scoreの平均値でrateを更新
+// 0(reviewが0件)になった場合0の代わりにdefaultTouristSpotRateで更新する
 func (r *TouristSpotCommandRepositoryImpl) UpdateScoreByID(c context.Context, id int64) error {
 	if err := r.DB(c).Exec("UPDATE tourist_spot SET rate = COALESCE( NULLIF( (select AVG(score) from review where tourist_spot_id = ? AND deleted_at IS NULL), 0), ?) WHERE id = ?;", id, defaultTouristSpotRate, id).Error; err != nil {
 		return errors.Wrap(err, "failed to update tourist spot rate")

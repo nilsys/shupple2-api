@@ -180,8 +180,9 @@ func getS3ObjectSize(key string) (int, error) {
 func newUser(id int, name ...string) *entity.User {
 	user := &entity.User{
 		UserTiny: entity.UserTiny{
-			ID:        id,
-			Birthdate: sampleTime,
+			ID:             id,
+			Birthdate:      sampleTime,
+			UserAttributes: []*entity.UserAttribute{},
 		},
 		UserInterests: []*entity.UserInterest{},
 	}

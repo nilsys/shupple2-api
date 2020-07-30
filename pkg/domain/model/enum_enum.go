@@ -1188,6 +1188,61 @@ func (x *ThemeCategoryType) UnmarshalText(text []byte) error {
 }
 
 const (
+	// UserAttributeCommon is a UserAttribute of type Common
+	UserAttributeCommon UserAttribute = iota + 1
+	// UserAttributeWP is a UserAttribute of type WP
+	UserAttributeWP
+	// UserAttributeCfProjectOwner is a UserAttribute of type CfProjectOwner
+	UserAttributeCfProjectOwner
+)
+
+const _UserAttributeName = "CommonWPCfProjectOwner"
+
+var _UserAttributeMap = map[UserAttribute]string{
+	1: _UserAttributeName[0:6],
+	2: _UserAttributeName[6:8],
+	3: _UserAttributeName[8:22],
+}
+
+// String implements the Stringer interface.
+func (x UserAttribute) String() string {
+	if str, ok := _UserAttributeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("UserAttribute(%d)", x)
+}
+
+var _UserAttributeValue = map[string]UserAttribute{
+	_UserAttributeName[0:6]:  1,
+	_UserAttributeName[6:8]:  2,
+	_UserAttributeName[8:22]: 3,
+}
+
+// ParseUserAttribute attempts to convert a string to a UserAttribute
+func ParseUserAttribute(name string) (UserAttribute, error) {
+	if x, ok := _UserAttributeValue[name]; ok {
+		return x, nil
+	}
+	return UserAttribute(0), fmt.Errorf("%s is not a valid UserAttribute", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x UserAttribute) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *UserAttribute) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseUserAttribute(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// UserSortByRANKING is a UserSortBy of type RANKING
 	UserSortByRANKING UserSortBy = iota + 1
 	// UserSortByRECOMMEND is a UserSortBy of type RECOMMEND

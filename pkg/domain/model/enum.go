@@ -110,3 +110,9 @@ ENUM(Undefined, Unreserved, Reserved)
 宿泊券以外の場合はUndefined
 */
 type PaymentCfReturnGiftReservedTicketTypeStatus int
+
+/*
+ENUM(Common = 1, WP, CfProjectOwner)
+Userの属性,Commonがデフォルト値で一般ユーザーを表す
+*/
+type UserAttribute int

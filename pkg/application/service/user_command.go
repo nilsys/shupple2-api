@@ -5,7 +5,9 @@ import (
 	"strconv"
 	"time"
 
-	payjp2 "github.com/stayway-corp/stayway-media-api/pkg/domain/repository/payjp"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository/payjp"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
@@ -34,8 +36,8 @@ type (
 		repository.UserCommandRepository
 		repository.UserQueryRepository
 		repository.WordpressQueryRepository
-		payjp2.CustomerCommandRepository
-		payjp2.CustomerQueryRepository
+		payjp.CustomerCommandRepository
+		payjp.CustomerQueryRepository
 		AuthService
 		service.NoticeDomainService
 		TransactionService
@@ -48,6 +50,7 @@ var UserCommandServiceSet = wire.NewSet(
 )
 
 func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, migrationCode *string) error {
+	// uid重複チェック
 	isExist, err := s.UserQueryRepository.IsExistByUID(user.UID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get user")
@@ -56,11 +59,14 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 		return serror.New(nil, serror.CodeInvalidParam, "uid: %s is duplicate", user.UID)
 	}
 
+	// token検証
 	cognitoID, err := s.AuthService.Authorize(cognitoToken)
 	if err != nil {
 		return serror.New(err, serror.CodeUnauthorized, "unauthorized")
 	}
 	user.CognitoID = null.StringFrom(cognitoID)
+	// 属性付与
+	user.AddAttribute(model.UserAttributeCommon)
 
 	if migrationCode != nil && *migrationCode != "" {
 		existingUser, err := s.UserQueryRepository.FindByMigrationCode(*migrationCode)
@@ -72,6 +78,8 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 		user.WordpressID = existingUser.WordpressID
 		user.AvatarUUID = existingUser.AvatarUUID
 		user.HeaderUUID = existingUser.HeaderUUID
+		// 属性付与
+		user.AddAttribute(model.UserAttributeWP)
 	}
 
 	return s.TransactionService.Do(func(ctx context.Context) error {

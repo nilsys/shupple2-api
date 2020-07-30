@@ -188,11 +188,13 @@ func (s Script) importUser(wordpressDB *gorm.DB) error {
 
 func (s Script) convertUser(wpUser *wordpress.User) *entity.User {
 	return &entity.User{
-		ID:          wpUser.ID,
-		WordpressID: null.IntFrom(int64(wpUser.ID)),
-		Name:        wpUser.Name,
-		Profile:     wpUser.Description,
-		Birthdate:   time.Date(2100, 10, 10, 0, 0, 0, 0, time.Local),
+		UserTiny: entity.UserTiny{
+			ID:          wpUser.ID,
+			WordpressID: null.IntFrom(int64(wpUser.ID)),
+			Name:        wpUser.Name,
+			Profile:     wpUser.Description,
+			Birthdate:   time.Date(2100, 10, 10, 0, 0, 0, 0, time.Local),
+		},
 	}
 }
 
