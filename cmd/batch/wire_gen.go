@@ -51,6 +51,9 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	customerCommandRepositoryImpl := &payjp.CustomerCommandRepositoryImpl{
 		PayjpClient: payjpService,
 	}
+	customerQueryRepositoryImpl := &payjp.CustomerQueryRepositoryImpl{
+		PayjpClient: payjpService,
+	}
 	authService, err := service.ProvideAuthService(configConfig)
 	if err != nil {
 		return nil, err
@@ -73,6 +76,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		UserQueryRepository:       userQueryRepositoryImpl,
 		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
 		CustomerCommandRepository: customerCommandRepositoryImpl,
+		CustomerQueryRepository:   customerQueryRepositoryImpl,
 		AuthService:               authService,
 		NoticeDomainService:       noticeDomainServiceImpl,
 		TransactionService:        transactionServiceImpl,

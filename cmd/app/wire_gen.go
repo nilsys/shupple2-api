@@ -446,11 +446,15 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	customerCommandRepositoryImpl := &payjp.CustomerCommandRepositoryImpl{
 		PayjpClient: payjpService,
 	}
+	customerQueryRepositoryImpl := &payjp.CustomerQueryRepositoryImpl{
+		PayjpClient: payjpService,
+	}
 	userCommandServiceImpl := &service.UserCommandServiceImpl{
 		UserCommandRepository:     userCommandRepositoryImpl,
 		UserQueryRepository:       userQueryRepositoryImpl,
 		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
 		CustomerCommandRepository: customerCommandRepositoryImpl,
+		CustomerQueryRepository:   customerQueryRepositoryImpl,
 		AuthService:               authService,
 		NoticeDomainService:       noticeDomainServiceImpl,
 		TransactionService:        transactionServiceImpl,

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository/payjp"
+	payjp2 "github.com/stayway-corp/stayway-media-api/pkg/domain/repository/payjp"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
@@ -34,7 +34,8 @@ type (
 		repository.UserCommandRepository
 		repository.UserQueryRepository
 		repository.WordpressQueryRepository
-		payjp.CustomerCommandRepository
+		payjp2.CustomerCommandRepository
+		payjp2.CustomerQueryRepository
 		AuthService
 		service.NoticeDomainService
 		TransactionService
@@ -73,16 +74,23 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 		user.HeaderUUID = existingUser.HeaderUUID
 	}
 
-	if err := s.UserCommandRepository.Store(user); err != nil {
-		return errors.Wrap(err, "failed to store user")
-	}
+	return s.TransactionService.Do(func(ctx context.Context) error {
+		if err := s.UserCommandRepository.Store(ctx, user); err != nil {
+			return errors.Wrap(err, "failed to store user")
+		}
 
-	// pay.jp側にcustomer登録
-	if err := s.CustomerCommandRepository.StoreCustomer(user.PayjpCustomerID(), user.Email); err != nil {
-		return errors.Wrap(err, "failed store customer to pay.jp")
-	}
+		_, err = s.CustomerQueryRepository.FindCustomer(user.PayjpCustomerID())
+		if err != nil {
+			if !serror.IsErrorCode(err, serror.CodeNotFound) {
+				return errors.Wrap(err, "failed register to payjp")
+			}
+			if err := s.CustomerCommandRepository.StoreCustomer(user.PayjpCustomerID(), user.Email); err != nil {
+				return errors.Wrap(err, "failed store customer to pay.jp")
+			}
+		}
 
-	return nil
+		return nil
+	})
 }
 
 // TODO: エラー時はslackに通知飛ばしたほうが良さそう

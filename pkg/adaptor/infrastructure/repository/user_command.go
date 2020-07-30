@@ -34,8 +34,8 @@ var UserCommandRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.UserCommandRepository), new(*UserCommandRepositoryImpl)),
 )
 
-func (r *UserCommandRepositoryImpl) Store(user *entity.User) error {
-	return errors.Wrap(r.DB(context.TODO()).Save(user).Error, "failed to save user")
+func (r *UserCommandRepositoryImpl) Store(ctx context.Context, user *entity.User) error {
+	return errors.Wrap(r.DB(ctx).Save(user).Error, "failed to save user")
 }
 
 func (r *UserCommandRepositoryImpl) Update(user *entity.User) error {

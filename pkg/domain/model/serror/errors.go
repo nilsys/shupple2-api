@@ -35,6 +35,7 @@ func IsErrorCode(err error, codes ...Code) bool {
 	}
 
 	err = errors.Cause(err)
+
 	if serr, ok := err.(*SError); ok {
 		for _, code := range codes {
 			if serr.Code == code {

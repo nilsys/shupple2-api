@@ -28,10 +28,12 @@ var (
 
 func newUser(userID int) *entity.User {
 	user := &entity.User{
-		ID:            userID,
-		Birthdate:     time.Date(2020, 7, 7, 0, 0, 0, 0, time.Local),
+		UserTiny: entity.UserTiny{
+			ID:        userID,
+			Birthdate: time.Date(2020, 7, 7, 0, 0, 0, 0, time.Local),
+			Gender:    model.GenderMale,
+		},
 		UserInterests: []*entity.UserInterest{},
-		Gender:        model.GenderMale,
 	}
 	util.FillDummyString(user, userID)
 	return user

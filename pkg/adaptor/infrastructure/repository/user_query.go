@@ -140,7 +140,7 @@ func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByID(id int) (*entity.U
 func (r *UserQueryRepositoryImpl) IsExistByUID(uid string) (bool, error) {
 	var row entity.User
 
-	err := r.DB.Where("uid = ?", uid).First(&row).Error
+	err := r.DB.Unscoped().Where("uid = ?", uid).First(&row).Error
 
 	return ErrorToIsExist(err, "user(uid=%s)", uid)
 }

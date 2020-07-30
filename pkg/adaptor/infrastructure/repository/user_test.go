@@ -2,6 +2,7 @@ package repository
 
 import (
 	"bytes"
+	"context"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
@@ -35,10 +36,10 @@ var _ = Describe("UserRepositoryImpl", func() {
 	DescribeTable("Storeは引数のuserを作成するか、その状態になるように更新する",
 		func(before *entity.User, saved *entity.User) {
 			if before != nil {
-				Expect(command.Store(before)).To(Succeed())
+				Expect(command.Store(context.Background(), before)).To(Succeed())
 			}
 
-			Expect(command.Store(saved)).To(Succeed())
+			Expect(command.Store(context.Background(), saved)).To(Succeed())
 			actual, err := query.FindByID(saved.ID)
 			Expect(err).To(Succeed())
 
@@ -178,10 +179,11 @@ func getS3ObjectSize(key string) (int, error) {
 
 func newUser(id int, name ...string) *entity.User {
 	user := &entity.User{
-		ID:            id,
-		Birthdate:     sampleTime,
+		UserTiny: entity.UserTiny{
+			ID:        id,
+			Birthdate: sampleTime,
+		},
 		UserInterests: []*entity.UserInterest{},
-		Gender:        model.GenderMale,
 	}
 	util.FillDummyString(user, id)
 	if len(name) > 0 {

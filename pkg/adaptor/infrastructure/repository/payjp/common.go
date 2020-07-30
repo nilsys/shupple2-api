@@ -9,6 +9,7 @@ import (
 const (
 	codeInvalidID       = "invalid_id"
 	codeAlreadyHaveCard = "already_have_card"
+	codeAlreadyExistID  = "already_exist_id"
 )
 
 func handleError(err error, message string, vs ...interface{}) error {
@@ -18,6 +19,8 @@ func handleError(err error, message string, vs ...interface{}) error {
 			return serror.New(err, serror.CodeNotFound, message, vs...)
 		case codeAlreadyHaveCard:
 			return serror.New(err, serror.CodeDuplicateCard, message, vs...)
+		case codeAlreadyExistID:
+			return serror.New(err, serror.CodeInvalidParam, message, vs...)
 		}
 	}
 

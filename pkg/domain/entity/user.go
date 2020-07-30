@@ -13,27 +13,8 @@ import (
 
 type (
 	User struct {
-		ID              int `gorm:"primary_key"`
-		UID             string
-		CognitoID       null.String
-		WordpressID     null.Int
-		CognitoUserName string
-		MigrationCode   null.String
-		Name            string
-		Email           string
-		Birthdate       time.Time
-		Gender          model.Gender
-		Profile         string
-		AvatarUUID      string
-		HeaderUUID      string
-		URL             string
-		FacebookURL     string
-		InstagramURL    string
-		TwitterURL      string
-		YoutubeURL      string
-		LivingArea      string
-		UserInterests   []*UserInterest `gorm:"foreignkey:UserID"`
-		Times
+		UserTiny
+		UserInterests []*UserInterest `gorm:"foreignkey:UserID"`
 	}
 
 	UserTiny struct {
@@ -115,16 +96,18 @@ type (
 
 func NewUserByWordpressUser(wpUser *wordpress.User) *User {
 	return &User{
-		UID:           string(wpUser.Slug),
-		Name:          wpUser.Name,
-		MigrationCode: null.StringFrom(uuid.NewV4().String()),
-		WordpressID:   null.IntFrom(int64(wpUser.ID)),
-		Profile:       wpUser.Description,
-		Birthdate:     time.Date(1900, 1, 1, 0, 0, 0, 0, time.Local),
-		FacebookURL:   wpUser.Meta.Facebook,
-		TwitterURL:    wpUser.Meta.Twitter,
-		InstagramURL:  wpUser.Meta.Instagram,
-		YoutubeURL:    wpUser.Meta.Youtube,
+		UserTiny: UserTiny{
+			UID:           string(wpUser.Slug),
+			Name:          wpUser.Name,
+			MigrationCode: null.StringFrom(uuid.NewV4().String()),
+			WordpressID:   null.IntFrom(int64(wpUser.ID)),
+			Profile:       wpUser.Description,
+			Birthdate:     time.Date(1900, 1, 1, 0, 0, 0, 0, time.Local),
+			FacebookURL:   wpUser.Meta.Facebook,
+			TwitterURL:    wpUser.Meta.Twitter,
+			InstagramURL:  wpUser.Meta.Instagram,
+			YoutubeURL:    wpUser.Meta.Youtube,
+		},
 	}
 }
 
@@ -214,6 +197,6 @@ func (u *OptionalUser) IsAuthorized() bool {
 	return u.Authenticated
 }
 
-func (u *User) PayjpCustomerID() string {
+func (u *UserTiny) PayjpCustomerID() string {
 	return fmt.Sprintf("sw_%s", u.UID)
 }

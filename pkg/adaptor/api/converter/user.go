@@ -42,20 +42,22 @@ func (c Converters) ConvertStoreUserParamToEntity(param *input.StoreUser) *entit
 		interests[i] = &entity.UserInterest{InterestID: interest}
 	}
 	return &entity.User{
-		CognitoUserName: param.CognitoUserName,
-		UID:             param.UID,
-		Name:            param.Name,
-		Email:           param.Email,
-		Birthdate:       time.Time(param.BirthDate),
-		Gender:          param.Gender,
-		Profile:         param.Profile,
-		URL:             param.URL,
-		FacebookURL:     param.FacebookURL,
-		InstagramURL:    param.InstagramURL,
-		TwitterURL:      param.TwitterURL,
-		YoutubeURL:      param.YoutubeURL,
-		LivingArea:      param.LivingArea,
-		UserInterests:   interests,
+		UserTiny: entity.UserTiny{
+			CognitoUserName: param.CognitoUserName,
+			UID:             param.UID,
+			Name:            param.Name,
+			Email:           param.Email,
+			Birthdate:       time.Time(param.BirthDate),
+			Gender:          param.Gender,
+			Profile:         param.Profile,
+			URL:             param.URL,
+			FacebookURL:     param.FacebookURL,
+			InstagramURL:    param.InstagramURL,
+			TwitterURL:      param.TwitterURL,
+			YoutubeURL:      param.YoutubeURL,
+			LivingArea:      param.LivingArea,
+		},
+		UserInterests: interests,
 	}
 }
 
