@@ -42,12 +42,7 @@ func run() error {
 }
 
 func (s *Script) Run() error {
-	excludeIDs, err := s.FindMappingTouristSpotIDs()
-	if err != nil {
-		return errors.Wrap(err, "failed list mapping tourist_spot ids")
-	}
-
-	touristSpots, err := s.FindTouristSpotNotExcludeIDs(excludeIDs)
+	touristSpots, err := s.FindAllTouristSpot()
 	if err != nil {
 		return errors.Wrap(err, "failed list tourist_spot")
 	}
@@ -102,7 +97,9 @@ func (s *Script) Run() error {
 		}
 
 		if err := s.DB.Exec("INSERT INTO tourist_spot_area_category(tourist_spot_id,area_category_id) VALUES(?,?)", touristSpot.ID, areaCategory.ID).Error; err != nil {
-			return errors.Wrap(err, "failed insert tourist_spot_area_category")
+			// MEMO: 重複のinsertが発生するがスルー
+			logger.Debug(fmt.Sprintf("failed insert dup %d-%d", touristSpot.ID, areaCategory.ID))
+			continue
 		}
 	}
 
@@ -125,11 +122,11 @@ func (s *Script) FindMappingTouristSpotIDs() ([]int, error) {
 	return ids, nil
 }
 
-func (s *Script) FindTouristSpotNotExcludeIDs(excludeIDs []int) ([]*entity.TouristSpotTiny, error) {
+func (s *Script) FindAllTouristSpot() ([]*entity.TouristSpotTiny, error) {
 	var rows []*entity.TouristSpotTiny
 
-	if err := s.DB.Not("id", excludeIDs).Find(&rows).Error; err != nil {
-		return nil, errors.Wrap(err, "failed find tourist_spot not in ids")
+	if err := s.DB.Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find tourist_spot")
 	}
 	return rows, nil
 }
