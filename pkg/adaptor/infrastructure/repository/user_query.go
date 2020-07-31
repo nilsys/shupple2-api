@@ -186,7 +186,7 @@ func (r *UserQueryRepositoryImpl) FindFollowedByID(query *query.FindFollowUser) 
 	var rows []*entity.UserTinyWithIsFollow
 
 	if err := r.DB.
-		Joins("LEFT JOIN user_following ON user.id = user_following.user_id").
+		Joins("LEFT JOIN user_following ON user.id = user_following.target_id").
 		Where("id IN (SELECT user_id FROM user_following WHERE target_id = ?)", query.ID).
 		Limit(query.Limit).
 		Offset(query.Offset).

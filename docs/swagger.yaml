@@ -2924,23 +2924,23 @@ components:
         firstName:
           type: string
           description: |
-            姓
-          example: 山田
+            名
+          example: 太郎
         lastName:
           type: string
           description: |
-            名
-          example: 太郎
+            姓
+          example: 山田
         firstNameKana:
-          type: string
-          description: |
-            姓カナ
-          example: ヤマダ
-        lastNameKana:
           type: string
           description: |
             名カナ
           example: タロウ
+        lastNameKana:
+          type: string
+          description: |
+            姓カナ
+          example: ヤマダ
         phoneNumber:
           type: string
           description: |
