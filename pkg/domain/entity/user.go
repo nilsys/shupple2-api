@@ -152,7 +152,7 @@ func (u *User) HeaderURL(filesURL config.URL) string {
 }
 
 func (u *UserTiny) AvatarURL(filesURL config.URL) string {
-	if u.HeaderUUID == "" {
+	if u.AvatarUUID == "" {
 		return ""
 	}
 	filesURL.Path = model.UserS3Path(u.AvatarUUID)

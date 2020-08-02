@@ -100,7 +100,7 @@ func (c Converters) ConvertUserTableListToOutput(users []*entity.UserTiny) []*ou
 	res := make([]*output.UserSummary, len(users))
 
 	for i, user := range users {
-		res[i] = c.convertUserTableToOutput(user)
+		res[i] = c.convertUserTinyToOutput(user)
 	}
 
 	return res
@@ -123,7 +123,7 @@ func (c Converters) ConvertUserTinyWithIsFavoriteListToUserSummaryList(users []*
 	return followUsers
 }
 
-func (c Converters) convertUserTableToOutput(user *entity.UserTiny) *output.UserSummary {
+func (c Converters) convertUserTinyToOutput(user *entity.UserTiny) *output.UserSummary {
 	return &output.UserSummary{
 		ID:      user.ID,
 		UID:     user.UID,

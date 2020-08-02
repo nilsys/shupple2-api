@@ -154,10 +154,10 @@ func (r *UserQueryRepositoryImpl) FindByCognitoUserName(cognitoUserName []string
 }
 
 // name部分一致検索
-func (r *UserQueryRepositoryImpl) SearchByName(name string) ([]*entity.User, error) {
-	var rows []*entity.User
+func (r *UserQueryRepositoryImpl) SearchByNameOrUID(name string) ([]*entity.UserTiny, error) {
+	var rows []*entity.UserTiny
 
-	if err := r.DB.Where("MATCH(name) AGAINST(?)", name).Limit(defaultSearchSuggestionsNumber).Find(&rows).Error; err != nil {
+	if err := r.DB.Where("name LIKE ? OR uid LIKE ?", "%"+name+"%", "%"+name+"%").Limit(defaultSearchSuggestionsNumber).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find user list by like name")
 	}
 

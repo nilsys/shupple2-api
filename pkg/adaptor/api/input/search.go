@@ -11,7 +11,7 @@ type Keyward struct {
 	SuggestionType model.SuggestionType `query:"type"`
 }
 
-func (keyward Keyward) SearchResult(byKeyward func(string) (*entity.SearchSuggetions, error), byType func(string, model.SuggestionType) (*entity.SearchSuggetions, error)) (*entity.SearchSuggetions, error) {
+func (keyward Keyward) SearchResult(byKeyward func(string) (*entity.SearchSuggestions, error), byType func(string, model.SuggestionType) (*entity.SearchSuggestions, error)) (*entity.SearchSuggestions, error) {
 	if keyward.SuggestionType != 0 {
 		return byType(keyward.Value, keyward.SuggestionType)
 	}

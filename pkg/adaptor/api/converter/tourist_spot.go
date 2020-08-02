@@ -93,3 +93,27 @@ func (c Converters) ConvertRecommendTouristSpotListParamToQuery(param *input.Lis
 		OffSet:                param.GetOffset(),
 	}
 }
+
+func (c Converters) ConvertTouristSpotTinyToOutput(spot *entity.TouristSpotTiny) *output.TouristSpotTiny {
+	return &output.TouristSpotTiny{
+		ID:           spot.ID,
+		Slug:         spot.Slug,
+		Name:         spot.Name,
+		Thumbnail:    spot.Thumbnail,
+		URL:          spot.WebsiteURL,
+		City:         spot.City,
+		Address:      spot.Address,
+		Latitude:     spot.Lat,
+		Longitude:    spot.Lng,
+		AccessCar:    spot.AccessCar,
+		AccessTrain:  spot.AccessTrain,
+		AccessBus:    spot.AccessBus,
+		Tel:          spot.TEL,
+		Price:        spot.Price,
+		InstagramURL: spot.InstagramURL,
+		SearchInnURL: spot.SearchInnURL,
+		OpeningHours: spot.OpeningHours,
+		Rate:         spot.Rate,
+		VendorRate:   spot.VendorRate,
+	}
+}

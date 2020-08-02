@@ -89,8 +89,8 @@ func (r *TouristSpotQueryRepositoryImpl) FindRecommendListByParams(query *query.
 }
 
 // name部分一致検索
-func (r *TouristSpotQueryRepositoryImpl) SearchByName(name string) ([]*entity.TouristSpot, error) {
-	var rows []*entity.TouristSpot
+func (r *TouristSpotQueryRepositoryImpl) SearchByName(name string) ([]*entity.TouristSpotTiny, error) {
+	var rows []*entity.TouristSpotTiny
 
 	if err := r.DB.Where("MATCH(name) AGAINST(?)", name).Limit(defaultSearchSuggestionsNumber).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find tourist_spot list by like name")

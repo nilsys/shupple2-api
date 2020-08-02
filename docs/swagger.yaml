@@ -3859,35 +3859,24 @@ components:
           description: ハッシュタグ名
           example: 春に行きたい
     SearchSuggestions:
-      type: array
-      items:
-        $ref: "#/components/schemas/SearchSuggestion"
-    SearchSuggestion:
       type: object
       properties:
-        id:
-          type: integer
-          description: ハッシュタグID
-          example: 1
-        type:
-          type: string
-          description: 候補タイプ(enum)
-          example: AREA
-          enum:
-            - AREA
-            - SUBAREA
-            - SUBSUBAREA
-            - SPOT
-            - HASHTAG
-            - USER
-        name:
-          type: string
-          description: 候補名
-          example: 渋谷
-        url:
-          type: string
-          description: URL
-          example: /area/1
+        area:
+          type: array
+          items:
+            $ref: "#/components/schemas/AreaCategory"
+        touristSpot:
+          type: array
+          items:
+            $ref: "#/components/schemas/TouristSpotTiny"
+        hashtag:
+          type: array
+          items:
+            $ref: "#/components/schemas/Hashtag"
+        user:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserSummary"
     ComicList:
       type: array
       items:

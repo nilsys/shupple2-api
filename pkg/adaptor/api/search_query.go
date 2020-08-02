@@ -33,5 +33,5 @@ func (c *SearchQueryController) ListSearchSuggestion(ctx echo.Context) error {
 		return errors.Wrap(err, "failed to show search suggestion list")
 	}
 
-	return ctx.JSON(http.StatusOK, suggestions)
+	return ctx.JSON(http.StatusOK, c.ConvertSearchSuggestionsToOutput(suggestions))
 }

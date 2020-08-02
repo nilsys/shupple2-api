@@ -37,7 +37,7 @@ type (
 		IsExistByUID(uid string) (bool, error)
 		FindByCognitoUserName(cognitoUserName []string) ([]*entity.UserTiny, error)
 		// name部分一致検索
-		SearchByName(name string) ([]*entity.User, error)
+		SearchByNameOrUID(name string) ([]*entity.UserTiny, error)
 		FindFollowingByID(query *query.FindFollowUser) ([]*entity.UserTinyWithIsFollow, error)
 		FindFollowedByID(query *query.FindFollowUser) ([]*entity.UserTinyWithIsFollow, error)
 		FindFollowingWithIsFollowByID(userID int, query *query.FindFollowUser) ([]*entity.UserTinyWithIsFollow, error)
