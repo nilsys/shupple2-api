@@ -14,7 +14,6 @@ type (
 		Slug           string
 		Thumbnail      string
 		Title          string
-		Summary        string
 		TOC            string
 		CfProjectID    null.Int
 		IsSticky       bool

@@ -2,33 +2,41 @@ package output
 
 import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 
+// フロント返却用Post
 type (
-	PostTiny struct {
-		ID             int                `json:"id"`
-		Slug           string             `json:"slug"`
-		Thumbnail      string             `json:"thumbnail"`
-		Title          string             `json:"title"`
-		Summary        string             `json:"summary"`
-		TOC            string             `json:"toc"`
-		IsSticky       bool               `json:"isSticky"`
-		HideAds        bool               `json:"hideAds"`
-		FavoriteCount  int                `json:"favoriteCount"`
-		FacebookCount  int                `json:"facebookCount"`
-		TwitterCount   int                `json:"twitterCount"`
-		Views          int                `json:"views"`
-		SEOTitle       string             `json:"seoTitle"`
-		SEODescription string             `json:"seoDescription"`
-		CreatedAt      model.TimeResponse `json:"createdAt"`
-		EditedAt       model.TimeResponse `json:"editedAt"`
+	Post struct {
+		ID              int                `json:"id"`
+		Thumbnail       string             `json:"thumbnail"`
+		AreaCategories  []*AreaCategory    `json:"areaCategories"`
+		ThemeCategories []*ThemeCategory   `json:"themeCategories"`
+		Title           string             `json:"title"`
+		Slug            string             `json:"slug"`
+		Creator         Creator            `json:"creator"`
+		FavoriteCount   int                `json:"favoriteCount"`
+		Views           int                `json:"views"`
+		HideAds         bool               `json:"hideAds"`
+		IsFavorite      bool               `json:"isFavorite"`
+		EditedAt        model.TimeResponse `json:"editedAt"`
+		CreatedAt       model.TimeResponse `json:"createdAt"`
+		UpdatedAt       model.TimeResponse `json:"updatedAt"`
 	}
 
 	// PostQueryController.ListPost()でのみ使用中
 	PostWithCategoryDetail struct {
-		PostTiny
-		IsFavorite      bool                   `json:"isFavorite"`
-		Creator         Creator                `json:"creator"`
+		ID              int                    `json:"id"`
+		Thumbnail       string                 `json:"thumbnail"`
 		AreaCategories  []*AreaCategoryDetail  `json:"areaCategories"`
 		ThemeCategories []*ThemeCategoryDetail `json:"themeCategories"`
+		Title           string                 `json:"title"`
+		Slug            string                 `json:"slug"`
+		Creator         Creator                `json:"creator"`
+		FavoriteCount   int                    `json:"favoriteCount"`
+		Views           int                    `json:"views"`
+		HideAds         bool                   `json:"hideAds"`
+		IsFavorite      bool                   `json:"isFavorite"`
+		EditedAt        model.TimeResponse     `json:"editedAt"`
+		CreatedAt       model.TimeResponse     `json:"createdAt"`
+		UpdatedAt       model.TimeResponse     `json:"updatedAt"`
 	}
 
 	PostWithCategoryDetailList struct {
@@ -36,14 +44,33 @@ type (
 		Posts       []*PostWithCategoryDetail `json:"posts"`
 	}
 
+	PostList struct {
+		TotalNumber int     `json:"totalNumber"`
+		Posts       []*Post `json:"posts"`
+	}
+
 	PostShow struct {
-		PostTiny
-		IsFavorite      bool                   `json:"isFavorite"`
+		ID              int                    `json:"id"`
+		Thumbnail       string                 `json:"thumbnail"`
+		Title           string                 `json:"title"`
+		Slug            string                 `json:"slug"`
 		Body            []*PostBody            `json:"body"`
+		TOC             string                 `json:"toc"`
+		FavoriteCount   int                    `json:"favoriteCount"`
+		FacebookCount   int                    `json:"facebookCount"`
+		TwitterCount    int                    `json:"twitterCount"`
+		Views           int                    `json:"views"`
+		SEOTitle        string                 `json:"seoTitle"`
+		SEODescription  string                 `json:"seoDescription"`
+		HideAds         bool                   `json:"hideAds"`
+		IsFavorite      bool                   `json:"isFavorite"`
 		Creator         Creator                `json:"creator"`
 		AreaCategories  []*AreaCategoryDetail  `json:"areaCategories"`
 		ThemeCategories []*ThemeCategoryDetail `json:"themeCategories"`
 		Hashtags        []*Hashtag             `json:"hashtags"`
+		EditedAt        model.TimeResponse     `json:"editedAt"`
+		UpdatedAt       model.TimeResponse     `json:"updatedAt"`
+		CreatedAt       model.TimeResponse     `json:"createdAt"`
 	}
 
 	PostBody struct {
