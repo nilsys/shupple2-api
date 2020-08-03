@@ -91,30 +91,36 @@ func (r *AreaCategoryQueryRepositoryImpl) FindAreaListHavingPostByAreaGroup(area
 	q := r.buildQueryByLimitAndExcludeID(limit, excludeID)
 
 	/*
-		area_category AS area_category, ac
-		post_area_category AS pac
-
-		SELECT area_category.*, post_count FROM `area_category` JOIN(
-				SELECT ac.area_id, count(ac.id) AS post_count FROM post_area_category pac
-				JOIN area_category ac ON pac.area_category_id = ac.id
-				GROUP BY ac.area_id
-		) a ON a.area_id = area_category.id
-		WHERE (area_category.area_group = 'Japan' AND area_category.type = 'Area')
-		HAVING (post_count > 0)
-		ORDER BY post_count DESC LIMIT 1000
+			SELECT area_category.*, post_count FROM `area_category` JOIN(
+		            SELECT area_id, count(*) AS post_count FROM post JOIN (
+		                    SELECT post_id, area_id FROM post_area_category JOIN (
+		                            SELECT id, area_id FROM area_category
+		                            WHERE area_group = '1'
+		                    ) at ON post_area_category.area_category_id = at.id
+							GROUP BY post_id, area_id
+		            ) pa ON post.id = pa.post_id
+		            GROUP BY area_id
+		    ) ac ON area_category.area_id = ac.area_id
+			WHERE (type = 'Area') HAVING (post_count > 0) ORDER BY post_count DESC,sort_order ASC LIMIT 1000
 	*/
 	if err := q.
 		Select("area_category.*, post_count").
 		Joins(`JOIN(
-			SELECT ac.area_id, count(ac.id) AS post_count FROM post_area_category pac
-			JOIN area_category ac ON pac.area_category_id = ac.id
-			GROUP BY ac.area_id) a ON a.area_id = area_category.id`).
-		Where("area_category.area_group = ? AND area_category.type = ?", areaGroup, model.AreaCategoryTypeArea).
+			SELECT area_id, count(*) AS post_count FROM post JOIN (
+				SELECT post_id, area_id FROM post_area_category JOIN (
+					SELECT id, area_id FROM area_category
+					WHERE area_group = ?
+                ) at ON post_area_category.area_category_id = at.id
+				GROUP BY post_id, area_id
+            ) pa ON post.id = pa.post_id
+			GROUP BY area_id
+		) ac ON area_category.area_id = ac.area_id`, areaGroup).
+		Where("type = ?", model.AreaCategoryTypeArea).
 		Having("post_count > 0").
 		Order(sortOrder).
 		Order("post_count DESC").
 		Find(&rows).Error; err != nil {
-		return nil, errors.Wrapf(err, "failed to area list by areaGroup= %s", areaGroup)
+		return nil, errors.Wrapf(err, "failed to area list by areaGroup = %s", areaGroup)
 	}
 
 	return rows, nil
@@ -126,38 +132,43 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubAreaListHavingPostByAreaIDAndTh
 
 	if themeID != 0 {
 		/*
-			area_category AS area_category, ac
-			post_area_category AS pac
-			post_theme_category AS ptc
-
-			SELECT area_category.*, post_count FROM `area_category` JOIN(
-				SELECT ac.sub_area_id, count(ac.id) AS post_count FROM area_category ac JOIN (
-					SELECT pac.* FROM theme_category tc
-					JOIN post_theme_category ptc ON tc.id = ptc.theme_category_id
-					JOIN post_area_category pac ON ptc.post_id = pac.post_id
-					WHERE tc.theme_id = '1'
-					GROUP BY pac.post_id, pac.area_category_id
-				) a ON ac.id = a.area_category_id
-				WHERE (ac.type = 'SubArea' OR ac.type = 'SubSubArea')
-				GROUP BY ac.sub_area_id
-			)b ON area_category.id = b.sub_area_id
-			WHERE (area_category.area_id = '1' AND area_category.type = 'SubArea')
-			HAVING (post_count > 0)
-			ORDER BY post_count DESC LIMIT 1000
+				SELECT area_category.*, post_count FROM `area_category` JOIN(
+			            SELECT sub_area_id, count(*) AS post_count FROM post JOIN (
+			                    SELECT post_id, sub_area_id FROM post_area_category JOIN (
+			                            SELECT id, sub_area_id FROM area_category
+			                            WHERE area_id = '418'
+			                    ) at ON post_area_category.area_category_id = at.id
+								GROUP BY post_id, sub_area_id
+			            ) ps ON post.id = ps.post_id
+						WHERE post.id IN (
+								SELECT post_id FROM post_theme_category WHERE theme_category_id IN (
+									SELECT id FROM theme_category
+									WHERE theme_id = '1699'
+								)
+						)
+			            GROUP BY sub_area_id
+			    ) sc ON area_category.sub_area_id = sc.sub_area_id
+				WHERE (type = '2') HAVING (post_count > 0) ORDER BY post_count DESC,sort_order ASC LIMIT 1000
 		*/
 		if err := q.
 			Select("area_category.*, post_count").
 			Joins(`JOIN(
-				SELECT ac.sub_area_id, count(ac.id) AS post_count FROM area_category ac JOIN (
-					SELECT pac.* FROM theme_category tc
-					JOIN post_theme_category ptc ON tc.id = ptc.theme_category_id
-					JOIN post_area_category pac ON ptc.post_id = pac.post_id
-					WHERE tc.theme_id = ?
-					GROUP BY pac.post_id, pac.area_category_id
-				) a ON ac.id = a.area_category_id
-				WHERE (ac.type = ? OR ac.type = ?)
-				GROUP BY ac.sub_area_id)b ON area_category.id = b.sub_area_id`, themeID, model.AreaCategoryTypeSubArea, model.AreaCategoryTypeSubSubArea).
-			Where("area_category.area_id = ? AND area_category.type = ?", areaID, model.AreaCategoryTypeSubArea).
+               SELECT sub_area_id, count(*) AS post_count FROM post JOIN (
+                       SELECT post_id, sub_area_id FROM post_area_category JOIN (
+                               SELECT id, sub_area_id FROM area_category
+                               WHERE area_id = ?
+			           ) at ON post_area_category.area_category_id = at.id
+		    			GROUP BY post_id, sub_area_id
+				) ps ON post.id = ps.post_id
+		    	WHERE post.id IN (
+		    			SELECT post_id FROM post_theme_category WHERE theme_category_id IN (
+		    				SELECT id FROM theme_category
+		    				WHERE theme_id = ?
+		    			)
+		    	)
+               GROUP BY sub_area_id
+			) sc ON area_category.sub_area_id = sc.sub_area_id`, areaID, themeID).
+			Where("type = ?", model.AreaCategoryTypeSubArea).
 			Having("post_count > 0").
 			Order(sortOrder).
 			Order("post_count DESC").
@@ -167,27 +178,31 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubAreaListHavingPostByAreaIDAndTh
 		return rows, nil
 	}
 	/*
-		area_category AS area_category, ac
-		post_area_category AS pac
-
-		SELECT area_category.*, post_count FROM `area_category` JOIN(
-			SELECT ac.sub_area_id, count(ac.id) AS post_count FROM post_area_category pac
-			JOIN area_category ac ON pac.area_category_id = ac.id
-			WHERE (ac.type = 'SubArea' OR ac.type = 'SubSubArea')
-			GROUP BY ac.sub_area_id
-		)a ON area_category.id = a.sub_area_id
-		WHERE (area_category.area_id = '7' AND area_category.type = 'SubArea')
-		HAVING (post_count > 0)
-		ORDER BY post_count DESC LIMIT 1000
+			SELECT area_category.*, post_count FROM `area_category` JOIN(
+		            SELECT sub_area_id, count(*) AS post_count FROM post JOIN (
+		                    SELECT post_id, sub_area_id FROM post_area_category JOIN (
+		                            SELECT id, sub_area_id FROM area_category
+		                            WHERE area_id = '418'
+		                    ) at ON post_area_category.area_category_id = at.id
+							GROUP BY post_id, sub_area_id
+		            ) ps ON post.id = ps.post_id
+		            GROUP BY sub_area_id
+		    ) sc ON area_category.sub_area_id = sc.sub_area_id
+			WHERE (type = 'SubArea') HAVING (post_count > 0) ORDER BY post_count DESC,sort_order ASC LIMIT 1000
 	*/
 	if err := q.
 		Select("area_category.*, post_count").
 		Joins(`JOIN(
-			SELECT ac.sub_area_id, count(ac.id) AS post_count FROM post_area_category pac
-			JOIN area_category ac ON pac.area_category_id = ac.id
-			WHERE (ac.type = ? OR ac.type = ?)
-			GROUP BY ac.sub_area_id)a ON area_category.id = a.sub_area_id`, model.AreaCategoryTypeSubArea, model.AreaCategoryTypeSubSubArea).
-		Where("area_category.area_id = ? AND area_category.type = ?", areaID, model.AreaCategoryTypeSubArea).
+			SELECT sub_area_id, count(*) AS post_count FROM post JOIN (
+				SELECT post_id, sub_area_id FROM post_area_category JOIN (
+					SELECT id, sub_area_id FROM area_category
+					WHERE area_id = ?
+				) at ON post_area_category.area_category_id = at.id
+				GROUP BY post_id, sub_area_id
+			) ps ON post.id = ps.post_id
+			GROUP BY sub_area_id
+		) sc ON area_category.sub_area_id = sc.sub_area_id`, areaID).
+		Where("type = ?", model.AreaCategoryTypeSubArea).
 		Having("post_count > 0").
 		Order(sortOrder).
 		Order("post_count DESC").
@@ -203,33 +218,42 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubSubAreaListHavingPostBySubAreaI
 
 	if themeID != 0 {
 		/*
-			area_category AS area_category
-			post_area_category AS pac
-			post_theme_category AS ptc
-
-			SELECT area_category.*, count(area_category.id) AS post_count FROM `area_category` JOIN(
-				SELECT pac.* FROM theme_category tc
-				JOIN post_theme_category ptc ON tc.id = ptc.theme_category_id
-				JOIN post_area_category pac ON pac.post_id = ptc.post_id
-				WHERE tc.theme_id = '1'
-				GROUP BY pac.post_id, pac.area_category_id;
-			)a ON area_category.sub_sub_area_id = a.area_category_id
-			WHERE (sub_area_id = '10' AND type = 'SubSubArea')
-			GROUP BY area_category.id
-			HAVING (post_count > 0)
-			ORDER BY post_count DESC LIMIT 1000
+				SELECT area_category.*, post_count FROM `area_category` JOIN(
+			            SELECT sub_sub_area_id, count(*) AS post_count FROM post INNER JOIN (
+			                    SELECT post_id, sub_sub_area_id FROM post_area_category JOIN (
+			                            SELECT id, sub_sub_area_id FROM area_category
+			                            WHERE sub_area_id = '416' AND type = '3'
+			                    ) at ON post_area_category.area_category_id = at.id
+								GROUP BY post_id, sub_sub_area_id
+			            ) pss ON post.id = pss.post_id
+						WHERE id IN (
+								SELECT post_id FROM post_theme_category WHERE theme_category_id IN (
+									SELECT id FROM theme_category
+									WHERE theme_id = '1696'
+								)
+						)
+			            GROUP BY sub_sub_area_id
+			    ) ssc ON area_category.sub_sub_area_id = ssc.sub_sub_area_id
+				HAVING (post_count > 0) ORDER BY post_count DESC,sort_order ASC LIMIT 1000
 		*/
 		if err := q.
-			Select("area_category.*, count(area_category.id) AS post_count").
+			Select("area_category.*, post_count").
 			Joins(`JOIN(
-					SELECT pac.* FROM theme_category tc
-					JOIN post_theme_category ptc ON tc.id = ptc.theme_category_id
-					JOIN post_area_category pac ON pac.post_id = ptc.post_id
-					WHERE tc.theme_id = ?
-					GROUP BY pac.post_id, pac.area_category_id
-				)a ON area_category.sub_sub_area_id = a.area_category_id`, themeID).
-			Where("sub_area_id = ? AND type = ?", subAreaID, model.AreaCategoryTypeSubSubArea).
-			Group("area_category.id").
+                SELECT sub_sub_area_id, count(*) AS post_count FROM post JOIN (
+                        SELECT post_id, sub_sub_area_id FROM post_area_category JOIN (
+                                SELECT id, sub_sub_area_id FROM area_category
+                                WHERE sub_area_id = ? AND type = ?
+                        ) at ON post_area_category.area_category_id = at.id
+			    		GROUP BY post_id, sub_sub_area_id
+                ) pss ON post.id = pss.post_id
+			    WHERE id IN (
+			    		SELECT post_id FROM post_theme_category WHERE theme_category_id IN (
+			    			SELECT id FROM theme_category
+			    			WHERE theme_id = ?
+			    		)
+			    )
+                GROUP BY sub_sub_area_id
+			) ssc ON area_category.sub_sub_area_id = ssc.sub_sub_area_id`, subAreaID, model.AreaCategoryTypeSubSubArea, themeID).
 			Having("post_count > 0").
 			Order(sortOrder).
 			Order("post_count DESC").
@@ -239,21 +263,31 @@ func (r *AreaCategoryQueryRepositoryImpl) FindSubSubAreaListHavingPostBySubAreaI
 		return rows, nil
 	}
 	/*
-		area_category AS area_category
-		post_area_category AS pac
-
-		SELECT area_category.*, count(pac.post_id) as post_count FROM `area_category`
-		JOIN post_area_category pac ON area_category.id = pac.area_category_id
-		WHERE (sub_area_id = '1' AND type = 'SubSubArea')
-		GROUP BY area_category.id
-		HAVING post_count > 0
-		ORDER BY post_count DESC LIMIT 1000
+			SELECT area_category.*, post_count FROM `area_category` JOIN(
+		            SELECT sub_sub_area_id, count(*) AS post_count FROM post JOIN (
+		                    SELECT post_id, sub_sub_area_id FROM post_area_category JOIN (
+		                            SELECT id, sub_sub_area_id FROM area_category
+		                            WHERE sub_area_id = '441'
+		                    ) at ON post_area_category.area_category_id = at.id
+							GROUP BY post_id, sub_sub_area_id
+		            ) pss ON post.id = pss.post_id
+		            GROUP BY sub_sub_area_id
+		    ) ssc ON area_category.sub_sub_area_id = ssc.sub_sub_area_id
+			WHERE (type = 'SubSubArea') HAVING (post_count > 0) ORDER BY post_count DESC,sort_order ASC LIMIT 1000
 	*/
 	if err := q.
-		Select("area_category.*, count(pac.post_id) as post_count").
-		Joins("JOIN post_area_category pac ON area_category.id = pac.area_category_id").
-		Where("sub_area_id = ? AND type = ?", subAreaID, model.AreaCategoryTypeSubSubArea).
-		Group("area_category.id").
+		Select("area_category.*, post_count").
+		Joins(`JOIN (
+           SELECT sub_sub_area_id, count(*) AS post_count FROM post JOIN (
+                   SELECT post_id, sub_sub_area_id FROM post_area_category JOIN (
+                           SELECT id, sub_sub_area_id FROM area_category
+                           WHERE sub_area_id = ?
+                   ) at ON post_area_category.area_category_id = at.id
+					GROUP BY post_id, sub_sub_area_id
+           ) pss ON post.id = pss.post_id
+           GROUP BY sub_sub_area_id
+		) ssc ON area_category.sub_sub_area_id = ssc.sub_sub_area_id`, subAreaID).
+		Where("type = ?", model.AreaCategoryTypeSubSubArea).
 		Having("post_count > 0").
 		Order(sortOrder).
 		Order("post_count DESC").
