@@ -42,37 +42,6 @@ func (c Converters) ConvertListFeedPostParamToQuery(param *input.ListFeedPostPar
 	}
 }
 
-/*
- * i -> o
- */
-func (c Converters) ConvertPostDetailListToOutput(posts []*entity.PostDetail) []*output.Post {
-	responsePosts := make([]*output.Post, len(posts))
-
-	for i, queryPost := range posts {
-		responsePosts[i] = c.ConvertQueryPostToOutput(queryPost)
-	}
-
-	return responsePosts
-}
-
-func (c Converters) ConvertQueryPostToOutput(queryPost *entity.PostDetail) *output.Post {
-	return &output.Post{
-		ID:              queryPost.ID,
-		Thumbnail:       queryPost.Thumbnail,
-		Title:           queryPost.Title,
-		Slug:            queryPost.Slug,
-		AreaCategories:  c.ConvertAreaCategoriesToOutput(queryPost.AreaCategories),
-		ThemeCategories: c.ConvertThemeCategoriesToOutput(queryPost.ThemeCategories),
-		Creator:         c.NewCreatorFromUser(queryPost.User),
-		FavoriteCount:   queryPost.FavoriteCount,
-		Views:           queryPost.Views,
-		HideAds:         queryPost.HideAds,
-		EditedAt:        model.TimeResponse(queryPost.EditedAt),
-		CreatedAt:       model.TimeResponse(queryPost.CreatedAt),
-		UpdatedAt:       model.TimeResponse(queryPost.UpdatedAt),
-	}
-}
-
 func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.PostShow {
 	var hashtags = make([]*output.Hashtag, len(post.Hashtag))
 	var bodies = make([]*output.PostBody, len(post.Bodies))
@@ -95,27 +64,30 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 	}
 
 	return &output.PostShow{
-		ID:              post.ID,
-		Thumbnail:       post.PostTiny.Thumbnail,
-		Title:           post.Title,
-		Slug:            post.Slug,
-		Body:            bodies,
-		TOC:             post.TOC,
-		FavoriteCount:   post.FavoriteCount,
-		FacebookCount:   post.FacebookCount,
-		TwitterCount:    post.TwitterCount,
-		Views:           post.Views,
-		SEOTitle:        post.SEOTitle,
-		SEODescription:  post.SEODescription,
-		HideAds:         post.HideAds,
+		PostTiny: output.PostTiny{
+			ID:             post.ID,
+			Thumbnail:      post.PostTiny.Thumbnail,
+			Title:          post.Title,
+			Summary:        post.Summary,
+			Slug:           post.Slug,
+			TOC:            post.TOC,
+			FavoriteCount:  post.FavoriteCount,
+			FacebookCount:  post.FacebookCount,
+			TwitterCount:   post.TwitterCount,
+			Views:          post.Views,
+			SEOTitle:       post.SEOTitle,
+			SEODescription: post.SEODescription,
+			HideAds:        post.HideAds,
+			IsSticky:       post.IsSticky,
+			CreatedAt:      model.TimeResponse(post.CreatedAt),
+			EditedAt:       model.TimeResponse(post.EditedAt),
+		},
 		IsFavorite:      post.IsFavorite,
+		Body:            bodies,
 		Creator:         c.NewCreatorFromUser(post.User),
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
 		Hashtags:        hashtags,
-		EditedAt:        model.TimeResponse(post.EditedAt),
-		CreatedAt:       model.TimeResponse(post.CreatedAt),
-		UpdatedAt:       model.TimeResponse(post.UpdatedAt),
 	}
 }
 
@@ -144,19 +116,27 @@ func (c Converters) ConvertPostListTinyWithCategoryDetailToOutput(post *entity.P
 	}
 
 	return &output.PostWithCategoryDetail{
-		ID:              post.ID,
-		Thumbnail:       post.Thumbnail,
+		PostTiny: output.PostTiny{
+			ID:             post.ID,
+			Slug:           post.Slug,
+			Thumbnail:      post.Thumbnail,
+			Title:          post.Title,
+			Summary:        post.Summary,
+			TOC:            post.TOC,
+			IsSticky:       post.IsSticky,
+			HideAds:        post.HideAds,
+			FavoriteCount:  post.FavoriteCount,
+			FacebookCount:  post.FacebookCount,
+			TwitterCount:   post.TwitterCount,
+			Views:          post.Views,
+			SEOTitle:       post.SEOTitle,
+			SEODescription: post.SEODescription,
+			CreatedAt:      model.TimeResponse(post.CreatedAt),
+			EditedAt:       model.TimeResponse(post.EditedAt),
+		},
+		IsFavorite:      post.IsFavorite,
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
-		Title:           post.Title,
-		Slug:            post.Slug,
 		Creator:         c.NewCreatorFromUser(post.User),
-		FavoriteCount:   post.FavoriteCount,
-		Views:           post.Views,
-		HideAds:         post.HideAds,
-		IsFavorite:      post.IsFavorite,
-		EditedAt:        model.TimeResponse(post.EditedAt),
-		CreatedAt:       model.TimeResponse(post.CreatedAt),
-		UpdatedAt:       model.TimeResponse(post.UpdatedAt),
 	}
 }
