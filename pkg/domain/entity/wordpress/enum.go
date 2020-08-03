@@ -8,7 +8,7 @@ ENUM(undefined, japan, world, theme)
 type CategoryType int
 
 /*
-ENUM(user = 1, post, location, movie, comic, feature, category, location__cat, revision, cf_project, cf_return_gift)
+ENUM(user = 1, post, location, movie, comic, feature, category, location__cat, revision, project, return_gift)
 */
 type EntityType int
 
