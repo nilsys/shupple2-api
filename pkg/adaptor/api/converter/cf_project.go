@@ -65,10 +65,14 @@ func (c *Converters) ConvertCfProjectDetailToOutput(project *entity.CfProjectDet
 		AchievedPrice:   project.AchievedPrice,
 		SupporterCount:  project.SupportCommentCount,
 		FavoriteCount:   project.FavoriteCount,
+		FacebookCount:   project.FacebookCount,
+		TwitterCount:    project.TwitterCount,
 		Creator:         c.NewCreatorFromUser(project.User),
 		Thumbnails:      thumbnails,
 		AreaCategories:  c.ConvertAreaCategoriesToOutput(project.Snapshot.AreaCategories),
 		ThemeCategories: c.ConvertThemeCategoriesToOutput(project.Snapshot.ThemeCategories),
 		DeadLine:        model.TimeResponse(project.Snapshot.Deadline),
+		CreatedAt:       model.TimeResponse(project.CreatedAt),
+		EditedAt:        model.TimeResponse(project.Snapshot.CreatedAt),
 	}
 }

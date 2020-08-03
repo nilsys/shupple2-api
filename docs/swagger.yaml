@@ -4572,6 +4572,10 @@ components:
           type: integer
         favoriteCount:
           type: integer
+        facebookCount:
+          type: integer
+        twitterCount:
+          type: integer
         creator:
           $ref: "#/components/schemas/Creator"
         thumbnails:
@@ -4586,6 +4590,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ThemeCategoryDetail"
+        createdAt:
+          $ref: "#/components/schemas/createdAt"
+        editedAt:
+          $ref: "#/components/schemas/editedAt"
     CfProjectThumbnail:
       type: object
       properties:

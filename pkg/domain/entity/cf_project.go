@@ -15,6 +15,9 @@ type (
 		FavoriteCount          int
 		AchievedPrice          int
 		IsSentAchievementEmail bool
+		// TODO:
+		FacebookCount int
+		TwitterCount  int
 		Times
 	}
 
