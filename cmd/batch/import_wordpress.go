@@ -22,7 +22,7 @@ func (b *Batch) cliImportWordpress() cli.Command {
 				Action: b.importWordpress(wordpress.EntityTypeLocation),
 			},
 			{
-				Name:   wordpress.EntityTypeCfProject.String(),
+				Name:   wordpress.EntityTypeProject.String(),
 				Usage:  "紐づく返礼品も一緒にimportする",
 				Action: b.importWordpressCfProject,
 			},
