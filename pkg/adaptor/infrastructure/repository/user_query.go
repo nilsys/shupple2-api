@@ -169,8 +169,7 @@ func (r *UserQueryRepositoryImpl) FindFollowingByID(query *query.FindFollowUser)
 	var rows []*entity.UserTinyWithIsFollow
 
 	if err := r.DB.
-		Joins("LEFT JOIN user_following ON user.id = user_following.user_id").
-		Where("id IN (SELECT target_id FROM user_following WHERE user_id = ?)", query.ID).
+		Joins("INNER JOIN user_following ON user.id = user_following.target_id AND user_following.user_id = ?", query.ID).
 		Limit(query.Limit).
 		Offset(query.Offset).
 		Order("user_following.created_at DESC").
@@ -186,8 +185,7 @@ func (r *UserQueryRepositoryImpl) FindFollowedByID(query *query.FindFollowUser) 
 	var rows []*entity.UserTinyWithIsFollow
 
 	if err := r.DB.
-		Joins("LEFT JOIN user_following ON user.id = user_following.target_id").
-		Where("id IN (SELECT user_id FROM user_following WHERE target_id = ?)", query.ID).
+		Joins("INNER JOIN user_following ON user.id = user_following.user_id AND user_following.target_id = ?", query.ID).
 		Limit(query.Limit).
 		Offset(query.Offset).
 		Order("user_following.created_at DESC").
