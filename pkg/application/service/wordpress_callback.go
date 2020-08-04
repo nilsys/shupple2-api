@@ -52,9 +52,9 @@ func (s *WordpressCallbackServiceImpl) Import(entityType wordpress.EntityType, i
 		err = s.CategoryCommandService.ImportFromWordpressByID(id, termDeleted)
 	case wordpress.EntityTypeLocationCat:
 		err = s.SpotCategoryCommandService.ImportFromWordpressByID(id, termDeleted)
-	case wordpress.EntityTypeProject:
+	case wordpress.EntityTypeCfProject:
 		err = s.CfProjectCommandService.ImportFromWordpressByID(id)
-	case wordpress.EntityTypeReturnGift:
+	case wordpress.EntityTypeCfReturnGift:
 		err = s.CfReturnGiftCommandService.ImportFromWordpressByID(id)
 	case wordpress.EntityTypeRevision:
 		// nop

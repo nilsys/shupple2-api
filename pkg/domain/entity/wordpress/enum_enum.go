@@ -85,13 +85,13 @@ const (
 	EntityTypeLocationCat
 	// EntityTypeRevision is a EntityType of type Revision
 	EntityTypeRevision
-	// EntityTypeProject is a EntityType of type Project
-	EntityTypeProject
-	// EntityTypeReturnGift is a EntityType of type Return_gift
-	EntityTypeReturnGift
+	// EntityTypeCfProject is a EntityType of type Cf_project
+	EntityTypeCfProject
+	// EntityTypeCfReturnGift is a EntityType of type Cf_return_gift
+	EntityTypeCfReturnGift
 )
 
-const _EntityTypeName = "userpostlocationmoviecomicfeaturecategorylocation__catrevisionprojectreturn_gift"
+const _EntityTypeName = "userpostlocationmoviecomicfeaturecategorylocation__catrevisioncf_projectcf_return_gift"
 
 var _EntityTypeMap = map[EntityType]string{
 	1:  _EntityTypeName[0:4],
@@ -103,8 +103,8 @@ var _EntityTypeMap = map[EntityType]string{
 	7:  _EntityTypeName[33:41],
 	8:  _EntityTypeName[41:54],
 	9:  _EntityTypeName[54:62],
-	10: _EntityTypeName[62:69],
-	11: _EntityTypeName[69:80],
+	10: _EntityTypeName[62:72],
+	11: _EntityTypeName[72:86],
 }
 
 // String implements the Stringer interface.
@@ -125,8 +125,8 @@ var _EntityTypeValue = map[string]EntityType{
 	_EntityTypeName[33:41]: 7,
 	_EntityTypeName[41:54]: 8,
 	_EntityTypeName[54:62]: 9,
-	_EntityTypeName[62:69]: 10,
-	_EntityTypeName[69:80]: 11,
+	_EntityTypeName[62:72]: 10,
+	_EntityTypeName[72:86]: 11,
 }
 
 // ParseEntityType attempts to convert a string to a EntityType
