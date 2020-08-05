@@ -82,6 +82,10 @@ func (r *CfProjectQueryRepositoryImpl) buildFindList(query *query.FindCfProjectQ
 		q = q.Where("cf_project.latest_snapshot_id IN (SELECT cf_project_snapshot_id FROM cf_project_snapshot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE sub_sub_area_id = ?))", query.SubSubAreaID)
 	}
 
+	if query.UserID != 0 {
+		q = q.Where("cf_project.user_id = ?", query.UserID)
+	}
+
 	if query.SortBy == model.CfProjectSortByPush {
 		q = q.Where("cf_project_snapshot.achieved_price / cf_project_snapshot.goal_price >= 0.7")
 	}

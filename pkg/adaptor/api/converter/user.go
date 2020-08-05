@@ -155,6 +155,11 @@ func (c Converters) ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWi
 		interests[i] = c.InterestToOutput(interest)
 	}
 
+	attributes := make([]model.UserAttribute, len(user.UserAttributes))
+	for i, attr := range user.UserAttributes {
+		attributes[i] = attr.Attribute
+	}
+
 	return &output.MyPageUser{
 		ID:             user.ID,
 		UID:            user.UID,
@@ -175,6 +180,7 @@ func (c Converters) ConvertUserDetailWithCountToOutPut(user *entity.UserDetailWi
 		FollowingCount: user.FollowingCount,
 		FollowedCount:  user.FollowedCount,
 		Interests:      interests,
+		Attributes:     attributes,
 		IsFollow:       user.IsFollow,
 	}
 }

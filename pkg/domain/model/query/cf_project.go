@@ -7,6 +7,7 @@ type (
 		AreaID       int
 		SubAreaID    int
 		SubSubAreaID int
+		UserID       int
 		SortBy       model.CfProjectSortBy
 	}
 )

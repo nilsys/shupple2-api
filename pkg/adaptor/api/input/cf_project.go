@@ -11,6 +11,7 @@ type (
 		AreaID       int                   `query:"areaId"`
 		SubAreaID    int                   `query:"subAreaId"`
 		SubSubAreaID int                   `query:"subSubAreaId"`
+		UserID       int                   `query:"userId"`
 		SortBy       model.CfProjectSortBy `query:"sortBy"`
 	}
 

@@ -41,26 +41,27 @@ type (
 	}
 
 	MyPageUser struct {
-		ID             int          `json:"id"`
-		UID            string       `json:"uid"`
-		Name           string       `json:"name"`
-		Profile        string       `json:"profile"`
-		Birthdate      model.Date   `json:"birthdate"`
-		Email          string       `json:"email"`
-		Gender         model.Gender `json:"gender"`
-		Icon           string       `json:"iconUrl"`
-		Header         string       `json:"headerUrl"`
-		FacebookURL    string       `json:"facebookUrl"`
-		InstagramURL   string       `json:"instagramUrl"`
-		TwitterURL     string       `json:"twitterUrl"`
-		YoutubeURL     string       `json:"youtubeUrl"`
-		URL            string       `json:"url"`
-		LivingArea     string       `json:"livingArea"`
-		PostCount      int          `json:"postCount"`
-		FollowingCount int          `json:"followingCount"`
-		FollowedCount  int          `json:"followedCount"`
-		Interests      []Interest   `json:"interests"`
-		IsFollow       bool         `json:"isFollow"`
+		ID             int                   `json:"id"`
+		UID            string                `json:"uid"`
+		Name           string                `json:"name"`
+		Profile        string                `json:"profile"`
+		Birthdate      model.Date            `json:"birthdate"`
+		Email          string                `json:"email"`
+		Gender         model.Gender          `json:"gender"`
+		Icon           string                `json:"iconUrl"`
+		Header         string                `json:"headerUrl"`
+		FacebookURL    string                `json:"facebookUrl"`
+		InstagramURL   string                `json:"instagramUrl"`
+		TwitterURL     string                `json:"twitterUrl"`
+		YoutubeURL     string                `json:"youtubeUrl"`
+		URL            string                `json:"url"`
+		LivingArea     string                `json:"livingArea"`
+		PostCount      int                   `json:"postCount"`
+		FollowingCount int                   `json:"followingCount"`
+		FollowedCount  int                   `json:"followedCount"`
+		Interests      []Interest            `json:"interests"`
+		Attributes     []model.UserAttribute `json:"attributes"`
+		IsFollow       bool                  `json:"isFollow"`
 	}
 
 	Interest struct {

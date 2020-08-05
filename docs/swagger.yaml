@@ -2319,6 +2319,12 @@ paths:
           schema:
             type: integer
         - in: query
+          name: userId
+          description: |
+            Userのid
+          schema:
+            type: integer
+        - in: query
           name: sortBy
           schema:
             $ref: "#/components/schemas/CfProjectSortBy"
@@ -2812,6 +2818,13 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Interest"
+        isFollow:
+          type: boolean
+          description: フォローしてるか
+        attributes:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserAttribute"
     UserSummaryList:
       type: array
       items:
@@ -4737,6 +4750,17 @@ components:
       description: |
         giftTypeがReservedTicketの場合有効
         ReservedTicket以外の場合Undefined
+    UserAttribute:
+      type: string
+      enum:
+        - Common
+        - WP
+        - CfProjectOwner
+      description: |
+        Userが持つ属性
+        Common = 一般User
+        WP = wpにも登録されているクリエイター
+        CfProjectOwner = CfProjectのowner
     Error:
       type: object
       properties:
