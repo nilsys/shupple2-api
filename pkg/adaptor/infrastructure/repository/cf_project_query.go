@@ -56,14 +56,30 @@ func (r *CfProjectQueryRepositoryImpl) FindSupportCommentListByCfProjectID(proje
 	return rows, nil
 }
 
-func (r *CfProjectQueryRepositoryImpl) FindNotSentAchievementNoticeMailAndAchievedListByLastID(lastID, limit int) (*entity.CfProjectDetailList, error) {
+// 達成メールが未送信かつ目標金額に達していているCfProject
+func (r *CfProjectQueryRepositoryImpl) FindNotSentAchievementNoticeEmailAndAchievedListByLastID(lastID, limit int) (*entity.CfProjectDetailList, error) {
 	var rows entity.CfProjectDetailList
 	if err := r.DB(context.Background()).
 		Joins("INNER JOIN cf_project_snapshot ON cf_project.latest_snapshot_id = cf_project_snapshot.id").
-		Where("cf_project.id > ? AND cf_project_snapshot.goal_price <= cf_project.achieved_price AND cf_project.is_sent_achievement_mail = false", lastID).
+		Where("cf_project.id > ? AND cf_project_snapshot.goal_price <= cf_project.achieved_price AND cf_project.is_sent_achievement_email = false", lastID).
+		Limit(limit).
 		Find(&rows.List).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find cf_project")
 	}
+	return &rows, nil
+}
+
+// 通知メールが送信されていない報告(post)を持つCfProject
+func (r *CfProjectQueryRepositoryImpl) FindNotSentNewPostNoticeEmailByLastID(lastID, limit int) (*entity.CfProjectDetailList, error) {
+	var rows entity.CfProjectDetailList
+
+	if err := r.DB(context.Background()).
+		Where("is_sent_new_post_email = false AND latest_post_id IS NOT NULL AND id > ?", lastID).
+		Limit(limit).
+		Find(&rows.List).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find cf_project")
+	}
+
 	return &rows, nil
 }
 

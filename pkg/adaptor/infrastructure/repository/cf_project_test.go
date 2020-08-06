@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"gopkg.in/guregu/null.v3"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -36,6 +38,7 @@ var _ = Describe("CfProjectRepositoryImpl", func() {
 
 		base = newCfProject(cfProjectID, userID, thumbnails, areaCategoryIDs, themeCategoryIDs)
 		Expect(db.Save(base).Error).To(Succeed())
+		Expect(db.Save(newPost(postID, bodies, nil, nil, nil)))
 	})
 
 	Describe("Store", func() {
@@ -142,6 +145,55 @@ var _ = Describe("CfProjectRepositoryImpl", func() {
 			Expect(err).To(Succeed())
 
 			Expect(actual).To(entity.EqualEntity(base))
+		})
+	})
+
+	Describe("UpdateLatestPostID", func() {
+		Context("cf_project.latest_post_idとis_sent_new_post_emailをfalseへ更新", func() {
+			It("正常系", func() {
+				err := commandRepo.UpdateLatestPostID(context.Background(), cfProjectID, postID)
+				Expect(err).To(Succeed())
+
+				base.LatestPostID = null.IntFrom(int64(postID))
+				base.IsSentNewPostEmail = false
+
+				actual, err := findCfProjectByID(cfProjectID)
+				Expect(err).To(Succeed())
+
+				Expect(actual).To(entity.EqualEntity(base))
+			})
+		})
+	})
+
+	Describe("MarkAsIsSentAchievementNoticeEmail", func() {
+		Context("cf_project.is_sent_achievement_emailをtrueへ更新", func() {
+			It("正常系", func() {
+				err := commandRepo.MarkAsIsSentAchievementNoticeEmail(cfProjectID)
+				Expect(err).To(Succeed())
+
+				base.IsSentAchievementEmail = true
+
+				actual, err := findCfProjectByID(cfProjectID)
+				Expect(err).To(Succeed())
+
+				Expect(actual).To(entity.EqualEntity(base))
+			})
+		})
+	})
+
+	Describe("MarkAsIsSentNewPostEmail", func() {
+		Context("cf_project.is_sent_new_post_emailをtrueへ更新", func() {
+			It("正常系", func() {
+				err := commandRepo.MarkAsIsSentNewPostEmail(context.Background(), cfProjectID)
+				Expect(err).To(Succeed())
+
+				base.IsSentNewPostEmail = true
+
+				actual, err := findCfProjectByID(cfProjectID)
+				Expect(err).To(Succeed())
+
+				Expect(actual).To(entity.EqualEntity(base))
+			})
 		})
 	})
 })

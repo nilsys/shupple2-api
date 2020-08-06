@@ -9,7 +9,8 @@ import (
 
 type (
 	CfProjectFacade interface {
-		SendAchievementMail() error
+		SendAchievementEmail() error
+		SendNewPostEmail() error
 		ImportWithGifts(id int) error
 	}
 
@@ -17,6 +18,7 @@ type (
 		service.CfProjectCommandService
 		service.CfReturnGiftCommandService
 		repository.CfProjectQueryRepository
+		repository.PostQueryRepository
 		repository.WordpressQueryRepository
 	}
 )
@@ -30,22 +32,55 @@ const (
 	cfProjectPartLimit = 100
 )
 
-func (f *CfProjectFacadeImpl) SendAchievementMail() error {
+func (f *CfProjectFacadeImpl) SendAchievementEmail() error {
 	lastID := 0
 	for {
-		cfProjects, err := f.CfProjectQueryRepository.FindNotSentAchievementNoticeMailAndAchievedListByLastID(lastID, cfProjectPartLimit)
+		cfProjects, err := f.CfProjectQueryRepository.FindNotSentAchievementNoticeEmailAndAchievedListByLastID(lastID, cfProjectPartLimit)
 		if err != nil {
 			return errors.Wrap(err, "failed find cf_project")
 		}
 		if len(cfProjects.List) == 0 {
 			break
 		}
+
 		for _, cfProject := range cfProjects.List {
-			return f.CfProjectCommandService.SendAchievementMailToSupporter(cfProject)
+			if err := f.CfProjectCommandService.SendAchievementMailToSupporter(cfProject); err != nil {
+				return errors.Wrap(err, "failed send achievement email")
+			}
 		}
 
 		lastID = cfProjects.List[len(cfProjects.List)-1].ID
 	}
+	return nil
+}
+
+func (f *CfProjectFacadeImpl) SendNewPostEmail() error {
+	lastID := 0
+	for {
+		cfProjects, err := f.CfProjectQueryRepository.FindNotSentNewPostNoticeEmailByLastID(lastID, cfProjectPartLimit)
+		if err != nil {
+			return errors.Wrap(err, "failed find cf_project")
+		}
+		if len(cfProjects.List) == 0 {
+			break
+		}
+
+		posts, err := f.PostQueryRepository.FindByIDs(cfProjects.LatestPostIDs())
+		if err != nil {
+			return errors.Wrap(err, "failed find post")
+		}
+
+		cfProjectIDPostDMap := posts.ToCfProjectIDMap()
+
+		for _, cfProject := range cfProjects.List {
+			if err := f.CfProjectCommandService.SendNewReportMailToSupporter(cfProject, cfProjectIDPostDMap[cfProject.ID]); err != nil {
+				return errors.Wrap(err, "failed send new post email")
+			}
+		}
+
+		lastID = cfProjects.List[len(cfProjects.List)-1].ID
+	}
+
 	return nil
 }
 

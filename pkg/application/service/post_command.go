@@ -21,6 +21,7 @@ type (
 		repository.PostCommandRepository
 		repository.HashtagCommandRepository
 		repository.WordpressQueryRepository
+		repository.CfProjectCommandRepository
 		WordpressService
 		TransactionService
 	}
@@ -60,11 +61,17 @@ func (r *PostCommandServiceImpl) ImportFromWordpressByID(id int) (*entity.Post, 
 		}
 
 		if err := r.WordpressService.PatchPost(post, wpPost); err != nil {
-			return errors.Wrap(err, "failed  to patch post")
+			return errors.Wrap(err, "failed to patch post")
 		}
 
 		if err := r.Store(c, post); err != nil {
 			return errors.Wrap(err, "failed to store post")
+		}
+
+		if post.CfProjectID.Valid {
+			if err := r.CfProjectCommandRepository.UpdateLatestPostID(c, int(post.CfProjectID.Int64), post.ID); err != nil {
+				return errors.Wrap(err, "failed to update cf_project.latest_post_id, is_sent_new_post_email")
+			}
 		}
 
 		return nil

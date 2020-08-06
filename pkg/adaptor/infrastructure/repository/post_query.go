@@ -38,6 +38,16 @@ func (r *PostQueryRepositoryImpl) FindByID(id int) (*entity.Post, error) {
 	return &row, nil
 }
 
+func (r *PostQueryRepositoryImpl) FindByIDs(ids []int) (*entity.PostDetailList, error) {
+	var rows entity.PostDetailList
+
+	if err := r.DB.Where("id IN (?)", ids).Find(&rows.List).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find post detail")
+	}
+
+	return &rows, nil
+}
+
 func (r *PostQueryRepositoryImpl) FindPostDetailWithHashtagByID(id int) (*entity.PostDetailWithHashtagAndIsFavorite, error) {
 	var row entity.PostDetailWithHashtagAndIsFavorite
 

@@ -116,9 +116,24 @@ func (r *CfProjectCommandRepositoryImpl) DecrementAchievedPrice(c context.Contex
 	return nil
 }
 
-func (r *CfProjectCommandRepositoryImpl) MarkAsIsSentAchievementNoticeMail(id int) error {
-	if err := r.DB(context.Background()).Exec("UPDATE cf_project SET is_sent_achievement_mail = true WHERE id = ?", id).Error; err != nil {
+func (r *CfProjectCommandRepositoryImpl) MarkAsIsSentAchievementNoticeEmail(id int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE cf_project SET is_sent_achievement_email = true WHERE id = ?", id).Error; err != nil {
 		return errors.Wrap(err, "failed update is_sent_achievement_mail")
+	}
+	return nil
+}
+
+func (r *CfProjectCommandRepositoryImpl) MarkAsIsSentNewPostEmail(ctx context.Context, id int) error {
+	if err := r.DB(ctx).Exec("UPDATE cf_project SET is_sent_new_post_email = true WHERE id = ?", id).Error; err != nil {
+		return errors.Wrap(err, "failed update is_sent_new_post_mail")
+	}
+	return nil
+}
+
+// latest_post_idと同時に通知メールの送信フラグをfalse
+func (r *CfProjectCommandRepositoryImpl) UpdateLatestPostID(ctx context.Context, id, postID int) error {
+	if err := r.DB(ctx).Exec("UPDATE cf_project SET latest_post_id = ?, is_sent_new_post_email = false WHERE id = ?", postID, id).Error; err != nil {
+		return errors.Wrap(err, "failed update latest_post_id")
 	}
 	return nil
 }

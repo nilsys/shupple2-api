@@ -478,14 +478,17 @@ const (
 	MailTemplateNameReserveRequestForOwner
 	// MailTemplateNameCfProjectAchievementNoticeForSupporter is a MailTemplateName of type CfProjectAchievementNoticeForSupporter
 	MailTemplateNameCfProjectAchievementNoticeForSupporter
+	// MailTemplateNameCfProjectPostNewReportNoticeForSupporter is a MailTemplateName of type CfProjectPostNewReportNoticeForSupporter
+	MailTemplateNameCfProjectPostNewReportNoticeForSupporter
 )
 
-const _MailTemplateNameName = "ThanksPurchaseReserveRequestForOwnerCfProjectAchievementNoticeForSupporter"
+const _MailTemplateNameName = "ThanksPurchaseReserveRequestForOwnerCfProjectAchievementNoticeForSupporterCfProjectPostNewReportNoticeForSupporter"
 
 var _MailTemplateNameMap = map[MailTemplateName]string{
 	1: _MailTemplateNameName[0:14],
 	2: _MailTemplateNameName[14:36],
 	3: _MailTemplateNameName[36:74],
+	4: _MailTemplateNameName[74:114],
 }
 
 // String implements the Stringer interface.
@@ -497,9 +500,10 @@ func (x MailTemplateName) String() string {
 }
 
 var _MailTemplateNameValue = map[string]MailTemplateName{
-	_MailTemplateNameName[0:14]:  1,
-	_MailTemplateNameName[14:36]: 2,
-	_MailTemplateNameName[36:74]: 3,
+	_MailTemplateNameName[0:14]:   1,
+	_MailTemplateNameName[14:36]:  2,
+	_MailTemplateNameName[36:74]:  3,
+	_MailTemplateNameName[74:114]: 4,
 }
 
 // ParseMailTemplateName attempts to convert a string to a MailTemplateName

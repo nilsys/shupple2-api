@@ -66,7 +66,7 @@ func (b *Batch) Run(args []string) error {
 	app.Commands = []cli.Command{
 		b.cliImportWordpress(),
 		b.cliImportViews(),
-		b.cliCfProjectAchievementMail(),
+		b.cliCfProjectNotice(),
 	}
 
 	return app.Run(args)

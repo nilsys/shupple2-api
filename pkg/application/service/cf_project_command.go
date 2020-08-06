@@ -18,6 +18,7 @@ type (
 		Favorite(user *entity.User, projectID int) error
 		Unfavorite(user *entity.User, projectID int) error
 		SendAchievementMailToSupporter(project *entity.CfProjectDetail) error
+		SendNewReportMailToSupporter(project *entity.CfProjectDetail, post *entity.PostDetail) error
 	}
 
 	CfProjectCommandServiceImpl struct {
@@ -102,11 +103,31 @@ func (s *CfProjectCommandServiceImpl) SendAchievementMailToSupporter(project *en
 		return errors.Wrap(err, "failed find cf_project supporter")
 	}
 	return s.TransactionService.Do(func(ctx context.Context) error {
-		if err := s.CfProjectCommandRepository.MarkAsIsSentAchievementNoticeMail(project.ID); err != nil {
+		if err := s.CfProjectCommandRepository.MarkAsIsSentAchievementNoticeEmail(project.ID); err != nil {
 			return errors.Wrap(err, "failed mark as sent")
 		}
 
 		if err := s.MailCommandRepository.SendTemplateMail(users.Emails(), entity.NewCfProjectAchievementNoticeForSupporter(project.ID, project.Snapshot.Title, project.User.Email)); err != nil {
+			return errors.Wrap(err, "failed send email from ses")
+		}
+
+		return nil
+	})
+}
+
+func (s *CfProjectCommandServiceImpl) SendNewReportMailToSupporter(project *entity.CfProjectDetail, post *entity.PostDetail) error {
+	users, err := s.UserQueryRepository.FindCfProjectSupporterByCfProjectID(project.ID)
+	if err != nil {
+		return errors.Wrap(err, "failed find cf_project supporter")
+	}
+
+	return s.TransactionService.Do(func(ctx context.Context) error {
+		if err := s.CfProjectCommandRepository.MarkAsIsSentNewPostEmail(ctx, project.ID); err != nil {
+			return errors.Wrap(err, "failed update is_sent_new_post_mail")
+		}
+
+		// TODO: post.beginningを使う
+		if err := s.MailCommandRepository.SendTemplateMail(users.Emails(), entity.NewCfProjectPostNewReportNoticeForSupporter(project.ID, project.Snapshot.Title, post.Title, post.Slug, post.FullBody())); err != nil {
 			return errors.Wrap(err, "failed send email from ses")
 		}
 

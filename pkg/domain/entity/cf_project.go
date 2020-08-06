@@ -14,7 +14,9 @@ type (
 		SupportCommentCount    int // == SupporterCount
 		FavoriteCount          int
 		AchievedPrice          int
+		LatestPostID           null.Int
 		IsSentAchievementEmail bool
+		IsSentNewPostEmail     bool
 		// TODO:
 		FacebookCount int
 		TwitterCount  int
@@ -166,4 +168,12 @@ func (p *CfProjectSnapshot) SetThemeCategories(themeCategoryIDs []int) {
 			ThemeCategoryID:     c,
 		}
 	}
+}
+
+func (c *CfProjectDetailList) LatestPostIDs() []int {
+	ids := make([]int, len(c.List))
+	for i, tiny := range c.List {
+		ids[i] = int(tiny.LatestPostID.Int64)
+	}
+	return ids
 }

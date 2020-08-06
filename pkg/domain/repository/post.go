@@ -23,6 +23,7 @@ type (
 	PostQueryRepository interface {
 		FindByLastID(lastID, limit int) ([]*entity.Post, error)
 		FindByID(id int) (*entity.Post, error)
+		FindByIDs(ids []int) (*entity.PostDetailList, error)
 		FindPostDetailWithHashtagByID(id int) (*entity.PostDetailWithHashtagAndIsFavorite, error)
 		FindPostDetailWithHashtagAndIsFavoriteByID(id, userID int) (*entity.PostDetailWithHashtagAndIsFavorite, error)
 		FindPostDetailWithHashtagBySlug(slug string) (*entity.PostDetailWithHashtagAndIsFavorite, error)

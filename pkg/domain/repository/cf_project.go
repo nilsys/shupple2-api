@@ -22,13 +22,16 @@ type (
 		IncrementSupportCommentCount(c context.Context, id int) error
 		IncrementAchievedPrice(c context.Context, id, price int) error
 		DecrementAchievedPrice(c context.Context, id, price int) error
-		MarkAsIsSentAchievementNoticeMail(id int) error
+		MarkAsIsSentAchievementNoticeEmail(id int) error
+		MarkAsIsSentNewPostEmail(ctx context.Context, id int) error
+		UpdateLatestPostID(ctx context.Context, id, postID int) error
 	}
 
 	CfProjectQueryRepository interface {
 		FindByID(id int) (*entity.CfProjectDetail, error)
 		FindListByQuery(query *query.FindCfProjectQuery) (*entity.CfProjectDetailList, error)
 		FindSupportCommentListByCfProjectID(projectID, limit int) ([]*entity.CfProjectSupportComment, error)
-		FindNotSentAchievementNoticeMailAndAchievedListByLastID(lastID, limit int) (*entity.CfProjectDetailList, error)
+		FindNotSentAchievementNoticeEmailAndAchievedListByLastID(lastID, limit int) (*entity.CfProjectDetailList, error)
+		FindNotSentNewPostNoticeEmailByLastID(lastID, limit int) (*entity.CfProjectDetailList, error)
 	}
 )

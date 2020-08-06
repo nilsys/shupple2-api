@@ -46,6 +46,14 @@ type (
 		ProjectTitle      string `json:"projecttitle"`
 		ProjectOwnerEmail string `json:"projectowneremail"`
 	}
+
+	CfProjectPostNewReportNoticeForSupporter struct {
+		ProjectID    string `json:"projectid"`
+		ProjectTitle string `json:"projecttitle"`
+		PostTitle    string `json:"posttitle"`
+		PostSlug     string `json:"postslug"`
+		PostBody     string `json:"postbody"`
+	}
 )
 
 func NewThanksPurchaseTemplate(ownerName, returnGiftDesc, chargeID, systemFee, price, userEmail, userShippingAddress, userTel, userName string) *ThanksPurchaseTemplate {
@@ -87,6 +95,16 @@ func NewCfProjectAchievementNoticeForSupporter(cfProjectID int, cfProjectTitle, 
 		ProjectID:         strconv.Itoa(cfProjectID),
 		ProjectTitle:      cfProjectTitle,
 		ProjectOwnerEmail: cfProjectOwnerEmail,
+	}
+}
+
+func NewCfProjectPostNewReportNoticeForSupporter(projectID int, projectTitle, postTitle, postSlug, postBody string) *CfProjectPostNewReportNoticeForSupporter {
+	return &CfProjectPostNewReportNoticeForSupporter{
+		ProjectID:    strconv.Itoa(projectID),
+		ProjectTitle: projectTitle,
+		PostTitle:    postTitle,
+		PostSlug:     postSlug,
+		PostBody:     postBody,
 	}
 }
 
@@ -146,6 +164,27 @@ func (t *CfProjectAchievementNoticeForSupporter) DefaultData() (string, error) {
 }
 
 func (t *CfProjectAchievementNoticeForSupporter) ToJSON() (string, error) {
+	bytes, err := json.Marshal(t)
+	if err != nil {
+		return "", errors.Wrap(err, "failed marshal")
+	}
+	return string(bytes), nil
+}
+
+func (t *CfProjectPostNewReportNoticeForSupporter) TemplateName() model.MailTemplateName {
+	return model.MailTemplateNameCfProjectPostNewReportNoticeForSupporter
+}
+
+func (t *CfProjectPostNewReportNoticeForSupporter) DefaultData() (string, error) {
+	s := CfProjectPostNewReportNoticeForSupporter{}
+	bytes, err := json.Marshal(s)
+	if err != nil {
+		return "", errors.Wrap(err, "failed marshal")
+	}
+	return string(bytes), nil
+}
+
+func (t *CfProjectPostNewReportNoticeForSupporter) ToJSON() (string, error) {
 	bytes, err := json.Marshal(t)
 	if err != nil {
 		return "", errors.Wrap(err, "failed marshal")

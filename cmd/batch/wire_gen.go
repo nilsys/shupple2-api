@@ -245,6 +245,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		CfProjectCommandService:    cfProjectCommandServiceImpl,
 		CfReturnGiftCommandService: cfReturnGiftCommandServiceImpl,
 		CfProjectQueryRepository:   cfProjectQueryRepositoryImpl,
+		PostQueryRepository:        postQueryRepositoryImpl,
 		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
 	}
 	batch := &Batch{

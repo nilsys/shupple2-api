@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"sort"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
@@ -72,8 +73,7 @@ type (
 	}
 
 	PostDetailList struct {
-		TotalNumber int
-		Posts       []*PostDetail
+		List []*PostDetail
 	}
 
 	PostList struct {
@@ -101,7 +101,7 @@ type (
 	}
 )
 
-func (post *PostDetail) TableName() string {
+func (p *PostDetail) TableName() string {
 	return "post"
 }
 
@@ -238,4 +238,26 @@ func (p *PostDetailWithHashtagAndIsFavorite) ThemeCategoryIDs() []int {
 	}
 
 	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
+}
+
+func (p *PostDetail) FullBody() string {
+	var fullBody string
+
+	sort.Slice(p.Bodies, func(i, j int) bool {
+		return p.Bodies[i].Page < p.Bodies[j].Page
+	})
+
+	for _, body := range p.Bodies {
+		fullBody += "\n" + body.Body
+	}
+
+	return fullBody
+}
+
+func (p *PostDetailList) ToCfProjectIDMap() map[int]*PostDetail {
+	resolve := make(map[int]*PostDetail, len(p.List))
+	for _, tiny := range p.List {
+		resolve[int(tiny.CfProjectID.Int64)] = tiny
+	}
+	return resolve
 }
