@@ -24,6 +24,7 @@ type (
 		Slack           Slack           `validate:"required" yaml:"slack"`
 		GoogleAnalytics GoogleAnalytics `validate:"required" yaml:"google_analytics"`
 		Payjp           Payjp           `validate:"required" yaml:"payjp"`
+		CfProject       CfProject       `validate:"required" yaml:"cf_project"`
 		Env             Env
 
 		// scripts配下のスクリプト固有の設定
@@ -103,6 +104,10 @@ type (
 
 	Payjp struct {
 		SecretKey string `validate:"required" yaml:"secret_key"`
+	}
+
+	CfProject struct {
+		SystemFee int `validate:"required" yaml:"system_fee"`
 	}
 )
 

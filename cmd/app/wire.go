@@ -137,7 +137,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		wire.FieldsOf(new(config.Stayway), "Metasearch", "Media"),
 		client.NewClient,
 		wire.Value(&client.Config{}),
-		wire.FieldsOf(new(*config.Config), "Wordpress", "Stayway", "AWS", "Slack", "Env"),
+		wire.FieldsOf(new(*config.Config), "Wordpress", "Stayway", "AWS", "Slack", "CfProject", "Env"),
 		middleware.AuthorizeSet,
 		controllerSet,
 		scenarioSet,

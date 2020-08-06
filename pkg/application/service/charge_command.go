@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/config"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
@@ -39,6 +41,7 @@ type (
 		repository.CfProjectCommandRepository
 		repository.MailCommandRepository
 		TransactionService
+		CfProjectConfig config.CfProject
 	}
 )
 
@@ -123,8 +126,11 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 			return errors.Wrap(err, "failed find latest credit_card")
 		}
 
+		// 手数料込の金額
+		includeCommissionPrice := price + s.CfProjectConfig.SystemFee
+
 		// 支払いを作成
-		charge, err := s.ChargeCommandRepository.Create(user.PayjpCustomerID(), card.CardID, price)
+		charge, err := s.ChargeCommandRepository.Create(user.PayjpCustomerID(), card.CardID, includeCommissionPrice)
 		if err != nil {
 			return errors.Wrap(err, "failed create pay")
 		}
@@ -135,7 +141,7 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 		}
 
 		// 支払い情報を保存
-		payment := entity.NewPaymentTiny(user.ID, project.UserID, card.ID, address.ID, charge.ID, price)
+		payment := entity.NewPaymentTiny(user.ID, project.UserID, card.ID, address.ID, charge.ID, price, s.CfProjectConfig.SystemFee)
 		if err := s.PaymentCommandRepository.Store(c, payment); err != nil {
 			return errors.Wrap(err, "failed store payment")
 		}
@@ -163,11 +169,12 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 		}
 
 		// 決済確定メール送信
-		template := entity.NewThanksPurchaseTemplate(projectOwner.Email, gifts.OnEmailDescription(), charge.ID, util.WithComma(price), address.Email, address.FullAddress(), user.Name)
+		template := entity.NewThanksPurchaseTemplate(projectOwner.Name, gifts.OnEmailDescription(), charge.ID, util.WithComma(s.CfProjectConfig.SystemFee), util.WithComma(includeCommissionPrice), address.Email, address.FullAddress(), address.PhoneNumber, user.Name)
 		if err := s.MailCommandRepository.SendTemplateMail([]string{address.Email}, template); err != nil {
 			return errors.Wrap(err, "failed send email from ses")
 		}
 
+		// TODO: 楽観的？
 		resolve.CfProjectID = project.ID
 		resolve.SupporterCount = project.SupportCommentCount + 1
 		resolve.AchievedPrice = project.AchievedPrice + price

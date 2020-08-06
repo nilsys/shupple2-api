@@ -19,9 +19,11 @@ type (
 		OwnerName             string `json:"ownername"`
 		ReturnGiftDescription string `json:"returngiftdescription"`
 		ChargeID              string `json:"chargeid"`
+		SystemFee             string `json:"systemfee"`
 		Price                 string `json:"price"`
 		UserEmail             string `json:"useremail"`
 		UserShippingAddress   string `json:"usershippingaddress"`
+		UserTel               string `json:"usertel"`
 		UserName              string `json:"username"`
 	}
 
@@ -46,14 +48,16 @@ type (
 	}
 )
 
-func NewThanksPurchaseTemplate(ownerName, returnGiftDesc, chargeID, price, userEmail, userShippingAddress, userName string) *ThanksPurchaseTemplate {
+func NewThanksPurchaseTemplate(ownerName, returnGiftDesc, chargeID, systemFee, price, userEmail, userShippingAddress, userTel, userName string) *ThanksPurchaseTemplate {
 	return &ThanksPurchaseTemplate{
 		OwnerName:             ownerName,
 		ReturnGiftDescription: returnGiftDesc,
 		ChargeID:              chargeID,
+		SystemFee:             systemFee,
 		Price:                 price,
 		UserEmail:             userEmail,
 		UserShippingAddress:   userShippingAddress,
+		UserTel:               userTel,
 		UserName:              userName,
 	}
 }

@@ -91,6 +91,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		DAO: dao,
 	}
 	mailCommandRepository := repository.ProvideMailer(configConfig, session)
+	cfProject := configConfig.CfProject
 	chargeCommandServiceImpl := &service.ChargeCommandServiceImpl{
 		PaymentCommandRepository:      paymentCommandRepositoryImpl,
 		PaymentQueryRepository:        paymentQueryRepositoryImpl,
@@ -104,6 +105,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		CfProjectCommandRepository:    cfProjectCommandRepositoryImpl,
 		MailCommandRepository:         mailCommandRepository,
 		TransactionService:            transactionServiceImpl,
+		CfProjectConfig:               cfProject,
 	}
 	shippingCommandRepositoryImpl := &repository.ShippingCommandRepositoryImpl{
 		DAO: dao,

@@ -33,5 +33,7 @@ slack:
   report_channel: changeme
 payjp:
   secret_key: changeme
+cf_project:
+  system_fee: 220
 
 # vim: set ft=yaml:

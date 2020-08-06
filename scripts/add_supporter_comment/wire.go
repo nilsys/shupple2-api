@@ -40,7 +40,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	wire.Build(
 		wire.Struct(new(Script), "*"),
 		config.GetConfig,
-		wire.FieldsOf(new(*config.Config), "AWS"),
+		wire.FieldsOf(new(*config.Config), "AWS", "CfProject"),
 		serviceSet,
 		repository.RepositoriesSet,
 	)

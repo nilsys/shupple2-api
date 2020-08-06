@@ -52,6 +52,9 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	customerCommandRepositoryImpl := &payjp.CustomerCommandRepositoryImpl{
 		PayjpClient: payjpService,
 	}
+	customerQueryRepositoryImpl := &payjp.CustomerQueryRepositoryImpl{
+		PayjpClient: payjpService,
+	}
 	authService, err := service.ProvideAuthService(configConfig)
 	if err != nil {
 		return nil, err
@@ -74,6 +77,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		UserQueryRepository:       userQueryRepositoryImpl,
 		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
 		CustomerCommandRepository: customerCommandRepositoryImpl,
+		CustomerQueryRepository:   customerQueryRepositoryImpl,
 		AuthService:               authService,
 		NoticeDomainService:       noticeDomainServiceImpl,
 		TransactionService:        transactionServiceImpl,
