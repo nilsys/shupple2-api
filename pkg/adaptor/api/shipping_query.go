@@ -25,5 +25,5 @@ func (c *ShippingQueryController) Show(ctx echo.Context, user entity.User) error
 	if err != nil {
 		return errors.Wrap(err, "failed show shopping address")
 	}
-	return ctx.JSON(http.StatusOK, address)
+	return ctx.JSON(http.StatusOK, c.ConvertShippingAddressToOutput(address))
 }
