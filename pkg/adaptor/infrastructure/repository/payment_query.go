@@ -21,7 +21,9 @@ var PaymentQueryRepositorySet = wire.NewSet(
 
 func (r *PaymentQueryRepositoryImpl) FindByUserID(userID int, query *query.FindListPaginationQuery) (*entity.PaymentList, error) {
 	var rows entity.PaymentList
-	if err := r.DB(context.Background()).Where("user_id = ?", userID).Offset(query.Offset).Limit(query.Limit).Find(&rows.List).Error; err != nil {
+	if err := r.DB(context.Background()).Where("user_id = ?", userID).
+		Offset(query.Offset).Limit(query.Limit).Order("created_at DESC").
+		Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find payment.user_id")
 	}
 	return &rows, nil

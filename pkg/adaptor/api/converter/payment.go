@@ -37,12 +37,16 @@ func (c Converters) ConvertListPaymentToQuery(i *input.ListPayment) *query.FindL
 	}
 }
 
-func (c Converters) ConvertPaymentListToOutput(payments *entity.PaymentList) []*output.Payment {
+func (c Converters) ConvertPaymentListToOutput(payments *entity.PaymentList) output.PaymentList {
 	response := make([]*output.Payment, len(payments.List))
 	for i, tiny := range payments.List {
 		response[i] = c.ConvertPaymentToOutput(tiny)
 	}
-	return response
+
+	return output.PaymentList{
+		TotalNumber: payments.TotalNumber,
+		Payments:    response,
+	}
 }
 
 func (c Converters) ConvertPaymentToOutput(payment *entity.Payment) *output.Payment {

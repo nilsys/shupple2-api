@@ -60,7 +60,8 @@ type (
 	}
 
 	PaymentList struct {
-		List []*Payment
+		TotalNumber int
+		List        []*Payment
 	}
 )
 

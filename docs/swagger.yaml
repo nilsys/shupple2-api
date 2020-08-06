@@ -2274,7 +2274,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PaymentList"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  reviews:
+                    $ref: "#/components/schemas/PaymentList"
   /payments/{id}/reserve:
     post:
       tags:

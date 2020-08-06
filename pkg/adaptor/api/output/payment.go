@@ -22,4 +22,9 @@ type (
 		GiftTypeReservedTicketStatus model.PaymentCfReturnGiftReservedTicketTypeStatus `json:"giftTypeReservedTicketStatus"`
 		OwnerConfirmedAt             model.TimeResponse                                `json:"ownerConfirmedAt"`
 	}
+
+	PaymentList struct {
+		TotalNumber int        `json:"totalNumber"`
+		Payments    []*Payment `json:"payments"`
+	}
 )
