@@ -8,6 +8,11 @@ type (
 	}
 
 	PathString string
+
+	PaginationQuery struct {
+		Page    int `query:"page"`
+		PerPage int `query:"perPage"`
+	}
 )
 
 func (ps *PathString) UnmarshalParam(s string) error {

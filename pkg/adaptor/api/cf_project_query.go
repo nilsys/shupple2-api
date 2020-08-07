@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
@@ -61,4 +63,18 @@ func (c *CfProjectQueryController) ListSupportComment(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, c.ConvertCfProjectSupportCommentListToOutput(comments))
+}
+
+func (c *CfProjectQueryController) ListSupported(ctx echo.Context, user entity.User) error {
+	i := &input.PaginationQuery{}
+	if err := BindAndValidate(ctx, i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	projects, err := c.CfProjectQueryService.ListSupported(&user, c.Converters.ConvertSupportedCfProjectListInputToQuery(i))
+	if err != nil {
+		return errors.Wrap(err, "failed list cf_project")
+	}
+
+	return ctx.JSON(http.StatusOK, c.ConvertCfProjectDetailListToOutput(projects))
 }

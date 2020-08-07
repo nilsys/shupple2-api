@@ -43,6 +43,13 @@ func (c *Converters) ConvertCfProjectListInputToQuery(i *input.ListCfProject) *q
 	}
 }
 
+func (c Converters) ConvertSupportedCfProjectListInputToQuery(i *input.PaginationQuery) *query.FindListPaginationQuery {
+	return &query.FindListPaginationQuery{
+		Limit:  i.GetCfProjectLimit(),
+		Offset: i.GetCfProjectOffset(),
+	}
+}
+
 func (c *Converters) ConvertCfProjectDetailToOutput(project *entity.CfProjectDetail) *output.CfProject {
 	// TODO
 	if project.Snapshot == nil {

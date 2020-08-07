@@ -33,5 +33,6 @@ type (
 		FindSupportCommentListByCfProjectID(projectID, limit int) ([]*entity.CfProjectSupportComment, error)
 		FindNotSentAchievementNoticeEmailAndAchievedListByLastID(lastID, limit int) (*entity.CfProjectDetailList, error)
 		FindNotSentNewPostNoticeEmailByLastID(lastID, limit int) (*entity.CfProjectDetailList, error)
+		FindSupportedListByUserID(userID int, query *query.FindListPaginationQuery) (*entity.CfProjectDetailList, error)
 	}
 )

@@ -262,6 +262,7 @@ func setRoutes(app *App) {
 		projects.PUT("/:id/favorite", auth.Require(app.CfProjectCommandController.Favorite))
 		projects.DELETE("/:id/favorite", auth.Require(app.CfProjectCommandController.Unfavorite))
 		projects.GET("/:id/gift", app.CfReturnGiftQueryController.List)
+		projects.GET("/supported", auth.Require(app.CfProjectQueryController.ListSupported))
 	}
 
 	api.POST("/s3", auth.Require(app.S3CommandController.Post))

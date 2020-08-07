@@ -12,6 +12,7 @@ type (
 		ListSupportComment(projectID, limit int) ([]*entity.CfProjectSupportComment, error)
 		Show(id int) (*entity.CfProjectDetail, error)
 		List(query *query.FindCfProjectQuery) (*entity.CfProjectDetailList, error)
+		ListSupported(user *entity.User, query *query.FindListPaginationQuery) (*entity.CfProjectDetailList, error)
 	}
 
 	CfProjectQueryServiceImpl struct {
@@ -34,4 +35,8 @@ func (s *CfProjectQueryServiceImpl) Show(id int) (*entity.CfProjectDetail, error
 
 func (s *CfProjectQueryServiceImpl) List(query *query.FindCfProjectQuery) (*entity.CfProjectDetailList, error) {
 	return s.CfProjectQueryRepository.FindListByQuery(query)
+}
+
+func (s *CfProjectQueryServiceImpl) ListSupported(user *entity.User, query *query.FindListPaginationQuery) (*entity.CfProjectDetailList, error) {
+	return s.CfProjectQueryRepository.FindSupportedListByUserID(user.ID, query)
 }

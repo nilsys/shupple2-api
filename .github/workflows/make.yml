@@ -35,6 +35,10 @@ jobs:
           if [ $(git diff --exit-code --quiet; echo $?) -eq 1 ]; then
             git add .
             git reset go.mod go.sum
+            if [ $(git diff --exit-code --quiet; echo $?) -eq 1 ]; then
+              echo "nothing to commit"
+              break
+            fi
             git commit -m "add make generate"
             git push origin $GIT_BRANCH
           else

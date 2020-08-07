@@ -3,7 +3,7 @@ package input
 import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 
 const (
-	defaultCfProjectSupportCommentPerPage = 10
+	defaultCfProjectPerPage = 10
 )
 
 type (
@@ -24,7 +24,21 @@ type (
 // PerPageがクエリで飛んで来なかった場合、デフォルト値である10を返す
 func (i *ListCfProjectSupportComment) GetLimit() int {
 	if i.PerPage == 0 {
-		return defaultCfProjectSupportCommentPerPage
+		return defaultCfProjectPerPage
 	}
 	return i.PerPage
+}
+
+func (i *PaginationQuery) GetCfProjectLimit() int {
+	if i.PerPage == 0 {
+		return defaultCfProjectPerPage
+	}
+	return i.PerPage
+}
+
+func (i *PaginationQuery) GetCfProjectOffset() int {
+	if i.Page == 1 || i.Page == 0 {
+		return 0
+	}
+	return i.GetCfProjectLimit() * (i.Page - 1)
 }
