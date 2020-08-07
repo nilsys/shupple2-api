@@ -22,6 +22,16 @@ type (
 )
 
 func (r *MailCommandRepositoryImpl) SendTemplateMail(toEmails []string, template entity.MailTemplate) error {
+	for _, toEmail := range toEmails {
+		if err := r.sendTemplateMail(toEmail, template); err != nil {
+			return errors.Wrap(err, "failed send email")
+		}
+	}
+
+	return nil
+}
+
+func (r *MailCommandRepositoryImpl) sendTemplateMail(toEmail string, template entity.MailTemplate) error {
 	data, err := template.ToJSON()
 	if err != nil {
 		return errors.Wrap(err, "failed marshal")
@@ -34,7 +44,7 @@ func (r *MailCommandRepositoryImpl) SendTemplateMail(toEmails []string, template
 	destinations := []*ses.BulkEmailDestination{
 		{
 			Destination: &ses.Destination{
-				ToAddresses: aws.StringSlice(toEmails),
+				ToAddresses: aws.StringSlice([]string{toEmail}),
 			},
 			ReplacementTemplateData: aws.String(data),
 		},

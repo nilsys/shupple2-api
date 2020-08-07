@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	tickTimeMinutes = 10 * time.Second
+	tickTimeMinutes = 5 * time.Minute
 )
 
 func (b *Batch) cliCfProjectNotice() cli.Command {
