@@ -20,6 +20,7 @@ type (
 	CfReturnGiftSnapshotTiny struct {
 		SnapshotID     int `gorm:"column:id;primary_key"`
 		CfReturnGiftID int
+		Title          string
 		Thumbnail      string
 		Body           string
 		Price          int

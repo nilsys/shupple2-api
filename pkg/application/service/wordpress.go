@@ -435,6 +435,7 @@ func (s *WordpressServiceImpl) NewCfReturnGift(wpCfReturnGift *wordpress.CfRetur
 
 	cfReturnGift.Snapshot = &entity.CfReturnGiftSnapshotTiny{
 		CfReturnGiftID: wpCfReturnGift.ID,
+		Title:          wpCfReturnGift.Title.Rendered,
 		Thumbnail:      thumbnail,
 		Body:           wpCfReturnGift.Content.Rendered,
 		Price:          int(wpCfReturnGift.Attributes.Price),
