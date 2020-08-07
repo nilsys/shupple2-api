@@ -527,11 +527,12 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		TransactionService:            transactionServiceImpl,
 	}
 	postCommandServiceImpl := &service.PostCommandServiceImpl{
-		PostCommandRepository:    postCommandRepositoryImpl,
-		HashtagCommandRepository: hashtagCommandRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepositoryImpl,
-		WordpressService:         wordpressServiceImpl,
-		TransactionService:       transactionServiceImpl,
+		PostCommandRepository:      postCommandRepositoryImpl,
+		HashtagCommandRepository:   hashtagCommandRepositoryImpl,
+		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
+		CfProjectCommandRepository: cfProjectCommandRepositoryImpl,
+		WordpressService:           wordpressServiceImpl,
+		TransactionService:         transactionServiceImpl,
 	}
 	touristSpotCommandServiceImpl := &service.TouristSpotCommandServiceImpl{
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,

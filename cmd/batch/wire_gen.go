@@ -163,12 +163,16 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
 		DAO: dao,
 	}
+	cfProjectCommandRepositoryImpl := &repository.CfProjectCommandRepositoryImpl{
+		DAO: dao,
+	}
 	postCommandServiceImpl := &service.PostCommandServiceImpl{
-		PostCommandRepository:    postCommandRepositoryImpl,
-		HashtagCommandRepository: hashtagCommandRepositoryImpl,
-		WordpressQueryRepository: wordpressQueryRepositoryImpl,
-		WordpressService:         wordpressServiceImpl,
-		TransactionService:       transactionServiceImpl,
+		PostCommandRepository:      postCommandRepositoryImpl,
+		HashtagCommandRepository:   hashtagCommandRepositoryImpl,
+		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
+		CfProjectCommandRepository: cfProjectCommandRepositoryImpl,
+		WordpressService:           wordpressServiceImpl,
+		TransactionService:         transactionServiceImpl,
 	}
 	touristSpotCommandRepositoryImpl := &repository.TouristSpotCommandRepositoryImpl{
 		DAO: dao,
@@ -187,9 +191,6 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
 		TransactionService:       transactionServiceImpl,
-	}
-	cfProjectCommandRepositoryImpl := &repository.CfProjectCommandRepositoryImpl{
-		DAO: dao,
 	}
 	mailCommandRepository := repository.ProvideMailer(configConfig, session)
 	cfProjectCommandServiceImpl := &service.CfProjectCommandServiceImpl{
