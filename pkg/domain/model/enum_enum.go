@@ -1198,14 +1198,17 @@ const (
 	UserAttributeWP
 	// UserAttributeCfProjectOwner is a UserAttribute of type CfProjectOwner
 	UserAttributeCfProjectOwner
+	// UserAttributeCfProjectAdmin is a UserAttribute of type CfProjectAdmin
+	UserAttributeCfProjectAdmin
 )
 
-const _UserAttributeName = "CommonWPCfProjectOwner"
+const _UserAttributeName = "CommonWPCfProjectOwnerCfProjectAdmin"
 
 var _UserAttributeMap = map[UserAttribute]string{
 	1: _UserAttributeName[0:6],
 	2: _UserAttributeName[6:8],
 	3: _UserAttributeName[8:22],
+	4: _UserAttributeName[22:36],
 }
 
 // String implements the Stringer interface.
@@ -1217,9 +1220,10 @@ func (x UserAttribute) String() string {
 }
 
 var _UserAttributeValue = map[string]UserAttribute{
-	_UserAttributeName[0:6]:  1,
-	_UserAttributeName[6:8]:  2,
-	_UserAttributeName[8:22]: 3,
+	_UserAttributeName[0:6]:   1,
+	_UserAttributeName[6:8]:   2,
+	_UserAttributeName[8:22]:  3,
+	_UserAttributeName[22:36]: 4,
 }
 
 // ParseUserAttribute attempts to convert a string to a UserAttribute
