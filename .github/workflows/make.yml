@@ -1,5 +1,8 @@
 on:
   push:
+    branch-ignore:
+      - 'master'
+      - 'deploy/*'
     paths:
       - 'cmd/app/wire.go'
       - 'cmd/batch/wire.go'
