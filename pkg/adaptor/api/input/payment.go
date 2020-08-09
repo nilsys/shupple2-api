@@ -18,8 +18,9 @@ type (
 	}
 
 	ListPayment struct {
-		PerPage int `query:"perPage"`
-		Page    int `query:"page"`
+		CfProjectID int `query:"cfProjectId"`
+		PerPage     int `query:"perPage"`
+		Page        int `query:"page"`
 	}
 )
 

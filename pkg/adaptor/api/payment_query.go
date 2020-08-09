@@ -29,7 +29,7 @@ func (c *PaymentQueryController) List(ctx echo.Context, user entity.User) error 
 		return errors.Wrap(err, "failed bind input")
 	}
 
-	payments, err := c.PaymentQueryService.ListByUser(&user, c.ConvertListPaymentToQuery(i))
+	payments, err := c.PaymentQueryService.ListByUser(&user, i.CfProjectID, c.ConvertListPaymentToQuery(i))
 	if err != nil {
 		return errors.Wrap(err, "failed list payment")
 	}

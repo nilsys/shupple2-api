@@ -19,10 +19,19 @@ var PaymentQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.PaymentQueryRepository), new(*PaymentQueryRepositoryImpl)),
 )
 
-func (r *PaymentQueryRepositoryImpl) FindByUserID(userID int, query *query.FindListPaginationQuery) (*entity.PaymentList, error) {
+func (r *PaymentQueryRepositoryImpl) FindByUserID(userID, projectID int, query *query.FindListPaginationQuery) (*entity.PaymentList, error) {
 	var rows entity.PaymentList
-	if err := r.DB(context.Background()).Where("user_id = ?", userID).
-		Offset(query.Offset).Limit(query.Limit).Order("created_at DESC").
+
+	q := r.DB(context.Background())
+
+	if projectID != 0 {
+		q = q.Where("pc.cf_project_id = ?", projectID)
+	}
+
+	if err := q.
+		Joins("INNER JOIN (SELECT payment_id, cf_project_id FROM payment_cf_return_gift) pc ON payment.id = pc.payment_id").
+		Where("payment.user_id = ?", userID).
+		Offset(query.Offset).Limit(query.Limit).Order("payment.created_at DESC").
 		Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find payment.user_id")
 	}

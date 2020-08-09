@@ -10,7 +10,7 @@ import (
 
 type (
 	PaymentQueryService interface {
-		ListByUser(user *entity.User, query *query.FindListPaginationQuery) (*entity.PaymentList, error)
+		ListByUser(user *entity.User, projectID int, query *query.FindListPaginationQuery) (*entity.PaymentList, error)
 	}
 
 	PaymentQueryServiceImpl struct {
@@ -23,8 +23,8 @@ var PaymentQueryServiceSet = wire.NewSet(
 	wire.Bind(new(PaymentQueryService), new(*PaymentQueryServiceImpl)),
 )
 
-func (s *PaymentQueryServiceImpl) ListByUser(user *entity.User, query *query.FindListPaginationQuery) (*entity.PaymentList, error) {
-	payments, err := s.PaymentQueryRepository.FindByUserID(user.ID, query)
+func (s *PaymentQueryServiceImpl) ListByUser(user *entity.User, projectID int, query *query.FindListPaginationQuery) (*entity.PaymentList, error) {
+	payments, err := s.PaymentQueryRepository.FindByUserID(user.ID, projectID, query)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed payment_query_repository.FindByUserID")
 	}

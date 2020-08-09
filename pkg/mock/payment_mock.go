@@ -37,18 +37,18 @@ func (m *MockPaymentQueryRepository) EXPECT() *MockPaymentQueryRepositoryMockRec
 }
 
 // FindByUserID mocks base method
-func (m *MockPaymentQueryRepository) FindByUserID(userID int, query *query.FindListPaginationQuery) (*entity.PaymentList, error) {
+func (m *MockPaymentQueryRepository) FindByUserID(userID, projectID int, query *query.FindListPaginationQuery) (*entity.PaymentList, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByUserID", userID, query)
+	ret := m.ctrl.Call(m, "FindByUserID", userID, projectID, query)
 	ret0, _ := ret[0].(*entity.PaymentList)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindByUserID indicates an expected call of FindByUserID
-func (mr *MockPaymentQueryRepositoryMockRecorder) FindByUserID(userID, query interface{}) *gomock.Call {
+func (mr *MockPaymentQueryRepositoryMockRecorder) FindByUserID(userID, projectID, query interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUserID", reflect.TypeOf((*MockPaymentQueryRepository)(nil).FindByUserID), userID, query)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUserID", reflect.TypeOf((*MockPaymentQueryRepository)(nil).FindByUserID), userID, projectID, query)
 }
 
 // FindByID mocks base method

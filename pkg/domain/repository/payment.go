@@ -10,7 +10,7 @@ import (
 
 type (
 	PaymentQueryRepository interface {
-		FindByUserID(userID int, query *query.FindListPaginationQuery) (*entity.PaymentList, error)
+		FindByUserID(userID, projectID int, query *query.FindListPaginationQuery) (*entity.PaymentList, error)
 		FindByID(id int) (*entity.Payment, error)
 		FindTinyByID(id int) (*entity.PaymentTiny, error)
 		FindPaymentCfReturnGiftByPaymentIDAndCfReturnGift(paymentID, cfReturnGiftID int) (*entity.PaymentCfReturnGift, error)
