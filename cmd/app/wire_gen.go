@@ -67,9 +67,14 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	cfProjectQueryServiceImpl := &service.CfProjectQueryServiceImpl{
 		CfProjectQueryRepository: cfProjectQueryRepositoryImpl,
 	}
-	cfProjectQueryController := api.CfProjectQueryController{
-		Converters:            converters,
+	cfProjectQueryScenarioImpl := &scenario.CfProjectQueryScenarioImpl{
 		CfProjectQueryService: cfProjectQueryServiceImpl,
+		UserQueryRepository:   userQueryRepositoryImpl,
+	}
+	cfProjectQueryController := api.CfProjectQueryController{
+		Converters:             converters,
+		CfProjectQueryScenario: cfProjectQueryScenarioImpl,
+		CfProjectQueryService:  cfProjectQueryServiceImpl,
 	}
 	cfProjectCommandRepositoryImpl := &repository.CfProjectCommandRepositoryImpl{
 		DAO: dao,
@@ -240,6 +245,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	postQueryScenarioImpl := &scenario.PostQueryScenarioImpl{
 		CategoryIDMapFactory: categoryIDMapFactory,
 		PostQueryService:     postQueryServiceImpl,
+		UserQueryRepository:  userQueryRepositoryImpl,
 	}
 	postQueryController := api.PostQueryController{
 		Converters:        converters,
@@ -292,9 +298,13 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		ComicQueryRepository: comicQueryRepositoryImpl,
 		UserQueryRepository:  userQueryRepositoryImpl,
 	}
+	comicQueryQueryScenarioImpl := &scenario.ComicQueryQueryScenarioImpl{
+		ComicQueryService:   comicQueryServiceImpl,
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
 	comicQueryController := api.ComicQueryController{
-		Converters:        converters,
-		ComicQueryService: comicQueryServiceImpl,
+		Converters:         converters,
+		ComicQueryScenario: comicQueryQueryScenarioImpl,
 	}
 	reviewQueryRepositoryImpl := &repository.ReviewQueryRepositoryImpl{
 		DB: db,
@@ -315,9 +325,14 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		InnQueryRepository:            innQueryRepositoryImpl,
 		MetasearchAreaQueryRepository: metasearchAreaQueryRepositoryImpl,
 	}
+	reviewQueryScenarioImpl := &scenario.ReviewQueryScenarioImpl{
+		ReviewQueryService:  reviewQueryServiceImpl,
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
 	reviewQueryController := api.ReviewQueryController{
-		Converters:         converters,
-		ReviewQueryService: reviewQueryServiceImpl,
+		Converters:          converters,
+		ReviewQueryService:  reviewQueryServiceImpl,
+		ReviewQueryScenario: reviewQueryScenarioImpl,
 	}
 	reviewCommandRepositoryImpl := &repository.ReviewCommandRepositoryImpl{
 		DAO:        dao,
@@ -340,6 +355,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		ReviewQueryService:    reviewQueryServiceImpl,
 		ReviewCommandService:  reviewCommandServiceImpl,
 		HashtagCommandService: hashtagCommandServiceImpl,
+		UserQueryRepository:   userQueryRepositoryImpl,
 	}
 	hashtagQueryServiceImpl := &service.HashtagQueryServiceImpl{
 		HashtagQueryRepository: hashtagQueryRepositoryImpl,
@@ -410,11 +426,11 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	featureQueryScenarioImpl := &scenario.FeatureQueryScenarioImpl{
 		CategoryIDMapFactory: categoryIDMapFactory,
 		FeatureQueryService:  featureQueryServiceImpl,
+		UserQueryRepository:  userQueryRepositoryImpl,
 	}
 	featureQueryController := api.FeatureQueryController{
 		Converters:           converters,
 		FeatureQueryScenario: featureQueryScenarioImpl,
-		FeatureQueryService:  featureQueryServiceImpl,
 	}
 	vlogQueryRepositoryImpl := &repository.VlogQueryRepositoryImpl{
 		DB: db,
@@ -427,6 +443,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	vlogQueryScenarioImpl := &scenario.VlogQueryScenarioImpl{
 		VlogQueryService:     vlogQueryServiceImpl,
 		CategoryIDMapFactory: categoryIDMapFactory,
+		UserQueryRepository:  userQueryRepositoryImpl,
 	}
 	vlogQueryController := api.VlogQueryController{
 		Converters:        converters,
@@ -765,7 +782,7 @@ var (
 
 var controllerSet = wire.NewSet(converter.ConvertersSet, api.ShippingQueryControllerSet, api.ShippingCommandControllerSet, api.ChargeCommandControllerSet, api.CardQueryControllerSet, api.CardCommandControllerSet, api.PostQueryControllerSet, api.PostFavoriteCommandControllerSet, api.CfProjectQueryControllerSet, api.CfReturnGiftQueryControllerSet, api.CategoryQueryControllerSet, api.CfProjectCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.RSSControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.ThemeQueryControllerSet, api.WordpressCallbackControllerSet, api.SitemapControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet, api.AreaQueryControllerSet, api.InnQueryControllerSet, api.NoticeQueryControllerSet, api.PaymentQueryControllerSet, api.PaymentCommandControllerSet, api.ReportCommandControllerSet, api.ComicFavoriteCommandControllerSet, api.VlogFavoriteCommandControllerSet)
 
-var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.PostQueryScenarioSet, scenario.FeatureQueryScenarioSet, scenario.VlogQueryScenarioSet, scenario.TouristSpotQueryScenarioSet)
+var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.ReviewQueryScenarioSet, scenario.PostQueryScenarioSet, scenario.FeatureQueryScenarioSet, scenario.VlogQueryScenarioSet, scenario.TouristSpotQueryScenarioSet, scenario.CfProjectQueryScenarioSet, scenario.ComicQueryScenarioSet)
 
 var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
 

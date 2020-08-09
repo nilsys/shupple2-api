@@ -45,35 +45,7 @@ func (c Converters) ConvertListFeedPostParamToQuery(param *input.ListFeedPostPar
 /*
  * i -> o
  */
-func (c Converters) ConvertPostDetailListToOutput(posts []*entity.PostDetail) []*output.Post {
-	responsePosts := make([]*output.Post, len(posts))
-
-	for i, queryPost := range posts {
-		responsePosts[i] = c.ConvertQueryPostToOutput(queryPost)
-	}
-
-	return responsePosts
-}
-
-func (c Converters) ConvertQueryPostToOutput(queryPost *entity.PostDetail) *output.Post {
-	return &output.Post{
-		ID:              queryPost.ID,
-		Thumbnail:       queryPost.Thumbnail,
-		Title:           queryPost.Title,
-		Slug:            queryPost.Slug,
-		AreaCategories:  c.ConvertAreaCategoriesToOutput(queryPost.AreaCategories),
-		ThemeCategories: c.ConvertThemeCategoriesToOutput(queryPost.ThemeCategories),
-		Creator:         c.NewCreatorFromUser(queryPost.User),
-		FavoriteCount:   queryPost.FavoriteCount,
-		Views:           queryPost.Views,
-		HideAds:         queryPost.HideAds,
-		EditedAt:        model.TimeResponse(queryPost.EditedAt),
-		CreatedAt:       model.TimeResponse(queryPost.CreatedAt),
-		UpdatedAt:       model.TimeResponse(queryPost.UpdatedAt),
-	}
-}
-
-func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.PostShow {
+func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idIsFollowMap map[int]bool) *output.PostShow {
 	var hashtags = make([]*output.Hashtag, len(post.Hashtag))
 	var bodies = make([]*output.PostBody, len(post.Bodies))
 
@@ -109,7 +81,7 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 		SEODescription:  post.SEODescription,
 		HideAds:         post.HideAds,
 		IsFavorite:      post.IsFavorite,
-		Creator:         c.NewCreatorFromUser(post.User),
+		Creator:         c.NewCreatorFromUser(post.User, idIsFollowMap[post.UserID]),
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
 		Hashtags:        hashtags,
@@ -119,11 +91,11 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 	}
 }
 
-func (c Converters) ConvertPostListTinyWithCategoryDetailForListToOutput(posts *entity.PostList, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.PostWithCategoryDetailList {
+func (c Converters) ConvertPostListTinyWithCategoryDetailForListToOutput(posts *entity.PostList, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idIsFollowMap map[int]bool) *output.PostWithCategoryDetailList {
 	postsRes := make([]*output.PostWithCategoryDetail, len(posts.Posts))
 
 	for i, post := range posts.Posts {
-		postsRes[i] = c.ConvertPostListTinyWithCategoryDetailToOutput(post, areaCategories, themeCategories)
+		postsRes[i] = c.ConvertPostListTinyWithCategoryDetailToOutput(post, areaCategories, themeCategories, idIsFollowMap)
 	}
 
 	return &output.PostWithCategoryDetailList{
@@ -132,7 +104,7 @@ func (c Converters) ConvertPostListTinyWithCategoryDetailForListToOutput(posts *
 	}
 }
 
-func (c Converters) ConvertPostListTinyWithCategoryDetailToOutput(post *entity.PostListTiny, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.PostWithCategoryDetail {
+func (c Converters) ConvertPostListTinyWithCategoryDetailToOutput(post *entity.PostListTiny, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idIsFollowMap map[int]bool) *output.PostWithCategoryDetail {
 	areaCategoriesRes := make([]*output.AreaCategoryDetail, len(post.AreaCategories))
 	for i, areaCate := range post.AreaCategories {
 		areaCategoriesRes[i] = c.ConvertAreaCategoryDetailFromAreaCategory(areaCate, areaCategories)
@@ -150,7 +122,7 @@ func (c Converters) ConvertPostListTinyWithCategoryDetailToOutput(post *entity.P
 		ThemeCategories: themeCategoriesRes,
 		Title:           post.Title,
 		Slug:            post.Slug,
-		Creator:         c.NewCreatorFromUser(post.User),
+		Creator:         c.NewCreatorFromUser(post.User, idIsFollowMap[post.UserID]),
 		FavoriteCount:   post.FavoriteCount,
 		Views:           post.Views,
 		HideAds:         post.HideAds,

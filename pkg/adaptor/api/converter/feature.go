@@ -28,12 +28,12 @@ func (c Converters) ConvertFeatureListToOutput(features *entity.FeatureList) *ou
 	}
 }
 
-func (c Converters) ConvertFeatureDetailPostsToOutput(feature *entity.FeatureDetailWithPosts, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory) *output.ShowFeature {
+func (c Converters) ConvertFeatureDetailPostsToOutput(feature *entity.FeatureDetailWithPosts, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idIsFollowMap map[int]bool) *output.ShowFeature {
 
 	relationPosts := make([]*output.PostWithCategoryDetail, len(feature.Posts))
 
 	for i, post := range feature.Posts {
-		relationPosts[i] = c.ConvertPostListTinyWithCategoryDetailToOutput(post, areaCategories, themeCategories)
+		relationPosts[i] = c.ConvertPostListTinyWithCategoryDetailToOutput(post, areaCategories, themeCategories, idIsFollowMap)
 	}
 
 	return &output.ShowFeature{
@@ -45,7 +45,7 @@ func (c Converters) ConvertFeatureDetailPostsToOutput(feature *entity.FeatureDet
 		FacebookCount: feature.FacebookCount,
 		TwitterCount:  feature.TwitterCount,
 		Views:         feature.Views,
-		Creator:       c.NewCreatorFromUser(feature.User),
+		Creator:       c.NewCreatorFromUser(feature.User, idIsFollowMap[feature.UserID]),
 		EditedAt:      model.TimeResponse(feature.EditedAt),
 		CreatedAt:     model.TimeResponse(feature.CreatedAt),
 		UpdatedAt:     model.TimeResponse(feature.UpdatedAt),

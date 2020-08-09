@@ -35,7 +35,8 @@ func (c *ReviewCommandController) Store(ctx echo.Context, user entity.User) erro
 		return errors.Wrap(err, "failed to store review")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteToOutput(review))
+	// 自身をフォローする事はできないので、review.UserのIsFollowチェックはしない
+	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteToOutput(review, map[int]bool{}))
 }
 
 func (c *ReviewCommandController) Update(ctx echo.Context, user entity.User) error {

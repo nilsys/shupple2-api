@@ -3371,62 +3371,6 @@ components:
           $ref: "#/components/schemas/updatedAt"
         editedAt:
           $ref: "#/components/schemas/editedAt"
-    PostList:
-      type: array
-      items:
-        $ref: "#/components/schemas/Post"
-    Post:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: 記事ID
-          example: 1
-        thumbnail:
-          type: string
-          description: サムネイルURL
-          example: http://example.com/img/1
-        slug:
-          type: string
-          description: スラッグ
-          example: hokkaido
-        areaCategories:
-          type: array
-          items:
-            $ref: "#/components/schemas/Category"
-        themeCategories:
-          type: array
-          items:
-            $ref: "#/components/schemas/Category"
-        title:
-          type: string
-          description: 記事タイトル
-          example: 埼玉の春を満喫♪
-        creator:
-          $ref: "#/components/schemas/Creator"
-        favoriteCount:
-          type: integer
-          description: いいね数
-          example: 3
-        views:
-          type: integer
-          description: 閲覧数
-          example: 6
-        isFavorite:
-          type: boolean
-          description: |
-            良いねしているかフラグ
-            ＊認証を挟まない場合はfalse
-        hideAds:
-          type: boolean
-          description: 広告非表示フラグ
-          example: false
-        createdAt:
-          $ref: "#/components/schemas/createdAt"
-        updatedAt:
-          $ref: "#/components/schemas/updatedAt"
-        editedAt:
-          $ref: "#/components/schemas/editedAt"
     PostShow:
       type: object
       properties:
@@ -4016,9 +3960,6 @@ components:
           $ref: "#/components/schemas/InterestGroup"
     Creator:
       type: object
-      required:
-        - iconUrl
-        - name
       properties:
         id:
           type: integer
@@ -4062,6 +4003,10 @@ components:
           type: string
           description: 任意のurl
           example: https://www.creator.com
+        isFollow:
+          type: boolean
+          description: フォローしているか
+          example: 1
     Category:
       type: object
       required:

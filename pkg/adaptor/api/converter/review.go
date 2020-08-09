@@ -69,18 +69,10 @@ func (c Converters) ConvertReviewCommentWithIsFavoriteToOutput(reviewComment *en
 	)
 }
 
-func (c Converters) ConvertQueryReviewListToOutput(queryReviews []*entity.ReviewDetail) []*output.Review {
-	outputs := make([]*output.Review, len(queryReviews))
-	for i, queryReview := range queryReviews {
-		outputs[i] = c.convertQueryReviewToOutput(queryReview)
-	}
-	return outputs
-}
-
-func (c Converters) ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews *entity.ReviewDetailWithIsFavoriteList) output.ReviewDetailIsFavoriteList {
-	responses := make([]*output.Review, len(reviews.Reviews))
-	for i, queryReview := range reviews.Reviews {
-		responses[i] = c.ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview)
+func (c Converters) ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews *entity.ReviewDetailWithIsFavoriteList, idIsFollowMap map[int]bool) output.ReviewDetailIsFavoriteList {
+	responses := make([]*output.Review, len(reviews.List))
+	for i, queryReview := range reviews.List {
+		responses[i] = c.ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview, idIsFollowMap)
 	}
 	return output.ReviewDetailIsFavoriteList{
 		TotalNumber: reviews.TotalNumber,
@@ -88,7 +80,7 @@ func (c Converters) ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews *
 	}
 }
 
-func (c Converters) ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview *entity.ReviewDetailWithIsFavorite) *output.Review {
+func (c Converters) ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview *entity.ReviewDetailWithIsFavorite, idIsFollowMap map[int]bool) *output.Review {
 	hashtags := make([]output.Hashtag, len(queryReview.Hashtag))
 	for i, hashtag := range queryReview.Hashtag {
 		hashtags[i] = output.Hashtag{
@@ -112,44 +104,8 @@ func (c Converters) ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview *
 		TravelDate:    model.NewYearMonth(queryReview.TravelDate),
 		Hashtag:       hashtags,
 		CommentCount:  queryReview.CommentCount,
-		Creator:       c.NewCreatorFromUser(queryReview.User),
+		Creator:       c.NewCreatorFromUser(queryReview.User, idIsFollowMap[queryReview.User.ID]),
 		IsFavorite:    queryReview.IsFavorite,
-	}
-}
-
-func (c Converters) convertQueryReviewToOutput(queryReview *entity.ReviewDetail) *output.Review {
-	medias := make([]output.ReviewMedia, len(queryReview.Medias))
-	hashtags := make([]output.Hashtag, len(queryReview.Hashtag))
-	for i, media := range queryReview.Medias {
-		medias[i] = output.ReviewMedia{
-			UUID: media.ID,
-			Mime: media.MimeType,
-			URL:  media.URL(c.filesURL()),
-		}
-	}
-	for i, hashtag := range queryReview.Hashtag {
-		hashtags[i] = output.Hashtag{
-			ID:   hashtag.ID,
-			Name: hashtag.Name,
-		}
-	}
-
-	return &output.Review{
-		ID:            queryReview.ID,
-		InnID:         queryReview.InnID.Int64,
-		TouristSpotID: queryReview.TouristSpotID.Int64,
-		Score:         queryReview.Score,
-		Body:          queryReview.Body,
-		FavoriteCount: queryReview.FavoriteCount,
-		Media:         c.ConvertReviewMediaList(queryReview.Medias),
-		Views:         queryReview.Views,
-		Accompanying:  queryReview.Accompanying.String(),
-		CreatedAt:     model.TimeResponse(queryReview.Review.CreatedAt),
-		UpdatedAt:     model.TimeResponse(queryReview.Review.UpdatedAt),
-		TravelDate:    model.NewYearMonth(queryReview.TravelDate),
-		CommentCount:  queryReview.CommentCount,
-		Hashtag:       hashtags,
-		Creator:       c.NewCreatorFromUser(queryReview.User),
 	}
 }
 

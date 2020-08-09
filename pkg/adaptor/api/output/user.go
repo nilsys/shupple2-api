@@ -16,6 +16,7 @@ type (
 		TwitterURL   string `json:"twitterUrl"`
 		YoutubeURL   string `json:"youtubeUrl"`
 		URL          string `json:"url"`
+		IsFollow     bool   `json:"isFollow"`
 	}
 
 	// ユーザーランキングで返すレスポンス型
@@ -71,7 +72,7 @@ type (
 	}
 )
 
-func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL, twitterURL, youtubeURL, url string) Creator {
+func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL, twitterURL, youtubeURL, url string, isFollow bool) Creator {
 	return Creator{
 		ID:           id,
 		UID:          uid,
@@ -83,6 +84,7 @@ func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL
 		TwitterURL:   twitterURL,
 		YoutubeURL:   youtubeURL,
 		URL:          url,
+		IsFollow:     isFollow,
 	}
 }
 

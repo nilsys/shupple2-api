@@ -46,14 +46,14 @@ func (r *CfProjectQueryRepositoryImpl) FindListByQuery(query *query.FindCfProjec
 	return &rows, nil
 }
 
-func (r *CfProjectQueryRepositoryImpl) FindSupportCommentListByCfProjectID(projectID, limit int) ([]*entity.CfProjectSupportComment, error) {
-	var rows []*entity.CfProjectSupportComment
+func (r *CfProjectQueryRepositoryImpl) FindSupportCommentListByCfProjectID(projectID, limit int) (*entity.CfProjectSupportCommentList, error) {
+	var rows entity.CfProjectSupportCommentList
 
 	if err := r.DB(context.Background()).Where("cf_project_id = ?", projectID).Order("created_at DESC").Limit(limit).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find cf_project_support_comment.cf_project_id")
 	}
 
-	return rows, nil
+	return &rows, nil
 }
 
 // 達成メールが未送信かつ目標金額に達していているCfProject

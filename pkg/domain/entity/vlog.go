@@ -221,3 +221,13 @@ func (v *VlogDetail) TouristSpotIDs() []int {
 
 	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
 }
+
+// Creator(User)とEditorsのIDを返す
+func (v *VlogDetail) UserIDs() []int {
+	ids := make([]int, len(v.Editors)+1)
+	for i, tiny := range v.Editors {
+		ids[i] = tiny.ID
+	}
+	ids[len(ids)-1] = v.UserID
+	return ids
+}

@@ -29,7 +29,7 @@ func (r *ReviewQueryRepositoryImpl) ShowReviewListByParams(query *query.ShowRevi
 		Limit(query.Limit).
 		Offset(query.OffSet).
 		Order(query.SortBy.GetReviewOrderQuery()).
-		Find(&rows.Reviews).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get reviews by params")
 	}
 
@@ -49,7 +49,7 @@ func (r *ReviewQueryRepositoryImpl) ShowReviewWithIsFavoriteListByParams(query *
 		Offset(query.OffSet).
 		Order(query.SortBy.GetReviewOrderQueryForJoin()).
 		Joins("LEFT JOIN user_favorite_review ON review.id = user_favorite_review.review_id AND user_favorite_review.user_id = ?", userID).
-		Find(&rows.Reviews).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get reviews by params")
 	}
 
@@ -66,7 +66,7 @@ func (r *ReviewQueryRepositoryImpl) FindFeedReviewListByUserID(userID int, query
 		Limit(query.Limit).
 		Offset(query.Offset).
 		Order("created_at DESC").
-		Find(&rows.Reviews).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find feed reviews")
 	}
 
@@ -84,7 +84,7 @@ func (r *ReviewQueryRepositoryImpl) FindFeedReviewWithIsFavoriteListByUserID(use
 		Offset(query.Offset).
 		Order("created_at DESC").
 		Joins("LEFT JOIN user_favorite_review ON review.id = user_favorite_review.review_id AND user_favorite_review.user_id = ?", userID).
-		Find(&rows.Reviews).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find feed reviews")
 	}
 
@@ -129,7 +129,7 @@ func (r *ReviewQueryRepositoryImpl) FindFavoriteReviewListByUserID(userID int, q
 		Order("uf.created_at DESC").
 		Limit(query.Limit).
 		Offset(query.Offset).
-		Find(&rows.Reviews).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed find favorite reviews by userID=%d", userID)
 	}
 
@@ -146,7 +146,7 @@ func (r *ReviewQueryRepositoryImpl) FindFavoriteReviewWithIsFavoriteListByUserID
 		Order("uf.created_at DESC").
 		Limit(query.Limit).
 		Offset(query.Offset).
-		Find(&rows.Reviews).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "failed find favorite reviews by userID=%d", targetUserID)
 	}
 

@@ -5,6 +5,8 @@ import (
 	"sort"
 	"time"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
+
 	"gopkg.in/guregu/null.v3"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
@@ -64,7 +66,7 @@ type (
 
 	ReviewDetailWithIsFavoriteList struct {
 		TotalNumber int
-		Reviews     []*ReviewDetailWithIsFavorite
+		List        []*ReviewDetailWithIsFavorite
 	}
 
 	ReviewList struct {
@@ -134,4 +136,14 @@ func (r *ReviewList) TouristSpotAlternativeImage(touristSpotID int) string {
 		}
 	}
 	return ""
+}
+
+func (r *ReviewDetailWithIsFavoriteList) UserIDs() []int {
+	ids := make([]int, len(r.List))
+
+	for i, tiny := range r.List {
+		ids[i] = tiny.UserID
+	}
+
+	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
 }

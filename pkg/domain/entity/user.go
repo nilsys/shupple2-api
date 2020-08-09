@@ -95,6 +95,8 @@ type (
 		TargetID int `gorm:"primary_key"`
 	}
 
+	UserFollowings []*UserFollowing
+
 	UserAttribute struct {
 		UserID    int                 `gorm:"primary_key"`
 		Attribute model.UserAttribute `gorm:"primary_key"`
@@ -212,4 +214,21 @@ func (u *User) AddAttribute(attr model.UserAttribute) {
 	u.UserAttributes = append(u.UserAttributes, &UserAttribute{
 		Attribute: attr,
 	})
+}
+
+// id:IsExist のMapを返す
+func (u UserFollowings) ToIDExistMap(userIDs []int) map[int]bool {
+	resolve := make(map[int]bool, len(userIDs))
+
+	for _, id := range userIDs {
+		for _, tiny := range []*UserFollowing(u) {
+			if id == tiny.TargetID {
+				resolve[id] = true
+			} else {
+				resolve[id] = false
+			}
+		}
+	}
+
+	return resolve
 }

@@ -22,7 +22,7 @@ type (
 
 	ComicList struct {
 		TotalNumber int
-		Comics      []*ComicWithIsFavorite
+		List        []*ComicWithIsFavorite
 	}
 
 	ComicDetail struct {
@@ -36,7 +36,6 @@ type (
 	}
 )
 
-// テーブル名
 func (queryComic *ComicDetail) TableName() string {
 	return "comic"
 }
@@ -50,4 +49,12 @@ func NewUserFavoriteComic(userID, comicID int) *UserFavoriteComic {
 
 func (c *ComicWithIsFavorite) TableName() string {
 	return "comic"
+}
+
+func (c *ComicList) UserIDs() []int {
+	ids := make([]int, len(c.List))
+	for i, tiny := range c.List {
+		ids[i] = tiny.UserID
+	}
+	return ids
 }

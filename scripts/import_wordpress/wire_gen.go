@@ -230,6 +230,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		ReviewQueryService:    reviewQueryServiceImpl,
 		ReviewCommandService:  reviewCommandServiceImpl,
 		HashtagCommandService: hashtagCommandServiceImpl,
+		UserQueryRepository:   userQueryRepositoryImpl,
 	}
 	script := &Script{
 		DB:                    db,

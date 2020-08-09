@@ -8,6 +8,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 	"gopkg.in/guregu/null.v3"
 )
 
@@ -24,6 +25,7 @@ type (
 		service.ReviewQueryService
 		service.ReviewCommandService
 		service.HashtagCommandService
+		repository.UserQueryRepository
 	}
 )
 
@@ -48,14 +50,20 @@ func (s *ReviewCommandScenarioImpl) Create(user *entity.User, param *command.Cre
 		if err := s.ReviewCommandService.StoreTouristSpotReview(review); err != nil {
 			return nil, errors.Wrap(err, "failed to store touristSpotReview")
 		}
-		return s.ReviewQueryService.ShowQueryReview(review.ID, *ouser)
+	} else {
+		if err := s.ReviewCommandService.StoreInnReview(review); err != nil {
+			return nil, errors.Wrap(err, "failed to store innReview")
+		}
 	}
 
-	if err := s.ReviewCommandService.StoreInnReview(review); err != nil {
-		return nil, errors.Wrap(err, "failed to store innReview")
+	// 保存したreviewを取得
+	resolve, err := s.ReviewQueryService.ShowQueryReview(review.ID, *ouser)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed show review")
 	}
 
-	return s.ReviewQueryService.ShowQueryReview(review.ID, *ouser)
+	// 自身をフォローする事はできないので、review.UserのIsFollowチェックはしない
+	return resolve, nil
 }
 
 func (s *ReviewCommandScenarioImpl) UpdateReview(user *entity.User, cmd *command.UpdateReview) error {

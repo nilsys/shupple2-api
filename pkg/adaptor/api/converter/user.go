@@ -193,10 +193,11 @@ func (c Converters) InterestToOutput(interest *entity.Interest) output.Interest 
 	}
 }
 
-func (c Converters) NewCreatorFromUser(user *entity.User) output.Creator {
+func (c Converters) NewCreatorFromUser(user *entity.User, isFollow bool) output.Creator {
 	return output.NewCreator(
 		user.ID, user.UID, user.AvatarURL(c.filesURL()), user.Name, user.Profile,
 		user.FacebookURL, user.InstagramURL, user.TwitterURL, user.YoutubeURL, user.URL,
+		isFollow,
 	)
 }
 

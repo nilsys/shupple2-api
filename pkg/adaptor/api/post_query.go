@@ -33,12 +33,12 @@ func (c *PostQueryController) Show(ctx echo.Context, ouser entity.OptionalUser) 
 		return errors.Wrapf(err, "validation get post parameter")
 	}
 
-	post, areaCategoriesMap, themeCategoriesMap, err := c.PostQueryScenario.ShowByID(p.ID, ouser)
+	post, areaCategoriesMap, themeCategoriesMap, idIsFollowMap, err := c.PostQueryScenario.Show(p.ID, &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to get post")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post, areaCategoriesMap, themeCategoriesMap))
+	return ctx.JSON(http.StatusOK, c.ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post, areaCategoriesMap, themeCategoriesMap, idIsFollowMap))
 }
 
 func (c *PostQueryController) ShowBySlug(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -47,12 +47,12 @@ func (c *PostQueryController) ShowBySlug(ctx echo.Context, ouser entity.Optional
 		return errors.Wrap(err, "validation get post by slug parameter")
 	}
 
-	post, areaCategorieMap, themeCategoriesMap, err := c.PostQueryScenario.ShowBySlug(string(p.Slug), ouser)
+	post, areaCategorieMap, themeCategoriesMap, idIsFollowMap, err := c.PostQueryScenario.ShowBySlug(string(p.Slug), &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to get post by slug")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post, areaCategorieMap, themeCategoriesMap))
+	return ctx.JSON(http.StatusOK, c.ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post, areaCategorieMap, themeCategoriesMap, idIsFollowMap))
 }
 
 func (c *PostQueryController) ListPost(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -63,12 +63,12 @@ func (c *PostQueryController) ListPost(ctx echo.Context, ouser entity.OptionalUs
 
 	query := c.ConvertFindPostListParamToQuery(p)
 
-	posts, areaCategoriesMap, themeCategoriesMap, err := c.PostQueryScenario.ListByParams(query, ouser)
+	posts, areaCategoriesMap, themeCategoriesMap, idIsFollowMap, err := c.PostQueryScenario.ListByParams(query, &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to find post list")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertPostListTinyWithCategoryDetailForListToOutput(posts, areaCategoriesMap, themeCategoriesMap))
+	return ctx.JSON(http.StatusOK, c.ConvertPostListTinyWithCategoryDetailForListToOutput(posts, areaCategoriesMap, themeCategoriesMap, idIsFollowMap))
 }
 
 func (c *PostQueryController) ListFeedPost(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -79,12 +79,12 @@ func (c *PostQueryController) ListFeedPost(ctx echo.Context, ouser entity.Option
 
 	q := c.ConvertListFeedPostParamToQuery(p)
 
-	posts, areaCategoriesMap, themeCategories, err := c.PostQueryScenario.ListFeed(p.UserID, q, ouser)
+	posts, areaCategoriesMap, themeCategories, idIsFollowMap, err := c.PostQueryScenario.ListFeed(p.UserID, q, &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed to show feed posts")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertPostListTinyWithCategoryDetailForListToOutput(posts, areaCategoriesMap, themeCategories))
+	return ctx.JSON(http.StatusOK, c.ConvertPostListTinyWithCategoryDetailForListToOutput(posts, areaCategoriesMap, themeCategories, idIsFollowMap))
 }
 
 func (c *PostQueryController) ListFavoritePost(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -95,10 +95,10 @@ func (c *PostQueryController) ListFavoritePost(ctx echo.Context, ouser entity.Op
 
 	q := c.ConvertListFeedPostParamToQuery(p)
 
-	posts, areaCategoriesMap, themeCategories, err := c.PostQueryScenario.LitFavorite(p.UserID, q, ouser)
+	posts, areaCategoriesMap, themeCategories, idIsFollowMap, err := c.PostQueryScenario.LitFavorite(p.UserID, q, &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed list favorite post")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertPostListTinyWithCategoryDetailForListToOutput(posts, areaCategoriesMap, themeCategories))
+	return ctx.JSON(http.StatusOK, c.ConvertPostListTinyWithCategoryDetailForListToOutput(posts, areaCategoriesMap, themeCategories, idIsFollowMap))
 }

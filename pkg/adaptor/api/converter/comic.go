@@ -19,9 +19,9 @@ func (c Converters) ConvertShowComicListParamToQuery(param *input.ShowComicListP
 
 // ConvertComicToOutput()のスライスバージョン
 func (c Converters) ConvertComicListToOutput(comics *entity.ComicList) output.ComicList {
-	responseComics := make([]*output.Comic, len(comics.Comics))
+	responseComics := make([]*output.Comic, len(comics.List))
 
-	for i, comic := range comics.Comics {
+	for i, comic := range comics.List {
 		responseComics[i] = c.convertComicToOutput(comic)
 	}
 
@@ -31,7 +31,7 @@ func (c Converters) ConvertComicListToOutput(comics *entity.ComicList) output.Co
 	}
 }
 
-func (c Converters) ConvertQueryComicOutput(comic *entity.ComicDetail) *output.ShowComic {
+func (c Converters) ConvertComicDetailToOutput(comic *entity.ComicDetail, idIsFollowMap map[int]bool) *output.ShowComic {
 	return &output.ShowComic{
 		ID:            comic.Comic.ID,
 		Slug:          comic.Comic.Slug,
@@ -41,7 +41,7 @@ func (c Converters) ConvertQueryComicOutput(comic *entity.ComicDetail) *output.S
 		FavoriteCount: comic.FavoriteCount,
 		IsFavorite:    comic.IsFavorite,
 		CreatedAt:     model.TimeResponse(comic.Comic.CreatedAt),
-		Creator:       c.NewCreatorFromUser(comic.User),
+		Creator:       c.NewCreatorFromUser(comic.User, idIsFollowMap[comic.UserID]),
 	}
 }
 

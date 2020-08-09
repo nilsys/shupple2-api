@@ -74,7 +74,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 				actual, err := queryRepo.ShowReviewListByParams(param)
 				Expect(err).To(Succeed())
 
-				for _, result := range actual.Reviews {
+				for _, result := range actual.List {
 					Expect(result.CreatedAt).NotTo(BeZero())
 					Expect(result.UpdatedAt).NotTo(BeZero())
 					Expect(result.User.CreatedAt).NotTo(BeZero())
@@ -86,7 +86,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 				}
 				Expect(actual).To(Equal(&entity.ReviewDetailWithIsFavoriteList{
 					TotalNumber: 1,
-					Reviews:     []*entity.ReviewDetailWithIsFavorite{newReviewDetailWithIsFavorite(hashtag.Name, hashtag.ID)},
+					List:        []*entity.ReviewDetailWithIsFavorite{newReviewDetailWithIsFavorite(hashtag.Name, hashtag.ID)},
 				}))
 			},
 			Entry("正常系_全条件検索", newShowReviewListQuery(userID, innID, touristSpotID, hashtag.Name)),

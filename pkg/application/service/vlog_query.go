@@ -27,7 +27,7 @@ var VlogQueryServiceSet = wire.NewSet(
 	wire.Bind(new(VlogQueryService), new(*VlogQueryServiceImpl)),
 )
 
-// TODO: WARN
+// WARN:
 // TODO: review_countをtourist_spotテーブルに追加して、Review投稿時にIncrementする様にする、その際にscriptを書いて既存のReviewの数を含める
 func (s *VlogQueryServiceImpl) Show(id int, ouser *entity.OptionalUser) (*entity.VlogDetail, *entity.TouristSpotReviewCountList, error) {
 	var vlog *entity.VlogDetail

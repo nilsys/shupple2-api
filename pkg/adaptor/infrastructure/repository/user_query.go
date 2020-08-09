@@ -113,12 +113,14 @@ func (r *UserQueryRepositoryImpl) FindRecommendFollowUserList(interestIDs []int)
 	return rows, nil
 }
 
-func (r *UserQueryRepositoryImpl) IsFollow(targetID int, userID int) (bool, error) {
-	var row entity.UserFollowing
+func (r *UserQueryRepositoryImpl) IsFollowing(baseUserID int, userIDs []int) (map[int]bool, error) {
+	var rows entity.UserFollowings
 
-	err := r.DB.Where("user_id = ? AND target_id = ?", userID, targetID).First(&row).Error
+	if err := r.DB.Where("user_id = ? AND target_id IN (?)", baseUserID, userIDs).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find ")
+	}
 
-	return ErrorToIsExist(err, "user_following(user_id=%s, target_id=%s)", userID, targetID)
+	return rows.ToIDExistMap(userIDs), nil
 }
 
 func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error) {

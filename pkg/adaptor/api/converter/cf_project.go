@@ -8,18 +8,18 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
-func (c *Converters) ConvertCfProjectSupportCommentListToOutput(comments []*entity.CfProjectSupportComment) []*output.CfProjectSupportComment {
-	response := make([]*output.CfProjectSupportComment, len(comments))
-	for i, comment := range comments {
+func (c *Converters) ConvertCfProjectSupportCommentListToOutput(comments *entity.CfProjectSupportCommentList) []*output.CfProjectSupportComment {
+	response := make([]*output.CfProjectSupportComment, len([]*entity.CfProjectSupportComment(*comments)))
+	for i, comment := range []*entity.CfProjectSupportComment(*comments) {
 		response[i] = c.convertCfProjectSupportCommentToOutput(comment)
 	}
 	return response
 }
 
-func (c *Converters) ConvertCfProjectDetailListToOutput(list *entity.CfProjectDetailList) []*output.CfProject {
+func (c *Converters) ConvertCfProjectDetailListToOutput(list *entity.CfProjectDetailList, idIsFollowMap map[int]bool) []*output.CfProject {
 	response := make([]*output.CfProject, len(list.List))
 	for i, project := range list.List {
-		response[i] = c.ConvertCfProjectDetailToOutput(project)
+		response[i] = c.ConvertCfProjectDetailToOutput(project, idIsFollowMap)
 	}
 	return response
 }
@@ -43,14 +43,7 @@ func (c *Converters) ConvertCfProjectListInputToQuery(i *input.ListCfProject) *q
 	}
 }
 
-func (c Converters) ConvertSupportedCfProjectListInputToQuery(i *input.PaginationQuery) *query.FindListPaginationQuery {
-	return &query.FindListPaginationQuery{
-		Limit:  i.GetCfProjectLimit(),
-		Offset: i.GetCfProjectOffset(),
-	}
-}
-
-func (c *Converters) ConvertCfProjectDetailToOutput(project *entity.CfProjectDetail) *output.CfProject {
+func (c *Converters) ConvertCfProjectDetailToOutput(project *entity.CfProjectDetail, idIsFollowMap map[int]bool) *output.CfProject {
 	// TODO
 	if project.Snapshot == nil {
 		project.Snapshot = &entity.CfProjectSnapshotDetail{}
@@ -75,12 +68,19 @@ func (c *Converters) ConvertCfProjectDetailToOutput(project *entity.CfProjectDet
 		FavoriteCount:   project.FavoriteCount,
 		FacebookCount:   project.FacebookCount,
 		TwitterCount:    project.TwitterCount,
-		Creator:         c.NewCreatorFromUser(project.User),
+		Creator:         c.NewCreatorFromUser(project.User, idIsFollowMap[project.UserID]),
 		Thumbnails:      thumbnails,
 		AreaCategories:  c.ConvertAreaCategoriesToOutput(project.Snapshot.AreaCategories),
 		ThemeCategories: c.ConvertThemeCategoriesToOutput(project.Snapshot.ThemeCategories),
 		DeadLine:        model.TimeResponse(project.Snapshot.Deadline),
 		CreatedAt:       model.TimeResponse(project.CreatedAt),
 		EditedAt:        model.TimeResponse(project.Snapshot.CreatedAt),
+	}
+}
+
+func (c Converters) ConvertSupportedCfProjectListInputToQuery(i *input.PaginationQuery) *query.FindListPaginationQuery {
+	return &query.FindListPaginationQuery{
+		Limit:  i.GetCfProjectLimit(),
+		Offset: i.GetCfProjectOffset(),
 	}
 }

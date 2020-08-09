@@ -61,10 +61,13 @@ var controllerSet = wire.NewSet(
 
 var scenarioSet = wire.NewSet(
 	scenario.ReviewCommandScenarioSet,
+	scenario.ReviewQueryScenarioSet,
 	scenario.PostQueryScenarioSet,
 	scenario.FeatureQueryScenarioSet,
 	scenario.VlogQueryScenarioSet,
 	scenario.TouristSpotQueryScenarioSet,
+	scenario.CfProjectQueryScenarioSet,
+	scenario.ComicQueryScenarioSet,
 )
 
 var domainServiceSet = wire.NewSet(

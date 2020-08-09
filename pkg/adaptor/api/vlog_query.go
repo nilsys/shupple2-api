@@ -30,12 +30,12 @@ func (c *VlogQueryController) Show(ctx echo.Context, ouser entity.OptionalUser) 
 		return errors.Wrap(err, "required vlog id")
 	}
 
-	vlog, touristSpotReviewCountMap, areaCategoriesMap, themeCategoriesMap, err := c.VlogQueryScenario.Show(p.ID, &ouser)
+	vlog, touristSpotReviewCountMap, areaCategoriesMap, themeCategoriesMap, idIsFollowMap, err := c.VlogQueryScenario.Show(p.ID, &ouser)
 	if err != nil {
 		return errors.Wrapf(err, "failed show vlog id=%d", p.ID)
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertVlogDetail(vlog, touristSpotReviewCountMap, areaCategoriesMap, themeCategoriesMap))
+	return ctx.JSON(http.StatusOK, c.ConvertVlogDetail(vlog, touristSpotReviewCountMap, areaCategoriesMap, themeCategoriesMap, idIsFollowMap))
 }
 func (c *VlogQueryController) ListVlog(ctx echo.Context, ouser entity.OptionalUser) error {
 	param := &input.ListVlogParam{}
@@ -43,7 +43,7 @@ func (c *VlogQueryController) ListVlog(ctx echo.Context, ouser entity.OptionalUs
 		return errors.Wrap(err, "invalid show vlogs input")
 	}
 
-	vlogs, areaCategoriesMap, themeCategoriesMap, err := c.VlogQueryScenario.ListByParams(c.ConvertListVlogParamToQuery(param), &ouser)
+	vlogs, areaCategoriesMap, themeCategoriesMap, err := c.VlogQueryScenario.List(c.ConvertListVlogParamToQuery(param), &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed show vlog list")
 	}

@@ -168,8 +168,8 @@ func setRoutes(app *App) {
 	{
 		features := api.Group("/feature_posts")
 
-		features.GET("", app.FeatureQueryController.ListFeature)
-		features.GET("/:id", app.FeatureQueryController.ShowQuery)
+		features.GET("", app.FeatureQueryController.List)
+		features.GET("/:id", auth.Optional(app.FeatureQueryController.Show))
 	}
 
 	{
@@ -256,9 +256,9 @@ func setRoutes(app *App) {
 
 	{
 		projects := api.Group("/projects")
-		projects.GET("", app.CfProjectQueryController.List)
-		projects.GET("/:id", app.CfProjectQueryController.Show)
-		projects.GET("/:id/comment", app.CfProjectQueryController.ListSupportComment)
+		projects.GET("", auth.Optional(app.CfProjectQueryController.List))
+		projects.GET("/:id", auth.Optional(app.CfProjectQueryController.Show))
+		projects.GET("/:id/comment", auth.Optional(app.CfProjectQueryController.ListSupportComment))
 		projects.PUT("/:id/favorite", auth.Require(app.CfProjectCommandController.Favorite))
 		projects.DELETE("/:id/favorite", auth.Require(app.CfProjectCommandController.Unfavorite))
 		projects.GET("/:id/gift", app.CfReturnGiftQueryController.List)

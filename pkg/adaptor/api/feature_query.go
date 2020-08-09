@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 
 	"github.com/google/wire"
@@ -10,35 +12,32 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
-	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
 type FeatureQueryController struct {
 	converter.Converters
-	// 処理が複雑な物はシナリオクラスを挟み、serviceにアクセスしている
-	FeatureQueryScenario scenario.FeatureQueryScenario
-	FeatureQueryService  service.FeatureQueryService
+	scenario.FeatureQueryScenario
 }
 
 var FeatureQueryControllerSet = wire.NewSet(
 	wire.Struct(new(FeatureQueryController), "*"),
 )
 
-func (c *FeatureQueryController) ShowQuery(ctx echo.Context) error {
+func (c *FeatureQueryController) Show(ctx echo.Context, ouser entity.OptionalUser) error {
 	p := &input.ShowFeatureParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation show feature")
 	}
 
-	queryFeature, areaCategories, themeCategories, err := c.FeatureQueryScenario.Show(p.ID)
+	queryFeature, areaCategories, themeCategories, idIsFollowMap, err := c.FeatureQueryScenario.Show(p.ID, &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed show query feature")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertFeatureDetailPostsToOutput(queryFeature, areaCategories, themeCategories))
+	return ctx.JSON(http.StatusOK, c.ConvertFeatureDetailPostsToOutput(queryFeature, areaCategories, themeCategories, idIsFollowMap))
 }
 
-func (c *FeatureQueryController) ListFeature(ctx echo.Context) error {
+func (c *FeatureQueryController) List(ctx echo.Context) error {
 	p := &input.ShowFeatureListParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation show feature list input")
@@ -46,7 +45,7 @@ func (c *FeatureQueryController) ListFeature(ctx echo.Context) error {
 
 	q := c.ConvertShowFeatureListParamToQuery(p)
 
-	features, err := c.FeatureQueryService.List(q)
+	features, err := c.FeatureQueryScenario.List(q)
 	if err != nil {
 		return errors.Wrap(err, "failed show feature list")
 	}

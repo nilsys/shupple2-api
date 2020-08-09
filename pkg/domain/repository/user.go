@@ -32,7 +32,7 @@ type (
 		FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error)
 		FindByUID(uid string) (*entity.UserTiny, error)
 		FindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error)
-		IsFollow(targetID, userID int) (bool, error)
+		IsFollowing(baseUserID int, userIDs []int) (map[int]bool, error)
 		FindRecommendFollowUserList(interestIDs []int) ([]*entity.UserTiny, error)
 		IsExistByUID(uid string) (bool, error)
 		FindByCognitoUserName(cognitoUserName []string) ([]*entity.UserTiny, error)

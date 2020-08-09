@@ -93,6 +93,8 @@ type (
 		User *User `gorm:"foreignkey:ID;association_foreignkey:UserID"`
 	}
 
+	CfProjectSupportCommentList []*CfProjectSupportComment
+
 	UserFavoriteCfProject struct {
 		UserID      int `gorm:"primary_key"`
 		CfProjectID int `gorm:"primary_key"`
@@ -168,6 +170,22 @@ func (p *CfProjectSnapshot) SetThemeCategories(themeCategoryIDs []int) {
 			ThemeCategoryID:     c,
 		}
 	}
+}
+
+func (c *CfProjectDetailList) UserIDs() []int {
+	ids := make([]int, len(c.List))
+	for i, tiny := range c.List {
+		ids[i] = tiny.UserID
+	}
+	return ids
+}
+
+func (c CfProjectSupportCommentList) UserIDs() []int {
+	ids := make([]int, len([]*CfProjectSupportComment(c)))
+	for i, tiny := range []*CfProjectSupportComment(c) {
+		ids[i] = tiny.UserID
+	}
+	return ids
 }
 
 func (c *CfProjectDetailList) LatestPostIDs() []int {

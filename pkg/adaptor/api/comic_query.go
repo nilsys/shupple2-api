@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 
 	"github.com/google/wire"
@@ -10,12 +12,11 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/converter"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
-	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 )
 
 type ComicQueryController struct {
 	converter.Converters
-	service.ComicQueryService
+	scenario.ComicQueryScenario
 }
 
 var ComicQueryControllerSet = wire.NewSet(
@@ -28,12 +29,12 @@ func (c *ComicQueryController) Show(ctx echo.Context, ouser entity.OptionalUser)
 		return errors.Wrapf(err, "validation show comic input")
 	}
 
-	comicDetail, err := c.ComicQueryService.Show(param.ID, &ouser)
+	comicDetail, idIsFollowMap, err := c.ComicQueryScenario.Show(param.ID, &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed show comic")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertQueryComicOutput(comicDetail))
+	return ctx.JSON(http.StatusOK, c.ConvertComicDetailToOutput(comicDetail, idIsFollowMap))
 }
 
 func (c *ComicQueryController) ListComic(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -42,7 +43,7 @@ func (c *ComicQueryController) ListComic(ctx echo.Context, ouser entity.Optional
 		return errors.Wrapf(err, "validation show comic list input")
 	}
 
-	comics, err := c.ComicQueryService.List(c.ConvertShowComicListParamToQuery(params), &ouser)
+	comics, err := c.ComicQueryScenario.List(c.ConvertShowComicListParamToQuery(params), &ouser)
 	if err != nil {
 		return errors.Wrapf(err, "failed show comic list")
 	}

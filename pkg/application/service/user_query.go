@@ -45,10 +45,12 @@ func (s *UserQueryServiceImpl) ShowByUID(uid string, ouser entity.OptionalUser) 
 		if err != nil {
 			return nil, errors.Wrap(err, "failed find user by id")
 		}
-		user.IsFollow, err = s.UserQueryRepository.IsFollow(userTable.ID, ouser.ID)
+		idIsFollowMap, err := s.UserQueryRepository.IsFollowing(ouser.ID, []int{userTable.ID})
 		if err != nil {
 			return nil, errors.Wrap(err, "failed find user_following")
 		}
+
+		user.IsFollow = idIsFollowMap[userTable.ID]
 
 		return user, nil
 	}

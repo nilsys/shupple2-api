@@ -240,6 +240,14 @@ func (p *PostDetailWithHashtagAndIsFavorite) ThemeCategoryIDs() []int {
 	return util.RemoveDuplicatesAndZeroFromIntSlice(ids)
 }
 
+func (p *PostList) UserIDs() []int {
+	ids := make([]int, len(p.Posts))
+	for i, tiny := range p.Posts {
+		ids[i] = tiny.UserID
+	}
+	return ids
+}
+
 func (p *PostDetail) FullBody() string {
 	var fullBody string
 
