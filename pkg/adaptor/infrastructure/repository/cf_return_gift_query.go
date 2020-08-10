@@ -42,8 +42,8 @@ func (r *CfReturnGiftQueryRepositoryImpl) FindByCfProjectID(projectID int) (*ent
 
 	if err := r.DB(context.Background()).
 		Select("*").
-		Joins("LEFT JOIN (SELECT payment_cf_return_gift.cf_return_gift_id AS id, COUNT(DISTINCT user_id) AS supporter_count, SUM(payment_cf_return_gift.amount) AS sold_count FROM payment INNER JOIN payment_cf_return_gift ON payment.id = payment_cf_return_gift.payment_id GROUP BY payment_cf_return_gift.cf_return_gift_id) pc ON cf_return_gift.id = pc.id").
-		Where("cf_return_gift.cf_project_id = ?", projectID).Find(&rows.List).Error; err != nil {
+		Joins("LEFT JOIN (SELECT payment_cf_return_gift.cf_return_gift_id AS id, COUNT(DISTINCT user_id) AS supporter_count, SUM(payment_cf_return_gift.amount) AS sold_count FROM payment INNER JOIN payment_cf_return_gift ON payment.id = payment_cf_return_gift.payment_id GROUP BY payment_cf_return_gift.cf_return_gift_id) pc ON cf_return_gift.id = pc.id INNER JOIN cf_return_gift_snapshot ON cf_return_gift.latest_snapshot_id = cf_return_gift_snapshot.id").
+		Where("cf_return_gift.cf_project_id = ?", projectID).Order("cf_return_gift_snapshot.sort_order").Find(&rows.List).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find cf_return_gift")
 	}
 
