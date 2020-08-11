@@ -104,6 +104,13 @@ type (
 	CfProjectDetailList struct {
 		List []*CfProjectDetail
 	}
+
+	UserSupportCfProject struct {
+		UserID      int
+		CfProjectID int
+	}
+
+	UserSupportCfProjectList []*UserSupportCfProject
 )
 
 func (c *CfProjectDetailList) ToIDMap() map[int]*CfProjectDetail {
@@ -180,6 +187,14 @@ func (c *CfProjectDetailList) UserIDs() []int {
 	return ids
 }
 
+func (c *CfProjectDetailList) IDs() []int {
+	ids := make([]int, len(c.List))
+	for i, tiny := range c.List {
+		ids[i] = tiny.ID
+	}
+	return ids
+}
+
 func (c CfProjectSupportCommentList) UserIDs() []int {
 	ids := make([]int, len([]*CfProjectSupportComment(c)))
 	for i, tiny := range []*CfProjectSupportComment(c) {
@@ -194,4 +209,20 @@ func (c *CfProjectDetailList) LatestPostIDs() []int {
 		ids[i] = int(tiny.LatestPostID.Int64)
 	}
 	return ids
+}
+
+func (c UserSupportCfProjectList) ToIDIsSupportMap(cfProjectIDs []int) map[int]bool {
+	resolve := make(map[int]bool, len(cfProjectIDs))
+
+	for _, id := range cfProjectIDs {
+		for _, tiny := range []*UserSupportCfProject(c) {
+			if id == tiny.CfProjectID {
+				resolve[id] = true
+			} else {
+				resolve[id] = false
+			}
+		}
+	}
+
+	return resolve
 }

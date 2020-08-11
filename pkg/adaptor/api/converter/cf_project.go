@@ -16,10 +16,10 @@ func (c *Converters) ConvertCfProjectSupportCommentListToOutput(comments *entity
 	return response
 }
 
-func (c *Converters) ConvertCfProjectDetailListToOutput(list *entity.CfProjectDetailList, idIsFollowMap map[int]bool) []*output.CfProject {
+func (c *Converters) ConvertCfProjectDetailListToOutput(list *entity.CfProjectDetailList, idIsFollowMap, idIsSupportMap map[int]bool) []*output.CfProject {
 	response := make([]*output.CfProject, len(list.List))
 	for i, project := range list.List {
-		response[i] = c.ConvertCfProjectDetailToOutput(project, idIsFollowMap)
+		response[i] = c.ConvertCfProjectDetailToOutput(project, idIsFollowMap, idIsSupportMap)
 	}
 	return response
 }
@@ -43,7 +43,7 @@ func (c *Converters) ConvertCfProjectListInputToQuery(i *input.ListCfProject) *q
 	}
 }
 
-func (c *Converters) ConvertCfProjectDetailToOutput(project *entity.CfProjectDetail, idIsFollowMap map[int]bool) *output.CfProject {
+func (c *Converters) ConvertCfProjectDetailToOutput(project *entity.CfProjectDetail, idIsFollowMap, idIsSupportMap map[int]bool) *output.CfProject {
 	// TODO
 	if project.Snapshot == nil {
 		project.Snapshot = &entity.CfProjectSnapshotDetail{}
@@ -68,6 +68,7 @@ func (c *Converters) ConvertCfProjectDetailToOutput(project *entity.CfProjectDet
 		FavoriteCount:   project.FavoriteCount,
 		FacebookCount:   project.FacebookCount,
 		TwitterCount:    project.TwitterCount,
+		IsSupport:       idIsSupportMap[project.ID],
 		Creator:         c.NewCreatorFromUser(project.User, idIsFollowMap[project.UserID]),
 		Thumbnails:      thumbnails,
 		AreaCategories:  c.ConvertAreaCategoriesToOutput(project.Snapshot.AreaCategories),

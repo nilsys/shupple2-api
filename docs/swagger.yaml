@@ -4568,6 +4568,8 @@ components:
           type: integer
         twitterCount:
           type: integer
+        isSupport:
+          type: boolean
         creator:
           $ref: "#/components/schemas/Creator"
         thumbnails:

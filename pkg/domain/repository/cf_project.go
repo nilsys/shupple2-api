@@ -34,5 +34,6 @@ type (
 		FindNotSentAchievementNoticeEmailAndAchievedListByLastID(lastID, limit int) (*entity.CfProjectDetailList, error)
 		FindNotSentNewPostNoticeEmailByLastID(lastID, limit int) (*entity.CfProjectDetailList, error)
 		FindSupportedListByUserID(userID int, query *query.FindListPaginationQuery) (*entity.CfProjectDetailList, error)
+		IsSupported(userID int, projectIDs []int) (map[int]bool, error)
 	}
 )

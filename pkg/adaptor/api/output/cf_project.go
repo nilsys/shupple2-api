@@ -23,6 +23,7 @@ type (
 		FavoriteCount   int                   `json:"favoriteCount"`
 		FacebookCount   int                   `json:"facebookCount"`
 		TwitterCount    int                   `json:"twitterCount"`
+		IsSupport       bool                  `json:"isSupport"`
 		Creator         Creator               `json:"creator"`
 		Thumbnails      []*CfProjectThumbnail `json:"thumbnails"`
 		AreaCategories  []*AreaCategory       `json:"areaCategories"`

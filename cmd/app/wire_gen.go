@@ -68,8 +68,9 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		CfProjectQueryRepository: cfProjectQueryRepositoryImpl,
 	}
 	cfProjectQueryScenarioImpl := &scenario.CfProjectQueryScenarioImpl{
-		CfProjectQueryService: cfProjectQueryServiceImpl,
-		UserQueryRepository:   userQueryRepositoryImpl,
+		CfProjectQueryService:    cfProjectQueryServiceImpl,
+		UserQueryRepository:      userQueryRepositoryImpl,
+		CfProjectQueryRepository: cfProjectQueryRepositoryImpl,
 	}
 	cfProjectQueryController := api.CfProjectQueryController{
 		Converters:             converters,
