@@ -54,6 +54,9 @@ const (
 	// 24h * 180days = 4230h
 	// https://pay.jp/docs/api/#%E6%94%AF%E6%89%95%E3%81%84%E6%83%85%E5%A0%B1%E3%82%92%E6%9B%B4%E6%96%B0
 	chargeRefundExpiredHour = 4320
+
+	// PaymentCfReturnGift.InquiryCode(お問い合わせ番号)の桁数
+	paymentCfReturnGiftInquiryCodeLength = 7
 )
 
 // 決済確定
@@ -66,8 +69,6 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 		if err != nil {
 			return errors.Wrap(err, "failed find latest")
 		}
-
-		paymentReturnGifts := make([]*entity.PaymentCfReturnGiftTiny, len(cmd.List))
 
 		gifts, err := s.CfReturnGiftCommandRepository.LockByIDs(c, cmd.ReturnIDs())
 		if err != nil {
@@ -97,7 +98,10 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 
 		giftIDMap := gifts.ToIDMap()
 
+		paymentReturnGifts := make([]*entity.PaymentCfReturnGiftTiny, len(cmd.List))
+		idInquiryCodeMap := make(map[int]string, len(cmd.List))
 		var price int
+
 		for i, payment := range cmd.List {
 			// 商品情報が更新されている時
 			if int64(payment.ReturnGiftSnapshotID) != giftIDMap[payment.ReturnGiftID].LatestSnapshotID.Int64 {
@@ -113,11 +117,20 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 			// 金額x数量
 			price += giftIDMap[payment.ReturnGiftID].Snapshot.Price * payment.Amount
 			gift := giftIDMap[payment.ReturnGiftID]
+
+			// お問い合わせ番号生成
+			inquiryCode, err := model.RandomStr(paymentCfReturnGiftInquiryCodeLength)
+			if err != nil {
+				return errors.Wrap(err, "failed random str")
+			}
+
+			idInquiryCodeMap[gift.ID] = inquiryCode
+
 			if gift.CfReturnGiftTiny.GiftType == model.CfReturnGiftTypeReservedTicket {
-				paymentReturnGifts[i] = entity.NewPaymentReturnGiftForReservedTicket(payment.ReturnGiftID, int(gift.LatestSnapshotID.Int64), gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount)
+				paymentReturnGifts[i] = entity.NewPaymentReturnGiftForReservedTicket(payment.ReturnGiftID, int(gift.LatestSnapshotID.Int64), gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount, inquiryCode)
 				continue
 			}
-			paymentReturnGifts[i] = entity.NewPaymentReturnGiftForOther(payment.ReturnGiftID, int(gift.LatestSnapshotID.Int64), gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount)
+			paymentReturnGifts[i] = entity.NewPaymentReturnGiftForOther(payment.ReturnGiftID, int(gift.LatestSnapshotID.Int64), gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount, inquiryCode)
 		}
 
 		// 最新のカードidを取得
@@ -169,7 +182,7 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 		}
 
 		// 決済確定メール送信
-		template := entity.NewThanksPurchaseTemplate(projectOwner.Name, gifts.OnEmailDescription(), charge.ID, util.WithComma(s.CfProjectConfig.SystemFee), util.WithComma(includeCommissionPrice), address.Email, address.FullAddress(), address.PhoneNumber, user.Name)
+		template := entity.NewThanksPurchaseTemplate(projectOwner.Name, gifts.TitlesOnEmail(idInquiryCodeMap), charge.ID, util.WithComma(s.CfProjectConfig.SystemFee), util.WithComma(includeCommissionPrice), address.Email, address.FullAddress(), address.PhoneNumber, user.Name)
 		if err := s.MailCommandRepository.SendTemplateMail([]string{address.Email}, template); err != nil {
 			return errors.Wrap(err, "failed send email from ses")
 		}

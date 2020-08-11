@@ -42,6 +42,7 @@ type (
 		UserReserveRequestedAt       *time.Time
 		GiftTypeOtherStatus          null.Int
 		GiftTypeReservedTicketStatus null.Int
+		InquiryCode                  string
 		TimesWithoutDeletedAt
 	}
 
@@ -102,7 +103,7 @@ func (p *PaymentList) CardIDs() []string {
 }
 
 // PaymentIDが先に取得できない為、後でいれる想定
-func NewPaymentReturnGiftForOther(giftID, giftSnapshotID, projectID, projectSnapshotID, amount int) *PaymentCfReturnGiftTiny {
+func NewPaymentReturnGiftForOther(giftID, giftSnapshotID, projectID, projectSnapshotID, amount int, inquiryCode string) *PaymentCfReturnGiftTiny {
 	return &PaymentCfReturnGiftTiny{
 		CfReturnGiftID:         giftID,
 		CfReturnGiftSnapshotID: giftSnapshotID,
@@ -110,6 +111,7 @@ func NewPaymentReturnGiftForOther(giftID, giftSnapshotID, projectID, projectSnap
 		CfProjectSnapshotID:    projectSnapshotID,
 		Amount:                 amount,
 		GiftTypeOtherStatus:    null.IntFrom(int64(model.PaymentCfReturnGiftOtherTypeStatusOwnerUnconfirmed)),
+		InquiryCode:            inquiryCode,
 	}
 }
 
@@ -118,7 +120,7 @@ func (p *PaymentCfReturnGift) TotalPrice() int {
 }
 
 // PaymentIDが先に取得できない為、後でいれる想定
-func NewPaymentReturnGiftForReservedTicket(giftID, giftSnapshotID, projectID, projectSnapshotID, amount int) *PaymentCfReturnGiftTiny {
+func NewPaymentReturnGiftForReservedTicket(giftID, giftSnapshotID, projectID, projectSnapshotID, amount int, inquiryCode string) *PaymentCfReturnGiftTiny {
 	now := time.Now()
 	return &PaymentCfReturnGiftTiny{
 		CfReturnGiftID:               giftID,
@@ -128,5 +130,6 @@ func NewPaymentReturnGiftForReservedTicket(giftID, giftSnapshotID, projectID, pr
 		Amount:                       amount,
 		OwnerConfirmedAt:             &now,
 		GiftTypeReservedTicketStatus: null.IntFrom(int64(model.PaymentCfReturnGiftReservedTicketTypeStatusUnreserved)),
+		InquiryCode:                  inquiryCode,
 	}
 }

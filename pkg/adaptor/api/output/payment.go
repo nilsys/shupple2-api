@@ -18,6 +18,7 @@ type (
 	PaymentCfReturnGift struct {
 		CfReturnGift                 *CfReturnGift                                     `json:"cfReturnGift"`
 		Amount                       int                                               `json:"amount"`
+		InquiryCode                  string                                            `json:"inquiryCode"`
 		GiftTypeOtherStatus          model.PaymentCfReturnGiftOtherTypeStatus          `json:"giftTypeOtherStatus"`
 		GiftTypeReservedTicketStatus model.PaymentCfReturnGiftReservedTicketTypeStatus `json:"giftTypeReservedTicketStatus"`
 		OwnerConfirmedAt             model.TimeResponse                                `json:"ownerConfirmedAt"`

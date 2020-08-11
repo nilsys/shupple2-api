@@ -2284,7 +2284,7 @@ paths:
                     type: integer
                     description: 検索総件数
                     example: 120
-                  reviews:
+                  payments:
                     $ref: "#/components/schemas/PaymentList"
   /payments/{id}/reserve:
     post:
@@ -3088,6 +3088,11 @@ components:
         amount:
           type: integer
           example: 2
+        inquiryCode:
+          type: string
+          description: |
+            7桁のお問い合わせ番号
+          example: AE82EDF
         giftTypeOtherStatus:
           $ref: "#/components/schemas/CfReturnGiftTypeOtherStatus"
         giftTypeReservedTicketStatus:

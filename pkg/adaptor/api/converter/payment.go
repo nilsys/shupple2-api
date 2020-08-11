@@ -77,6 +77,7 @@ func (c Converters) ConvertPaymentCfReturnGiftToOutput(payment []*entity.Payment
 				Snapshot:         tiny.CfReturnGiftSnapshot,
 			}),
 			Amount:                       tiny.Amount,
+			InquiryCode:                  tiny.InquiryCode,
 			GiftTypeOtherStatus:          tiny.ResolveGiftTypeOtherStatus(),
 			GiftTypeReservedTicketStatus: tiny.ResolveGiftTypeReservedTicketStatus(),
 			OwnerConfirmedAt:             model.TimeResponse(ownerConfirmedAt),

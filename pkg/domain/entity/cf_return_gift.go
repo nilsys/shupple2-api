@@ -90,10 +90,11 @@ func (r *CfReturnGiftList) UniqueCfProjectID() (int, bool) {
 	return 0, false
 }
 
-func (r *CfReturnGiftList) OnEmailDescription() string {
+// お問い合わせ番号とタイトルを並べる
+func (r *CfReturnGiftList) TitlesOnEmail(idInquiryCodeMap map[int]string) string {
 	var titles string
 	for _, gift := range r.List {
-		titles += fmt.Sprintf("<br>%s", gift.Snapshot.Title)
+		titles += fmt.Sprintf("<br>%s<br>お問い合わせ番号: %s<br>", gift.Snapshot.Title, idInquiryCodeMap[gift.ID])
 	}
 	return titles
 }
