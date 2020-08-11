@@ -1,6 +1,8 @@
 package converter
 
 import (
+	"time"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/input"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/api/output"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -64,6 +66,11 @@ func (c Converters) ConvertPaymentToOutput(payment *entity.Payment) *output.Paym
 func (c Converters) ConvertPaymentCfReturnGiftToOutput(payment []*entity.PaymentCfReturnGift) []*output.PaymentCfReturnGift {
 	response := make([]*output.PaymentCfReturnGift, len(payment))
 	for i, tiny := range payment {
+		var ownerConfirmedAt time.Time
+		if tiny.OwnerConfirmedAt != nil {
+			ownerConfirmedAt = *tiny.OwnerConfirmedAt
+		}
+
 		response[i] = &output.PaymentCfReturnGift{
 			CfReturnGift: c.convertCfReturnGiftToOutput(&entity.CfReturnGift{
 				CfReturnGiftTiny: *tiny.CfReturnGift,
@@ -72,7 +79,7 @@ func (c Converters) ConvertPaymentCfReturnGiftToOutput(payment []*entity.Payment
 			Amount:                       tiny.Amount,
 			GiftTypeOtherStatus:          tiny.ResolveGiftTypeOtherStatus(),
 			GiftTypeReservedTicketStatus: tiny.ResolveGiftTypeReservedTicketStatus(),
-			OwnerConfirmedAt:             model.TimeResponse(*tiny.OwnerConfirmedAt),
+			OwnerConfirmedAt:             model.TimeResponse(ownerConfirmedAt),
 		}
 	}
 	return response
