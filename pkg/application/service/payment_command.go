@@ -61,7 +61,7 @@ func (s *PaymentCommandServiceImpl) ReservePaymentCfReturnGift(user *entity.User
 			return errors.Wrap(err, "failed mark as reserved")
 		}
 
-		if err := s.MailCommandRepository.SendTemplateMail([]string{payment.Owner.Email}, entity.NewReserveRequestTemplateFromCfReserveRequest(request, payment.ChargeID, paymentCfReturnGift.CfReturnGiftSnapshot.Body)); err != nil {
+		if err := s.MailCommandRepository.SendTemplateMail([]string{payment.Owner.Email}, entity.NewReserveRequestTemplateFromCfReserveRequest(request, payment.ChargeID, paymentCfReturnGift.CfReturnGiftSnapshot.Title)); err != nil {
 			return errors.Wrap(err, "failed send email from ses")
 		}
 

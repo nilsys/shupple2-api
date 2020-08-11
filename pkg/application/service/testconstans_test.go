@@ -120,5 +120,5 @@ func newCfReturnGiftSnapshot(deadline time.Time) *entity.CfReturnGiftSnapshotTin
 }
 
 func newMailTemplate() entity.MailTemplate {
-	return entity.NewReserveRequestTemplateFromCfReserveRequest(newCfReserveRequest(), newPayment().ChargeID, newPaymentCfReturnGift(model.CfReturnGiftTypeReservedTicket, model.PaymentCfReturnGiftOtherTypeStatusUndefined, model.PaymentCfReturnGiftReservedTicketTypeStatusUnreserved, validDeadline).CfReturnGiftSnapshot.Body)
+	return entity.NewReserveRequestTemplateFromCfReserveRequest(newCfReserveRequest(), newPayment().ChargeID, newPaymentCfReturnGift(model.CfReturnGiftTypeReservedTicket, model.PaymentCfReturnGiftOtherTypeStatusUndefined, model.PaymentCfReturnGiftReservedTicketTypeStatusUnreserved, validDeadline).CfReturnGiftSnapshot.Title)
 }

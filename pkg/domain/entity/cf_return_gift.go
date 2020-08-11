@@ -91,11 +91,11 @@ func (r *CfReturnGiftList) UniqueCfProjectID() (int, bool) {
 }
 
 func (r *CfReturnGiftList) OnEmailDescription() string {
-	var body string
+	var titles string
 	for _, gift := range r.List {
-		body += fmt.Sprintf("<br>%s", gift.Snapshot.Body)
+		titles += fmt.Sprintf("<br>%s", gift.Snapshot.Title)
 	}
-	return body
+	return titles
 }
 
 func (r *CfReturnGiftSoldCountList) GetSoldCount(id int) int {

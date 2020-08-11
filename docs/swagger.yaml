@@ -4612,6 +4612,9 @@ components:
         cfProjectId:
           type: integer
           example: 1
+        title:
+          type: string
+          example: リターン名
         thumbnail:
           type: string
         giftType:

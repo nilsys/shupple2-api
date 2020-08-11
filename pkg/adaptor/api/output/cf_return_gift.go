@@ -7,6 +7,7 @@ type (
 		ID             int                    `json:"id"`
 		SnapshotID     int                    `json:"snapshotId"`
 		CfProjectID    int                    `json:"cfProjectId"`
+		Title          string                 `json:"title"`
 		Thumbnail      string                 `json:"thumbnail"`
 		GiftType       model.CfReturnGiftType `json:"giftType"`
 		Body           string                 `json:"body"`
