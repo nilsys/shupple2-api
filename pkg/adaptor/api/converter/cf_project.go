@@ -16,12 +16,15 @@ func (c *Converters) ConvertCfProjectSupportCommentListToOutput(comments *entity
 	return response
 }
 
-func (c *Converters) ConvertCfProjectDetailListToOutput(list *entity.CfProjectDetailList, idIsFollowMap, idIsSupportMap map[int]bool) []*output.CfProject {
+func (c *Converters) ConvertCfProjectDetailListToOutput(list *entity.CfProjectDetailList, idIsFollowMap, idIsSupportMap map[int]bool) *output.CfProjectList {
 	response := make([]*output.CfProject, len(list.List))
 	for i, project := range list.List {
 		response[i] = c.ConvertCfProjectDetailToOutput(project, idIsFollowMap, idIsSupportMap)
 	}
-	return response
+	return &output.CfProjectList{
+		TotalNumber: list.TotalNumber,
+		CfProjects:  response,
+	}
 }
 
 func (c *Converters) convertCfProjectSupportCommentToOutput(comment *entity.CfProjectSupportComment) *output.CfProjectSupportComment {

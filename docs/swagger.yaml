@@ -2350,7 +2350,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CfProjectList"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  cfProjects:
+                    $ref: "#/components/schemas/CfProjectList"
   /projects/supported:
     get:
       tags:
@@ -2373,7 +2380,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CfProjectList"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  cfProjects:
+                    $ref: "#/components/schemas/CfProjectList"
   /projects/{id}:
     get:
       tags:

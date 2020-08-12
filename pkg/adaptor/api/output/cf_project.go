@@ -37,4 +37,9 @@ type (
 		Priority  int    `json:"priority"`
 		Thumbnail string `json:"thumbnail"`
 	}
+
+	CfProjectList struct {
+		TotalNumber int          `json:"totalNumber"`
+		CfProjects  []*CfProject `json:"cfProjects"`
+	}
 )

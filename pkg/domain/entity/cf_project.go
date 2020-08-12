@@ -102,7 +102,8 @@ type (
 	}
 
 	CfProjectDetailList struct {
-		List []*CfProjectDetail
+		TotalNumber int
+		List        []*CfProjectDetail
 	}
 
 	UserSupportCfProject struct {
