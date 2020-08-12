@@ -9,5 +9,7 @@ type (
 		SubSubAreaID int
 		UserID       int
 		SortBy       model.CfProjectSortBy
+		Limit        int
+		Offset       int
 	}
 )

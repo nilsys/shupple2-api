@@ -2344,6 +2344,16 @@ paths:
             LargeAmount - 支援金額の多い順
             Push - 達成金額70%以上
             Attention - 注目
+        - name: perPage
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
       responses:
         "200":
           description: ok

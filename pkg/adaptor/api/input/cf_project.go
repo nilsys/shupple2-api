@@ -13,6 +13,7 @@ type (
 		SubSubAreaID int                   `query:"subSubAreaId"`
 		UserID       int                   `query:"userId"`
 		SortBy       model.CfProjectSortBy `query:"sortBy"`
+		PaginationQuery
 	}
 
 	ListCfProjectSupportComment struct {

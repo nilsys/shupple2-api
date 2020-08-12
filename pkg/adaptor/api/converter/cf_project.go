@@ -43,6 +43,8 @@ func (c *Converters) ConvertCfProjectListInputToQuery(i *input.ListCfProject) *q
 		SubSubAreaID: i.SubSubAreaID,
 		UserID:       i.UserID,
 		SortBy:       i.SortBy,
+		Limit:        i.GetCfProjectLimit(),
+		Offset:       i.GetCfProjectOffset(),
 	}
 }
 

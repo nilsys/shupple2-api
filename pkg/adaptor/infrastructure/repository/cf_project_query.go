@@ -40,7 +40,11 @@ func (r *CfProjectQueryRepositoryImpl) FindListByQuery(query *query.FindCfProjec
 	var rows entity.CfProjectDetailList
 
 	q := r.buildFindList(query)
-	if err := q.Joins("JOIN cf_project_snapshot ON cf_project.latest_snapshot_id = cf_project_snapshot.id").Order(query.SortBy.GetCfProjectOrderQuery()).Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+	if err := q.Joins("JOIN cf_project_snapshot ON cf_project.latest_snapshot_id = cf_project_snapshot.id").
+		Order(query.SortBy.GetCfProjectOrderQuery()).
+		Limit(query.Limit).
+		Offset(query.Offset).
+		Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find cf_project")
 	}
 	return &rows, nil
