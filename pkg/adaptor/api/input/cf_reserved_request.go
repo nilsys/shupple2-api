@@ -13,7 +13,7 @@ type (
 		Checkin          string `json:"checkin" validate:"required"`
 		Checkout         string `json:"checkout" validate:"required"`
 		StayDays         int    `json:"stayDays" validate:"required"`
-		AdultMemberCount int    `json:"adultMemberCount" validate:"required"`
-		ChildMemberCount int    `json:"childMemberCount" validate:"required"`
+		AdultMemberCount int    `json:"adultMemberCount"`
+		ChildMemberCount int    `json:"childMemberCount"`
 	}
 )
