@@ -8,7 +8,7 @@ type (
 		Slug           string             `json:"slug"`
 		Thumbnail      string             `json:"thumbnail"`
 		Title          string             `json:"title"`
-		Beginning      string             `json:"summary"`
+		Beginning      string             `json:"beginning"`
 		TOC            string             `json:"toc"`
 		IsSticky       bool               `json:"isSticky"`
 		HideAds        bool               `json:"hideAds"`
