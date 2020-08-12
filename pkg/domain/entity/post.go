@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"sort"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
@@ -15,6 +14,7 @@ type (
 		Slug           string
 		Thumbnail      string
 		Title          string
+		Beginning      string
 		TOC            string
 		CfProjectID    null.Int
 		IsSticky       bool
@@ -31,7 +31,7 @@ type (
 
 	Post struct {
 		PostTiny
-		Bodies           []*PostBody
+		Bodies           []*PostBody `gorm:"foreignkey:PostID"`
 		AreaCategoryIDs  []*PostAreaCategory
 		ThemeCategoryIDs []*PostThemeCategory
 		HashtagIDs       []*PostHashtag
@@ -58,7 +58,6 @@ type (
 		HashtagID int `gorm:"primary_key"`
 	}
 
-	// 参照用Post
 	PostDetail struct {
 		PostTiny
 		Bodies          []*PostBody      `gorm:"foreignkey:PostID"`
@@ -105,7 +104,7 @@ func (p *PostDetail) TableName() string {
 	return "post"
 }
 
-func (post *PostListTiny) TableName() string {
+func (p *PostListTiny) TableName() string {
 	return "post"
 }
 
@@ -246,20 +245,6 @@ func (p *PostList) UserIDs() []int {
 		ids[i] = tiny.UserID
 	}
 	return ids
-}
-
-func (p *PostDetail) FullBody() string {
-	var fullBody string
-
-	sort.Slice(p.Bodies, func(i, j int) bool {
-		return p.Bodies[i].Page < p.Bodies[j].Page
-	})
-
-	for _, body := range p.Bodies {
-		fullBody += "\n" + body.Body
-	}
-
-	return fullBody
 }
 
 func (p *PostDetailList) ToCfProjectIDMap() map[int]*PostDetail {

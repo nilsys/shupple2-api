@@ -42,9 +42,6 @@ func (c Converters) ConvertListFeedPostParamToQuery(param *input.ListFeedPostPar
 	}
 }
 
-/*
- * i -> o
- */
 func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idIsFollowMap map[int]bool) *output.PostShow {
 	var hashtags = make([]*output.Hashtag, len(post.Hashtag))
 	var bodies = make([]*output.PostBody, len(post.Bodies))
@@ -67,27 +64,29 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 	}
 
 	return &output.PostShow{
-		ID:              post.ID,
-		Thumbnail:       post.PostTiny.Thumbnail,
-		Title:           post.Title,
-		Slug:            post.Slug,
-		Body:            bodies,
-		TOC:             post.TOC,
-		FavoriteCount:   post.FavoriteCount,
-		FacebookCount:   post.FacebookCount,
-		TwitterCount:    post.TwitterCount,
-		Views:           post.Views,
-		SEOTitle:        post.SEOTitle,
-		SEODescription:  post.SEODescription,
-		HideAds:         post.HideAds,
+		PostTiny: output.PostTiny{
+			ID:             post.ID,
+			Thumbnail:      post.PostTiny.Thumbnail,
+			Title:          post.Title,
+			Beginning:      post.Beginning,
+			Slug:           post.Slug,
+			TOC:            post.TOC,
+			FavoriteCount:  post.FavoriteCount,
+			FacebookCount:  post.FacebookCount,
+			TwitterCount:   post.TwitterCount,
+			Views:          post.Views,
+			SEOTitle:       post.SEOTitle,
+			SEODescription: post.SEODescription,
+			HideAds:        post.HideAds,
+			IsSticky:       post.IsSticky,
+			CreatedAt:      model.TimeResponse(post.CreatedAt),
+			EditedAt:       model.TimeResponse(post.EditedAt),
+		},
 		IsFavorite:      post.IsFavorite,
 		Creator:         c.NewCreatorFromUser(post.User, idIsFollowMap[post.UserID]),
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
 		Hashtags:        hashtags,
-		EditedAt:        model.TimeResponse(post.EditedAt),
-		CreatedAt:       model.TimeResponse(post.CreatedAt),
-		UpdatedAt:       model.TimeResponse(post.UpdatedAt),
 	}
 }
 
@@ -116,19 +115,27 @@ func (c Converters) ConvertPostListTinyWithCategoryDetailToOutput(post *entity.P
 	}
 
 	return &output.PostWithCategoryDetail{
-		ID:              post.ID,
-		Thumbnail:       post.Thumbnail,
+		PostTiny: output.PostTiny{
+			ID:             post.ID,
+			Slug:           post.Slug,
+			Thumbnail:      post.Thumbnail,
+			Title:          post.Title,
+			Beginning:      post.Beginning,
+			TOC:            post.TOC,
+			IsSticky:       post.IsSticky,
+			HideAds:        post.HideAds,
+			FavoriteCount:  post.FavoriteCount,
+			FacebookCount:  post.FacebookCount,
+			TwitterCount:   post.TwitterCount,
+			Views:          post.Views,
+			SEOTitle:       post.SEOTitle,
+			SEODescription: post.SEODescription,
+			CreatedAt:      model.TimeResponse(post.CreatedAt),
+			EditedAt:       model.TimeResponse(post.EditedAt),
+		},
+		IsFavorite:      post.IsFavorite,
+		Creator:         c.NewCreatorFromUser(post.User, idIsFollowMap[post.UserID]),
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
-		Title:           post.Title,
-		Slug:            post.Slug,
-		Creator:         c.NewCreatorFromUser(post.User, idIsFollowMap[post.UserID]),
-		FavoriteCount:   post.FavoriteCount,
-		Views:           post.Views,
-		HideAds:         post.HideAds,
-		IsFavorite:      post.IsFavorite,
-		EditedAt:        model.TimeResponse(post.EditedAt),
-		CreatedAt:       model.TimeResponse(post.CreatedAt),
-		UpdatedAt:       model.TimeResponse(post.UpdatedAt),
 	}
 }

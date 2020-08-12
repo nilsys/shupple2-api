@@ -126,8 +126,7 @@ func (s *CfProjectCommandServiceImpl) SendNewReportMailToSupporter(project *enti
 			return errors.Wrap(err, "failed update is_sent_new_post_mail")
 		}
 
-		// TODO: post.beginningを使う
-		if err := s.MailCommandRepository.SendTemplateMail(users.Emails(), entity.NewCfProjectPostNewReportNoticeForSupporter(project.ID, project.Snapshot.Title, post.Title, post.Slug, post.FullBody())); err != nil {
+		if err := s.MailCommandRepository.SendTemplateMail(users.Emails(), entity.NewCfProjectPostNewReportNoticeForSupporter(project.ID, project.Snapshot.Title, post.Title, post.Slug, post.Beginning)); err != nil {
 			return errors.Wrap(err, "failed send email from ses")
 		}
 

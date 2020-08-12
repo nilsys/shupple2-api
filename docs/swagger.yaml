@@ -3339,6 +3339,9 @@ components:
           type: string
           description: スラッグ
           example: hokkaido
+        beginning:
+          type: string
+          description: 冒頭
         areaCategories:
           type: array
           items:
@@ -3391,6 +3394,9 @@ components:
           type: string
           description: スラッグ
           example: hokkaido
+        beginning:
+          type: string
+          description: 冒頭
         body:
           type: array
           items:

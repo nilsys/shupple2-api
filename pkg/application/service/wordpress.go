@@ -109,6 +109,13 @@ func (s *WordpressServiceImpl) PatchPost(post *entity.Post, wpPost *wordpress.Po
 	post.SEODescription = wpPost.Meta.MetaDescription
 	post.EditedAt = time.Time(wpPost.Modified)
 	post.CreatedAt = time.Time(wpPost.Date)
+	if len(bodies) != 0 {
+		beginning, err := model.PostBodyToBeginning(bodies[0])
+		if err != nil {
+			return errors.Wrap(err, "failed extract body")
+		}
+		post.Beginning = beginning
+	}
 	post.SetBodies(bodies)
 	post.SetAreaCategories(areaCategoryIDs)
 	post.SetThemeCategories(themeCategoryIDs)
