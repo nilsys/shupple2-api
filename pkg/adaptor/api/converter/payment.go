@@ -61,6 +61,7 @@ func (c Converters) ConvertPaymentToOutput(payment *entity.Payment) *output.Paym
 		ShippingAddress:      c.ConvertShippingAddressToOutput(payment.ShippingAddress),
 		Card:                 c.ConvertCardToOutput(payment.Card),
 		TotalPrice:           payment.TotalPrice,
+		CommissionPrice:      payment.CommissionPrice,
 		ChargeID:             payment.ChargeID,
 		Remark:               payment.Remark,
 		PaymentCfReturnGifts: c.ConvertPaymentCfReturnGiftToOutput(payment.PaymentCfReturnGift),

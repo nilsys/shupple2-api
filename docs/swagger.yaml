@@ -3097,6 +3097,12 @@ components:
           $ref: "#/components/schemas/ShippingAddress"
         totalPrice:
           type: integer
+          description: |
+            手数用抜きの合計金額
+        commissionPrice:
+          type: integer
+          description: |
+            手数料(システム利用料etc...)
         chargeId:
           type: string
           example: ch_oiwr3o1023

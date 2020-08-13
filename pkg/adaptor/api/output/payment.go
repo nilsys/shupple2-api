@@ -10,6 +10,7 @@ type (
 		ShippingAddress      *ShippingAddress       `json:"shippingAddress"`
 		Card                 *Card                  `json:"card"`
 		TotalPrice           int                    `json:"totalPrice"`
+		CommissionPrice      int                    `json:"commissionPrice"`
 		ChargeID             string                 `json:"chargeId"`
 		Remark               string                 `json:"remark"`
 		PaymentCfReturnGifts []*PaymentCfReturnGift `json:"paymentCfReturnGifts"`
