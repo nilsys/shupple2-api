@@ -38,9 +38,9 @@ func (r *PaymentQueryRepositoryImpl) FindByUserID(userID, projectID int, query *
 	return &rows, nil
 }
 
-func (r *PaymentQueryRepositoryImpl) FindByID(id int) (*entity.Payment, error) {
+func (r *PaymentQueryRepositoryImpl) FindByID(ctx context.Context, id int) (*entity.Payment, error) {
 	var row entity.Payment
-	if err := r.DB(context.Background()).First(&row, id).Error; err != nil {
+	if err := r.DB(ctx).First(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "payment(id=%d)", id)
 	}
 	return &row, nil

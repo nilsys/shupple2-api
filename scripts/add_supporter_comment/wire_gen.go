@@ -11,6 +11,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
+	"github.com/stayway-corp/stayway-media-api/pkg/application/service/helper"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	service2 "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 )
@@ -91,21 +92,27 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		DAO: dao,
 	}
 	mailCommandRepository := repository.ProvideMailer(configConfig, session)
+	userSalesHistoryCommandRepositoryImpl := &repository.UserSalesHistoryCommandRepositoryImpl{
+		DAO: dao,
+	}
+	inquiryCodeGeneratorImpl := &helper.InquiryCodeGeneratorImpl{}
 	cfProject := configConfig.CfProject
 	chargeCommandServiceImpl := &service.ChargeCommandServiceImpl{
-		PaymentCommandRepository:      paymentCommandRepositoryImpl,
-		PaymentQueryRepository:        paymentQueryRepositoryImpl,
-		CardQueryRepository:           cardQueryRepositoryImpl,
-		CfProjectQueryRepository:      cfProjectQueryRepositoryImpl,
-		ChargeCommandRepository:       chargeCommandRepositoryImpl,
-		CfReturnGiftQueryRepository:   cfReturnGiftQueryRepositoryImpl,
-		UserQueryRepository:           userQueryRepositoryImpl,
-		CfReturnGiftCommandRepository: cfReturnGiftCommandRepositoryImpl,
-		ShippingQueryRepository:       shippingQueryRepositoryImpl,
-		CfProjectCommandRepository:    cfProjectCommandRepositoryImpl,
-		MailCommandRepository:         mailCommandRepository,
-		TransactionService:            transactionServiceImpl,
-		CfProjectConfig:               cfProject,
+		PaymentCommandRepository:          paymentCommandRepositoryImpl,
+		PaymentQueryRepository:            paymentQueryRepositoryImpl,
+		CardQueryRepository:               cardQueryRepositoryImpl,
+		CfProjectQueryRepository:          cfProjectQueryRepositoryImpl,
+		ChargeCommandRepository:           chargeCommandRepositoryImpl,
+		CfReturnGiftQueryRepository:       cfReturnGiftQueryRepositoryImpl,
+		UserQueryRepository:               userQueryRepositoryImpl,
+		CfReturnGiftCommandRepository:     cfReturnGiftCommandRepositoryImpl,
+		ShippingQueryRepository:           shippingQueryRepositoryImpl,
+		CfProjectCommandRepository:        cfProjectCommandRepositoryImpl,
+		MailCommandRepository:             mailCommandRepository,
+		UserSalesHistoryCommandRepository: userSalesHistoryCommandRepositoryImpl,
+		InquiryCodeGenerator:              inquiryCodeGeneratorImpl,
+		TransactionService:                transactionServiceImpl,
+		CfProjectConfig:                   cfProject,
 	}
 	shippingCommandRepositoryImpl := &repository.ShippingCommandRepositoryImpl{
 		DAO: dao,
@@ -129,4 +136,4 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.SpotCategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, service.ReviewQueryServiceSet, service.CardCommandServiceSet, service.ChargeCommandServiceSet, service.ShippingCommandServiceSet, scenario.ReviewCommandScenarioSet, service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
+var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.SpotCategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, service.ReviewQueryServiceSet, service.CardCommandServiceSet, service.ChargeCommandServiceSet, service.ShippingCommandServiceSet, scenario.ReviewCommandScenarioSet, service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet, helper.InquiryCodeGeneratorSet)

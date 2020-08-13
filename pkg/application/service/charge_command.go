@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
-	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/application/service/helper"
+
+	"gopkg.in/guregu/null.v3"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 
@@ -40,6 +43,8 @@ type (
 		repository.ShippingQueryRepository
 		repository.CfProjectCommandRepository
 		repository.MailCommandRepository
+		repository.UserSalesHistoryCommandRepository
+		helper.InquiryCodeGenerator
 		TransactionService
 		CfProjectConfig config.CfProject
 	}
@@ -48,15 +53,6 @@ type (
 var ChargeCommandServiceSet = wire.NewSet(
 	wire.Struct(new(ChargeCommandServiceImpl), "*"),
 	wire.Bind(new(ChargeCommandService), new(*ChargeCommandServiceImpl)),
-)
-
-const (
-	// 24h * 180days = 4230h
-	// https://pay.jp/docs/api/#%E6%94%AF%E6%89%95%E3%81%84%E6%83%85%E5%A0%B1%E3%82%92%E6%9B%B4%E6%96%B0
-	chargeRefundExpiredHour = 4320
-
-	// PaymentCfReturnGift.InquiryCode(お問い合わせ番号)の桁数
-	paymentCfReturnGiftInquiryCodeLength = 7
 )
 
 // 決済確定
@@ -119,7 +115,7 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 			gift := giftIDMap[payment.ReturnGiftID]
 
 			// お問い合わせ番号生成
-			inquiryCode, err := model.RandomStr(paymentCfReturnGiftInquiryCodeLength)
+			inquiryCode, err := s.InquiryCodeGenerator.Gen()
 			if err != nil {
 				return errors.Wrap(err, "failed random str")
 			}
@@ -176,6 +172,16 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 			return errors.Wrap(err, "failed increment project_snapshot.achieved_price")
 		}
 
+		// 購入したCfReturnGiftが全て宿泊券の場合、オーナー側が入金申請可能となる(売り上げに変動が起きる)為、履歴を残す
+		if gifts.IsAllCfReturnGiftTypeEqualArg(model.CfReturnGiftTypeReservedTicket) {
+			history := entity.NewUserSalesHistoryTiny(projectOwner.ID, null.IntFrom(int64(payment.ID)), null.Int{},
+				model.UserSalesReasonTypeAvailable, payment.TotalPrice,
+			)
+			if err := s.UserSalesHistoryCommandRepository.Store(c, history); err != nil {
+				return errors.Wrap(err, "failed store user_sales_history")
+			}
+		}
+
 		// 決済確定
 		if err := s.ChargeCommandRepository.Capture(charge.ID); err != nil {
 			return errors.Wrap(err, "failed capture charge")
@@ -202,7 +208,7 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 }
 
 func (s *ChargeCommandServiceImpl) Refund(user *entity.User, paymentID, cfReturnGiftID int) error {
-	payment, err := s.PaymentQueryRepository.FindByID(paymentID)
+	payment, err := s.PaymentQueryRepository.FindByID(context.Background(), paymentID)
 	if err != nil {
 		return errors.Wrap(err, "failed find payment")
 	}
@@ -216,11 +222,8 @@ func (s *ChargeCommandServiceImpl) Refund(user *entity.User, paymentID, cfReturn
 			return errors.Wrap(err, "failed find payment_cf_return_gift")
 		}
 
-		if !paymentCfReturnGift.CfReturnGiftSnapshot.IsCancelable || !paymentCfReturnGift.ResolveGiftTypeOtherStatus().CanTransit(model.PaymentCfReturnGiftOtherTypeStatusCanceled) {
+		if !paymentCfReturnGift.CanCancel() {
 			return serror.New(nil, serror.CodeInvalidParam, "can't cancel")
-		}
-		if paymentCfReturnGift.CreatedAt.Add(chargeRefundExpiredHour * time.Hour).After(time.Now()) {
-			return serror.New(nil, serror.CodeInvalidParam, "expired")
 		}
 
 		if err := s.PaymentCommandRepository.MarkPaymentCfReturnGiftAsCancel(ctx, payment.ID, cfReturnGiftID); err != nil {
@@ -230,6 +233,15 @@ func (s *ChargeCommandServiceImpl) Refund(user *entity.User, paymentID, cfReturn
 		// projectの達成金額から減算
 		if err := s.CfProjectCommandRepository.DecrementAchievedPrice(ctx, payment.ID, paymentCfReturnGift.TotalPrice()); err != nil {
 			return errors.Wrap(err, "failed decrement achieved_price")
+		}
+
+		// 入金申請不可能になるので履歴を残す
+		// この場合マイナスなので第３引数にはマイナスの値を置いている
+		history := entity.NewUserSalesHistoryTiny(payment.Owner.ID, null.IntFrom(int64(payment.ID)),
+			null.Int{}, model.UserSalesReasonTypeUnavailable, -payment.TotalPrice,
+		)
+		if err := s.UserSalesHistoryCommandRepository.Store(ctx, history); err != nil {
+			return errors.Wrap(err, "failed store user_sales_history")
 		}
 
 		// 返金

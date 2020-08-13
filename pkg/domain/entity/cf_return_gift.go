@@ -109,6 +109,17 @@ func (r *CfReturnGiftSoldCountList) GetSoldCount(id int) int {
 	return 0
 }
 
+// 全てのCfReturnGiftのGiftTypeが引数に取ったものと等しいか
+func (r *CfReturnGiftList) IsAllCfReturnGiftTypeEqualArg(giftType model.CfReturnGiftType) bool {
+	for _, pCfReturnGift := range r.List {
+		if pCfReturnGift.CfReturnGiftTiny.GiftType != giftType {
+			return false
+		}
+	}
+
+	return true
+}
+
 /**************************
          TableName
 ***************************/

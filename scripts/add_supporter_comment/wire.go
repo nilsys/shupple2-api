@@ -7,6 +7,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
+	"github.com/stayway-corp/stayway-media-api/pkg/application/service/helper"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	domain_service "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 )
@@ -34,6 +35,7 @@ var serviceSet = wire.NewSet(
 	scenario.ReviewCommandScenarioSet,
 	domain_service.NoticeDomainServiceSet,
 	domain_service.TaggedUserDomainServiceSet,
+	helper.InquiryCodeGeneratorSet,
 )
 
 func InitializeScript(configFilePath config.FilePath) (*Script, error) {

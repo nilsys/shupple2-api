@@ -12,6 +12,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
+	"github.com/stayway-corp/stayway-media-api/pkg/application/service/helper"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 	domain_service "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
@@ -125,6 +126,7 @@ var serviceSet = wire.NewSet(
 	service.ReportCommandServiceSet,
 	service.ComicFavoriteCommandServiceSet,
 	service.VlogFavoriteCommandServiceSet,
+	helper.InquiryCodeGeneratorSet,
 )
 
 var factorySet = wire.NewSet(

@@ -117,3 +117,11 @@ Userの属性,Commonがデフォルト値で一般ユーザーを表す
 CfProjectAdminは一般的にStaywayのユーザーが使用するAdmin権限
 */
 type UserAttribute int
+
+/*
+ENUM(Available = 1, Unavailable, Done)
+Available = 入金可能になった
+Unavailable = 入金不可能になった
+Done = 入金申請済になった
+*/
+type UserSalesReasonType int

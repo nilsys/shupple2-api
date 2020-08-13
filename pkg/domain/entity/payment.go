@@ -10,6 +10,11 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
 
+const (
+	// https://pay.jp/docs/api/#%E6%94%AF%E6%89%95%E3%81%84%E6%83%85%E5%A0%B1%E3%82%92%E6%9B%B4%E6%96%B0
+	chargeRefundExpired = 4320 * time.Hour
+)
+
 type (
 	PaymentTiny struct {
 		ID                      int `gorm:"primary_key"`
@@ -134,4 +139,27 @@ func NewPaymentReturnGiftForReservedTicket(giftID, giftSnapshotID, projectID, pr
 		GiftTypeReservedTicketStatus: null.IntFrom(int64(model.PaymentCfReturnGiftReservedTicketTypeStatusUnreserved)),
 		InquiryCode:                  inquiryCode,
 	}
+}
+
+func (p *PaymentCfReturnGift) CanCancel() bool {
+	// キャンセル可能なリターンで無い場合
+	if !p.CfReturnGiftSnapshot.IsCancelable || p.CfReturnGift.GiftType == model.CfReturnGiftTypeReservedTicket {
+		return false
+	}
+
+	if !p.ResolveGiftTypeOtherStatus().CanTransit(model.PaymentCfReturnGiftOtherTypeStatusCanceled) {
+		return false
+	}
+
+	// 入金申請が行われた場合
+	if p.OwnerConfirmedAt != nil {
+		return false
+	}
+
+	// キャンセル期限(180日)を過ぎている場合
+	if p.CreatedAt.Add(chargeRefundExpired).Before(time.Now()) {
+		return false
+	}
+
+	return true
 }

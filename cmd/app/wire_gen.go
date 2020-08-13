@@ -16,6 +16,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
+	"github.com/stayway-corp/stayway-media-api/pkg/application/service/helper"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 	service2 "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
@@ -179,21 +180,27 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	cfReturnGiftCommandRepositoryImpl := &repository.CfReturnGiftCommandRepositoryImpl{
 		DAO: dao,
 	}
+	userSalesHistoryCommandRepositoryImpl := &repository.UserSalesHistoryCommandRepositoryImpl{
+		DAO: dao,
+	}
+	inquiryCodeGeneratorImpl := &helper.InquiryCodeGeneratorImpl{}
 	cfProject := configConfig.CfProject
 	chargeCommandServiceImpl := &service.ChargeCommandServiceImpl{
-		PaymentCommandRepository:      paymentCommandRepositoryImpl,
-		PaymentQueryRepository:        paymentQueryRepositoryImpl,
-		CardQueryRepository:           cardQueryRepositoryImpl,
-		CfProjectQueryRepository:      cfProjectQueryRepositoryImpl,
-		ChargeCommandRepository:       chargeCommandRepositoryImpl,
-		CfReturnGiftQueryRepository:   cfReturnGiftQueryRepositoryImpl,
-		UserQueryRepository:           userQueryRepositoryImpl,
-		CfReturnGiftCommandRepository: cfReturnGiftCommandRepositoryImpl,
-		ShippingQueryRepository:       shippingQueryRepositoryImpl,
-		CfProjectCommandRepository:    cfProjectCommandRepositoryImpl,
-		MailCommandRepository:         mailCommandRepository,
-		TransactionService:            transactionServiceImpl,
-		CfProjectConfig:               cfProject,
+		PaymentCommandRepository:          paymentCommandRepositoryImpl,
+		PaymentQueryRepository:            paymentQueryRepositoryImpl,
+		CardQueryRepository:               cardQueryRepositoryImpl,
+		CfProjectQueryRepository:          cfProjectQueryRepositoryImpl,
+		ChargeCommandRepository:           chargeCommandRepositoryImpl,
+		CfReturnGiftQueryRepository:       cfReturnGiftQueryRepositoryImpl,
+		UserQueryRepository:               userQueryRepositoryImpl,
+		CfReturnGiftCommandRepository:     cfReturnGiftCommandRepositoryImpl,
+		ShippingQueryRepository:           shippingQueryRepositoryImpl,
+		CfProjectCommandRepository:        cfProjectCommandRepositoryImpl,
+		MailCommandRepository:             mailCommandRepository,
+		UserSalesHistoryCommandRepository: userSalesHistoryCommandRepositoryImpl,
+		InquiryCodeGenerator:              inquiryCodeGeneratorImpl,
+		TransactionService:                transactionServiceImpl,
+		CfProjectConfig:                   cfProject,
 	}
 	chargeCommandController := api.ChargeCommandController{
 		ChargeCommandService: chargeCommandServiceImpl,
@@ -787,6 +794,6 @@ var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.Review
 
 var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
 
-var serviceSet = wire.NewSet(service.ShippingQueryServiceSet, service.ShippingCommandServiceSet, service.CfProjectCommandServiceSet, service.CfProjectQueryServiceSet, service.ChargeCommandServiceSet, service.CardCommandServiceSet, service.CardQueryServiceSet, service.PaymentQueryServiceSet, service.PaymentCommandServiceSet, service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.CfReturnGiftQueryServiceSet, service.CfReturnGiftCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryQueryServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.RssServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.SpotCategoryCommandServiceSet, service.SitemapServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet, service.NoticeQueryServiceSet, service.ReportCommandServiceSet, service.ComicFavoriteCommandServiceSet, service.VlogFavoriteCommandServiceSet)
+var serviceSet = wire.NewSet(service.ShippingQueryServiceSet, service.ShippingCommandServiceSet, service.CfProjectCommandServiceSet, service.CfProjectQueryServiceSet, service.ChargeCommandServiceSet, service.CardCommandServiceSet, service.CardQueryServiceSet, service.PaymentQueryServiceSet, service.PaymentCommandServiceSet, service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.CfReturnGiftQueryServiceSet, service.CfReturnGiftCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryQueryServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.RssServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.SpotCategoryCommandServiceSet, service.SitemapServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet, service.NoticeQueryServiceSet, service.ReportCommandServiceSet, service.ComicFavoriteCommandServiceSet, service.VlogFavoriteCommandServiceSet, helper.InquiryCodeGeneratorSet)
 
 var factorySet = wire.NewSet(factory.S3SignatureFactorySet, factory.CategoryIDMapFactorySet)

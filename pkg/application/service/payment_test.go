@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/golang/mock/gomock"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
@@ -22,21 +24,21 @@ var _ = Describe("PaymentServiceImpl", func() {
 
 	BeforeEach(func() {
 		cmdSvc = tests.PaymentCommandServiceImpl
-		paymentQueryRepo = tests.PaymentQueryRepository
-		paymentCmdRepo = tests.PaymentCommandRepository
-		mailCmdRepo = tests.MailCommandRepository
+		paymentQueryRepo = tests.PaymentCommandServiceImpl.PaymentQueryRepository
+		paymentCmdRepo = tests.PaymentCommandServiceImpl.PaymentCommandRepository
+		mailCmdRepo = tests.PaymentCommandServiceImpl.MailCommandRepository
 	})
 
 	Describe("ReservePaymentCfReturnGift", func() {
 		BeforeEach(func() {
-			paymentQueryRepo.(*mock.MockPaymentQueryRepository).EXPECT().FindByID(paymentID).Return(newPayment(), nil)
+			paymentQueryRepo.(*mock.MockPaymentQueryRepository).EXPECT().FindByID(context.Background(), paymentID).Return(newPayment(), nil)
 		})
 
 		Context("正常系", func() {
 			BeforeEach(func() {
 				paymentQueryRepo.(*mock.MockPaymentQueryRepository).EXPECT().FindPaymentCfReturnGiftByPaymentIDAndCfReturnGift(paymentID, cfReturnGiftID).Return(newPaymentCfReturnGift(model.CfReturnGiftTypeReservedTicket, model.PaymentCfReturnGiftOtherTypeStatusUndefined, model.PaymentCfReturnGiftReservedTicketTypeStatusUnreserved, validDeadline), nil)
 				paymentCmdRepo.(*mock.MockPaymentCommandRepository).EXPECT().MarkPaymentCfReturnGiftAsReserved(gomock.Any(), paymentID, cfReturnGiftID).Return(nil)
-				mailCmdRepo.(*mock.MockMailCommandRepository).EXPECT().SendTemplateMail([]string{newPayment().Owner.Email}, newMailTemplate()).Return(nil)
+				mailCmdRepo.(*mock.MockMailCommandRepository).EXPECT().SendTemplateMail([]string{newUser(ownerUserID).Email}, newReserveRequestTemplateMailTemplate()).Return(nil)
 			})
 
 			It("エラーなし", func() {

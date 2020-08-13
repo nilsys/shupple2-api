@@ -8,13 +8,16 @@ package service
 import (
 	"github.com/golang/mock/gomock"
 	"github.com/onsi/ginkgo"
+	"github.com/stayway-corp/stayway-media-api/pkg/application/service/helper"
+	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository/payjp"
 	"github.com/stayway-corp/stayway-media-api/pkg/mock"
 )
 
 // Injectors from wire.go:
 
-func InitializeTest() (*Test, error) {
+func InitializeTest(filePath config.FilePath) (*Test, error) {
 	testReporter := ProvideTestReporter()
 	controller := gomock.NewController(testReporter)
 	paymentCommandRepository := ProvideMockPaymentCmdRepo(controller)
@@ -27,8 +30,41 @@ func InitializeTest() (*Test, error) {
 		MailCommandRepository:    mailCommandRepository,
 		TransactionService:       transactionService,
 	}
+	cardQueryRepository := ProvideCardQueryRepo(controller)
+	cfProjectQueryRepository := ProvideCfProjectQueryRepo(controller)
+	chargeCommandRepository := ProvideChargeCmdRepo(controller)
+	cfReturnGiftQueryRepository := ProvideCfReturnGiftQueryRepo(controller)
+	userQueryRepository := ProvideUserQueryRepo(controller)
+	cfReturnGiftCommandRepository := ProvideCfReturnGiftCmdRepo(controller)
+	shippingQueryRepository := ProvideShippingQueryRepo(controller)
+	cfProjectCommandRepository := ProvideCfProjectCmdRepo(controller)
+	userSalesHistoryCommandRepository := ProvideUserSalesHistoryRepo(controller)
+	inquiryCodeGeneratorImplForTest := &helper.InquiryCodeGeneratorImplForTest{}
+	configConfig, err := config.GetConfig(filePath)
+	if err != nil {
+		return nil, err
+	}
+	cfProject := configConfig.CfProject
+	chargeCommandServiceImpl := &ChargeCommandServiceImpl{
+		PaymentCommandRepository:          paymentCommandRepository,
+		PaymentQueryRepository:            paymentQueryRepository,
+		CardQueryRepository:               cardQueryRepository,
+		CfProjectQueryRepository:          cfProjectQueryRepository,
+		ChargeCommandRepository:           chargeCommandRepository,
+		CfReturnGiftQueryRepository:       cfReturnGiftQueryRepository,
+		UserQueryRepository:               userQueryRepository,
+		CfReturnGiftCommandRepository:     cfReturnGiftCommandRepository,
+		ShippingQueryRepository:           shippingQueryRepository,
+		CfProjectCommandRepository:        cfProjectCommandRepository,
+		MailCommandRepository:             mailCommandRepository,
+		UserSalesHistoryCommandRepository: userSalesHistoryCommandRepository,
+		InquiryCodeGenerator:              inquiryCodeGeneratorImplForTest,
+		TransactionService:                transactionService,
+		CfProjectConfig:                   cfProject,
+	}
 	test := &Test{
 		PaymentCommandServiceImpl: paymentCommandServiceImpl,
+		ChargeCommandServiceImpl:  chargeCommandServiceImpl,
 	}
 	return test, nil
 }
@@ -37,6 +73,7 @@ func InitializeTest() (*Test, error) {
 
 type Test struct {
 	*PaymentCommandServiceImpl
+	*ChargeCommandServiceImpl
 }
 
 func ProvideTestReporter() gomock.TestReporter {
@@ -57,4 +94,40 @@ func ProvideMockMailCmdRepo(ctrl *gomock.Controller) repository.MailCommandRepos
 
 func ProvideMockTransactionService() TransactionService {
 	return TransactionServiceForTest{}
+}
+
+func ProvideCardQueryRepo(ctrl *gomock.Controller) repository.CardQueryRepository {
+	return mock.NewMockCardQueryRepository(ctrl)
+}
+
+func ProvideCfProjectQueryRepo(ctrl *gomock.Controller) repository.CfProjectQueryRepository {
+	return mock.NewMockCfProjectQueryRepository(ctrl)
+}
+
+func ProvideChargeCmdRepo(ctrl *gomock.Controller) payjp.ChargeCommandRepository {
+	return mock.NewMockChargeCommandRepository(ctrl)
+}
+
+func ProvideCfReturnGiftQueryRepo(ctrl *gomock.Controller) repository.CfReturnGiftQueryRepository {
+	return mock.NewMockCfReturnGiftQueryRepository(ctrl)
+}
+
+func ProvideUserQueryRepo(ctrl *gomock.Controller) repository.UserQueryRepository {
+	return mock.NewMockUserQueryRepository(ctrl)
+}
+
+func ProvideCfReturnGiftCmdRepo(ctrl *gomock.Controller) repository.CfReturnGiftCommandRepository {
+	return mock.NewMockCfReturnGiftCommandRepository(ctrl)
+}
+
+func ProvideShippingQueryRepo(ctrl *gomock.Controller) repository.ShippingQueryRepository {
+	return mock.NewMockShippingQueryRepository(ctrl)
+}
+
+func ProvideCfProjectCmdRepo(ctrl *gomock.Controller) repository.CfProjectCommandRepository {
+	return mock.NewMockCfProjectCommandRepository(ctrl)
+}
+
+func ProvideUserSalesHistoryRepo(ctrl *gomock.Controller) repository.UserSalesHistoryCommandRepository {
+	return mock.NewMockUserSalesHistoryCommandRepository(ctrl)
 }

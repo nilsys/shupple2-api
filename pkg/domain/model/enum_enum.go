@@ -1251,6 +1251,61 @@ func (x *UserAttribute) UnmarshalText(text []byte) error {
 }
 
 const (
+	// UserSalesReasonTypeAvailable is a UserSalesReasonType of type Available
+	UserSalesReasonTypeAvailable UserSalesReasonType = iota + 1
+	// UserSalesReasonTypeUnavailable is a UserSalesReasonType of type Unavailable
+	UserSalesReasonTypeUnavailable
+	// UserSalesReasonTypeDone is a UserSalesReasonType of type Done
+	UserSalesReasonTypeDone
+)
+
+const _UserSalesReasonTypeName = "AvailableUnavailableDone"
+
+var _UserSalesReasonTypeMap = map[UserSalesReasonType]string{
+	1: _UserSalesReasonTypeName[0:9],
+	2: _UserSalesReasonTypeName[9:20],
+	3: _UserSalesReasonTypeName[20:24],
+}
+
+// String implements the Stringer interface.
+func (x UserSalesReasonType) String() string {
+	if str, ok := _UserSalesReasonTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("UserSalesReasonType(%d)", x)
+}
+
+var _UserSalesReasonTypeValue = map[string]UserSalesReasonType{
+	_UserSalesReasonTypeName[0:9]:   1,
+	_UserSalesReasonTypeName[9:20]:  2,
+	_UserSalesReasonTypeName[20:24]: 3,
+}
+
+// ParseUserSalesReasonType attempts to convert a string to a UserSalesReasonType
+func ParseUserSalesReasonType(name string) (UserSalesReasonType, error) {
+	if x, ok := _UserSalesReasonTypeValue[name]; ok {
+		return x, nil
+	}
+	return UserSalesReasonType(0), fmt.Errorf("%s is not a valid UserSalesReasonType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x UserSalesReasonType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *UserSalesReasonType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseUserSalesReasonType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// UserSortByRANKING is a UserSortBy of type RANKING
 	UserSortByRANKING UserSortBy = iota + 1
 	// UserSortByRECOMMEND is a UserSortBy of type RECOMMEND

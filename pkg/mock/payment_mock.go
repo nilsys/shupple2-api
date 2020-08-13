@@ -52,18 +52,18 @@ func (mr *MockPaymentQueryRepositoryMockRecorder) FindByUserID(userID, projectID
 }
 
 // FindByID mocks base method
-func (m *MockPaymentQueryRepository) FindByID(id int) (*entity.Payment, error) {
+func (m *MockPaymentQueryRepository) FindByID(ctx context.Context, id int) (*entity.Payment, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByID", id)
+	ret := m.ctrl.Call(m, "FindByID", ctx, id)
 	ret0, _ := ret[0].(*entity.Payment)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindByID indicates an expected call of FindByID
-func (mr *MockPaymentQueryRepositoryMockRecorder) FindByID(id interface{}) *gomock.Call {
+func (mr *MockPaymentQueryRepositoryMockRecorder) FindByID(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockPaymentQueryRepository)(nil).FindByID), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockPaymentQueryRepository)(nil).FindByID), ctx, id)
 }
 
 // FindTinyByID mocks base method

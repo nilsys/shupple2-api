@@ -100,6 +100,7 @@ var RepositoriesSet = wire.NewSet(
 	PostFavoriteQueryRepositorySet,
 	UserQueryRepositorySet,
 	UserCommandRepositorySet,
+	UserSalesHistoryCommandRepositorySet,
 	VlogCommandRepositorySet,
 	VlogQueryRepositorySet,
 	VlogFavoriteCommandRepositorySet,

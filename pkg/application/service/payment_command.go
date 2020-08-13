@@ -32,7 +32,7 @@ var PaymentCommandServiceSet = wire.NewSet(
 )
 
 func (s *PaymentCommandServiceImpl) ReservePaymentCfReturnGift(user *entity.User, paymentID, cfReturnGiftID int, request *entity.CfReserveRequest) error {
-	payment, err := s.PaymentQueryRepository.FindByID(paymentID)
+	payment, err := s.PaymentQueryRepository.FindByID(context.Background(), paymentID)
 	if err != nil {
 		return errors.Wrap(err, "failed find payment")
 	}
