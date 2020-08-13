@@ -144,7 +144,7 @@ func (r *CfProjectQueryRepositoryImpl) buildFindList(query *query.FindCfProjectQ
 	}
 
 	if query.SortBy == model.CfProjectSortByPush {
-		q = q.Where("cf_project.achieved_price / cf_project.goal_price >= 0.7")
+		q = q.Where("cf_project.achieved_price / cf_project_snapshot.goal_price >= 0.7")
 	}
 
 	if query.SortBy == model.CfProjectSortByAttention {
