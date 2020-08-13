@@ -8,8 +8,9 @@ type (
 	}
 
 	PaymentList struct {
-		List []*Payment
-		Body string
+		List   []*Payment
+		Body   string
+		Remark string
 	}
 )
 

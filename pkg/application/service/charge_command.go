@@ -154,7 +154,7 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 		}
 
 		// 支払い情報を保存
-		payment := entity.NewPaymentTiny(user.ID, project.UserID, card.ID, address.ID, charge.ID, price, s.CfProjectConfig.SystemFee)
+		payment := entity.NewPaymentTiny(user.ID, project.UserID, card.ID, address.ID, charge.ID, price, s.CfProjectConfig.SystemFee, cmd.Remark)
 		if err := s.PaymentCommandRepository.Store(c, payment); err != nil {
 			return errors.Wrap(err, "failed store payment")
 		}

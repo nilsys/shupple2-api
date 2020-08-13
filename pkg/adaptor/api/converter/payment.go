@@ -29,7 +29,11 @@ func (c Converters) ConvertPaymentsToCmd(payments *input.CaptureCharge) *command
 		})
 	}
 
-	return &command.PaymentList{List: result, Body: payments.SupportCommentBody}
+	return &command.PaymentList{
+		List:   result,
+		Body:   payments.SupportCommentBody,
+		Remark: payments.Remark,
+	}
 }
 
 func (c Converters) ConvertListPaymentToQuery(i *input.ListPayment) *query.FindListPaginationQuery {
@@ -58,6 +62,7 @@ func (c Converters) ConvertPaymentToOutput(payment *entity.Payment) *output.Paym
 		Card:                 c.ConvertCardToOutput(payment.Card),
 		TotalPrice:           payment.TotalPrice,
 		ChargeID:             payment.ChargeID,
+		Remark:               payment.Remark,
 		PaymentCfReturnGifts: c.ConvertPaymentCfReturnGiftToOutput(payment.PaymentCfReturnGift),
 		OrderedAt:            model.TimeResponse(payment.CreatedAt),
 	}

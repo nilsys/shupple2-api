@@ -3062,6 +3062,11 @@ components:
           description: |
             応援コメント
           example: 応援しています！
+        remark:
+          type: string
+          description: |
+            備考
+          example: TシャツはMサイズで
     CfReturnGiftID:
       type: object
       properties:
@@ -3100,6 +3105,10 @@ components:
           format: date-time
         card:
           $ref: "#/components/schemas/Card"
+        remark:
+          type: string
+          description: |
+            備考
         paymentCfReturnGifts:
           type: array
           items:

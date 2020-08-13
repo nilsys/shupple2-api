@@ -11,6 +11,7 @@ type (
 		Card                 *Card                  `json:"card"`
 		TotalPrice           int                    `json:"totalPrice"`
 		ChargeID             string                 `json:"chargeId"`
+		Remark               string                 `json:"remark"`
 		PaymentCfReturnGifts []*PaymentCfReturnGift `json:"paymentCfReturnGifts"`
 		OrderedAt            model.TimeResponse     `json:"orderedAt"`
 	}

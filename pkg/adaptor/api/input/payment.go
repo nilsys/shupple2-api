@@ -10,6 +10,7 @@ type (
 	CaptureCharge struct {
 		Payments           []Charge `json:"payments" validate:"gt=0"`
 		SupportCommentBody string   `json:"supportCommentBody"`
+		Remark             string   `json:"remark" validate:"lt=500"`
 	}
 
 	RefundCharge struct {
