@@ -4,34 +4,35 @@ import (
 	"context"
 	"time"
 
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
-
 	"github.com/google/wire"
+
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
 type (
-	PaymentCommandService interface {
-		ReservePaymentCfReturnGift(user *entity.User, paymentID, cfReturnGiftID int, request *entity.CfReserveRequest) error
+	CfInnReserveRequestCommandService interface {
+		RequestReserve(user *entity.User, paymentID, cfReturnGiftID int, request *entity.CfInnReserveRequest) error
 	}
 
-	PaymentCommandServiceImpl struct {
-		repository.PaymentCommandRepository
+	CfInnReserveRequestCommandServiceImpl struct {
+		repository.CfInnReserveRequestCommandRepository
 		repository.PaymentQueryRepository
+		repository.PaymentCommandRepository
 		repository.MailCommandRepository
 		TransactionService
 	}
 )
 
-var PaymentCommandServiceSet = wire.NewSet(
-	wire.Struct(new(PaymentCommandServiceImpl), "*"),
-	wire.Bind(new(PaymentCommandService), new(*PaymentCommandServiceImpl)),
+var CfInnReserveRequestCommandServiceSet = wire.NewSet(
+	wire.Struct(new(CfInnReserveRequestCommandServiceImpl), "*"),
+	wire.Bind(new(CfInnReserveRequestCommandService), new(*CfInnReserveRequestCommandServiceImpl)),
 )
 
-func (s *PaymentCommandServiceImpl) ReservePaymentCfReturnGift(user *entity.User, paymentID, cfReturnGiftID int, request *entity.CfReserveRequest) error {
+func (s *CfInnReserveRequestCommandServiceImpl) RequestReserve(user *entity.User, paymentID, cfReturnGiftID int, request *entity.CfInnReserveRequest) error {
 	payment, err := s.PaymentQueryRepository.FindByID(context.Background(), paymentID)
 	if err != nil {
 		return errors.Wrap(err, "failed find payment")
@@ -59,6 +60,10 @@ func (s *PaymentCommandServiceImpl) ReservePaymentCfReturnGift(user *entity.User
 	return s.TransactionService.Do(func(ctx context.Context) error {
 		if err := s.PaymentCommandRepository.MarkPaymentCfReturnGiftAsReserved(ctx, paymentID, cfReturnGiftID); err != nil {
 			return errors.Wrap(err, "failed mark as reserved")
+		}
+
+		if err := s.CfInnReserveRequestCommandRepository.Store(ctx, request); err != nil {
+			return errors.Wrap(err, "failed store cf_reserve_request")
 		}
 
 		if err := s.MailCommandRepository.SendTemplateMail([]string{payment.Owner.Email}, entity.NewReserveRequestTemplateFromCfReserveRequest(request, payment.ChargeID, paymentCfReturnGift.CfReturnGiftSnapshot.Title)); err != nil {

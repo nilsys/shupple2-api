@@ -13,24 +13,24 @@ import (
 )
 
 type (
-	PaymentCommandController struct {
+	CfInnReserveRequestCommandController struct {
 		converter.Converters
-		service.PaymentCommandService
+		service.CfInnReserveRequestCommandService
 	}
 )
 
-var PaymentCommandControllerSet = wire.NewSet(
-	wire.Struct(new(PaymentCommandController), "*"),
+var CfReserveRequestCommandControllerSet = wire.NewSet(
+	wire.Struct(new(CfInnReserveRequestCommandController), "*"),
 )
 
-func (c *PaymentCommandController) ReservePaymentCfReturnGiftReservedTicket(ctx echo.Context, user entity.User) error {
-	i := &input.CfReserveRequest{}
+func (c *CfInnReserveRequestCommandController) RequestReserve(ctx echo.Context, user entity.User) error {
+	i := &input.CfInnReserveRequest{}
 	if err := BindAndValidate(ctx, i); err != nil {
 		return errors.Wrap(err, "failed bind input")
 	}
 
-	if err := c.PaymentCommandService.ReservePaymentCfReturnGift(&user, i.PaymentID.ID, i.CfReturnGiftID, c.ConvertReserveRequestToEntity(i)); err != nil {
-		return errors.Wrap(err, "failed reserve payment_cf_return_gift")
+	if err := c.CfInnReserveRequestCommandService.RequestReserve(&user, i.PaymentID.ID, i.CfReturnGiftID, c.ConvertReserveRequestToEntity(i, user.ID)); err != nil {
+		return errors.Wrap(err, "failed request reserve ")
 	}
 
 	return ctx.NoContent(http.StatusNoContent)

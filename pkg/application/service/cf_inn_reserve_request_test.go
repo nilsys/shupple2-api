@@ -15,23 +15,26 @@ import (
 
 var _ = Describe("PaymentServiceImpl", func() {
 	var (
-		cmdSvc           *PaymentCommandServiceImpl
-		paymentQueryRepo repository.PaymentQueryRepository
-		paymentCmdRepo   repository.PaymentCommandRepository
-		mailCmdRepo      repository.MailCommandRepository
-		err              error
+		cmdSvc            *CfInnReserveRequestCommandServiceImpl
+		paymentQueryRepo  repository.PaymentQueryRepository
+		paymentCmdRepo    repository.PaymentCommandRepository
+		innReserveCmdRepo repository.CfInnReserveRequestCommandRepository
+		mailCmdRepo       repository.MailCommandRepository
+		err               error
 	)
 
 	BeforeEach(func() {
-		cmdSvc = tests.PaymentCommandServiceImpl
-		paymentQueryRepo = tests.PaymentCommandServiceImpl.PaymentQueryRepository
-		paymentCmdRepo = tests.PaymentCommandServiceImpl.PaymentCommandRepository
-		mailCmdRepo = tests.PaymentCommandServiceImpl.MailCommandRepository
+		cmdSvc = tests.CfInnReserveRequestCommandServiceImpl
+		paymentQueryRepo = tests.CfInnReserveRequestCommandServiceImpl.PaymentQueryRepository
+		paymentCmdRepo = tests.CfInnReserveRequestCommandServiceImpl.PaymentCommandRepository
+		innReserveCmdRepo = tests.CfInnReserveRequestCommandServiceImpl.CfInnReserveRequestCommandRepository
+		mailCmdRepo = tests.CfInnReserveRequestCommandServiceImpl.MailCommandRepository
 	})
 
-	Describe("ReservePaymentCfReturnGift", func() {
+	Describe("RequestReserve", func() {
 		BeforeEach(func() {
 			paymentQueryRepo.(*mock.MockPaymentQueryRepository).EXPECT().FindByID(context.Background(), paymentID).Return(newPayment(), nil)
+			innReserveCmdRepo.(*mock.MockCfInnReserveRequestCommandRepository).EXPECT().Store(context.Background(), newCfInnReserveRequest()).Return(nil)
 		})
 
 		Context("正常系", func() {
@@ -42,7 +45,7 @@ var _ = Describe("PaymentServiceImpl", func() {
 			})
 
 			It("エラーなし", func() {
-				err = cmdSvc.ReservePaymentCfReturnGift(newUser(userID), paymentID, cfReturnGiftID, newCfReserveRequest())
+				err = cmdSvc.RequestReserve(newUser(userID), paymentID, cfReturnGiftID, newCfReserveRequest())
 				Expect(err).To(Succeed())
 			})
 		})
@@ -50,7 +53,7 @@ var _ = Describe("PaymentServiceImpl", func() {
 		Context("権限無し", func() {
 
 			It("'forbidden'というエラーメッセージが返る", func() {
-				err = cmdSvc.ReservePaymentCfReturnGift(newUser(ownerUserID), paymentID, cfReturnGiftID, newCfReserveRequest())
+				err = cmdSvc.RequestReserve(newUser(ownerUserID), paymentID, cfReturnGiftID, newCfReserveRequest())
 				Expect(err.Error()).To(Equal("forbidden"))
 			})
 		})
@@ -62,7 +65,7 @@ var _ = Describe("PaymentServiceImpl", func() {
 			})
 
 			It("'not reserved ticket'というエラーメッセージが返る", func() {
-				err = cmdSvc.ReservePaymentCfReturnGift(newUser(userID), paymentID, cfReturnGiftID, newCfReserveRequest())
+				err = cmdSvc.RequestReserve(newUser(userID), paymentID, cfReturnGiftID, newCfReserveRequest())
 				Expect(err.Error()).To(Equal("not reserved ticket"))
 			})
 		})
@@ -74,7 +77,7 @@ var _ = Describe("PaymentServiceImpl", func() {
 			})
 
 			It("'expired'というエラーメッセージが返る", func() {
-				err = cmdSvc.ReservePaymentCfReturnGift(newUser(userID), paymentID, cfReturnGiftID, newCfReserveRequest())
+				err = cmdSvc.RequestReserve(newUser(userID), paymentID, cfReturnGiftID, newCfReserveRequest())
 				Expect(err.Error()).To(Equal("expired"))
 			})
 		})
@@ -86,7 +89,7 @@ var _ = Describe("PaymentServiceImpl", func() {
 			})
 
 			It("予約済な場合", func() {
-				err = cmdSvc.ReservePaymentCfReturnGift(newUser(userID), paymentID, cfReturnGiftID, newCfReserveRequest())
+				err = cmdSvc.RequestReserve(newUser(userID), paymentID, cfReturnGiftID, newCfReserveRequest())
 				Expect(err.Error()).To(Equal("can't transit"))
 			})
 		})

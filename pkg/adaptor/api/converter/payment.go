@@ -92,16 +92,19 @@ func (c Converters) ConvertPaymentCfReturnGiftToOutput(payment []*entity.Payment
 	return response
 }
 
-func (c Converters) ConvertReserveRequestToEntity(reserveReq *input.CfReserveRequest) *entity.CfReserveRequest {
-	return &entity.CfReserveRequest{
+func (c Converters) ConvertReserveRequestToEntity(reserveReq *input.CfInnReserveRequest, userID int) *entity.CfInnReserveRequest {
+	return &entity.CfInnReserveRequest{
+		UserID:           userID,
+		PaymentID:        reserveReq.PaymentID.ID,
+		CfReturnGiftID:   reserveReq.CfReturnGiftID,
 		FirstName:        reserveReq.FirstName,
 		LastName:         reserveReq.LastName,
 		FirstNameKana:    reserveReq.FirstNameKana,
 		LastNameKana:     reserveReq.LastNameKana,
 		Email:            reserveReq.Email,
 		PhoneNumber:      reserveReq.PhoneNumber,
-		Checkin:          reserveReq.Checkin,
-		Checkout:         reserveReq.Checkout,
+		CheckinAt:        time.Time(reserveReq.Checkin),
+		CheckoutAt:       time.Time(reserveReq.Checkout),
 		StayDays:         reserveReq.StayDays,
 		AdultMemberCount: reserveReq.AdultMemberCount,
 		ChildMemberCount: reserveReq.ChildMemberCount,

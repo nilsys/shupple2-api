@@ -50,8 +50,8 @@ func newUser(userID int) *entity.User {
 	return user
 }
 
-func newCfReserveRequest() *entity.CfReserveRequest {
-	req := &entity.CfReserveRequest{}
+func newCfReserveRequest() *entity.CfInnReserveRequest {
+	req := &entity.CfInnReserveRequest{}
 	util.FillDummyString(req, cfReserveRequestDummyInt)
 	return req
 }
@@ -190,5 +190,26 @@ func newPaymentCfReturnGiftTinyForOtherForChargeTest(otherStatus model.PaymentCf
 		Amount:                 paymentCfReturnGiftAmount,
 		InquiryCode:            paymentCfReturnGiftInquiryCode,
 		GiftTypeOtherStatus:    null.IntFrom(int64(otherStatus)),
+	}
+}
+
+func newCfInnReserveRequest() *entity.CfInnReserveRequest {
+	req := newCfReserveRequest()
+
+	return &entity.CfInnReserveRequest{
+		UserID:           req.UserID,
+		PaymentID:        req.PaymentID,
+		CfReturnGiftID:   req.CfReturnGiftID,
+		FirstName:        req.FirstName,
+		LastName:         req.LastName,
+		FirstNameKana:    req.FirstNameKana,
+		LastNameKana:     req.LastNameKana,
+		Email:            req.Email,
+		PhoneNumber:      req.PhoneNumber,
+		CheckinAt:        req.CheckinAt,
+		CheckoutAt:       req.CheckoutAt,
+		StayDays:         req.StayDays,
+		AdultMemberCount: req.AdultMemberCount,
+		ChildMemberCount: req.ChildMemberCount,
 	}
 }

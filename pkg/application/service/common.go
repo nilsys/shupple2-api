@@ -6,7 +6,7 @@ import (
 )
 
 var ServiceTestSet = wire.NewSet(
-	PaymentCommandServiceSet,
+	CfInnReserveRequestCommandServiceSet,
 	ChargeCommandServiceSet,
 	helper.InquiryCodeGeneratorForTestSet,
 )

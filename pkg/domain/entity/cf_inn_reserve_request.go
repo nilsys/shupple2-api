@@ -1,27 +1,34 @@
 package entity
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type (
-	CfReserveRequest struct {
+	CfInnReserveRequest struct {
+		UserID           int
+		PaymentID        int
+		CfReturnGiftID   int
 		FirstName        string
 		LastName         string
 		FirstNameKana    string
 		LastNameKana     string
 		Email            string
 		PhoneNumber      string
-		Checkin          string
-		Checkout         string
+		CheckinAt        time.Time
+		CheckoutAt       time.Time
 		StayDays         int
 		AdultMemberCount int
 		ChildMemberCount int
+		TimesWithoutDeletedAt
 	}
 )
 
-func (c *CfReserveRequest) FullNameMailFmt() string {
+func (c *CfInnReserveRequest) FullNameMailFmt() string {
 	return fmt.Sprintf("%s %s", c.LastName, c.FirstName)
 }
 
-func (c *CfReserveRequest) FullNameKanaMailFmt() string {
+func (c *CfInnReserveRequest) FullNameKanaMailFmt() string {
 	return fmt.Sprintf("%s %s", c.LastNameKana, c.FirstNameKana)
 }

@@ -3172,14 +3172,20 @@ components:
           type: string
         checkin:
           type: string
+          description: |
+            fmt "2006/01/02 15:04"
         checkout:
           type: string
+          description: |
+            fmt "2006/01/02 15:04"
         stayDays:
           type: integer
         adultMemberCount:
           type: integer
         childMemberCount:
           type: integer
+        remark:
+          type: string
     NoticeList:
       type: object
       properties:

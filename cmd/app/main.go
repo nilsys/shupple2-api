@@ -24,48 +24,48 @@ func main() {
 }
 
 type App struct {
-	Config                          *config.Config
-	DB                              *gorm.DB
-	Echo                            *echo.Echo
-	AuthorizeWrapper                staywayMiddleware.Authorize
-	CfProjectQueryController        api.CfProjectQueryController
-	CfProjectCommandController      api.CfProjectCommandController
-	CfReturnGiftQueryController     api.CfReturnGiftQueryController
-	ShippingQueryController         api.ShippingQueryController
-	ShippingCommandController       api.ShippingCommandController
-	CardQueryController             api.CardQueryController
-	ChargeCommandController         api.ChargeCommandController
-	CardCommandController           api.CardCommandController
-	PaymentQueryController          api.PaymentQueryController
-	PaymentCommandController        api.PaymentCommandController
-	PostQueryController             api.PostQueryController
-	PostFavoriteCommandController   api.PostFavoriteCommandController
-	CategoryQueryController         api.CategoryQueryController
-	ComicQueryController            api.ComicQueryController
-	ReviewQueryController           api.ReviewQueryController
-	ReviewCommandController         api.ReviewCommandController
-	ReviewFavoriteCommandController api.ReviewFavoriteCommandController
-	RssController                   api.RSSController
-	HashtagQueryController          api.HashtagQueryController
-	HashtagCommandController        api.HashtagCommandController
-	SearchQueryController           api.SearchQueryController
-	FeatureQueryController          api.FeatureQueryController
-	VlogQueryController             api.VlogQueryController
-	UserQueryController             api.UserQueryController
-	UserCommandController           api.UserCommandController
-	HealthCheckController           api.HealthCheckController
-	WordpressCallbackController     api.WordpressCallbackController
-	SitemapController               api.SitemapController
-	S3CommandController             api.S3CommandController
-	TouristSpotQueryController      api.TouristSpotQueryController
-	InteresetQueryController        api.InterestQueryController
-	ThemeQueryController            api.ThemeQueryController
-	AreaQueryController             api.AreaQueryController
-	InnQueryController              api.InnQueryController
-	NoticeQueryController           api.NoticeQueryController
-	ReportCommandController         api.ReportCommandController
-	ComicFavoriteCommandController  api.ComicFavoriteCommandController
-	VlogFavoriteCommandController   api.VlogFavoriteCommandController
+	Config                               *config.Config
+	DB                                   *gorm.DB
+	Echo                                 *echo.Echo
+	AuthorizeWrapper                     staywayMiddleware.Authorize
+	CfProjectQueryController             api.CfProjectQueryController
+	CfProjectCommandController           api.CfProjectCommandController
+	CfReturnGiftQueryController          api.CfReturnGiftQueryController
+	CfInnReserveRequestCommandController api.CfInnReserveRequestCommandController
+	ShippingQueryController              api.ShippingQueryController
+	ShippingCommandController            api.ShippingCommandController
+	CardQueryController                  api.CardQueryController
+	ChargeCommandController              api.ChargeCommandController
+	CardCommandController                api.CardCommandController
+	PaymentQueryController               api.PaymentQueryController
+	PostQueryController                  api.PostQueryController
+	PostFavoriteCommandController        api.PostFavoriteCommandController
+	CategoryQueryController              api.CategoryQueryController
+	ComicQueryController                 api.ComicQueryController
+	ReviewQueryController                api.ReviewQueryController
+	ReviewCommandController              api.ReviewCommandController
+	ReviewFavoriteCommandController      api.ReviewFavoriteCommandController
+	RssController                        api.RSSController
+	HashtagQueryController               api.HashtagQueryController
+	HashtagCommandController             api.HashtagCommandController
+	SearchQueryController                api.SearchQueryController
+	FeatureQueryController               api.FeatureQueryController
+	VlogQueryController                  api.VlogQueryController
+	UserQueryController                  api.UserQueryController
+	UserCommandController                api.UserCommandController
+	HealthCheckController                api.HealthCheckController
+	WordpressCallbackController          api.WordpressCallbackController
+	SitemapController                    api.SitemapController
+	S3CommandController                  api.S3CommandController
+	TouristSpotQueryController           api.TouristSpotQueryController
+	InteresetQueryController             api.InterestQueryController
+	ThemeQueryController                 api.ThemeQueryController
+	AreaQueryController                  api.AreaQueryController
+	InnQueryController                   api.InnQueryController
+	NoticeQueryController                api.NoticeQueryController
+	ReportCommandController              api.ReportCommandController
+	ComicFavoriteCommandController       api.ComicFavoriteCommandController
+	VlogFavoriteCommandController        api.VlogFavoriteCommandController
 }
 
 func run() error {
@@ -251,7 +251,7 @@ func setRoutes(app *App) {
 		payment.DELETE("/card/:id", auth.Require(app.CardCommandController.Delete))
 		payment.GET("/shipping", auth.Require(app.ShippingQueryController.Show))
 		payment.POST("/shipping", auth.Require(app.ShippingCommandController.StoreShippingAddress))
-		payment.POST("/:id/reserve", auth.Require(app.PaymentCommandController.ReservePaymentCfReturnGiftReservedTicket))
+		payment.POST("/:id/reserve", auth.Require(app.CfInnReserveRequestCommandController.RequestReserve))
 	}
 
 	{

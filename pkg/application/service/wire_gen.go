@@ -20,15 +20,17 @@ import (
 func InitializeTest(filePath config.FilePath) (*Test, error) {
 	testReporter := ProvideTestReporter()
 	controller := gomock.NewController(testReporter)
-	paymentCommandRepository := ProvideMockPaymentCmdRepo(controller)
+	cfInnReserveRequestCommandRepository := ProvideCfInnReserveRequestCmdRepo(controller)
 	paymentQueryRepository := ProvideMockPaymentQueryRepo(controller)
+	paymentCommandRepository := ProvideMockPaymentCmdRepo(controller)
 	mailCommandRepository := ProvideMockMailCmdRepo(controller)
 	transactionService := ProvideMockTransactionService()
-	paymentCommandServiceImpl := &PaymentCommandServiceImpl{
-		PaymentCommandRepository: paymentCommandRepository,
-		PaymentQueryRepository:   paymentQueryRepository,
-		MailCommandRepository:    mailCommandRepository,
-		TransactionService:       transactionService,
+	cfInnReserveRequestCommandServiceImpl := &CfInnReserveRequestCommandServiceImpl{
+		CfInnReserveRequestCommandRepository: cfInnReserveRequestCommandRepository,
+		PaymentQueryRepository:               paymentQueryRepository,
+		PaymentCommandRepository:             paymentCommandRepository,
+		MailCommandRepository:                mailCommandRepository,
+		TransactionService:                   transactionService,
 	}
 	cardQueryRepository := ProvideCardQueryRepo(controller)
 	cfProjectQueryRepository := ProvideCfProjectQueryRepo(controller)
@@ -63,8 +65,8 @@ func InitializeTest(filePath config.FilePath) (*Test, error) {
 		CfProjectConfig:                   cfProject,
 	}
 	test := &Test{
-		PaymentCommandServiceImpl: paymentCommandServiceImpl,
-		ChargeCommandServiceImpl:  chargeCommandServiceImpl,
+		CfInnReserveRequestCommandServiceImpl: cfInnReserveRequestCommandServiceImpl,
+		ChargeCommandServiceImpl:              chargeCommandServiceImpl,
 	}
 	return test, nil
 }
@@ -72,7 +74,7 @@ func InitializeTest(filePath config.FilePath) (*Test, error) {
 // wire.go:
 
 type Test struct {
-	*PaymentCommandServiceImpl
+	*CfInnReserveRequestCommandServiceImpl
 	*ChargeCommandServiceImpl
 }
 
@@ -130,4 +132,8 @@ func ProvideCfProjectCmdRepo(ctrl *gomock.Controller) repository.CfProjectComman
 
 func ProvideUserSalesHistoryRepo(ctrl *gomock.Controller) repository.UserSalesHistoryCommandRepository {
 	return mock.NewMockUserSalesHistoryCommandRepository(ctrl)
+}
+
+func ProvideCfInnReserveRequestCmdRepo(ctrl *gomock.Controller) repository.CfInnReserveRequestCommandRepository {
+	return mock.NewMockCfInnReserveRequestCommandRepository(ctrl)
 }

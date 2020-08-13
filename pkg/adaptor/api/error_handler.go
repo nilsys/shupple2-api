@@ -17,9 +17,9 @@ const stackTraceDepth = 5
 
 type (
 	ErrorResponse struct {
-		Status string
-		Error  string
-		Body   string
+		Status string `json:"status"`
+		Error  string `json:"error"`
+		Body   string `json:"body"`
 	}
 
 	stackTracer interface {

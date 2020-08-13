@@ -86,8 +86,8 @@ func NewReserveRequestTemplate(fullName, fullNameKana, email, phonenum, chargeID
 	}
 }
 
-func NewReserveRequestTemplateFromCfReserveRequest(req *CfReserveRequest, chargeID, giftDesc string) *ReserveRequestTemplateForOwnerTemplate {
-	return NewReserveRequestTemplate(req.FullNameMailFmt(), req.FullNameKanaMailFmt(), req.Email, req.PhoneNumber, chargeID, giftDesc, req.Checkin, req.Checkout, strconv.Itoa(req.StayDays), strconv.Itoa(req.AdultMemberCount), strconv.Itoa(req.ChildMemberCount))
+func NewReserveRequestTemplateFromCfReserveRequest(req *CfInnReserveRequest, chargeID, giftDesc string) *ReserveRequestTemplateForOwnerTemplate {
+	return NewReserveRequestTemplate(req.FullNameMailFmt(), req.FullNameKanaMailFmt(), req.Email, req.PhoneNumber, chargeID, giftDesc, model.TimeFront(req.CheckinAt).ToString(), model.TimeFront(req.CheckoutAt).ToString(), strconv.Itoa(req.StayDays), strconv.Itoa(req.AdultMemberCount), strconv.Itoa(req.ChildMemberCount))
 }
 
 func NewCfProjectAchievementNoticeForSupporter(cfProjectID int, cfProjectTitle, cfProjectOwnerEmail string) *CfProjectAchievementNoticeForSupporter {

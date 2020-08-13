@@ -13,7 +13,7 @@ import (
 )
 
 type Test struct {
-	*PaymentCommandServiceImpl
+	*CfInnReserveRequestCommandServiceImpl
 	*ChargeCommandServiceImpl
 }
 
@@ -37,6 +37,7 @@ func InitializeTest(filePath config.FilePath) (*Test, error) {
 		ProvideShippingQueryRepo,
 		ProvideCfProjectCmdRepo,
 		ProvideUserSalesHistoryRepo,
+		ProvideCfInnReserveRequestCmdRepo,
 		ServiceTestSet,
 	)
 
@@ -97,4 +98,8 @@ func ProvideCfProjectCmdRepo(ctrl *gomock.Controller) repository.CfProjectComman
 
 func ProvideUserSalesHistoryRepo(ctrl *gomock.Controller) repository.UserSalesHistoryCommandRepository {
 	return mock.NewMockUserSalesHistoryCommandRepository(ctrl)
+}
+
+func ProvideCfInnReserveRequestCmdRepo(ctrl *gomock.Controller) repository.CfInnReserveRequestCommandRepository {
+	return mock.NewMockCfInnReserveRequestCommandRepository(ctrl)
 }
