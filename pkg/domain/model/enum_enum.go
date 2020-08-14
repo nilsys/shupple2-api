@@ -474,21 +474,30 @@ func (x *InterestGroup) UnmarshalText(text []byte) error {
 const (
 	// MailTemplateNameThanksPurchase is a MailTemplateName of type ThanksPurchase
 	MailTemplateNameThanksPurchase MailTemplateName = iota + 1
+	// MailTemplateNameDepositRequestForStayway is a MailTemplateName of type DepositRequestForStayway
+	MailTemplateNameDepositRequestForStayway
+	// MailTemplateNameCfReturnGiftShippingNotification is a MailTemplateName of type CfReturnGiftShippingNotification
+	MailTemplateNameCfReturnGiftShippingNotification
 	// MailTemplateNameReserveRequestForOwner is a MailTemplateName of type ReserveRequestForOwner
 	MailTemplateNameReserveRequestForOwner
+	// MailTemplateNameReserveRequestForUser is a MailTemplateName of type ReserveRequestForUser
+	MailTemplateNameReserveRequestForUser
 	// MailTemplateNameCfProjectAchievementNoticeForSupporter is a MailTemplateName of type CfProjectAchievementNoticeForSupporter
 	MailTemplateNameCfProjectAchievementNoticeForSupporter
 	// MailTemplateNameCfProjectPostNewReportNoticeForSupporter is a MailTemplateName of type CfProjectPostNewReportNoticeForSupporter
 	MailTemplateNameCfProjectPostNewReportNoticeForSupporter
 )
 
-const _MailTemplateNameName = "ThanksPurchaseReserveRequestForOwnerCfProjectAchievementNoticeForSupporterCfProjectPostNewReportNoticeForSupporter"
+const _MailTemplateNameName = "ThanksPurchaseDepositRequestForStaywayCfReturnGiftShippingNotificationReserveRequestForOwnerReserveRequestForUserCfProjectAchievementNoticeForSupporterCfProjectPostNewReportNoticeForSupporter"
 
 var _MailTemplateNameMap = map[MailTemplateName]string{
 	1: _MailTemplateNameName[0:14],
-	2: _MailTemplateNameName[14:36],
-	3: _MailTemplateNameName[36:74],
-	4: _MailTemplateNameName[74:114],
+	2: _MailTemplateNameName[14:38],
+	3: _MailTemplateNameName[38:70],
+	4: _MailTemplateNameName[70:92],
+	5: _MailTemplateNameName[92:113],
+	6: _MailTemplateNameName[113:151],
+	7: _MailTemplateNameName[151:191],
 }
 
 // String implements the Stringer interface.
@@ -500,10 +509,13 @@ func (x MailTemplateName) String() string {
 }
 
 var _MailTemplateNameValue = map[string]MailTemplateName{
-	_MailTemplateNameName[0:14]:   1,
-	_MailTemplateNameName[14:36]:  2,
-	_MailTemplateNameName[36:74]:  3,
-	_MailTemplateNameName[74:114]: 4,
+	_MailTemplateNameName[0:14]:    1,
+	_MailTemplateNameName[14:38]:   2,
+	_MailTemplateNameName[38:70]:   3,
+	_MailTemplateNameName[70:92]:   4,
+	_MailTemplateNameName[92:113]:  5,
+	_MailTemplateNameName[113:151]: 6,
+	_MailTemplateNameName[151:191]: 7,
 }
 
 // ParseMailTemplateName attempts to convert a string to a MailTemplateName

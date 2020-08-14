@@ -41,7 +41,10 @@ var _ = Describe("PaymentServiceImpl", func() {
 			BeforeEach(func() {
 				paymentQueryRepo.(*mock.MockPaymentQueryRepository).EXPECT().FindPaymentCfReturnGiftByPaymentIDAndCfReturnGift(paymentID, cfReturnGiftID).Return(newPaymentCfReturnGift(model.CfReturnGiftTypeReservedTicket, model.PaymentCfReturnGiftOtherTypeStatusUndefined, model.PaymentCfReturnGiftReservedTicketTypeStatusUnreserved, validDeadline), nil)
 				paymentCmdRepo.(*mock.MockPaymentCommandRepository).EXPECT().MarkPaymentCfReturnGiftAsReserved(gomock.Any(), paymentID, cfReturnGiftID).Return(nil)
-				mailCmdRepo.(*mock.MockMailCommandRepository).EXPECT().SendTemplateMail([]string{newUser(ownerUserID).Email}, newReserveRequestTemplateMailTemplate()).Return(nil)
+				gomock.InOrder(
+					mailCmdRepo.(*mock.MockMailCommandRepository).EXPECT().SendTemplateMail([]string{newUser(ownerUserID).Email}, newReserveRequestForOwnerTemplate()).Return(nil),
+					mailCmdRepo.(*mock.MockMailCommandRepository).EXPECT().SendTemplateMail([]string{newCfInnReserveRequest().Email}, newReserveRequestForUserMailTemplate()).Return(nil),
+				)
 			})
 
 			It("エラーなし", func() {

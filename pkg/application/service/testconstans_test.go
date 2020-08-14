@@ -136,10 +136,19 @@ func newCfReturnGiftSnapshot(deadline time.Time) *entity.CfReturnGiftSnapshotTin
 	return tiny
 }
 
-func newReserveRequestTemplateMailTemplate() entity.MailTemplate {
+func newReserveRequestForOwnerTemplate() entity.MailTemplate {
 	req := newCfInnReserveRequest()
 	pCfReturnGift := newPaymentCfReturnGift(model.CfReturnGiftTypeReservedTicket, model.PaymentCfReturnGiftOtherTypeStatusUndefined, model.PaymentCfReturnGiftReservedTicketTypeStatusUnreserved, validDeadline)
-	return entity.NewReserveRequestTemplate(req.FullNameMailFmt(), req.FullNameKanaMailFmt(), req.Email, req.PhoneNumber, newPayment().ChargeID, paymentCfReturnGiftInquiryCode, pCfReturnGift.CfReturnGiftSnapshot.Title,
+	return entity.NewReserveRequestForOwnerTemplate(req.FullNameMailFmt(), req.FullNameKanaMailFmt(), req.Email, req.PhoneNumber, newPayment().ChargeID, paymentCfReturnGiftInquiryCode, pCfReturnGift.CfReturnGiftSnapshot.Title,
+		pCfReturnGift.CfReturnGiftSnapshot.Body, model.TimeFront(req.CheckinAt).ToString(), model.TimeFront(req.CheckoutAt).ToString(), strconv.Itoa(req.StayDays),
+		strconv.Itoa(req.AdultMemberCount), strconv.Itoa(req.ChildMemberCount), req.Remark,
+	)
+}
+
+func newReserveRequestForUserMailTemplate() entity.MailTemplate {
+	req := newCfInnReserveRequest()
+	pCfReturnGift := newPaymentCfReturnGift(model.CfReturnGiftTypeReservedTicket, model.PaymentCfReturnGiftOtherTypeStatusUndefined, model.PaymentCfReturnGiftReservedTicketTypeStatusUnreserved, validDeadline)
+	return entity.NewReserveRequestForUserTemplate(req.FullNameMailFmt(), req.FullNameKanaMailFmt(), req.Email, req.PhoneNumber, newPayment().ChargeID, paymentCfReturnGiftInquiryCode, pCfReturnGift.CfReturnGiftSnapshot.Title,
 		pCfReturnGift.CfReturnGiftSnapshot.Body, model.TimeFront(req.CheckinAt).ToString(), model.TimeFront(req.CheckoutAt).ToString(), strconv.Itoa(req.StayDays),
 		strconv.Itoa(req.AdultMemberCount), strconv.Itoa(req.ChildMemberCount), req.Remark,
 	)

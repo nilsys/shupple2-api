@@ -44,6 +44,23 @@ type (
 		Remark                  string `json:"remark"`
 	}
 
+	ReserveRequestTemplateForUserTemplate struct {
+		UserFullName            string `json:"userfullname"`
+		UserFullNameKana        string `json:"userfullnamekana"`
+		UserEmail               string `json:"useremail"`
+		UserPhoneNumber         string `json:"userphonenumber"`
+		ChargeID                string `json:"chargeid"`
+		InquiryCode             string `json:"inquirycode"`
+		CfReturnGiftTitle       string `json:"cfreturngifttitle"`
+		CfReturnGiftDescription string `json:"cfreturngiftdesc"`
+		Checkin                 string `json:"checkin"`
+		Checkout                string `json:"checkout"`
+		StayDays                string `json:"staydays"`
+		AdultMemberCount        string `json:"adultmembercount"`
+		ChildMemberCount        string `json:"childmembercount"`
+		Remark                  string `json:"remark"`
+	}
+
 	CfProjectAchievementNoticeForSupporter struct {
 		ProjectID         string `json:"projectid"`
 		ProjectTitle      string `json:"projecttitle"`
@@ -73,8 +90,27 @@ func NewThanksPurchaseTemplate(ownerName, returnGiftDesc, chargeID, systemFee, p
 	}
 }
 
-func NewReserveRequestTemplate(fullName, fullNameKana, email, phonenum, chargeID, inquiryCode, giftTitle, giftDesc, checkin, checkout, staydays, adultcount, childcount, remark string) *ReserveRequestTemplateForOwnerTemplate {
+func NewReserveRequestForOwnerTemplate(fullName, fullNameKana, email, phonenum, chargeID, inquiryCode, giftTitle, giftDesc, checkin, checkout, staydays, adultcount, childcount, remark string) *ReserveRequestTemplateForOwnerTemplate {
 	return &ReserveRequestTemplateForOwnerTemplate{
+		UserFullName:            fullName,
+		UserFullNameKana:        fullNameKana,
+		UserEmail:               email,
+		UserPhoneNumber:         phonenum,
+		ChargeID:                chargeID,
+		InquiryCode:             inquiryCode,
+		CfReturnGiftTitle:       giftTitle,
+		CfReturnGiftDescription: giftDesc,
+		Checkin:                 checkin,
+		Checkout:                checkout,
+		StayDays:                staydays,
+		AdultMemberCount:        adultcount,
+		ChildMemberCount:        childcount,
+		Remark:                  remark,
+	}
+}
+
+func NewReserveRequestForUserTemplate(fullName, fullNameKana, email, phonenum, chargeID, inquiryCode, giftTitle, giftDesc, checkin, checkout, staydays, adultcount, childcount, remark string) *ReserveRequestTemplateForUserTemplate {
+	return &ReserveRequestTemplateForUserTemplate{
 		UserFullName:            fullName,
 		UserFullNameKana:        fullNameKana,
 		UserEmail:               email,
@@ -187,6 +223,27 @@ func (t *CfProjectPostNewReportNoticeForSupporter) DefaultData() (string, error)
 }
 
 func (t *CfProjectPostNewReportNoticeForSupporter) ToJSON() (string, error) {
+	bytes, err := json.Marshal(t)
+	if err != nil {
+		return "", errors.Wrap(err, "failed marshal")
+	}
+	return string(bytes), nil
+}
+
+func (t *ReserveRequestTemplateForUserTemplate) TemplateName() model.MailTemplateName {
+	return model.MailTemplateNameReserveRequestForUser
+}
+
+func (t *ReserveRequestTemplateForUserTemplate) DefaultData() (string, error) {
+	s := ReserveRequestTemplateForUserTemplate{}
+	bytes, err := json.Marshal(s)
+	if err != nil {
+		return "", errors.Wrap(err, "failed marshal")
+	}
+	return string(bytes), nil
+}
+
+func (t *ReserveRequestTemplateForUserTemplate) ToJSON() (string, error) {
 	bytes, err := json.Marshal(t)
 	if err != nil {
 		return "", errors.Wrap(err, "failed marshal")
