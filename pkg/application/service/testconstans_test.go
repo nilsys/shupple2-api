@@ -1,6 +1,7 @@
 package service
 
 import (
+	"strconv"
 	"time"
 
 	"gopkg.in/guregu/null.v3"
@@ -96,6 +97,7 @@ func newPaymentCfReturnGiftTinyForOther(otherStatus model.PaymentCfReturnGiftOth
 		CfProjectID:            cfProjectID,
 		CfProjectSnapshotID:    cfProjectSnapshotID,
 		GiftTypeOtherStatus:    null.IntFrom(int64(otherStatus)),
+		InquiryCode:            paymentCfReturnGiftInquiryCode,
 	}
 }
 
@@ -107,6 +109,7 @@ func newPaymentCfReturnGiftTinyForReservedTicket(ticketStatus model.PaymentCfRet
 		CfProjectID:                  cfProjectID,
 		CfProjectSnapshotID:          cfProjectSnapshotID,
 		GiftTypeReservedTicketStatus: null.IntFrom(int64(ticketStatus)),
+		InquiryCode:                  paymentCfReturnGiftInquiryCode,
 	}
 }
 
@@ -134,7 +137,12 @@ func newCfReturnGiftSnapshot(deadline time.Time) *entity.CfReturnGiftSnapshotTin
 }
 
 func newReserveRequestTemplateMailTemplate() entity.MailTemplate {
-	return entity.NewReserveRequestTemplateFromCfReserveRequest(newCfReserveRequest(), newPayment().ChargeID, newPaymentCfReturnGift(model.CfReturnGiftTypeReservedTicket, model.PaymentCfReturnGiftOtherTypeStatusUndefined, model.PaymentCfReturnGiftReservedTicketTypeStatusUnreserved, validDeadline).CfReturnGiftSnapshot.Title)
+	req := newCfInnReserveRequest()
+	pCfReturnGift := newPaymentCfReturnGift(model.CfReturnGiftTypeReservedTicket, model.PaymentCfReturnGiftOtherTypeStatusUndefined, model.PaymentCfReturnGiftReservedTicketTypeStatusUnreserved, validDeadline)
+	return entity.NewReserveRequestTemplate(req.FullNameMailFmt(), req.FullNameKanaMailFmt(), req.Email, req.PhoneNumber, newPayment().ChargeID, paymentCfReturnGiftInquiryCode, pCfReturnGift.CfReturnGiftSnapshot.Title,
+		pCfReturnGift.CfReturnGiftSnapshot.Body, model.TimeFront(req.CheckinAt).ToString(), model.TimeFront(req.CheckoutAt).ToString(), strconv.Itoa(req.StayDays),
+		strconv.Itoa(req.AdultMemberCount), strconv.Itoa(req.ChildMemberCount), req.Remark,
+	)
 }
 
 func newThanksPurchaseTemplate() entity.MailTemplate {
