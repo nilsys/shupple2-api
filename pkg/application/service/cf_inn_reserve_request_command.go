@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"github.com/google/wire"
@@ -66,7 +67,12 @@ func (s *CfInnReserveRequestCommandServiceImpl) RequestReserve(user *entity.User
 			return errors.Wrap(err, "failed store cf_reserve_request")
 		}
 
-		if err := s.MailCommandRepository.SendTemplateMail([]string{payment.Owner.Email}, entity.NewReserveRequestTemplateFromCfReserveRequest(request, payment.ChargeID, paymentCfReturnGift.CfReturnGiftSnapshot.Title)); err != nil {
+		email := entity.NewReserveRequestTemplate(request.FullNameMailFmt(), request.FullNameKanaMailFmt(), request.Email, request.PhoneNumber, payment.ChargeID, paymentCfReturnGift.InquiryCode,
+			paymentCfReturnGift.CfReturnGiftSnapshot.Title, paymentCfReturnGift.CfReturnGiftSnapshot.Body, model.TimeFront(request.CheckinAt).ToString(), model.TimeFront(request.CheckoutAt).ToString(),
+			strconv.Itoa(request.StayDays), strconv.Itoa(request.AdultMemberCount), strconv.Itoa(request.ChildMemberCount), request.Remark,
+		)
+
+		if err := s.MailCommandRepository.SendTemplateMail([]string{payment.Owner.Email}, email); err != nil {
 			return errors.Wrap(err, "failed send email from ses")
 		}
 

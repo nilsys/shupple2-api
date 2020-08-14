@@ -21,6 +21,7 @@ type (
 		StayDays         int
 		AdultMemberCount int
 		ChildMemberCount int
+		Remark           string
 		TimesWithoutDeletedAt
 	}
 )

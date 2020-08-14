@@ -211,5 +211,6 @@ func newCfInnReserveRequest() *entity.CfInnReserveRequest {
 		StayDays:         req.StayDays,
 		AdultMemberCount: req.AdultMemberCount,
 		ChildMemberCount: req.ChildMemberCount,
+		Remark:           req.Remark,
 	}
 }

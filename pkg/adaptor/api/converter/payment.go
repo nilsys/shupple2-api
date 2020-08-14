@@ -108,5 +108,6 @@ func (c Converters) ConvertReserveRequestToEntity(reserveReq *input.CfInnReserve
 		StayDays:         reserveReq.StayDays,
 		AdultMemberCount: reserveReq.AdultMemberCount,
 		ChildMemberCount: reserveReq.ChildMemberCount,
+		Remark:           reserveReq.Remark,
 	}
 }

@@ -28,17 +28,20 @@ type (
 	}
 
 	ReserveRequestTemplateForOwnerTemplate struct {
-		UserFullName          string `json:"userfullname"`
-		UserFullNameKana      string `json:"userfullnamekana"`
-		UserEmail             string `json:"useremail"`
-		UserPhoneNumber       string `json:"userphonenumber"`
-		ChargeID              string `json:"chargeid"`
-		ReturnGiftDescription string `json:"returngiftdescription"`
-		Checkin               string `json:"checkin"`
-		Checkout              string `json:"checkout"`
-		StayDays              string `json:"staydays"`
-		AdultMemberCount      string `json:"adultmembercount"`
-		ChildMemberCount      string `json:"childmembercount"`
+		UserFullName            string `json:"userfullname"`
+		UserFullNameKana        string `json:"userfullnamekana"`
+		UserEmail               string `json:"useremail"`
+		UserPhoneNumber         string `json:"userphonenumber"`
+		ChargeID                string `json:"chargeid"`
+		InquiryCode             string `json:"inquirycode"`
+		CfReturnGiftTitle       string `json:"cfreturngifttitle"`
+		CfReturnGiftDescription string `json:"cfreturngiftdesc"`
+		Checkin                 string `json:"checkin"`
+		Checkout                string `json:"checkout"`
+		StayDays                string `json:"staydays"`
+		AdultMemberCount        string `json:"adultmembercount"`
+		ChildMemberCount        string `json:"childmembercount"`
+		Remark                  string `json:"remark"`
 	}
 
 	CfProjectAchievementNoticeForSupporter struct {
@@ -70,24 +73,23 @@ func NewThanksPurchaseTemplate(ownerName, returnGiftDesc, chargeID, systemFee, p
 	}
 }
 
-func NewReserveRequestTemplate(fullName, fullNameKana, email, phonenum, chargeID, giftDesc, checkin, checkout, staydays, adultcount, childcount string) *ReserveRequestTemplateForOwnerTemplate {
+func NewReserveRequestTemplate(fullName, fullNameKana, email, phonenum, chargeID, inquiryCode, giftTitle, giftDesc, checkin, checkout, staydays, adultcount, childcount, remark string) *ReserveRequestTemplateForOwnerTemplate {
 	return &ReserveRequestTemplateForOwnerTemplate{
-		UserFullName:          fullName,
-		UserFullNameKana:      fullNameKana,
-		UserEmail:             email,
-		UserPhoneNumber:       phonenum,
-		ChargeID:              chargeID,
-		ReturnGiftDescription: giftDesc,
-		Checkin:               checkin,
-		Checkout:              checkout,
-		StayDays:              staydays,
-		AdultMemberCount:      adultcount,
-		ChildMemberCount:      childcount,
+		UserFullName:            fullName,
+		UserFullNameKana:        fullNameKana,
+		UserEmail:               email,
+		UserPhoneNumber:         phonenum,
+		ChargeID:                chargeID,
+		InquiryCode:             inquiryCode,
+		CfReturnGiftTitle:       giftTitle,
+		CfReturnGiftDescription: giftDesc,
+		Checkin:                 checkin,
+		Checkout:                checkout,
+		StayDays:                staydays,
+		AdultMemberCount:        adultcount,
+		ChildMemberCount:        childcount,
+		Remark:                  remark,
 	}
-}
-
-func NewReserveRequestTemplateFromCfReserveRequest(req *CfInnReserveRequest, chargeID, giftDesc string) *ReserveRequestTemplateForOwnerTemplate {
-	return NewReserveRequestTemplate(req.FullNameMailFmt(), req.FullNameKanaMailFmt(), req.Email, req.PhoneNumber, chargeID, giftDesc, model.TimeFront(req.CheckinAt).ToString(), model.TimeFront(req.CheckoutAt).ToString(), strconv.Itoa(req.StayDays), strconv.Itoa(req.AdultMemberCount), strconv.Itoa(req.ChildMemberCount))
 }
 
 func NewCfProjectAchievementNoticeForSupporter(cfProjectID int, cfProjectTitle, cfProjectOwnerEmail string) *CfProjectAchievementNoticeForSupporter {
