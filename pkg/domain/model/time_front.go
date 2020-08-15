@@ -37,5 +37,5 @@ func (tf TimeFront) MarshalJSON() ([]byte, error) {
 }
 
 func (tf TimeFront) ToString() string {
-	return time.Time(tf).Format(timeFrontFmt)
+	return time.Time(tf).In(util.JSTLoc).Format(timeFrontFmt)
 }
