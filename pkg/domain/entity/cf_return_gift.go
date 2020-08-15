@@ -94,7 +94,11 @@ func (r *CfReturnGiftList) UniqueCfProjectID() (int, bool) {
 func (r *CfReturnGiftList) TitlesOnEmail(idInquiryCodeMap map[int]string) string {
 	var titles string
 	for _, gift := range r.List {
-		titles += fmt.Sprintf("<br>%s<br>お問い合わせ番号: %s<br>", gift.Snapshot.Title, idInquiryCodeMap[gift.ID])
+		if gift.Snapshot.Deadline.Valid {
+			titles += fmt.Sprintf("<br>%s<br>お問い合わせ番号: %s<br>有効期限: %s<br>", gift.Snapshot.Title, idInquiryCodeMap[gift.ID], model.TimeFront(gift.Snapshot.Deadline.Time).ToString())
+		} else {
+			titles += fmt.Sprintf("<br>%s<br>お問い合わせ番号: %s<br>", gift.Snapshot.Title, idInquiryCodeMap[gift.ID])
+		}
 	}
 	return titles
 }
