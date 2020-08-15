@@ -82,6 +82,7 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 			CreatedAt:      model.TimeResponse(post.CreatedAt),
 			EditedAt:       model.TimeResponse(post.EditedAt),
 		},
+		Body:            bodies,
 		IsFavorite:      post.IsFavorite,
 		Creator:         c.NewCreatorFromUser(post.User, idIsFollowMap[post.UserID]),
 		AreaCategories:  areaCategoriesRes,
