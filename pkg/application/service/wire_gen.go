@@ -21,12 +21,14 @@ func InitializeTest(filePath config.FilePath) (*Test, error) {
 	testReporter := ProvideTestReporter()
 	controller := gomock.NewController(testReporter)
 	cfInnReserveRequestCommandRepository := ProvideCfInnReserveRequestCmdRepo(controller)
+	cfInnReserveRequestQueryRepository := ProvideCfInnReserveRequestQueryRepo(controller)
 	paymentQueryRepository := ProvideMockPaymentQueryRepo(controller)
 	paymentCommandRepository := ProvideMockPaymentCmdRepo(controller)
 	mailCommandRepository := ProvideMockMailCmdRepo(controller)
 	transactionService := ProvideMockTransactionService()
 	cfInnReserveRequestCommandServiceImpl := &CfInnReserveRequestCommandServiceImpl{
 		CfInnReserveRequestCommandRepository: cfInnReserveRequestCommandRepository,
+		CfInnReserveRequestQueryRepository:   cfInnReserveRequestQueryRepository,
 		PaymentQueryRepository:               paymentQueryRepository,
 		PaymentCommandRepository:             paymentCommandRepository,
 		MailCommandRepository:                mailCommandRepository,
@@ -136,4 +138,8 @@ func ProvideUserSalesHistoryRepo(ctrl *gomock.Controller) repository.UserSalesHi
 
 func ProvideCfInnReserveRequestCmdRepo(ctrl *gomock.Controller) repository.CfInnReserveRequestCommandRepository {
 	return mock.NewMockCfInnReserveRequestCommandRepository(ctrl)
+}
+
+func ProvideCfInnReserveRequestQueryRepo(ctrl *gomock.Controller) repository.CfInnReserveRequestQueryRepository {
+	return mock.NewMockCfInnReserveRequestQueryRepository(ctrl)
 }

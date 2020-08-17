@@ -1,0 +1,3 @@
+ALTER TABLE cf_inn_reserve_request
+    ADD id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT FIRST,
+    COMMENT '予約リクエスト';

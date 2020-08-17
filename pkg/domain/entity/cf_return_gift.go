@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
@@ -103,6 +104,13 @@ func (r *CfReturnGiftList) TitlesOnEmail(idInquiryCodeMap map[int]string) string
 	return titles
 }
 
+func (r *CfReturnGiftSnapshotTiny) IsExpired() bool {
+	if deadline := r.Deadline; deadline.Valid && deadline.Time.Before(time.Now()) {
+		return true
+	}
+	return false
+}
+
 func (r *CfReturnGiftSoldCountList) GetSoldCount(id int) int {
 	for _, summary := range r.List {
 		if summary.CfReturnGiftID == id {
@@ -132,7 +140,7 @@ func (c *CfReturnGiftTiny) TableName() string {
 	return "cf_return_gift"
 }
 
-func (c *CfReturnGiftSnapshotTiny) TableName() string {
+func (r *CfReturnGiftSnapshotTiny) TableName() string {
 	return "cf_return_gift_snapshot"
 }
 

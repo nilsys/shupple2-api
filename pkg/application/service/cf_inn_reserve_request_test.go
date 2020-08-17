@@ -15,12 +15,13 @@ import (
 
 var _ = Describe("PaymentServiceImpl", func() {
 	var (
-		cmdSvc            *CfInnReserveRequestCommandServiceImpl
-		paymentQueryRepo  repository.PaymentQueryRepository
-		paymentCmdRepo    repository.PaymentCommandRepository
-		innReserveCmdRepo repository.CfInnReserveRequestCommandRepository
-		mailCmdRepo       repository.MailCommandRepository
-		err               error
+		cmdSvc              *CfInnReserveRequestCommandServiceImpl
+		paymentQueryRepo    repository.PaymentQueryRepository
+		paymentCmdRepo      repository.PaymentCommandRepository
+		innReserveCmdRepo   repository.CfInnReserveRequestCommandRepository
+		innReserveQueryRepo repository.CfInnReserveRequestQueryRepository
+		mailCmdRepo         repository.MailCommandRepository
+		err                 error
 	)
 
 	BeforeEach(func() {
@@ -28,6 +29,7 @@ var _ = Describe("PaymentServiceImpl", func() {
 		paymentQueryRepo = tests.CfInnReserveRequestCommandServiceImpl.PaymentQueryRepository
 		paymentCmdRepo = tests.CfInnReserveRequestCommandServiceImpl.PaymentCommandRepository
 		innReserveCmdRepo = tests.CfInnReserveRequestCommandServiceImpl.CfInnReserveRequestCommandRepository
+		innReserveQueryRepo = tests.CfInnReserveRequestCommandServiceImpl.CfInnReserveRequestQueryRepository
 		mailCmdRepo = tests.CfInnReserveRequestCommandServiceImpl.MailCommandRepository
 	})
 
@@ -35,6 +37,7 @@ var _ = Describe("PaymentServiceImpl", func() {
 		BeforeEach(func() {
 			paymentQueryRepo.(*mock.MockPaymentQueryRepository).EXPECT().FindByID(context.Background(), paymentID).Return(newPayment(), nil)
 			innReserveCmdRepo.(*mock.MockCfInnReserveRequestCommandRepository).EXPECT().Store(context.Background(), newCfInnReserveRequest()).Return(nil)
+			innReserveQueryRepo.(*mock.MockCfInnReserveRequestQueryRepository).EXPECT().IsExistByPaymentIDAndCfReturnGiftID(paymentID, cfReturnGiftID).Return(false, nil)
 		})
 
 		Context("正常系", func() {

@@ -38,6 +38,7 @@ func InitializeTest(filePath config.FilePath) (*Test, error) {
 		ProvideCfProjectCmdRepo,
 		ProvideUserSalesHistoryRepo,
 		ProvideCfInnReserveRequestCmdRepo,
+		ProvideCfInnReserveRequestQueryRepo,
 		ServiceTestSet,
 	)
 
@@ -102,4 +103,8 @@ func ProvideUserSalesHistoryRepo(ctrl *gomock.Controller) repository.UserSalesHi
 
 func ProvideCfInnReserveRequestCmdRepo(ctrl *gomock.Controller) repository.CfInnReserveRequestCommandRepository {
 	return mock.NewMockCfInnReserveRequestCommandRepository(ctrl)
+}
+
+func ProvideCfInnReserveRequestQueryRepo(ctrl *gomock.Controller) repository.CfInnReserveRequestQueryRepository {
+	return mock.NewMockCfInnReserveRequestQueryRepository(ctrl)
 }

@@ -7,6 +7,7 @@ import (
 
 type (
 	CfInnReserveRequest struct {
+		ID               int `gorm:"primary_key"`
 		UserID           int
 		PaymentID        int
 		CfReturnGiftID   int

@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"strconv"
-	"time"
 
 	"github.com/google/wire"
 
@@ -21,6 +20,7 @@ type (
 
 	CfInnReserveRequestCommandServiceImpl struct {
 		repository.CfInnReserveRequestCommandRepository
+		repository.CfInnReserveRequestQueryRepository
 		repository.PaymentQueryRepository
 		repository.PaymentCommandRepository
 		repository.MailCommandRepository
@@ -42,6 +42,14 @@ func (s *CfInnReserveRequestCommandServiceImpl) RequestReserve(user *entity.User
 		return serror.New(nil, serror.CodeForbidden, "forbidden")
 	}
 
+	isReserved, err := s.CfInnReserveRequestQueryRepository.IsExistByPaymentIDAndCfReturnGiftID(paymentID, cfReturnGiftID)
+	if err != nil {
+		return errors.Wrap(err, "failed find reserve_request")
+	}
+	if isReserved {
+		return serror.New(nil, serror.CodeInvalidParam, "already requested")
+	}
+
 	paymentCfReturnGift, err := s.PaymentQueryRepository.FindPaymentCfReturnGiftByPaymentIDAndCfReturnGift(paymentID, cfReturnGiftID)
 	if err != nil {
 		return errors.Wrap(err, "failed find payment_cf_return_gift")
@@ -51,7 +59,7 @@ func (s *CfInnReserveRequestCommandServiceImpl) RequestReserve(user *entity.User
 		return serror.New(nil, serror.CodeInvalidParam, "not reserved ticket")
 	}
 
-	if deadline := paymentCfReturnGift.CfReturnGiftSnapshot.Deadline; deadline.Valid && deadline.Time.Before(time.Now()) {
+	if paymentCfReturnGift.CfReturnGiftSnapshot.IsExpired() {
 		return serror.New(nil, serror.CodeInvalidParam, "expired")
 	}
 	if !paymentCfReturnGift.ResolveGiftTypeReservedTicketStatus().CanTransit(model.PaymentCfReturnGiftReservedTicketTypeStatusReserved) {

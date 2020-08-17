@@ -138,6 +138,9 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	cfInnReserveRequestCommandRepositoryImpl := &repository.CfInnReserveRequestCommandRepositoryImpl{
 		DAO: dao,
 	}
+	cfInnReserveRequestQueryRepositoryImpl := &repository.CfInnReserveRequestQueryRepositoryImpl{
+		DB: db,
+	}
 	paymentQueryRepositoryImpl := &repository.PaymentQueryRepositoryImpl{
 		DAO: dao,
 	}
@@ -146,6 +149,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	}
 	cfInnReserveRequestCommandServiceImpl := &service.CfInnReserveRequestCommandServiceImpl{
 		CfInnReserveRequestCommandRepository: cfInnReserveRequestCommandRepositoryImpl,
+		CfInnReserveRequestQueryRepository:   cfInnReserveRequestQueryRepositoryImpl,
 		PaymentQueryRepository:               paymentQueryRepositoryImpl,
 		PaymentCommandRepository:             paymentCommandRepositoryImpl,
 		MailCommandRepository:                mailCommandRepository,

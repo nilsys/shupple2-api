@@ -48,3 +48,41 @@ func (mr *MockCfInnReserveRequestCommandRepositoryMockRecorder) Store(ctx, reque
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockCfInnReserveRequestCommandRepository)(nil).Store), ctx, request)
 }
+
+// MockCfInnReserveRequestQueryRepository is a mock of CfInnReserveRequestQueryRepository interface
+type MockCfInnReserveRequestQueryRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockCfInnReserveRequestQueryRepositoryMockRecorder
+}
+
+// MockCfInnReserveRequestQueryRepositoryMockRecorder is the mock recorder for MockCfInnReserveRequestQueryRepository
+type MockCfInnReserveRequestQueryRepositoryMockRecorder struct {
+	mock *MockCfInnReserveRequestQueryRepository
+}
+
+// NewMockCfInnReserveRequestQueryRepository creates a new mock instance
+func NewMockCfInnReserveRequestQueryRepository(ctrl *gomock.Controller) *MockCfInnReserveRequestQueryRepository {
+	mock := &MockCfInnReserveRequestQueryRepository{ctrl: ctrl}
+	mock.recorder = &MockCfInnReserveRequestQueryRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockCfInnReserveRequestQueryRepository) EXPECT() *MockCfInnReserveRequestQueryRepositoryMockRecorder {
+	return m.recorder
+}
+
+// IsExistByPaymentIDAndCfReturnGiftID mocks base method
+func (m *MockCfInnReserveRequestQueryRepository) IsExistByPaymentIDAndCfReturnGiftID(paymentID, cfReturnGiftID int) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsExistByPaymentIDAndCfReturnGiftID", paymentID, cfReturnGiftID)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IsExistByPaymentIDAndCfReturnGiftID indicates an expected call of IsExistByPaymentIDAndCfReturnGiftID
+func (mr *MockCfInnReserveRequestQueryRepositoryMockRecorder) IsExistByPaymentIDAndCfReturnGiftID(paymentID, cfReturnGiftID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsExistByPaymentIDAndCfReturnGiftID", reflect.TypeOf((*MockCfInnReserveRequestQueryRepository)(nil).IsExistByPaymentIDAndCfReturnGiftID), paymentID, cfReturnGiftID)
+}
