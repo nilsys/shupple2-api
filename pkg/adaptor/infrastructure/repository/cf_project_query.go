@@ -115,7 +115,7 @@ func (r *CfProjectQueryRepositoryImpl) IsSupported(userID int, projectIDs []int)
 		Select("payment.user_id AS user_id, payment_cf_return_gift.cf_project_id AS cf_project_id").
 		Table("payment").
 		Joins("INNER JOIN payment_cf_return_gift ON payment.id = payment_cf_return_gift.payment_id").
-		Where("payment_cf_return_gift.cf_project_id IN (?) AND payment.user_id", projectIDs).
+		Where("payment_cf_return_gift.cf_project_id IN (?) AND payment.user_id = ?", projectIDs, userID).
 		Group("payment.user_id, payment_cf_return_gift.cf_project_id").
 		Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find user supported cf_project")
