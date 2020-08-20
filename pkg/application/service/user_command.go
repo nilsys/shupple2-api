@@ -36,6 +36,7 @@ type (
 		repository.UserCommandRepository
 		repository.UserQueryRepository
 		repository.WordpressQueryRepository
+		service.UserValidatorDomainService
 		payjp.CustomerCommandRepository
 		payjp.CustomerQueryRepository
 		AuthService
@@ -50,13 +51,9 @@ var UserCommandServiceSet = wire.NewSet(
 )
 
 func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, migrationCode *string) error {
-	// uid重複チェック
-	isExist, err := s.UserQueryRepository.IsExistByUID(user.UID)
-	if err != nil {
-		return errors.Wrap(err, "failed to get user")
-	}
-	if isExist {
-		return serror.New(nil, serror.CodeInvalidParam, "uid: %s is duplicate", user.UID)
+
+	if err := s.UserValidatorDomainService.Do(user); err != nil {
+		return errors.Wrap(err, "invalid")
 	}
 
 	// token検証
@@ -65,7 +62,6 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 		return serror.New(err, serror.CodeUnauthorized, "unauthorized")
 	}
 	user.CognitoID = null.StringFrom(cognitoID)
-	// 属性付与
 	user.AddAttribute(model.UserAttributeCommon)
 
 	if migrationCode != nil && *migrationCode != "" {
@@ -74,12 +70,14 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 			return errors.Wrap(err, "failed to get user by migration code")
 		}
 		user.ID = existingUser.ID
+		if !existingUser.IsNonLogin {
+			// 属性付与
+			user.AddAttribute(model.UserAttributeWP)
+		}
 		user.UID = existingUser.UID
 		user.WordpressID = existingUser.WordpressID
 		user.AvatarUUID = existingUser.AvatarUUID
 		user.HeaderUUID = existingUser.HeaderUUID
-		// 属性付与
-		user.AddAttribute(model.UserAttributeWP)
 	}
 
 	return s.TransactionService.Do(func(ctx context.Context) error {

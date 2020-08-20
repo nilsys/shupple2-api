@@ -36,17 +36,17 @@ func (m *MockShippingCommandRepository) EXPECT() *MockShippingCommandRepositoryM
 }
 
 // StoreShippingAddress mocks base method
-func (m *MockShippingCommandRepository) StoreShippingAddress(address *entity.ShippingAddress) error {
+func (m *MockShippingCommandRepository) StoreShippingAddress(ctx context.Context, address *entity.ShippingAddress) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "StoreShippingAddress", address)
+	ret := m.ctrl.Call(m, "StoreShippingAddress", ctx, address)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // StoreShippingAddress indicates an expected call of StoreShippingAddress
-func (mr *MockShippingCommandRepositoryMockRecorder) StoreShippingAddress(address interface{}) *gomock.Call {
+func (mr *MockShippingCommandRepositoryMockRecorder) StoreShippingAddress(ctx, address interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreShippingAddress", reflect.TypeOf((*MockShippingCommandRepository)(nil).StoreShippingAddress), address)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreShippingAddress", reflect.TypeOf((*MockShippingCommandRepository)(nil).StoreShippingAddress), ctx, address)
 }
 
 // MockShippingQueryRepository is a mock of ShippingQueryRepository interface

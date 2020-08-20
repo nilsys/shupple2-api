@@ -35,16 +35,16 @@ func (m *MockUserSalesHistoryCommandRepository) EXPECT() *MockUserSalesHistoryCo
 	return m.recorder
 }
 
-// Store mocks base method
+// Validate mocks base method
 func (m *MockUserSalesHistoryCommandRepository) Store(ctx context.Context, history *entity.UserSalesHistoryTiny) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Store", ctx, history)
+	ret := m.ctrl.Call(m, "Validate", ctx, history)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Store indicates an expected call of Store
+// Validate indicates an expected call of Validate
 func (mr *MockUserSalesHistoryCommandRepositoryMockRecorder) Store(ctx, history interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockUserSalesHistoryCommandRepository)(nil).Store), ctx, history)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockUserSalesHistoryCommandRepository)(nil).Store), ctx, history)
 }

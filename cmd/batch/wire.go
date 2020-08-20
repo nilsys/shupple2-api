@@ -47,6 +47,7 @@ var facadeSet = wire.NewSet(
 var domainServiceSet = wire.NewSet(
 	domain_service.NoticeDomainServiceSet,
 	domain_service.TaggedUserDomainServiceSet,
+	domain_service.UserValidatorDomainServiceSet,
 )
 
 func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {

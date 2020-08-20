@@ -107,18 +107,18 @@ func (s Script) Run() error {
 			}
 		}
 
-		chargeRequest := command.PaymentList{
-			List: []*command.Payment{
+		chargeRequest := command.CreateCharge{
+			List: []*command.Charge{
 				{
 					ReturnGiftID:         returnGift.ID,
 					ReturnGiftSnapshotID: int(returnGift.LatestSnapshotID.Int64),
 					Amount:               1,
 				},
 			},
-			Body: comment.Body,
+			SupportCommentBody: comment.Body,
 		}
 
-		if _, err := s.ChargeCommandService.Capture(user, &chargeRequest); err != nil {
+		if _, err := s.ChargeCommandService.Create(user, &chargeRequest); err != nil {
 			return errors.WithStack(err)
 		}
 	}

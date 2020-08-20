@@ -134,18 +134,18 @@ func (m *MockPaymentCommandRepository) EXPECT() *MockPaymentCommandRepositoryMoc
 	return m.recorder
 }
 
-// Store mocks base method
+// Validate mocks base method
 func (m *MockPaymentCommandRepository) Store(c context.Context, payment *entity.PaymentTiny) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Store", c, payment)
+	ret := m.ctrl.Call(m, "Validate", c, payment)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Store indicates an expected call of Store
+// Validate indicates an expected call of Validate
 func (mr *MockPaymentCommandRepositoryMockRecorder) Store(c, payment interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockPaymentCommandRepository)(nil).Store), c, payment)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockPaymentCommandRepository)(nil).Store), c, payment)
 }
 
 // StorePaymentReturnGiftList mocks base method

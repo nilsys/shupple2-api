@@ -10,9 +10,9 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
-	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
+	service2 "github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
-	service2 "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 )
 
 // Injectors from wire.go:
@@ -47,6 +47,9 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		AWSConfig:  aws,
 		AWSSession: session,
 	}
+	userValidatorDomainServiceImpl := &service.UserValidatorDomainServiceImpl{
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
 	payjpService := repository.ProvidePayjp(configConfig)
 	customerCommandRepositoryImpl := &payjp.CustomerCommandRepositoryImpl{
 		PayjpClient: payjpService,
@@ -54,32 +57,33 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	customerQueryRepositoryImpl := &payjp.CustomerQueryRepositoryImpl{
 		PayjpClient: payjpService,
 	}
-	authService, err := service.ProvideAuthService(configConfig)
+	authService, err := service2.ProvideAuthService(configConfig)
 	if err != nil {
 		return nil, err
 	}
 	noticeCommandRepositoryImpl := &repository.NoticeCommandRepositoryImpl{
 		DAO: dao,
 	}
-	taggedUserDomainServiceImpl := service2.TaggedUserDomainServiceImpl{
+	taggedUserDomainServiceImpl := service.TaggedUserDomainServiceImpl{
 		UserQueryRepository: userQueryRepositoryImpl,
 	}
-	noticeDomainServiceImpl := &service2.NoticeDomainServiceImpl{
+	noticeDomainServiceImpl := &service.NoticeDomainServiceImpl{
 		NoticeCommandRepository: noticeCommandRepositoryImpl,
 		TaggedUserDomainService: taggedUserDomainServiceImpl,
 	}
 	transactionServiceImpl := &repository.TransactionServiceImpl{
 		DB: db,
 	}
-	userCommandServiceImpl := &service.UserCommandServiceImpl{
-		UserCommandRepository:     userCommandRepositoryImpl,
-		UserQueryRepository:       userQueryRepositoryImpl,
-		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
-		CustomerCommandRepository: customerCommandRepositoryImpl,
-		CustomerQueryRepository:   customerQueryRepositoryImpl,
-		AuthService:               authService,
-		NoticeDomainService:       noticeDomainServiceImpl,
-		TransactionService:        transactionServiceImpl,
+	userCommandServiceImpl := &service2.UserCommandServiceImpl{
+		UserCommandRepository:      userCommandRepositoryImpl,
+		UserQueryRepository:        userQueryRepositoryImpl,
+		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
+		UserValidatorDomainService: userValidatorDomainServiceImpl,
+		CustomerCommandRepository:  customerCommandRepositoryImpl,
+		CustomerQueryRepository:    customerQueryRepositoryImpl,
+		AuthService:                authService,
+		NoticeDomainService:        noticeDomainServiceImpl,
+		TransactionService:         transactionServiceImpl,
 	}
 	script := &Script{
 		DB:            db,
@@ -95,4 +99,4 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.SpotCategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, service.ReviewQueryServiceSet, scenario.ReviewCommandScenarioSet, service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
+var serviceSet = wire.NewSet(service2.ProvideAuthService, service2.PostQueryServiceSet, service2.PostCommandServiceSet, service2.WordpressServiceSet, service2.UserCommandServiceSet, service2.CategoryCommandServiceSet, service2.AreaCategoryCommandServiceSet, service2.ThemeCategoryCommandServiceSet, service2.ComicCommandServiceSet, service2.FeatureCommandServiceSet, service2.SpotCategoryCommandServiceSet, service2.TouristSpotCommandServiceSet, service2.VlogCommandServiceSet, service2.HashtagCommandServiceSet, service2.ReviewCommandServiceSet, service2.ReviewQueryServiceSet, scenario.ReviewCommandScenarioSet, service.NoticeDomainServiceSet, service.TaggedUserDomainServiceSet, service.UserValidatorDomainServiceSet)

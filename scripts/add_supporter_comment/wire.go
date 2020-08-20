@@ -36,6 +36,7 @@ var serviceSet = wire.NewSet(
 	domain_service.NoticeDomainServiceSet,
 	domain_service.TaggedUserDomainServiceSet,
 	helper.InquiryCodeGeneratorSet,
+	repository.ProvideS3Uploader,
 )
 
 func InitializeScript(configFilePath config.FilePath) (*Script, error) {

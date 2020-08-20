@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/util"
+
+	"github.com/pkg/errors"
+
 	uuid "github.com/satori/go.uuid"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
@@ -37,6 +41,7 @@ type (
 		TwitterURL      string
 		YoutubeURL      string
 		LivingArea      string
+		IsNonLogin      bool
 		Times
 		// 如何なる場面でも必要な為Userの最小単位に置いておく
 		UserAttributes []*UserAttribute `gorm:"foreignkey:UserID"`
@@ -101,6 +106,10 @@ type (
 		UserID    int                 `gorm:"primary_key"`
 		Attribute model.UserAttribute `gorm:"primary_key"`
 	}
+)
+
+const (
+	nonLoginUserUIDLength = 12
 )
 
 func NewUserByWordpressUser(wpUser *wordpress.User) *User {
@@ -210,7 +219,12 @@ func (u *UserTiny) PayjpCustomerID() string {
 	return fmt.Sprintf("sw_%s", u.UID)
 }
 
-func (u *User) AddAttribute(attr model.UserAttribute) {
+// TODO:
+func (u *UserTiny) LoginWithMigrationCodeURL() string {
+	return fmt.Sprintf("https://stayway.jp/users/signup?migration_code=%s", u.MigrationCode.String)
+}
+
+func (u *UserTiny) AddAttribute(attr model.UserAttribute) {
 	u.UserAttributes = append(u.UserAttributes, &UserAttribute{
 		Attribute: attr,
 	})
@@ -231,4 +245,30 @@ func (u UserFollowings) ToIDExistMap(userIDs []int) map[int]bool {
 	}
 
 	return resolve
+}
+
+// 非ログインユーザー
+func NewIsNonLoginUserTiny(name string) (*UserTiny, error) {
+	now := time.Now()
+
+	migrationCode, err := model.NewRandUUID()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed gen uuid")
+	}
+
+	uid, err := model.RandomStr(nonLoginUserUIDLength)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed gen rand str")
+	}
+
+	return &UserTiny{
+		Name:          name,
+		UID:           uid,
+		MigrationCode: null.StringFrom(migrationCode),
+		Birthdate:     time.Date(1000, 1, 1, 0, 0, 0, 0, util.JSTLoc),
+		IsNonLogin:    true,
+		Times: Times{
+			DeletedAt: &now,
+		},
+	}, nil
 }

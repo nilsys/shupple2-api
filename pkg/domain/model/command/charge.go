@@ -1,20 +1,20 @@
 package command
 
 type (
-	Payment struct {
+	Charge struct {
 		ReturnGiftID         int
 		ReturnGiftSnapshotID int
 		Amount               int
 	}
 
-	PaymentList struct {
-		List   []*Payment
-		Body   string
-		Remark string
+	CreateCharge struct {
+		List               []*Charge
+		SupportCommentBody string
+		Remark             string
 	}
 )
 
-func (p *PaymentList) ReturnIDs() []int {
+func (p *CreateCharge) ReturnIDs() []int {
 	ids := make([]int, len(p.List))
 	for i, payment := range p.List {
 		ids[i] = payment.ReturnGiftID

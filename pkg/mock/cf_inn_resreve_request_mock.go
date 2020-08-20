@@ -35,18 +35,18 @@ func (m *MockCfInnReserveRequestCommandRepository) EXPECT() *MockCfInnReserveReq
 	return m.recorder
 }
 
-// Store mocks base method
+// Validate mocks base method
 func (m *MockCfInnReserveRequestCommandRepository) Store(ctx context.Context, request *entity.CfInnReserveRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Store", ctx, request)
+	ret := m.ctrl.Call(m, "Validate", ctx, request)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Store indicates an expected call of Store
+// Validate indicates an expected call of Validate
 func (mr *MockCfInnReserveRequestCommandRepositoryMockRecorder) Store(ctx, request interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockCfInnReserveRequestCommandRepository)(nil).Store), ctx, request)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockCfInnReserveRequestCommandRepository)(nil).Store), ctx, request)
 }
 
 // MockCfInnReserveRequestQueryRepository is a mock of CfInnReserveRequestQueryRepository interface

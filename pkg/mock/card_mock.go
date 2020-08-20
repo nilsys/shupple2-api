@@ -35,18 +35,18 @@ func (m *MockCardCommandRepository) EXPECT() *MockCardCommandRepositoryMockRecor
 	return m.recorder
 }
 
-// Store mocks base method
+// Validate mocks base method
 func (m *MockCardCommandRepository) Store(c context.Context, card *entity.Card) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Store", c, card)
+	ret := m.ctrl.Call(m, "Validate", c, card)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Store indicates an expected call of Store
+// Validate indicates an expected call of Validate
 func (mr *MockCardCommandRepositoryMockRecorder) Store(c, card interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockCardCommandRepository)(nil).Store), c, card)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockCardCommandRepository)(nil).Store), c, card)
 }
 
 // Delete mocks base method

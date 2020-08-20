@@ -2219,7 +2219,21 @@ paths:
       security:
         - iDPCognito: []
       requestBody:
-        $ref: "#/components/requestBodies/PaymentRequest"
+        $ref: "#/components/requestBodies/CreateChargeRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaptureChargeResult"
+  /payments/charge/instant:
+    post:
+      tags:
+        - payment
+      summary: 非ログインユーザー決済
+      requestBody:
+        $ref: "#/components/requestBodies/CreateInstantChargeRequest"
       responses:
         "200":
           description: OK
@@ -2630,11 +2644,16 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CardRequest"
-    PaymentRequest:
+    CreateChargeRequest:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/PaymentListRequest"
+            $ref: "#/components/schemas/CreateChargeRequest"
+    CreateInstantChargeRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateInstantChargeRequest"
     ReportRequest:
       content:
         application/json:
@@ -3050,8 +3069,12 @@ components:
           type: string
           description: |
             pay.jpから送られるカードトークン
-    PaymentListRequest:
+    CreateChargeRequest:
       type: object
+      required:
+        - payments
+        - supportCommentBody
+        - remark
       properties:
         payments:
           type: array
@@ -3067,6 +3090,35 @@ components:
           description: |
             備考
           example: TシャツはMサイズで
+    CreateInstantChargeRequest:
+      type: object
+      required:
+        - payments
+        - supportCommentBody
+        - remark
+        - shippingAddress
+        - cardToken
+      properties:
+        payments:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentRequest"
+        supportCommentBody:
+          type: string
+          description: |
+            応援コメント
+          example: 応援しています！
+        remark:
+          type: string
+          description: |
+            備考
+          example: TシャツはMサイズで
+        shippingAddress:
+          $ref: "#/components/schemas/ShippingAddressRequest"
+        cardToken:
+          type: string
+          description: |
+            pay.jpでチェックアウト時に取得できるカードトークン
     CfReturnGiftID:
       type: object
       properties:
@@ -3074,6 +3126,10 @@ components:
           type: integer
     PaymentRequest:
       type: object
+      required:
+        - cfReturnGiftId
+        - cfReturnGiftSnapshotId
+        - amount
       properties:
         cfReturnGiftId:
           type: integer

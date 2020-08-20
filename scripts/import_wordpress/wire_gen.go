@@ -11,9 +11,9 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
-	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
+	service2 "github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
-	service2 "github.com/stayway-corp/stayway-media-api/pkg/domain/service"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/service"
 )
 
 // Injectors from wire.go:
@@ -48,6 +48,9 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		AWSConfig:     aws,
 		AWSSession:    session,
 	}
+	userValidatorDomainServiceImpl := &service.UserValidatorDomainServiceImpl{
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
 	payjpService := repository.ProvidePayjp(configConfig)
 	customerCommandRepositoryImpl := &payjp.CustomerCommandRepositoryImpl{
 		PayjpClient: payjpService,
@@ -55,32 +58,33 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	customerQueryRepositoryImpl := &payjp.CustomerQueryRepositoryImpl{
 		PayjpClient: payjpService,
 	}
-	authService, err := service.ProvideAuthService(configConfig)
+	authService, err := service2.ProvideAuthService(configConfig)
 	if err != nil {
 		return nil, err
 	}
 	noticeCommandRepositoryImpl := &repository.NoticeCommandRepositoryImpl{
 		DAO: dao,
 	}
-	taggedUserDomainServiceImpl := service2.TaggedUserDomainServiceImpl{
+	taggedUserDomainServiceImpl := service.TaggedUserDomainServiceImpl{
 		UserQueryRepository: userQueryRepositoryImpl,
 	}
-	noticeDomainServiceImpl := &service2.NoticeDomainServiceImpl{
+	noticeDomainServiceImpl := &service.NoticeDomainServiceImpl{
 		NoticeCommandRepository: noticeCommandRepositoryImpl,
 		TaggedUserDomainService: taggedUserDomainServiceImpl,
 	}
 	transactionServiceImpl := &repository.TransactionServiceImpl{
 		DB: db,
 	}
-	userCommandServiceImpl := &service.UserCommandServiceImpl{
-		UserCommandRepository:     userCommandRepositoryImpl,
-		UserQueryRepository:       userQueryRepositoryImpl,
-		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
-		CustomerCommandRepository: customerCommandRepositoryImpl,
-		CustomerQueryRepository:   customerQueryRepositoryImpl,
-		AuthService:               authService,
-		NoticeDomainService:       noticeDomainServiceImpl,
-		TransactionService:        transactionServiceImpl,
+	userCommandServiceImpl := &service2.UserCommandServiceImpl{
+		UserCommandRepository:      userCommandRepositoryImpl,
+		UserQueryRepository:        userQueryRepositoryImpl,
+		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
+		UserValidatorDomainService: userValidatorDomainServiceImpl,
+		CustomerCommandRepository:  customerCommandRepositoryImpl,
+		CustomerQueryRepository:    customerQueryRepositoryImpl,
+		AuthService:                authService,
+		NoticeDomainService:        noticeDomainServiceImpl,
+		TransactionService:         transactionServiceImpl,
 	}
 	areaCategoryCommandRepositoryImpl := &repository.AreaCategoryCommandRepositoryImpl{
 		DAO: dao,
@@ -100,11 +104,11 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	hashtagCommandRepositoryImpl := &repository.HashtagCommandRepositoryImpl{
 		DAO: dao,
 	}
-	hashtagCommandServiceImpl := &service.HashtagCommandServiceImpl{
+	hashtagCommandServiceImpl := &service2.HashtagCommandServiceImpl{
 		HashtagQueryRepository:   hashtagQueryRepositoryImpl,
 		HashtagCommandRepository: hashtagCommandRepositoryImpl,
 	}
-	wordpressServiceImpl := &service.WordpressServiceImpl{
+	wordpressServiceImpl := &service2.WordpressServiceImpl{
 		WordpressQueryRepository:     wordpressQueryRepositoryImpl,
 		UserQueryRepository:          userQueryRepositoryImpl,
 		AreaCategoryQueryRepository:  areaCategoryQueryRepositoryImpl,
@@ -112,7 +116,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		SpotCategoryQueryRepository:  spotCategoryQueryRepositoryImpl,
 		HashtagCommandService:        hashtagCommandServiceImpl,
 	}
-	areaCategoryCommandServiceImpl := &service.AreaCategoryCommandServiceImpl{
+	areaCategoryCommandServiceImpl := &service2.AreaCategoryCommandServiceImpl{
 		AreaCategoryCommandRepository: areaCategoryCommandRepositoryImpl,
 		AreaCategoryQueryRepository:   areaCategoryQueryRepositoryImpl,
 		WordpressQueryRepository:      wordpressQueryRepositoryImpl,
@@ -122,14 +126,14 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	themeCategoryCommandRepositoryImpl := &repository.ThemeCategoryCommandRepositoryImpl{
 		DAO: dao,
 	}
-	themeCategoryCommandServiceImpl := &service.ThemeCategoryCommandServiceImpl{
+	themeCategoryCommandServiceImpl := &service2.ThemeCategoryCommandServiceImpl{
 		ThemeCategoryCommandRepository: themeCategoryCommandRepositoryImpl,
 		ThemeCategoryQueryRepository:   themeCategoryQueryRepositoryImpl,
 		WordpressQueryRepository:       wordpressQueryRepositoryImpl,
 		WordpressService:               wordpressServiceImpl,
 		TransactionService:             transactionServiceImpl,
 	}
-	categoryCommandServiceImpl := &service.CategoryCommandServiceImpl{
+	categoryCommandServiceImpl := &service2.CategoryCommandServiceImpl{
 		AreaCategoryCommandService:  areaCategoryCommandServiceImpl,
 		ThemeCategoryCommandService: themeCategoryCommandServiceImpl,
 		WordpressQueryRepository:    wordpressQueryRepositoryImpl,
@@ -137,7 +141,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	comicCommandRepositoryImpl := &repository.ComicCommandRepositoryImpl{
 		DAO: dao,
 	}
-	comicCommandServiceImpl := &service.ComicCommandServiceImpl{
+	comicCommandServiceImpl := &service2.ComicCommandServiceImpl{
 		ComicCommandRepository:   comicCommandRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
@@ -146,7 +150,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	featureCommandRepositoryImpl := &repository.FeatureCommandRepositoryImpl{
 		DAO: dao,
 	}
-	featureCommandServiceImpl := &service.FeatureCommandServiceImpl{
+	featureCommandServiceImpl := &service2.FeatureCommandServiceImpl{
 		FeatureCommandRepository: featureCommandRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
@@ -155,7 +159,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	spotCategoryCommandRepositoryImpl := &repository.SpotCategoryCommandRepositoryImpl{
 		DAO: dao,
 	}
-	spotCategoryCommandServiceImpl := &service.SpotCategoryCommandServiceImpl{
+	spotCategoryCommandServiceImpl := &service2.SpotCategoryCommandServiceImpl{
 		SpotCategoryCommandRepository: spotCategoryCommandRepositoryImpl,
 		WordpressQueryRepository:      wordpressQueryRepositoryImpl,
 		WordpressService:              wordpressServiceImpl,
@@ -167,7 +171,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	cfProjectCommandRepositoryImpl := &repository.CfProjectCommandRepositoryImpl{
 		DAO: dao,
 	}
-	postCommandServiceImpl := &service.PostCommandServiceImpl{
+	postCommandServiceImpl := &service2.PostCommandServiceImpl{
 		PostCommandRepository:      postCommandRepositoryImpl,
 		HashtagCommandRepository:   hashtagCommandRepositoryImpl,
 		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
@@ -178,7 +182,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	touristSpotCommandRepositoryImpl := &repository.TouristSpotCommandRepositoryImpl{
 		DAO: dao,
 	}
-	touristSpotCommandServiceImpl := &service.TouristSpotCommandServiceImpl{
+	touristSpotCommandServiceImpl := &service2.TouristSpotCommandServiceImpl{
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
 		WordpressQueryRepository:     wordpressQueryRepositoryImpl,
 		WordpressService:             wordpressServiceImpl,
@@ -187,7 +191,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	vlogCommandRepositoryImpl := &repository.VlogCommandRepositoryImpl{
 		DAO: dao,
 	}
-	vlogCommandServiceImpl := &service.VlogCommandServiceImpl{
+	vlogCommandServiceImpl := &service2.VlogCommandServiceImpl{
 		VlogCommandRepository:    vlogCommandRepositoryImpl,
 		WordpressQueryRepository: wordpressQueryRepositoryImpl,
 		WordpressService:         wordpressServiceImpl,
@@ -207,7 +211,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	metasearchAreaQueryRepositoryImpl := &repository.MetasearchAreaQueryRepositoryImpl{
 		DB: db,
 	}
-	reviewQueryServiceImpl := &service.ReviewQueryServiceImpl{
+	reviewQueryServiceImpl := &service2.ReviewQueryServiceImpl{
 		ReviewQueryRepository:         reviewQueryRepositoryImpl,
 		InnQueryRepository:            innQueryRepositoryImpl,
 		MetasearchAreaQueryRepository: metasearchAreaQueryRepositoryImpl,
@@ -217,7 +221,7 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 		AWSSession: session,
 		AWSConfig:  aws,
 	}
-	reviewCommandServiceImpl := &service.ReviewCommandServiceImpl{
+	reviewCommandServiceImpl := &service2.ReviewCommandServiceImpl{
 		ReviewQueryRepository:        reviewQueryRepositoryImpl,
 		ReviewCommandRepository:      reviewCommandRepositoryImpl,
 		HashtagCommandRepository:     hashtagCommandRepositoryImpl,
@@ -259,4 +263,4 @@ var (
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.SpotCategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, service.ReviewQueryServiceSet, scenario.ReviewCommandScenarioSet, service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
+var serviceSet = wire.NewSet(service2.ProvideAuthService, service2.PostQueryServiceSet, service2.PostCommandServiceSet, service2.WordpressServiceSet, service2.UserCommandServiceSet, service2.CategoryCommandServiceSet, service2.AreaCategoryCommandServiceSet, service2.ThemeCategoryCommandServiceSet, service2.ComicCommandServiceSet, service2.FeatureCommandServiceSet, service2.SpotCategoryCommandServiceSet, service2.TouristSpotCommandServiceSet, service2.VlogCommandServiceSet, service2.HashtagCommandServiceSet, service2.ReviewCommandServiceSet, service2.ReviewQueryServiceSet, scenario.ReviewCommandScenarioSet, service.NoticeDomainServiceSet, service.TaggedUserDomainServiceSet, service.UserValidatorDomainServiceSet)

@@ -44,7 +44,7 @@ var _ = Describe("ChargeServiceImpl", func() {
 		cfProjectCmdRepo = tests.ChargeCommandServiceImpl.CfProjectCommandRepository
 	})
 
-	Describe("Capture", func() {
+	Describe("Create", func() {
 		BeforeEach(func() {
 			shippingQueryRepo.(*mock.MockShippingQueryRepository).EXPECT().FindLatestShippingAddressByUserID(gomock.Any(), userID).Return(newShippingAddress(), nil)
 		})
@@ -68,7 +68,7 @@ var _ = Describe("ChargeServiceImpl", func() {
 			})
 
 			It("エラーなし", func() {
-				_, err = cmdSvc.Capture(newUser(userID), newPaymentListCmd())
+				_, err = cmdSvc.Create(newUser(userID), newPaymentListCmd())
 				Expect(err).To(Succeed())
 			})
 		})
@@ -132,9 +132,9 @@ func newCfProjectSupportCmt() *entity.CfProjectSupportCommentTiny {
 	return cmt
 }
 
-func newPaymentListCmd() *command.PaymentList {
-	return &command.PaymentList{
-		List: []*command.Payment{{ReturnGiftID: cfReturnGiftID, ReturnGiftSnapshotID: cfReturnGiftSnapshotID, Amount: paymentCfReturnGiftAmount}},
-		Body: cfProjectSupportCommentBody,
+func newPaymentListCmd() *command.CreateCharge {
+	return &command.CreateCharge{
+		List:               []*command.Charge{{ReturnGiftID: cfReturnGiftID, ReturnGiftSnapshotID: cfReturnGiftSnapshotID, Amount: paymentCfReturnGiftAmount}},
+		SupportCommentBody: cfProjectSupportCommentBody,
 	}
 }

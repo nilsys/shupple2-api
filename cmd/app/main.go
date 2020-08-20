@@ -244,7 +244,8 @@ func setRoutes(app *App) {
 	{
 		payment := api.Group("/payments")
 		payment.GET("", auth.Require(app.PaymentQueryController.List))
-		payment.POST("/charge", auth.Require(app.ChargeCommandController.Capture))
+		payment.POST("/charge", auth.Require(app.ChargeCommandController.Create))
+		payment.POST("/charge/instant", app.ChargeCommandController.InstantCreate)
 		payment.PUT("/:id/charge/refund", auth.Require(app.ChargeCommandController.Refund))
 		payment.POST("/card", auth.Require(app.CardCommandController.Register))
 		payment.GET("/card", auth.Require(app.CardQueryController.ShowCard))

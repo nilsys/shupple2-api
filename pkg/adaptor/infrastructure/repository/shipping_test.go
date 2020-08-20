@@ -30,10 +30,10 @@ var _ = Describe("ShippingRepositoryTest", func() {
 	It("StoreShippingAddress: 引数のshippingAddressを作成or更新", func() {
 		test := func(before *entity.ShippingAddress, saved *entity.ShippingAddress) {
 			if before != nil {
-				Expect(commandRepo.StoreShippingAddress(before)).To(Succeed())
+				Expect(commandRepo.StoreShippingAddress(context.TODO(), before)).To(Succeed())
 			}
 
-			Expect(commandRepo.StoreShippingAddress(saved)).To(Succeed())
+			Expect(commandRepo.StoreShippingAddress(context.TODO(), saved)).To(Succeed())
 			actual, err := queryRepo.FindLatestShippingAddressByUserID(context.Background(), saved.UserID)
 			Expect(err).To(Succeed())
 

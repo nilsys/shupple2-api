@@ -27,20 +27,27 @@ import (
 
 type (
 	ChargeCommandService interface {
-		Capture(user *entity.User, cmd *command.PaymentList) (*entity.CaptureResult, error)
+		Create(user *entity.User, cmd *command.CreateCharge) (*entity.CaptureResult, error)
+		InstantCreate(user *entity.User, cmd *command.CreateCharge, cardToken string, address *entity.ShippingAddress) (*entity.CaptureResult, error)
 		Refund(user *entity.User, paymentID, cfReturnGiftID int) error
 	}
 
 	ChargeCommandServiceImpl struct {
 		repository.PaymentCommandRepository
 		repository.PaymentQueryRepository
+		PayjpCardCommandRepository payjp.CardCommandRepository
 		repository.CardQueryRepository
+		repository.CardCommandRepository
 		repository.CfProjectQueryRepository
 		payjp.ChargeCommandRepository
 		repository.CfReturnGiftQueryRepository
 		repository.UserQueryRepository
+		repository.UserCommandRepository
+		payjp.CustomerQueryRepository
+		payjp.CustomerCommandRepository
 		repository.CfReturnGiftCommandRepository
 		repository.ShippingQueryRepository
+		repository.ShippingCommandRepository
 		repository.CfProjectCommandRepository
 		repository.MailCommandRepository
 		repository.UserSalesHistoryCommandRepository
@@ -57,7 +64,7 @@ var ChargeCommandServiceSet = wire.NewSet(
 
 // 決済確定
 // 登録されている最新のカードで決済が行われる
-func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.PaymentList) (*entity.CaptureResult, error) {
+func (s *ChargeCommandServiceImpl) Create(user *entity.User, cmd *command.CreateCharge) (*entity.CaptureResult, error) {
 	resolve := &entity.CaptureResult{}
 
 	err := s.TransactionService.Do(func(c context.Context) error {
@@ -66,137 +73,66 @@ func (s *ChargeCommandServiceImpl) Capture(user *entity.User, cmd *command.Payme
 			return errors.Wrap(err, "failed find latest")
 		}
 
-		gifts, err := s.CfReturnGiftCommandRepository.LockByIDs(c, cmd.ReturnIDs())
-		if err != nil {
-			return errors.Wrap(err, "failed lock return_gift")
-		}
-
-		projectID, isUnique := gifts.UniqueCfProjectID()
-		// 複数のprojectのギフトを同時購入しようとした時
-		if !isUnique {
-			return serror.New(nil, serror.CodeInvalidParam, "need gift's project is unique")
-		}
-
-		project, err := s.CfProjectCommandRepository.Lock(c, projectID)
-		if err != nil {
-			return errors.Wrap(err, "failed lock cf_project")
-		}
-
-		projectOwner, err := s.UserQueryRepository.FindByID(project.UserID)
-		if err != nil {
-			return errors.Wrap(err, "failed to get project owner")
-		}
-
-		soldCountList, err := s.CfReturnGiftQueryRepository.FindSoldCountByReturnGiftIDs(c, cmd.ReturnIDs())
-		if err != nil {
-			return errors.Wrap(err, "failed find sold_count list")
-		}
-
-		giftIDMap := gifts.ToIDMap()
-
-		paymentReturnGifts := make([]*entity.PaymentCfReturnGiftTiny, len(cmd.List))
-		idInquiryCodeMap := make(map[int]string, len(cmd.List))
-		var price int
-
-		for i, payment := range cmd.List {
-			// 商品情報が更新されている時
-			if int64(payment.ReturnGiftSnapshotID) != giftIDMap[payment.ReturnGiftID].LatestSnapshotID.Int64 {
-				return serror.New(nil, serror.CodeInvalidParam, "return_gift updated")
-			}
-
-			// 残り在庫数確認
-			if giftIDMap[payment.ReturnGiftID].Snapshot.FullAmount < soldCountList.GetSoldCount(payment.ReturnGiftID)+payment.Amount {
-				// 在庫が確保できなかった場合
-				return serror.New(nil, serror.CodeInvalidParam, "failed stock acquisition")
-			}
-
-			// 金額x数量
-			price += giftIDMap[payment.ReturnGiftID].Snapshot.Price * payment.Amount
-			gift := giftIDMap[payment.ReturnGiftID]
-
-			// お問い合わせ番号生成
-			inquiryCode, err := s.InquiryCodeGenerator.Gen()
-			if err != nil {
-				return errors.Wrap(err, "failed random str")
-			}
-
-			idInquiryCodeMap[gift.ID] = inquiryCode
-
-			if gift.CfReturnGiftTiny.GiftType == model.CfReturnGiftTypeReservedTicket {
-				paymentReturnGifts[i] = entity.NewPaymentReturnGiftForReservedTicket(payment.ReturnGiftID, int(gift.LatestSnapshotID.Int64), gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount, inquiryCode)
-				continue
-			}
-			paymentReturnGifts[i] = entity.NewPaymentReturnGiftForOther(payment.ReturnGiftID, int(gift.LatestSnapshotID.Int64), gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount, inquiryCode)
-		}
-
 		// 最新のカードidを取得
 		card, err := s.CardQueryRepository.FindLatestByUserID(c, user.ID)
 		if err != nil {
 			return errors.Wrap(err, "failed find latest credit_card")
 		}
 
-		// 手数料込の金額
-		includeCommissionPrice := price + s.CfProjectConfig.SystemFee
-
-		// 支払いを作成
-		charge, err := s.ChargeCommandRepository.Create(user.PayjpCustomerID(), card.CardID, includeCommissionPrice)
+		resolve, err = s.create(c, cmd, card, address, user)
 		if err != nil {
-			return errors.Wrap(err, "failed create pay")
+			return errors.Wrap(err, "failed")
 		}
 
-		// 金額の確保等、認証に失敗した場合
-		if !charge.Paid {
-			return serror.New(nil, serror.CodePayAgentError, "credit card authorization error")
+		return nil
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed resolveCapturePrice charge")
+	}
+
+	return resolve, nil
+}
+
+// カードトークンで決済
+// 登録されてないUser(ワンタイムユーザー)で使われる
+func (s *ChargeCommandServiceImpl) InstantCreate(user *entity.User, cmd *command.CreateCharge, cardToken string, address *entity.ShippingAddress) (*entity.CaptureResult, error) {
+	resolve := &entity.CaptureResult{}
+
+	err := s.TransactionService.Do(func(c context.Context) error {
+		if err := s.UserCommandRepository.Store(c, user); err != nil {
+			return errors.Wrap(err, "failed store user")
 		}
 
-		// 支払い情報を保存
-		payment := entity.NewPaymentTiny(user.ID, project.UserID, card.ID, address.ID, charge.ID, price, s.CfProjectConfig.SystemFee, cmd.Remark)
-		if err := s.PaymentCommandRepository.Store(c, payment); err != nil {
-			return errors.Wrap(err, "failed store payment")
-		}
-		if err := s.PaymentCommandRepository.StorePaymentReturnGiftList(c, paymentReturnGifts, payment.ID); err != nil {
-			return errors.Wrap(err, "failed store payment_return_gift")
-		}
-
-		// 応援コメントを保存
-		comment := entity.NewCfProjectSupportTiny(user.ID, project.ID, cmd.Body)
-		if err := s.CfProjectCommandRepository.StoreSupportComment(c, comment); err != nil {
-			return errors.Wrap(err, "failed store support_comment")
-		}
-		if err := s.CfProjectCommandRepository.IncrementSupportCommentCount(c, project.ID); err != nil {
-			return errors.Wrap(err, "failed increment support_comment_count")
-		}
-
-		// projectの達成金額に加算
-		if err := s.CfProjectCommandRepository.IncrementAchievedPrice(c, project.ID, price); err != nil {
-			return errors.Wrap(err, "failed increment project_snapshot.achieved_price")
-		}
-
-		// 購入したCfReturnGiftが全て宿泊券の場合、オーナー側が入金申請可能となる(売り上げに変動が起きる)為、履歴を残す
-		if gifts.IsAllCfReturnGiftTypeEqualArg(model.CfReturnGiftTypeReservedTicket) {
-			history := entity.NewUserSalesHistoryTiny(projectOwner.ID, null.IntFrom(int64(payment.ID)), null.Int{},
-				model.UserSalesReasonTypeAvailable, payment.TotalPrice,
-			)
-			if err := s.UserSalesHistoryCommandRepository.Store(c, history); err != nil {
-				return errors.Wrap(err, "failed store user_sales_history")
+		_, err := s.CustomerQueryRepository.FindCustomer(user.PayjpCustomerID())
+		if err != nil {
+			if !serror.IsErrorCode(err, serror.CodeNotFound) {
+				return errors.Wrap(err, "failed find customer")
+			}
+			if err := s.CustomerCommandRepository.StoreCustomer(user.PayjpCustomerID(), user.Email); err != nil {
+				return errors.Wrap(err, "failed store customer")
 			}
 		}
 
-		// 決済確定
-		if err := s.ChargeCommandRepository.Capture(charge.ID); err != nil {
-			return errors.Wrap(err, "failed capture charge")
+		address.UserID = user.ID
+
+		if err := s.ShippingCommandRepository.StoreShippingAddress(c, address); err != nil {
+			return errors.Wrap(err, "failed store shipping_address")
 		}
 
-		// 決済確定メール送信
-		template := entity.NewThanksPurchaseTemplate(projectOwner.Name, gifts.TitlesOnEmail(idInquiryCodeMap), charge.ID, util.WithComma(s.CfProjectConfig.SystemFee), util.WithComma(includeCommissionPrice), address.Email, address.FullAddress(), address.PhoneNumber, user.Name)
-		if err := s.MailCommandRepository.SendTemplateMail([]string{address.Email}, template); err != nil {
-			return errors.Wrap(err, "failed send email from ses")
+		payjpCard, err := s.PayjpCardCommandRepository.Register(user.PayjpCustomerID(), cardToken)
+		if err != nil {
+			return errors.Wrap(err, "failed register card")
 		}
 
-		// TODO: 楽観的？
-		resolve.CfProjectID = project.ID
-		resolve.SupporterCount = project.SupportCommentCount + 1
-		resolve.AchievedPrice = project.AchievedPrice + price
+		card := entity.NewCard(user.ID, payjpCard.ID, payjpCard.Last4, model.CardExpiredFromMonthAndYear(payjpCard.ExpMonth, payjpCard.ExpYear))
+		if err := s.CardCommandRepository.Store(c, card); err != nil {
+			return errors.Wrap(err, "failed store card")
+		}
+
+		resolve, err = s.create(c, cmd, card, address, user)
+		if err != nil {
+			return errors.Wrap(err, "failed capture")
+		}
 
 		return nil
 	})
@@ -251,4 +187,139 @@ func (s *ChargeCommandServiceImpl) Refund(user *entity.User, paymentID, cfReturn
 
 		return nil
 	})
+}
+
+func (s *ChargeCommandServiceImpl) create(c context.Context, cmd *command.CreateCharge, card *entity.Card, address *entity.ShippingAddress, user *entity.User) (*entity.CaptureResult, error) {
+	gifts, err := s.CfReturnGiftCommandRepository.LockByIDs(c, cmd.ReturnIDs())
+	if err != nil {
+		return nil, errors.Wrap(err, "failed lock return_gift")
+	}
+
+	projectID, isUnique := gifts.UniqueCfProjectID()
+	// 複数のprojectのギフトを同時購入しようとした時
+	if !isUnique {
+		return nil, serror.New(nil, serror.CodeInvalidParam, "need gift's project is unique")
+	}
+
+	project, err := s.CfProjectCommandRepository.Lock(c, projectID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed lock cf_project")
+	}
+
+	projectOwner, err := s.UserQueryRepository.FindByID(project.UserID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed find project owner")
+	}
+	soldCountList, err := s.CfReturnGiftQueryRepository.FindSoldCountByReturnGiftIDs(c, cmd.ReturnIDs())
+
+	if err != nil {
+		return nil, errors.Wrap(err, "failed find sold_count list")
+	}
+
+	giftIDMap := gifts.ToIDMap()
+
+	paymentCfReturnGifts := make([]*entity.PaymentCfReturnGiftTiny, len(cmd.List))
+	idInquiryCodeMap := make(map[int]string, len(cmd.List))
+	var price int
+
+	for i, payment := range cmd.List {
+		// 商品情報が更新されている時
+		if int64(payment.ReturnGiftSnapshotID) != giftIDMap[payment.ReturnGiftID].LatestSnapshotID.Int64 {
+			return nil, serror.New(nil, serror.CodeInvalidParam, "return_gift updated")
+		}
+
+		// 残り在庫数確認
+		if giftIDMap[payment.ReturnGiftID].Snapshot.FullAmount < soldCountList.GetSoldCount(payment.ReturnGiftID)+payment.Amount {
+			// 在庫が確保できなかった場合
+			return nil, serror.New(nil, serror.CodeInvalidParam, "failed stock acquisition")
+		}
+
+		// 金額x数量
+		price += giftIDMap[payment.ReturnGiftID].Snapshot.Price * payment.Amount
+		gift := giftIDMap[payment.ReturnGiftID]
+
+		// お問い合わせ番号生成
+		inquiryCode, err := s.InquiryCodeGenerator.Gen()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed random str")
+		}
+
+		idInquiryCodeMap[gift.ID] = inquiryCode
+
+		if gift.CfReturnGiftTiny.GiftType == model.CfReturnGiftTypeReservedTicket {
+			paymentCfReturnGifts[i] = entity.NewPaymentReturnGiftForReservedTicket(payment.ReturnGiftID, int(gift.LatestSnapshotID.Int64), gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount, inquiryCode)
+			continue
+		}
+		paymentCfReturnGifts[i] = entity.NewPaymentReturnGiftForOther(payment.ReturnGiftID, int(gift.LatestSnapshotID.Int64), gift.CfProjectID, int(project.LatestSnapshotID.Int64), payment.Amount, inquiryCode)
+	}
+
+	// 手数料込の金額
+	includeCommissionPrice := price + s.CfProjectConfig.SystemFee
+
+	// 支払いを作成
+	charge, err := s.ChargeCommandRepository.Create(user.PayjpCustomerID(), card.CardID, includeCommissionPrice)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed resolveCapturePrice charge")
+	}
+	// 金額の確保等、認証に失敗した場合
+	if !charge.Paid {
+		return nil, serror.New(nil, serror.CodePayAgentError, "card authorization error")
+	}
+
+	// 支払い情報を保存
+	payment := entity.NewPaymentTiny(user.ID, project.UserID, card.ID, address.ID, charge.ID, price, s.CfProjectConfig.SystemFee, cmd.Remark)
+	if err := s.PaymentCommandRepository.Store(c, payment); err != nil {
+		return nil, errors.Wrap(err, "failed store payment")
+	}
+	if err := s.PaymentCommandRepository.StorePaymentReturnGiftList(c, paymentCfReturnGifts, payment.ID); err != nil {
+		return nil, errors.Wrap(err, "failed store payment_return_gift")
+	}
+
+	// 応援コメントを保存
+	comment := entity.NewCfProjectSupportTiny(user.ID, project.ID, cmd.SupportCommentBody)
+	if err := s.CfProjectCommandRepository.StoreSupportComment(c, comment); err != nil {
+		return nil, errors.Wrap(err, "failed store support_comment")
+	}
+
+	if err := s.CfProjectCommandRepository.IncrementSupportCommentCount(c, project.ID); err != nil {
+		return nil, errors.Wrap(err, "failed increment support_commment_count")
+	}
+
+	// projectの達成金額に加算
+	if err := s.CfProjectCommandRepository.IncrementAchievedPrice(c, project.ID, price); err != nil {
+		return nil, errors.Wrap(err, "failed increment project_snapshot.achieved_price")
+	}
+
+	// 購入したCfReturnGiftが全て宿泊券の場合、オーナー側が入金申請可能となる(売り上げに変動が起きる)為、履歴を残す
+	if gifts.IsAllCfReturnGiftTypeEqualArg(model.CfReturnGiftTypeReservedTicket) {
+		history := entity.NewUserSalesHistoryTiny(projectOwner.ID, null.IntFrom(int64(payment.ID)), null.Int{},
+			model.UserSalesReasonTypeAvailable, payment.TotalPrice,
+		)
+		if err := s.UserSalesHistoryCommandRepository.Store(c, history); err != nil {
+			return nil, errors.Wrap(err, "failed store user_sales_history")
+		}
+	}
+
+	// 決済確定
+	if err := s.ChargeCommandRepository.Capture(charge.ID); err != nil {
+		return nil, errors.Wrap(err, "failed resolveCapturePrice charge")
+	}
+
+	// 決済確定メール送信
+	var emailTemplate entity.MailTemplate
+	if user.IsNonLogin {
+		emailTemplate = entity.NewThanksPurchaseForNonLoginUserTemplate(projectOwner.Name, gifts.TitlesOnEmail(idInquiryCodeMap), charge.ID, util.WithComma(s.CfProjectConfig.SystemFee), util.WithComma(includeCommissionPrice), address.Email, address.FullAddress(), address.PhoneNumber, address.FullName(), user.LoginWithMigrationCodeURL())
+	} else {
+		emailTemplate = entity.NewThanksPurchaseTemplate(projectOwner.Name, gifts.TitlesOnEmail(idInquiryCodeMap), charge.ID, util.WithComma(s.CfProjectConfig.SystemFee), util.WithComma(includeCommissionPrice), address.Email, address.FullAddress(), address.PhoneNumber, address.FullName())
+	}
+	if err := s.MailCommandRepository.SendTemplateMail([]string{address.Email}, emailTemplate); err != nil {
+		return nil, errors.Wrap(err, "failed send email from ses")
+	}
+
+	resolve := &entity.CaptureResult{}
+	resolve.CfProjectID = project.ID
+	resolve.SupporterCount = project.SupportCommentCount + 1
+	resolve.AchievedPrice = project.AchievedPrice + price
+
+	return resolve, nil
 }

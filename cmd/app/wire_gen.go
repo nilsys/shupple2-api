@@ -192,7 +192,27 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		CardQueryService: cardQueryServiceImpl,
 		Converters:       converters,
 	}
+	cardCommandRepositoryImpl := &payjp.CardCommandRepositoryImpl{
+		PayjpClient: payjpService,
+	}
+	repositoryCardCommandRepositoryImpl := &repository.CardCommandRepositoryImpl{
+		DAO:         dao,
+		PayjpClient: payjpService,
+	}
 	chargeCommandRepositoryImpl := &payjp.ChargeCommandRepositoryImpl{
+		PayjpClient: payjpService,
+	}
+	uploader := repository.ProvideS3Uploader(session)
+	userCommandRepositoryImpl := &repository.UserCommandRepositoryImpl{
+		DAO:           dao,
+		MediaUploader: uploader,
+		AWSConfig:     aws,
+		AWSSession:    session,
+	}
+	customerQueryRepositoryImpl := &payjp.CustomerQueryRepositoryImpl{
+		PayjpClient: payjpService,
+	}
+	customerCommandRepositoryImpl := &payjp.CustomerCommandRepositoryImpl{
 		PayjpClient: payjpService,
 	}
 	cfReturnGiftCommandRepositoryImpl := &repository.CfReturnGiftCommandRepositoryImpl{
@@ -206,13 +226,19 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	chargeCommandServiceImpl := &service.ChargeCommandServiceImpl{
 		PaymentCommandRepository:          paymentCommandRepositoryImpl,
 		PaymentQueryRepository:            paymentQueryRepositoryImpl,
+		PayjpCardCommandRepository:        cardCommandRepositoryImpl,
 		CardQueryRepository:               cardQueryRepositoryImpl,
+		CardCommandRepository:             repositoryCardCommandRepositoryImpl,
 		CfProjectQueryRepository:          cfProjectQueryRepositoryImpl,
 		ChargeCommandRepository:           chargeCommandRepositoryImpl,
 		CfReturnGiftQueryRepository:       cfReturnGiftQueryRepositoryImpl,
 		UserQueryRepository:               userQueryRepositoryImpl,
+		UserCommandRepository:             userCommandRepositoryImpl,
+		CustomerQueryRepository:           customerQueryRepositoryImpl,
+		CustomerCommandRepository:         customerCommandRepositoryImpl,
 		CfReturnGiftCommandRepository:     cfReturnGiftCommandRepositoryImpl,
 		ShippingQueryRepository:           shippingQueryRepositoryImpl,
+		ShippingCommandRepository:         shippingCommandRepositoryImpl,
 		CfProjectCommandRepository:        cfProjectCommandRepositoryImpl,
 		MailCommandRepository:             mailCommandRepository,
 		UserSalesHistoryCommandRepository: userSalesHistoryCommandRepositoryImpl,
@@ -220,21 +246,51 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		TransactionService:                transactionServiceImpl,
 		CfProjectConfig:                   cfProject,
 	}
+	userValidatorDomainServiceImpl := &service2.UserValidatorDomainServiceImpl{
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
+	noticeCommandRepositoryImpl := &repository.NoticeCommandRepositoryImpl{
+		DAO: dao,
+	}
+	taggedUserDomainServiceImpl := service2.TaggedUserDomainServiceImpl{
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
+	noticeDomainServiceImpl := &service2.NoticeDomainServiceImpl{
+		NoticeCommandRepository: noticeCommandRepositoryImpl,
+		TaggedUserDomainService: taggedUserDomainServiceImpl,
+	}
+	userCommandServiceImpl := &service.UserCommandServiceImpl{
+		UserCommandRepository:      userCommandRepositoryImpl,
+		UserQueryRepository:        userQueryRepositoryImpl,
+		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
+		UserValidatorDomainService: userValidatorDomainServiceImpl,
+		CustomerCommandRepository:  customerCommandRepositoryImpl,
+		CustomerQueryRepository:    customerQueryRepositoryImpl,
+		AuthService:                authService,
+		NoticeDomainService:        noticeDomainServiceImpl,
+		TransactionService:         transactionServiceImpl,
+	}
+	chargeCommandScenarioImpl := &scenario.ChargeCommandScenarioImpl{
+		ChargeCommandService:       chargeCommandServiceImpl,
+		CardCommandRepository:      repositoryCardCommandRepositoryImpl,
+		UserCommandRepository:      userCommandRepositoryImpl,
+		ShippingCommandRepository:  shippingCommandRepositoryImpl,
+		UserCommandService:         userCommandServiceImpl,
+		PayjpCardCommandRepository: cardCommandRepositoryImpl,
+		CustomerQueryRepository:    customerQueryRepositoryImpl,
+		CustomerCommandRepository:  customerCommandRepositoryImpl,
+		UserValidatorDomainService: userValidatorDomainServiceImpl,
+		TransactionService:         transactionServiceImpl,
+	}
 	chargeCommandController := api.ChargeCommandController{
-		ChargeCommandService: chargeCommandServiceImpl,
-		Converters:           converters,
-	}
-	cardCommandRepositoryImpl := &repository.CardCommandRepositoryImpl{
-		DAO:         dao,
-		PayjpClient: payjpService,
-	}
-	payjpCardCommandRepositoryImpl := &payjp.CardCommandRepositoryImpl{
-		PayjpClient: payjpService,
+		ChargeCommandScenario: chargeCommandScenarioImpl,
+		ChargeCommandService:  chargeCommandServiceImpl,
+		Converters:            converters,
 	}
 	cardCommandServiceImpl := &service.CardCommandServiceImpl{
-		CardCommandRepository:      cardCommandRepositoryImpl,
+		CardCommandRepository:      repositoryCardCommandRepositoryImpl,
 		CardQueryRepository:        cardQueryRepositoryImpl,
-		PayjpCardCommandRepository: payjpCardCommandRepositoryImpl,
+		PayjpCardCommandRepository: cardCommandRepositoryImpl,
 		TransactionService:         transactionServiceImpl,
 	}
 	cardCommandController := api.CardCommandController{
@@ -275,16 +331,6 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	}
 	postCommandRepositoryImpl := &repository.PostCommandRepositoryImpl{
 		DAO: dao,
-	}
-	noticeCommandRepositoryImpl := &repository.NoticeCommandRepositoryImpl{
-		DAO: dao,
-	}
-	taggedUserDomainServiceImpl := service2.TaggedUserDomainServiceImpl{
-		UserQueryRepository: userQueryRepositoryImpl,
-	}
-	noticeDomainServiceImpl := &service2.NoticeDomainServiceImpl{
-		NoticeCommandRepository: noticeCommandRepositoryImpl,
-		TaggedUserDomainService: taggedUserDomainServiceImpl,
 	}
 	postFavoriteCommandServiceImpl := &service.PostFavoriteCommandServiceImpl{
 		PostFavoriteCommandRepository: postFavoriteCommandRepositoryImpl,
@@ -471,29 +517,6 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	userQueryController := api.UserQueryController{
 		Converters:       converters,
 		UserQueryService: userQueryServiceImpl,
-	}
-	uploader := repository.ProvideS3Uploader(session)
-	userCommandRepositoryImpl := &repository.UserCommandRepositoryImpl{
-		DAO:           dao,
-		MediaUploader: uploader,
-		AWSConfig:     aws,
-		AWSSession:    session,
-	}
-	customerCommandRepositoryImpl := &payjp.CustomerCommandRepositoryImpl{
-		PayjpClient: payjpService,
-	}
-	customerQueryRepositoryImpl := &payjp.CustomerQueryRepositoryImpl{
-		PayjpClient: payjpService,
-	}
-	userCommandServiceImpl := &service.UserCommandServiceImpl{
-		UserCommandRepository:     userCommandRepositoryImpl,
-		UserQueryRepository:       userQueryRepositoryImpl,
-		WordpressQueryRepository:  wordpressQueryRepositoryImpl,
-		CustomerCommandRepository: customerCommandRepositoryImpl,
-		CustomerQueryRepository:   customerQueryRepositoryImpl,
-		AuthService:               authService,
-		NoticeDomainService:       noticeDomainServiceImpl,
-		TransactionService:        transactionServiceImpl,
 	}
 	userCommandController := api.UserCommandController{
 		Converters:         converters,
@@ -798,9 +821,9 @@ var (
 
 var controllerSet = wire.NewSet(converter.ConvertersSet, api.ShippingQueryControllerSet, api.ShippingCommandControllerSet, api.ChargeCommandControllerSet, api.CardQueryControllerSet, api.CardCommandControllerSet, api.PostQueryControllerSet, api.PostFavoriteCommandControllerSet, api.CfProjectQueryControllerSet, api.CfReturnGiftQueryControllerSet, api.CategoryQueryControllerSet, api.CfProjectCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.RSSControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.ThemeQueryControllerSet, api.WordpressCallbackControllerSet, api.SitemapControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet, api.AreaQueryControllerSet, api.InnQueryControllerSet, api.NoticeQueryControllerSet, api.PaymentQueryControllerSet, api.CfReserveRequestCommandControllerSet, api.ReportCommandControllerSet, api.ComicFavoriteCommandControllerSet, api.VlogFavoriteCommandControllerSet)
 
-var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.ReviewQueryScenarioSet, scenario.PostQueryScenarioSet, scenario.FeatureQueryScenarioSet, scenario.VlogQueryScenarioSet, scenario.TouristSpotQueryScenarioSet, scenario.CfProjectQueryScenarioSet, scenario.ComicQueryScenarioSet)
+var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.ReviewQueryScenarioSet, scenario.PostQueryScenarioSet, scenario.FeatureQueryScenarioSet, scenario.VlogQueryScenarioSet, scenario.TouristSpotQueryScenarioSet, scenario.CfProjectQueryScenarioSet, scenario.ComicQueryScenarioSet, scenario.ChargeCommandScenarioSet)
 
-var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet)
+var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet, service2.UserValidatorDomainServiceSet)
 
 var serviceSet = wire.NewSet(service.ShippingQueryServiceSet, service.ShippingCommandServiceSet, service.CfProjectCommandServiceSet, service.CfProjectQueryServiceSet, service.ChargeCommandServiceSet, service.CardCommandServiceSet, service.CardQueryServiceSet, service.PaymentQueryServiceSet, service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.CfReturnGiftQueryServiceSet, service.CfReturnGiftCommandServiceSet, service.CfInnReserveRequestCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryQueryServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.RssServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.SpotCategoryCommandServiceSet, service.SitemapServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet, service.NoticeQueryServiceSet, service.ReportCommandServiceSet, service.ComicFavoriteCommandServiceSet, service.VlogFavoriteCommandServiceSet, helper.InquiryCodeGeneratorSet)
 

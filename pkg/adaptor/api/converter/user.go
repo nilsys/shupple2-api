@@ -202,6 +202,9 @@ func (c Converters) NewCreatorFromUser(user *entity.User, isFollow bool) output.
 }
 
 func (c Converters) NewUserSummaryFromUser(user *entity.User) *output.UserSummary {
+	if user == nil {
+		return nil
+	}
 	return output.NewUserSummary(user.ID, user.UID, user.Name, user.AvatarURL(c.filesURL()))
 }
 

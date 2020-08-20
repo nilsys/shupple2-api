@@ -1,6 +1,8 @@
 package entity
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type (
 	ShippingAddress struct {
@@ -40,4 +42,8 @@ func NewShippingAddress(userID int, firstName, lastName, firstNameKana, lastName
 
 func (s *ShippingAddress) FullAddress() string {
 	return fmt.Sprintf("〒%s %s%s%s%s", s.PostalNumber, s.Prefecture, s.City, s.Address, s.Building)
+}
+
+func (s *ShippingAddress) FullName() string {
+	return fmt.Sprintf("%s %s", s.LastName, s.FirstName)
 }

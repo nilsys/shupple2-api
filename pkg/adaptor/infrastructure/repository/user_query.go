@@ -63,7 +63,8 @@ func (r *UserQueryRepositoryImpl) FindByWordpressID(wordpressUserID int) (*entit
 
 func (r *UserQueryRepositoryImpl) FindByMigrationCode(code string) (*entity.UserTiny, error) {
 	var row entity.UserTiny
-	if err := r.DB.Where("migration_code = ?", code).First(&row).Error; err != nil {
+	// deleted_atのuserも対象
+	if err := r.DB.Unscoped().Where("migration_code = ?", code).First(&row).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "user(migration_code=%s)", code)
 	}
 	return &row, nil

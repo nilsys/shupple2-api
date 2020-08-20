@@ -49,18 +49,33 @@ func (mr *MockChargeCommandRepositoryMockRecorder) Create(customerID, cardID, am
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockChargeCommandRepository)(nil).Create), customerID, cardID, amount)
 }
 
-// Capture mocks base method
+// Create mocks base method
 func (m *MockChargeCommandRepository) Capture(chargeID string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Capture", chargeID)
+	ret := m.ctrl.Call(m, "Create", chargeID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Capture indicates an expected call of Capture
+// Create indicates an expected call of Create
 func (mr *MockChargeCommandRepositoryMockRecorder) Capture(chargeID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Capture", reflect.TypeOf((*MockChargeCommandRepository)(nil).Capture), chargeID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockChargeCommandRepository)(nil).Capture), chargeID)
+}
+
+// CreateByCardToken mocks base method
+func (m *MockChargeCommandRepository) CreateByCardToken(cardToken string, amount int) (*payjp.ChargeResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateByCardToken", cardToken, amount)
+	ret0, _ := ret[0].(*payjp.ChargeResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateByCardToken indicates an expected call of CreateByCardToken
+func (mr *MockChargeCommandRepositoryMockRecorder) InstantCreate(cardToken, amount interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateByCardToken", reflect.TypeOf((*MockChargeCommandRepository)(nil).CreateByCardToken), cardToken, amount)
 }
 
 // Refund mocks base method

@@ -18,8 +18,8 @@ var ShippingCommandRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.ShippingCommandRepository), new(*ShippingCommandRepositoryImpl)),
 )
 
-func (r *ShippingCommandRepositoryImpl) StoreShippingAddress(address *entity.ShippingAddress) error {
-	if err := r.DB(context.Background()).Save(address).Error; err != nil {
+func (r *ShippingCommandRepositoryImpl) StoreShippingAddress(ctx context.Context, address *entity.ShippingAddress) error {
+	if err := r.DB(ctx).Save(address).Error; err != nil {
 		return errors.Wrap(err, "failed store address")
 	}
 	return nil

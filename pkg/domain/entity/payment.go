@@ -5,8 +5,6 @@ import (
 
 	"gopkg.in/guregu/null.v3"
 
-	"github.com/stayway-corp/stayway-media-api/pkg/util"
-
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 )
 
@@ -101,14 +99,6 @@ func (p *PaymentCfReturnGiftTiny) ResolveGiftTypeReservedTicketStatus() model.Pa
 	return model.PaymentCfReturnGiftReservedTicketTypeStatus(int(p.GiftTypeReservedTicketStatus.Int64))
 }
 
-func (p *PaymentList) CardIDs() []string {
-	ids := make([]string, len(p.List))
-	for i, tiny := range p.List {
-		ids[i] = tiny.Card.CardID
-	}
-	return util.RemoveDuplicatesFromStringSlice(ids)
-}
-
 // PaymentIDが先に取得できない為、後でいれる想定
 func NewPaymentReturnGiftForOther(giftID, giftSnapshotID, projectID, projectSnapshotID, amount int, inquiryCode string) *PaymentCfReturnGiftTiny {
 	return &PaymentCfReturnGiftTiny{
@@ -151,7 +141,7 @@ func (p *PaymentCfReturnGift) CanCancel() bool {
 		return false
 	}
 
-	// 入金申請が行われた場合
+	// 発送が行われた場合
 	if p.OwnerConfirmedAt != nil {
 		return false
 	}

@@ -69,11 +69,13 @@ var scenarioSet = wire.NewSet(
 	scenario.TouristSpotQueryScenarioSet,
 	scenario.CfProjectQueryScenarioSet,
 	scenario.ComicQueryScenarioSet,
+	scenario.ChargeCommandScenarioSet,
 )
 
 var domainServiceSet = wire.NewSet(
 	domain_service.NoticeDomainServiceSet,
 	domain_service.TaggedUserDomainServiceSet,
+	domain_service.UserValidatorDomainServiceSet,
 )
 
 var serviceSet = wire.NewSet(

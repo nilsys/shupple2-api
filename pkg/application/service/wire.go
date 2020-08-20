@@ -10,6 +10,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository/payjp"
 	"github.com/stayway-corp/stayway-media-api/pkg/mock"
+	payjp2 "github.com/stayway-corp/stayway-media-api/pkg/mock/payjp"
 )
 
 type Test struct {
@@ -33,12 +34,18 @@ func InitializeTest(filePath config.FilePath) (*Test, error) {
 		ProvideChargeCmdRepo,
 		ProvideCfReturnGiftQueryRepo,
 		ProvideUserQueryRepo,
+		ProvideUserCmdRepo,
 		ProvideCfReturnGiftCmdRepo,
 		ProvideShippingQueryRepo,
 		ProvideCfProjectCmdRepo,
 		ProvideUserSalesHistoryRepo,
 		ProvideCfInnReserveRequestCmdRepo,
 		ProvideCfInnReserveRequestQueryRepo,
+		ProvidePayjpCardCmdRepo,
+		ProvideCustomerQueryRepo,
+		ProvideCustomerCmdRepo,
+		ProvideCardCmdRepo,
+		ProvideShippingCmdRepo,
 		ServiceTestSet,
 	)
 
@@ -85,6 +92,10 @@ func ProvideUserQueryRepo(ctrl *gomock.Controller) repository.UserQueryRepositor
 	return mock.NewMockUserQueryRepository(ctrl)
 }
 
+func ProvideUserCmdRepo(ctrl *gomock.Controller) repository.UserCommandRepository {
+	return mock.NewMockUserCommandRepository(ctrl)
+}
+
 func ProvideCfReturnGiftCmdRepo(ctrl *gomock.Controller) repository.CfReturnGiftCommandRepository {
 	return mock.NewMockCfReturnGiftCommandRepository(ctrl)
 }
@@ -107,4 +118,24 @@ func ProvideCfInnReserveRequestCmdRepo(ctrl *gomock.Controller) repository.CfInn
 
 func ProvideCfInnReserveRequestQueryRepo(ctrl *gomock.Controller) repository.CfInnReserveRequestQueryRepository {
 	return mock.NewMockCfInnReserveRequestQueryRepository(ctrl)
+}
+
+func ProvidePayjpCardCmdRepo(ctrl *gomock.Controller) payjp.CardCommandRepository {
+	return payjp2.NewMockCardCommandRepository(ctrl)
+}
+
+func ProvideCardCmdRepo(ctrl *gomock.Controller) repository.CardCommandRepository {
+	return mock.NewMockCardCommandRepository(ctrl)
+}
+
+func ProvideCustomerQueryRepo(ctrl *gomock.Controller) payjp.CustomerQueryRepository {
+	return payjp2.NewMockCustomerQueryRepository(ctrl)
+}
+
+func ProvideCustomerCmdRepo(ctrl *gomock.Controller) payjp.CustomerCommandRepository {
+	return payjp2.NewMockCustomerCommandRepository(ctrl)
+}
+
+func ProvideShippingCmdRepo(ctrl *gomock.Controller) repository.ShippingCommandRepository {
+	return mock.NewMockShippingCommandRepository(ctrl)
 }

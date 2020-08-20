@@ -36,18 +36,18 @@ func (m *MockCfProjectCommandRepository) EXPECT() *MockCfProjectCommandRepositor
 	return m.recorder
 }
 
-// Store mocks base method
+// Validate mocks base method
 func (m *MockCfProjectCommandRepository) Store(arg0 context.Context, arg1 *entity.CfProject) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Store", arg0, arg1)
+	ret := m.ctrl.Call(m, "Validate", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Store indicates an expected call of Store
+// Validate indicates an expected call of Validate
 func (mr *MockCfProjectCommandRepositoryMockRecorder) Store(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockCfProjectCommandRepository)(nil).Store), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockCfProjectCommandRepository)(nil).Store), arg0, arg1)
 }
 
 // Lock mocks base method

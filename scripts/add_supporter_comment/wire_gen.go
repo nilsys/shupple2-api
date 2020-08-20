@@ -82,10 +82,20 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	chargeCommandRepositoryImpl := &payjp.ChargeCommandRepositoryImpl{
 		PayjpClient: payjpService,
 	}
+	uploader := repository.ProvideS3Uploader(session)
+	userCommandRepositoryImpl := &repository.UserCommandRepositoryImpl{
+		DAO:           dao,
+		MediaUploader: uploader,
+		AWSConfig:     aws,
+		AWSSession:    session,
+	}
 	cfReturnGiftCommandRepositoryImpl := &repository.CfReturnGiftCommandRepositoryImpl{
 		DAO: dao,
 	}
 	shippingQueryRepositoryImpl := &repository.ShippingQueryRepositoryImpl{
+		DAO: dao,
+	}
+	shippingCommandRepositoryImpl := &repository.ShippingCommandRepositoryImpl{
 		DAO: dao,
 	}
 	cfProjectCommandRepositoryImpl := &repository.CfProjectCommandRepositoryImpl{
@@ -100,22 +110,25 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	chargeCommandServiceImpl := &service.ChargeCommandServiceImpl{
 		PaymentCommandRepository:          paymentCommandRepositoryImpl,
 		PaymentQueryRepository:            paymentQueryRepositoryImpl,
+		PayjpCardCommandRepository:        payjpCardCommandRepositoryImpl,
 		CardQueryRepository:               cardQueryRepositoryImpl,
+		CardCommandRepository:             cardCommandRepositoryImpl,
 		CfProjectQueryRepository:          cfProjectQueryRepositoryImpl,
 		ChargeCommandRepository:           chargeCommandRepositoryImpl,
 		CfReturnGiftQueryRepository:       cfReturnGiftQueryRepositoryImpl,
 		UserQueryRepository:               userQueryRepositoryImpl,
+		UserCommandRepository:             userCommandRepositoryImpl,
+		CustomerQueryRepository:           customerQueryRepositoryImpl,
+		CustomerCommandRepository:         customerCommandRepositoryImpl,
 		CfReturnGiftCommandRepository:     cfReturnGiftCommandRepositoryImpl,
 		ShippingQueryRepository:           shippingQueryRepositoryImpl,
+		ShippingCommandRepository:         shippingCommandRepositoryImpl,
 		CfProjectCommandRepository:        cfProjectCommandRepositoryImpl,
 		MailCommandRepository:             mailCommandRepository,
 		UserSalesHistoryCommandRepository: userSalesHistoryCommandRepositoryImpl,
 		InquiryCodeGenerator:              inquiryCodeGeneratorImpl,
 		TransactionService:                transactionServiceImpl,
 		CfProjectConfig:                   cfProject,
-	}
-	shippingCommandRepositoryImpl := &repository.ShippingCommandRepositoryImpl{
-		DAO: dao,
 	}
 	shippingCommandServiceImpl := &service.ShippingCommandServiceImpl{
 		ShippingCommandRepository: shippingCommandRepositoryImpl,
@@ -136,4 +149,4 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.SpotCategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, service.ReviewQueryServiceSet, service.CardCommandServiceSet, service.ChargeCommandServiceSet, service.ShippingCommandServiceSet, scenario.ReviewCommandScenarioSet, service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet, helper.InquiryCodeGeneratorSet)
+var serviceSet = wire.NewSet(service.ProvideAuthService, service.PostQueryServiceSet, service.PostCommandServiceSet, service.WordpressServiceSet, service.UserCommandServiceSet, service.CategoryCommandServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicCommandServiceSet, service.FeatureCommandServiceSet, service.SpotCategoryCommandServiceSet, service.TouristSpotCommandServiceSet, service.VlogCommandServiceSet, service.HashtagCommandServiceSet, service.ReviewCommandServiceSet, service.ReviewQueryServiceSet, service.CardCommandServiceSet, service.ChargeCommandServiceSet, service.ShippingCommandServiceSet, scenario.ReviewCommandScenarioSet, service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet, helper.InquiryCodeGeneratorSet, repository.ProvideS3Uploader)

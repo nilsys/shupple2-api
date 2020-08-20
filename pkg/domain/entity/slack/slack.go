@@ -124,7 +124,7 @@ func NewSlackReport(targetType model.ReportTargetType, targetURL string, targetI
 		},
 		{
 			Type: "mrkdwn",
-			Text: fmt.Sprintf("*Body:*\n\t%s", targetBody),
+			Text: fmt.Sprintf("*SupportCommentBody:*\n\t%s", targetBody),
 		},
 		{
 			Type: "mrkdwn",

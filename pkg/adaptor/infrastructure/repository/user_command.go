@@ -35,7 +35,7 @@ var UserCommandRepositorySet = wire.NewSet(
 )
 
 func (r *UserCommandRepositoryImpl) Store(ctx context.Context, user *entity.User) error {
-	return errors.Wrap(r.DB(ctx).Save(user).Error, "failed to save user")
+	return errors.Wrap(r.DB(ctx).Unscoped().Save(user).Error, "failed to save user")
 }
 
 func (r *UserCommandRepositoryImpl) Update(user *entity.User) error {

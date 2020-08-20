@@ -474,6 +474,8 @@ func (x *InterestGroup) UnmarshalText(text []byte) error {
 const (
 	// MailTemplateNameThanksPurchase is a MailTemplateName of type ThanksPurchase
 	MailTemplateNameThanksPurchase MailTemplateName = iota + 1
+	// MailTemplateNameThanksPurchaseForNonLoginUser is a MailTemplateName of type ThanksPurchaseForNonLoginUser
+	MailTemplateNameThanksPurchaseForNonLoginUser
 	// MailTemplateNameDepositRequestForStayway is a MailTemplateName of type DepositRequestForStayway
 	MailTemplateNameDepositRequestForStayway
 	// MailTemplateNameCfReturnGiftShippingNotification is a MailTemplateName of type CfReturnGiftShippingNotification
@@ -488,16 +490,17 @@ const (
 	MailTemplateNameCfProjectPostNewReportNoticeForSupporter
 )
 
-const _MailTemplateNameName = "ThanksPurchaseDepositRequestForStaywayCfReturnGiftShippingNotificationReserveRequestForOwnerReserveRequestForUserCfProjectAchievementNoticeForSupporterCfProjectPostNewReportNoticeForSupporter"
+const _MailTemplateNameName = "ThanksPurchaseThanksPurchaseForNonLoginUserDepositRequestForStaywayCfReturnGiftShippingNotificationReserveRequestForOwnerReserveRequestForUserCfProjectAchievementNoticeForSupporterCfProjectPostNewReportNoticeForSupporter"
 
 var _MailTemplateNameMap = map[MailTemplateName]string{
 	1: _MailTemplateNameName[0:14],
-	2: _MailTemplateNameName[14:38],
-	3: _MailTemplateNameName[38:70],
-	4: _MailTemplateNameName[70:92],
-	5: _MailTemplateNameName[92:113],
-	6: _MailTemplateNameName[113:151],
-	7: _MailTemplateNameName[151:191],
+	2: _MailTemplateNameName[14:43],
+	3: _MailTemplateNameName[43:67],
+	4: _MailTemplateNameName[67:99],
+	5: _MailTemplateNameName[99:121],
+	6: _MailTemplateNameName[121:142],
+	7: _MailTemplateNameName[142:180],
+	8: _MailTemplateNameName[180:220],
 }
 
 // String implements the Stringer interface.
@@ -510,12 +513,13 @@ func (x MailTemplateName) String() string {
 
 var _MailTemplateNameValue = map[string]MailTemplateName{
 	_MailTemplateNameName[0:14]:    1,
-	_MailTemplateNameName[14:38]:   2,
-	_MailTemplateNameName[38:70]:   3,
-	_MailTemplateNameName[70:92]:   4,
-	_MailTemplateNameName[92:113]:  5,
-	_MailTemplateNameName[113:151]: 6,
-	_MailTemplateNameName[151:191]: 7,
+	_MailTemplateNameName[14:43]:   2,
+	_MailTemplateNameName[43:67]:   3,
+	_MailTemplateNameName[67:99]:   4,
+	_MailTemplateNameName[99:121]:  5,
+	_MailTemplateNameName[121:142]: 6,
+	_MailTemplateNameName[142:180]: 7,
+	_MailTemplateNameName[180:220]: 8,
 }
 
 // ParseMailTemplateName attempts to convert a string to a MailTemplateName

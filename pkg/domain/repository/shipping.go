@@ -8,7 +8,7 @@ import (
 
 type (
 	ShippingCommandRepository interface {
-		StoreShippingAddress(address *entity.ShippingAddress) error
+		StoreShippingAddress(ctx context.Context, address *entity.ShippingAddress) error
 	}
 
 	ShippingQueryRepository interface {

@@ -31,6 +31,7 @@ var serviceSet = wire.NewSet(
 	scenario.ReviewCommandScenarioSet,
 	domain_service.NoticeDomainServiceSet,
 	domain_service.TaggedUserDomainServiceSet,
+	domain_service.UserValidatorDomainServiceSet,
 )
 
 func InitializeScript(configFilePath config.FilePath) (*Script, error) {
