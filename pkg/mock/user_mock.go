@@ -39,18 +39,18 @@ func (m *MockUserCommandRepository) EXPECT() *MockUserCommandRepositoryMockRecor
 	return m.recorder
 }
 
-// Validate mocks base method
+// Store mocks base method
 func (m *MockUserCommandRepository) Store(ctx context.Context, user *entity.User) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Validate", ctx, user)
+	ret := m.ctrl.Call(m, "Store", ctx, user)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Validate indicates an expected call of Validate
+// Store indicates an expected call of Store
 func (mr *MockUserCommandRepositoryMockRecorder) Store(ctx, user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockUserCommandRepository)(nil).Store), ctx, user)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockUserCommandRepository)(nil).Store), ctx, user)
 }
 
 // Update mocks base method
@@ -220,6 +220,21 @@ func (mr *MockUserQueryRepositoryMockRecorder) FindByWordpressID(id interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByWordpressID", reflect.TypeOf((*MockUserQueryRepository)(nil).FindByWordpressID), id)
 }
 
+// UnscopedFindByMigrationCode mocks base method
+func (m *MockUserQueryRepository) UnscopedFindByMigrationCode(code string) (*entity.UserTiny, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UnscopedFindByMigrationCode", code)
+	ret0, _ := ret[0].(*entity.UserTiny)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UnscopedFindByMigrationCode indicates an expected call of UnscopedFindByMigrationCode
+func (mr *MockUserQueryRepositoryMockRecorder) UnscopedFindByMigrationCode(code interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnscopedFindByMigrationCode", reflect.TypeOf((*MockUserQueryRepository)(nil).UnscopedFindByMigrationCode), code)
+}
+
 // FindByMigrationCode mocks base method
 func (m *MockUserQueryRepository) FindByMigrationCode(code string) (*entity.UserTiny, error) {
 	m.ctrl.T.Helper()
@@ -263,6 +278,21 @@ func (m *MockUserQueryRepository) FindByUID(uid string) (*entity.UserTiny, error
 func (mr *MockUserQueryRepositoryMockRecorder) FindByUID(uid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUID", reflect.TypeOf((*MockUserQueryRepository)(nil).FindByUID), uid)
+}
+
+// UnscopedFindUserDetailWithCountByID mocks base method
+func (m *MockUserQueryRepository) UnscopedFindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UnscopedFindUserDetailWithCountByID", id)
+	ret0, _ := ret[0].(*entity.UserDetailWithMediaCount)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UnscopedFindUserDetailWithCountByID indicates an expected call of UnscopedFindUserDetailWithCountByID
+func (mr *MockUserQueryRepositoryMockRecorder) UnscopedFindUserDetailWithCountByID(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnscopedFindUserDetailWithCountByID", reflect.TypeOf((*MockUserQueryRepository)(nil).UnscopedFindUserDetailWithCountByID), id)
 }
 
 // FindUserDetailWithCountByID mocks base method

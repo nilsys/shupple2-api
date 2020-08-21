@@ -61,10 +61,18 @@ func (r *UserQueryRepositoryImpl) FindByWordpressID(wordpressUserID int) (*entit
 	return &row, nil
 }
 
+// 非ログインユーザーの場合論理削除されている為、論理削除されているUserも対象に含める
+func (r *UserQueryRepositoryImpl) UnscopedFindByMigrationCode(code string) (*entity.UserTiny, error) {
+	var row entity.UserTiny
+	if err := r.DB.Unscoped().Where("migration_code = ?", code).First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "user(migration_code=%s)", code)
+	}
+	return &row, nil
+}
+
 func (r *UserQueryRepositoryImpl) FindByMigrationCode(code string) (*entity.UserTiny, error) {
 	var row entity.UserTiny
-	// deleted_atのuserも対象
-	if err := r.DB.Unscoped().Where("migration_code = ?", code).First(&row).Error; err != nil {
+	if err := r.DB.Where("migration_code = ?", code).First(&row).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "user(migration_code=%s)", code)
 	}
 	return &row, nil
@@ -122,6 +130,24 @@ func (r *UserQueryRepositoryImpl) IsFollowing(baseUserID int, userIDs []int) (ma
 	}
 
 	return rows.ToIDExistMap(userIDs), nil
+}
+
+func (r *UserQueryRepositoryImpl) UnscopedFindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error) {
+	var row entity.UserDetailWithMediaCount
+
+	if err := r.DB.
+		Unscoped().
+		Select("*").Where("user.id = ?", id).
+		Joins("LEFT JOIN (SELECT COUNT(id) as review_count, MAX(user_id) as user_id FROM review WHERE user_id = ? AND deleted_at IS NULL) AS r ON user.id = r.user_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(id) as post_count, MAX(user_id) as user_id FROM post WHERE user_id = ? AND deleted_at IS NULL) AS p ON user.id = p.user_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(id) as vlog_count, MAX(user_id) as user_id FROM vlog WHERE user_id = ? AND deleted_at IS NULL) AS v ON user.id = v.user_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(target_id) as followed_count, MAX(user_id) as user_id FROM user_followed WHERE user_id = ?) AS ufi ON user.id = ufi.user_id", id).
+		Joins("LEFT JOIN (SELECT COUNT(target_id) as following_count, MAX(user_id) as user_id FROM user_following WHERE user_id = ?) AS ufe ON user.id = ufe.user_id", id).
+		First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "user(id=%d)", id)
+	}
+
+	return &row, nil
 }
 
 func (r *UserQueryRepositoryImpl) FindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error) {

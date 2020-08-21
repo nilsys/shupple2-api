@@ -63,11 +63,13 @@ func (s *UserQueryServiceImpl) ShowByID(id int) (*entity.UserDetailWithMediaCoun
 }
 
 func (s *UserQueryServiceImpl) ShowByMigrationCode(code string) (*entity.UserDetailWithMediaCount, error) {
-	userTable, err := s.UserQueryRepository.FindByMigrationCode(code)
+	// 非ログインユーザーの場合論理削除されている為、論理削除されているUserも対象に含める
+	userTable, err := s.UserQueryRepository.UnscopedFindByMigrationCode(code)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed find user by migration_code")
 	}
-	return s.UserQueryRepository.FindUserDetailWithCountByID(userTable.ID)
+	// 非ログインユーザーの場合論理削除されている為、論理削除されているUserも対象に含める
+	return s.UserQueryRepository.UnscopedFindUserDetailWithCountByID(userTable.ID)
 }
 
 func (s *UserQueryServiceImpl) ShowUserRanking(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error) {
