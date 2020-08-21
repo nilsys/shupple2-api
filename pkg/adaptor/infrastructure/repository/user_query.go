@@ -327,7 +327,8 @@ func (r *UserQueryRepositoryImpl) FindFavoritePostUserByUserID(postID, userID in
 		Select("f.*, u.*, CASE WHEN uf.target_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_follow").
 		Joins("JOIN user u ON f.user_id = u.id AND u.deleted_at IS NULL").
 		Joins("LEFT JOIN user_following uf ON u.id = uf.target_id and uf.user_id=? WHERE f.post_id=?", userID, postID).
-		Order("uf.created_at DESC").Order("f.created_at DESC").Find(&rows).Error; err != nil {
+		Order(fmt.Sprintf("u.id = %d DESC, is_follow DESC, uf.created_at DESC, f.created_at DESC", userID)).
+		Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find favorite post user")
 	}
 
@@ -346,7 +347,8 @@ func (r *UserQueryRepositoryImpl) FindFavoriteReviewUserByUserID(reviewID, userI
 		Select("f.*, u.*, CASE WHEN uf.target_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_follow").
 		Joins("JOIN user u ON f.user_id = u.id AND u.deleted_at IS NULL").
 		Joins("LEFT JOIN user_following uf ON u.id = uf.target_id and uf.user_id=? WHERE f.review_id=?", userID, reviewID).
-		Order("uf.created_at DESC, f.created_at DESC").Find(&rows).Error; err != nil {
+		Order(fmt.Sprintf("u.id = %d DESC, is_follow DESC, uf.created_at DESC, f.created_at DESC", userID)).
+		Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find favorite review user")
 	}
 
@@ -365,7 +367,8 @@ func (r *UserQueryRepositoryImpl) FindFavoriteVlogUserByUserID(vlogID, userID in
 		Select("f.*, u.*, CASE WHEN uf.target_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_follow").
 		Joins("JOIN user u ON f.user_id = u.id AND u.deleted_at IS NULL").
 		Joins("LEFT JOIN user_following uf ON u.id = uf.target_id and uf.user_id=? WHERE f.vlog_id=?", userID, vlogID).
-		Order("uf.created_at DESC, f.created_at DESC").Find(&rows).Error; err != nil {
+		Order(fmt.Sprintf("u.id = %d DESC, is_follow DESC, uf.created_at DESC, f.created_at DESC", userID)).
+		Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find favorite vlog user")
 	}
 
@@ -384,7 +387,8 @@ func (r *UserQueryRepositoryImpl) FindFavoriteComicUserByUserID(comicID, userID 
 		Select("f.*, u.*, CASE WHEN uf.target_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_follow").
 		Joins("JOIN user u ON f.user_id = u.id AND u.deleted_at IS NULL").
 		Joins("LEFT JOIN user_following uf ON u.id = uf.target_id and uf.user_id=? WHERE f.comic_id=?", userID, comicID).
-		Order("uf.created_at DESC, f.created_at DESC").Find(&rows).Error; err != nil {
+		Order(fmt.Sprintf("u.id = %d DESC, is_follow DESC, uf.created_at DESC, f.created_at DESC", userID)).
+		Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find favorite comic user")
 	}
 
