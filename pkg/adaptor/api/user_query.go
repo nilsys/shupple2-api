@@ -144,7 +144,7 @@ func (c *UserQueryController) ListFavoritePostUser(ctx echo.Context, user entity
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertUserTableListToOutput(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUserTinyWithIsFavoriteListToUserSummaryList(users))
 }
 
 func (c *UserQueryController) ListFavoriteReviewUser(ctx echo.Context, user entity.OptionalUser) error {
@@ -158,7 +158,7 @@ func (c *UserQueryController) ListFavoriteReviewUser(ctx echo.Context, user enti
 		return err
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertUserTableListToOutput(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUserTinyWithIsFavoriteListToUserSummaryList(users))
 }
 
 func (c *UserQueryController) ListFavoriteComicUser(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -172,7 +172,7 @@ func (c *UserQueryController) ListFavoriteComicUser(ctx echo.Context, ouser enti
 		return errors.Wrap(err, "failed list favorite comic user")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertUserTableListToOutput(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUserTinyWithIsFavoriteListToUserSummaryList(users))
 }
 
 func (c *UserQueryController) ListFavoriteVlogUser(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -186,7 +186,7 @@ func (c *UserQueryController) ListFavoriteVlogUser(ctx echo.Context, ouser entit
 		return errors.Wrap(err, "failed list favorite vlog user")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertUserTableListToOutput(users))
+	return ctx.JSON(http.StatusOK, c.ConvertUserTinyWithIsFavoriteListToUserSummaryList(users))
 }
 
 func (c *UserQueryController) IsExistPhoneNumber(ctx echo.Context) error {

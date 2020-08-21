@@ -259,8 +259,8 @@ func (r *UserQueryRepositoryImpl) FindFollowedWithIsFollowByID(userID int, query
 	return rows, nil
 }
 
-func (r *UserQueryRepositoryImpl) FindFavoritePostUser(postID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
-	var rows []*entity.UserTiny
+func (r *UserQueryRepositoryImpl) FindFavoritePostUser(postID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
+	var rows []*entity.UserTinyWithIsFollow
 
 	if err := r.DB.Joins("INNER JOIN (SELECT user_id, created_at FROM user_favorite_post WHERE post_id = ?) uf ON user.id = uf.user_id", postID).
 		Order("uf.created_at DESC").
@@ -273,8 +273,8 @@ func (r *UserQueryRepositoryImpl) FindFavoritePostUser(postID int, query *query.
 	return rows, nil
 }
 
-func (r *UserQueryRepositoryImpl) FindFavoriteReviewUser(reviewID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
-	var rows []*entity.UserTiny
+func (r *UserQueryRepositoryImpl) FindFavoriteReviewUser(reviewID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
+	var rows []*entity.UserTinyWithIsFollow
 
 	if err := r.DB.Joins("INNER JOIN (SELECT user_id, created_at FROM user_favorite_review WHERE review_id = ?) uf ON user.id = uf.user_id", reviewID).
 		Order("uf.created_at DESC").
@@ -287,8 +287,8 @@ func (r *UserQueryRepositoryImpl) FindFavoriteReviewUser(reviewID int, query *qu
 	return rows, nil
 }
 
-func (r *UserQueryRepositoryImpl) FindFavoriteVlogUser(vlogID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
-	var rows []*entity.UserTiny
+func (r *UserQueryRepositoryImpl) FindFavoriteVlogUser(vlogID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
+	var rows []*entity.UserTinyWithIsFollow
 
 	if err := r.DB.Joins("INNER JOIN (SELECT user_id, created_at FROM user_favorite_vlog WHERE vlog_id = ?) uf ON user.id = uf.user_id", vlogID).
 		Order("uf.created_at DESC").
@@ -301,8 +301,8 @@ func (r *UserQueryRepositoryImpl) FindFavoriteVlogUser(vlogID int, query *query.
 	return rows, nil
 }
 
-func (r *UserQueryRepositoryImpl) FindFavoriteComicUser(comicID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
-	var rows []*entity.UserTiny
+func (r *UserQueryRepositoryImpl) FindFavoriteComicUser(comicID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
+	var rows []*entity.UserTinyWithIsFollow
 
 	if err := r.DB.Joins("INNER JOIN (SELECT user_id, created_at FROM user_favorite_comic WHERE comic_id = ?) uf ON user.id = uf.user_id", comicID).
 		Order("uf.created_at DESC").
@@ -316,13 +316,15 @@ func (r *UserQueryRepositoryImpl) FindFavoriteComicUser(comicID int, query *quer
 }
 
 // フォローしているユーザーがorder上位
-func (r *UserQueryRepositoryImpl) FindFavoritePostUserByUserID(postID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
-	var rows []*entity.UserTiny
+func (r *UserQueryRepositoryImpl) FindFavoritePostUserByUserID(postID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
+	var rows []*entity.UserTinyWithIsFollow
 
 	// user_favorite_post AS f
 	// user AS u
 	// user_following AS uf
-	if err := r.DB.Unscoped().Table("user_favorite_post f").Select("f.*, u.*").
+	if err := r.DB.Unscoped().
+		Table("user_favorite_post f").
+		Select("f.*, u.*, CASE WHEN uf.target_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_follow").
 		Joins("JOIN user u ON f.user_id = u.id AND u.deleted_at IS NULL").
 		Joins("LEFT JOIN user_following uf ON u.id = uf.target_id and uf.user_id=? WHERE f.post_id=?", userID, postID).
 		Order("uf.created_at DESC").Order("f.created_at DESC").Find(&rows).Error; err != nil {
@@ -333,13 +335,15 @@ func (r *UserQueryRepositoryImpl) FindFavoritePostUserByUserID(postID, userID in
 }
 
 // フォローしているユーザーがorder上位
-func (r *UserQueryRepositoryImpl) FindFavoriteReviewUserByUserID(reviewID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
-	var rows []*entity.UserTiny
+func (r *UserQueryRepositoryImpl) FindFavoriteReviewUserByUserID(reviewID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
+	var rows []*entity.UserTinyWithIsFollow
 
 	// user_favorite_review AS f
 	// user AS u
 	// user_following AS uf
-	if err := r.DB.Unscoped().Table("user_favorite_review f").Select("f.*, u.*").
+	if err := r.DB.Unscoped().
+		Table("user_favorite_review f").
+		Select("f.*, u.*, CASE WHEN uf.target_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_follow").
 		Joins("JOIN user u ON f.user_id = u.id AND u.deleted_at IS NULL").
 		Joins("LEFT JOIN user_following uf ON u.id = uf.target_id and uf.user_id=? WHERE f.review_id=?", userID, reviewID).
 		Order("uf.created_at DESC, f.created_at DESC").Find(&rows).Error; err != nil {
@@ -350,13 +354,15 @@ func (r *UserQueryRepositoryImpl) FindFavoriteReviewUserByUserID(reviewID, userI
 }
 
 // フォローしているユーザーがorder上位
-func (r *UserQueryRepositoryImpl) FindFavoriteVlogUserByUserID(vlogID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
-	var rows []*entity.UserTiny
+func (r *UserQueryRepositoryImpl) FindFavoriteVlogUserByUserID(vlogID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
+	var rows []*entity.UserTinyWithIsFollow
 
 	// user_favorite_vlog AS f
 	// user AS u
 	// user_following AS uf
-	if err := r.DB.Unscoped().Table("user_favorite_vlog f").Select("f.*, u.*").
+	if err := r.DB.Unscoped().
+		Table("user_favorite_vlog f").
+		Select("f.*, u.*, CASE WHEN uf.target_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_follow").
 		Joins("JOIN user u ON f.user_id = u.id AND u.deleted_at IS NULL").
 		Joins("LEFT JOIN user_following uf ON u.id = uf.target_id and uf.user_id=? WHERE f.vlog_id=?", userID, vlogID).
 		Order("uf.created_at DESC, f.created_at DESC").Find(&rows).Error; err != nil {
@@ -367,13 +373,15 @@ func (r *UserQueryRepositoryImpl) FindFavoriteVlogUserByUserID(vlogID, userID in
 }
 
 // フォローしているユーザーがorder上位
-func (r *UserQueryRepositoryImpl) FindFavoriteComicUserByUserID(comicID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
-	var rows []*entity.UserTiny
+func (r *UserQueryRepositoryImpl) FindFavoriteComicUserByUserID(comicID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
+	var rows []*entity.UserTinyWithIsFollow
 
 	// user_favorite_comic AS f
 	// user AS u
 	// user_following AS uf
-	if err := r.DB.Unscoped().Table("user_favorite_comic f").Select("f.*, u.*").
+	if err := r.DB.Unscoped().
+		Table("user_favorite_comic f").
+		Select("f.*, u.*, CASE WHEN uf.target_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_follow").
 		Joins("JOIN user u ON f.user_id = u.id AND u.deleted_at IS NULL").
 		Joins("LEFT JOIN user_following uf ON u.id = uf.target_id and uf.user_id=? WHERE f.comic_id=?", userID, comicID).
 		Order("uf.created_at DESC, f.created_at DESC").Find(&rows).Error; err != nil {
@@ -385,7 +393,9 @@ func (r *UserQueryRepositoryImpl) FindFavoriteComicUserByUserID(comicID, userID 
 
 func (r *UserQueryRepositoryImpl) FindCfProjectSupporterByCfProjectID(cfProjectID int) (*entity.UserTinyList, error) {
 	var rows entity.UserTinyList
-	if err := r.DB.Where("id IN (SELECT user_id FROM payment LEFT JOIN payment_cf_return_gift ON payment.id = payment_cf_return_gift.payment_id WHERE payment_cf_return_gift.cf_project_id = ?)", cfProjectID).Find(&rows.List).Error; err != nil {
+	if err := r.DB.
+		Where("id IN (SELECT user_id FROM payment LEFT JOIN payment_cf_return_gift ON payment.id = payment_cf_return_gift.payment_id WHERE payment_cf_return_gift.cf_project_id = ?)", cfProjectID).
+		Find(&rows.List).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find support cf_project user")
 	}
 	return &rows, nil

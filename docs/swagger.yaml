@@ -299,7 +299,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserSummaryList"
+                $ref: "#/components/schemas/UserSummaryWithIsFollowList"
   /users/favorite/posts/{id}:
     get:
       tags:
@@ -318,7 +318,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserSummaryList"
+                $ref: "#/components/schemas/UserSummaryWithIsFollowList"
   /notice:
     get:
       security:

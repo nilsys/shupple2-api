@@ -446,10 +446,10 @@ func (mr *MockUserQueryRepositoryMockRecorder) FindFollowedWithIsFollowByID(user
 }
 
 // FindFavoritePostUser mocks base method
-func (m *MockUserQueryRepository) FindFavoritePostUser(postID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
+func (m *MockUserQueryRepository) FindFavoritePostUser(postID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindFavoritePostUser", postID, query)
-	ret0, _ := ret[0].([]*entity.UserTiny)
+	ret0, _ := ret[0].([]*entity.UserTinyWithIsFollow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -461,10 +461,10 @@ func (mr *MockUserQueryRepositoryMockRecorder) FindFavoritePostUser(postID, quer
 }
 
 // FindFavoriteReviewUser mocks base method
-func (m *MockUserQueryRepository) FindFavoriteReviewUser(reviewID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
+func (m *MockUserQueryRepository) FindFavoriteReviewUser(reviewID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindFavoriteReviewUser", reviewID, query)
-	ret0, _ := ret[0].([]*entity.UserTiny)
+	ret0, _ := ret[0].([]*entity.UserTinyWithIsFollow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -476,10 +476,10 @@ func (mr *MockUserQueryRepositoryMockRecorder) FindFavoriteReviewUser(reviewID, 
 }
 
 // FindFavoriteComicUser mocks base method
-func (m *MockUserQueryRepository) FindFavoriteComicUser(comicID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
+func (m *MockUserQueryRepository) FindFavoriteComicUser(comicID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindFavoriteComicUser", comicID, query)
-	ret0, _ := ret[0].([]*entity.UserTiny)
+	ret0, _ := ret[0].([]*entity.UserTinyWithIsFollow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -491,10 +491,10 @@ func (mr *MockUserQueryRepositoryMockRecorder) FindFavoriteComicUser(comicID, qu
 }
 
 // FindFavoriteVlogUser mocks base method
-func (m *MockUserQueryRepository) FindFavoriteVlogUser(vlogID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
+func (m *MockUserQueryRepository) FindFavoriteVlogUser(vlogID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindFavoriteVlogUser", vlogID, query)
-	ret0, _ := ret[0].([]*entity.UserTiny)
+	ret0, _ := ret[0].([]*entity.UserTinyWithIsFollow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -506,10 +506,10 @@ func (mr *MockUserQueryRepositoryMockRecorder) FindFavoriteVlogUser(vlogID, quer
 }
 
 // FindFavoritePostUserByUserID mocks base method
-func (m *MockUserQueryRepository) FindFavoritePostUserByUserID(postID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
+func (m *MockUserQueryRepository) FindFavoritePostUserByUserID(postID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindFavoritePostUserByUserID", postID, userID, query)
-	ret0, _ := ret[0].([]*entity.UserTiny)
+	ret0, _ := ret[0].([]*entity.UserTinyWithIsFollow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -521,10 +521,10 @@ func (mr *MockUserQueryRepositoryMockRecorder) FindFavoritePostUserByUserID(post
 }
 
 // FindFavoriteReviewUserByUserID mocks base method
-func (m *MockUserQueryRepository) FindFavoriteReviewUserByUserID(reviewID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
+func (m *MockUserQueryRepository) FindFavoriteReviewUserByUserID(reviewID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindFavoriteReviewUserByUserID", reviewID, userID, query)
-	ret0, _ := ret[0].([]*entity.UserTiny)
+	ret0, _ := ret[0].([]*entity.UserTinyWithIsFollow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -536,10 +536,10 @@ func (mr *MockUserQueryRepositoryMockRecorder) FindFavoriteReviewUserByUserID(re
 }
 
 // FindFavoriteVlogUserByUserID mocks base method
-func (m *MockUserQueryRepository) FindFavoriteVlogUserByUserID(vlogID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
+func (m *MockUserQueryRepository) FindFavoriteVlogUserByUserID(vlogID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindFavoriteVlogUserByUserID", vlogID, userID, query)
-	ret0, _ := ret[0].([]*entity.UserTiny)
+	ret0, _ := ret[0].([]*entity.UserTinyWithIsFollow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -551,10 +551,10 @@ func (mr *MockUserQueryRepositoryMockRecorder) FindFavoriteVlogUserByUserID(vlog
 }
 
 // FindFavoriteComicUserByUserID mocks base method
-func (m *MockUserQueryRepository) FindFavoriteComicUserByUserID(comicID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
+func (m *MockUserQueryRepository) FindFavoriteComicUserByUserID(comicID, userID int, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindFavoriteComicUserByUserID", comicID, userID, query)
-	ret0, _ := ret[0].([]*entity.UserTiny)
+	ret0, _ := ret[0].([]*entity.UserTinyWithIsFollow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

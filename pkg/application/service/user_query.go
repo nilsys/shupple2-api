@@ -17,10 +17,10 @@ type (
 		ListRecommendFollowUser(interestIDs []int) ([]*entity.UserTiny, error)
 		ListFollowing(query *query.FindFollowUser, ouser *entity.OptionalUser) ([]*entity.UserTinyWithIsFollow, error)
 		ListFollowed(query *query.FindFollowUser, ouser *entity.OptionalUser) ([]*entity.UserTinyWithIsFollow, error)
-		ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error)
-		ListFavoriteReviewUser(reviewID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error)
-		ListFavoriteComicUser(comicID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error)
-		ListFavoriteVlogUser(vlogID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error)
+		ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error)
+		ListFavoriteReviewUser(reviewID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error)
+		ListFavoriteComicUser(comicID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error)
+		ListFavoriteVlogUser(vlogID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error)
 		IsExistByPhoneNumber(number string) (bool, error)
 	}
 
@@ -94,7 +94,7 @@ func (s *UserQueryServiceImpl) ListFollowed(query *query.FindFollowUser, ouser *
 	return s.UserQueryRepository.FindFollowedByID(query)
 }
 
-func (s *UserQueryServiceImpl) ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
+func (s *UserQueryServiceImpl) ListFavoritePostUser(postID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
 	if user.IsAuthorized() {
 		return s.UserQueryRepository.FindFavoritePostUserByUserID(postID, user.ID, query)
 	}
@@ -102,7 +102,7 @@ func (s *UserQueryServiceImpl) ListFavoritePostUser(postID int, user *entity.Opt
 	return s.UserQueryRepository.FindFavoritePostUser(postID, query)
 }
 
-func (s *UserQueryServiceImpl) ListFavoriteReviewUser(reviewID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
+func (s *UserQueryServiceImpl) ListFavoriteReviewUser(reviewID int, user *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
 	if user.IsAuthorized() {
 		return s.UserQueryRepository.FindFavoriteReviewUserByUserID(reviewID, user.ID, query)
 	}
@@ -110,14 +110,14 @@ func (s *UserQueryServiceImpl) ListFavoriteReviewUser(reviewID int, user *entity
 	return s.UserQueryRepository.FindFavoriteReviewUser(reviewID, query)
 }
 
-func (s *UserQueryServiceImpl) ListFavoriteComicUser(comicID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
+func (s *UserQueryServiceImpl) ListFavoriteComicUser(comicID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
 	if ouser.IsAuthorized() {
 		return s.UserQueryRepository.FindFavoriteComicUserByUserID(comicID, ouser.ID, query)
 	}
 	return s.UserQueryRepository.FindFavoriteComicUser(comicID, query)
 }
 
-func (s *UserQueryServiceImpl) ListFavoriteVlogUser(vlogID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTiny, error) {
+func (s *UserQueryServiceImpl) ListFavoriteVlogUser(vlogID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error) {
 	if ouser.IsAuthorized() {
 		return s.UserQueryRepository.FindFavoriteVlogUserByUserID(vlogID, ouser.ID, query)
 	}
