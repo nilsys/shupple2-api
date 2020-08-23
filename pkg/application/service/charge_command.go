@@ -167,7 +167,7 @@ func (s *ChargeCommandServiceImpl) Refund(user *entity.User, paymentID, cfReturn
 		}
 
 		// projectの達成金額から減算
-		if err := s.CfProjectCommandRepository.DecrementAchievedPrice(ctx, payment.ID, paymentCfReturnGift.TotalPrice()); err != nil {
+		if err := s.CfProjectCommandRepository.DecrementAchievedPrice(ctx, paymentCfReturnGift.CfProjectID, paymentCfReturnGift.TotalPrice()); err != nil {
 			return errors.Wrap(err, "failed decrement achieved_price")
 		}
 
