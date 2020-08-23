@@ -216,7 +216,7 @@ func (u *OptionalUser) IsAuthorized() bool {
 }
 
 func (u *UserTiny) PayjpCustomerID() string {
-	return fmt.Sprintf("sw_%s", u.UID)
+	return fmt.Sprintf("sw_%d", u.ID)
 }
 
 // TODO:
