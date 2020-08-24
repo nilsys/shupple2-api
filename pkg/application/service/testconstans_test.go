@@ -160,6 +160,12 @@ func newThanksPurchaseTemplate() entity.MailTemplate {
 	return entity.NewThanksPurchaseTemplate(newUser(ownerUserID).Name, "<br>"+gift.Title+"<br>お問い合わせ番号: "+paymentCfReturnGiftInquiryCode+"<br>有効期限: "+model.TimeFront(gift.Deadline.Time).ToString()+"<br>", chargeResID, util.WithComma(systemFee), util.WithComma(cfReturnGiftPrice+systemFee), address.Email, address.FullAddress(), address.PhoneNumber, address.FullName())
 }
 
+func newThanksPurchaseForOwnerTemplate() entity.MailTemplate {
+	address := newShippingAddress()
+	gift := newCfReturnGiftSnapshot(validDeadline)
+	return entity.NewThanksPurchaseForOwnerTemplate(newUser(ownerUserID).Name, "<br>"+gift.Title+"<br>お問い合わせ番号: "+paymentCfReturnGiftInquiryCode+"<br>有効期限: "+model.TimeFront(gift.Deadline.Time).ToString()+"<br>", chargeResID, util.WithComma(systemFee), util.WithComma(cfReturnGiftPrice+systemFee), address.Email, address.FullAddress(), address.PhoneNumber, address.FullName())
+}
+
 func newCfProjectTiny() entity.CfProjectTiny {
 	project := entity.CfProjectTiny{
 		ID:     cfProjectID,

@@ -32,6 +32,10 @@ type (
 		LoginURL string `json:"loginurl"`
 	}
 
+	ThanksPurchaseForOwnerTemplate struct {
+		ThanksPurchaseTemplate
+	}
+
 	ReserveRequestTemplateForOwnerTemplate struct {
 		UserFullName            string `json:"userfullname"`
 		UserFullNameKana        string `json:"userfullnamekana"`
@@ -99,6 +103,12 @@ func NewThanksPurchaseForNonLoginUserTemplate(ownerName, returnGiftDesc, chargeI
 	return &ThanksPurchaseForNonLoginUserTemplate{
 		ThanksPurchaseTemplate: *NewThanksPurchaseTemplate(ownerName, returnGiftDesc, chargeID, systemFee, price, userEmail, userShippingAddress, userTel, userName),
 		LoginURL:               loginURL,
+	}
+}
+
+func NewThanksPurchaseForOwnerTemplate(ownerName, returnGiftDesc, chargeID, systemFee, price, userEmail, userShippingAddress, userTel, userName string) *ThanksPurchaseForOwnerTemplate {
+	return &ThanksPurchaseForOwnerTemplate{
+		ThanksPurchaseTemplate: *NewThanksPurchaseTemplate(ownerName, returnGiftDesc, chargeID, systemFee, price, userEmail, userShippingAddress, userTel, userName),
 	}
 }
 
@@ -193,6 +203,27 @@ func (t *ThanksPurchaseForNonLoginUserTemplate) DefaultData() (string, error) {
 }
 
 func (t *ThanksPurchaseForNonLoginUserTemplate) ToJSON() (string, error) {
+	bytes, err := json.Marshal(t)
+	if err != nil {
+		return "", errors.Wrap(err, "failed marshal")
+	}
+	return string(bytes), nil
+}
+
+func (t *ThanksPurchaseForOwnerTemplate) TemplateName() model.MailTemplateName {
+	return model.MailTemplateNameThanksPurchaseForOwner
+}
+
+func (t *ThanksPurchaseForOwnerTemplate) DefaultData() (string, error) {
+	s := ThanksPurchaseForOwnerTemplate{}
+	bytes, err := json.Marshal(s)
+	if err != nil {
+		return "", errors.Wrap(err, "failed marshal")
+	}
+	return string(bytes), nil
+}
+
+func (t *ThanksPurchaseForOwnerTemplate) ToJSON() (string, error) {
 	bytes, err := json.Marshal(t)
 	if err != nil {
 		return "", errors.Wrap(err, "failed marshal")

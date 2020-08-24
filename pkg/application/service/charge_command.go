@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service/helper"
 
@@ -230,9 +229,6 @@ func (s *ChargeCommandServiceImpl) create(c context.Context, cmd *command.Create
 		}
 
 		// 残り在庫数確認
-		fmt.Println(giftIDMap[payment.ReturnGiftID].Snapshot.FullAmount)
-		fmt.Println(soldCountList.GetSoldCount(payment.ReturnGiftID))
-		fmt.Println(payment.Amount)
 		if giftIDMap[payment.ReturnGiftID].Snapshot.FullAmount < soldCountList.GetSoldCount(payment.ReturnGiftID)+payment.Amount {
 			// 在庫が確保できなかった場合
 			return nil, serror.New(nil, serror.CodeInvalidParam, "failed stock acquisition")
@@ -309,7 +305,7 @@ func (s *ChargeCommandServiceImpl) create(c context.Context, cmd *command.Create
 		return nil, errors.Wrap(err, "failed resolveCapturePrice charge")
 	}
 
-	// 決済確定メール送信
+	// 決済確定メール送信(to購入者)
 	var emailTemplate entity.MailTemplate
 	if user.IsNonLogin {
 		emailTemplate = entity.NewThanksPurchaseForNonLoginUserTemplate(projectOwner.Name, gifts.TitlesOnEmail(idInquiryCodeMap), charge.ID, util.WithComma(s.CfProjectConfig.SystemFee), util.WithComma(includeCommissionPrice), address.Email, address.FullAddress(), address.PhoneNumber, address.FullName(), user.LoginWithMigrationCodeURL())
@@ -317,6 +313,12 @@ func (s *ChargeCommandServiceImpl) create(c context.Context, cmd *command.Create
 		emailTemplate = entity.NewThanksPurchaseTemplate(projectOwner.Name, gifts.TitlesOnEmail(idInquiryCodeMap), charge.ID, util.WithComma(s.CfProjectConfig.SystemFee), util.WithComma(includeCommissionPrice), address.Email, address.FullAddress(), address.PhoneNumber, address.FullName())
 	}
 	if err := s.MailCommandRepository.SendTemplateMail([]string{address.Email}, emailTemplate); err != nil {
+		return nil, errors.Wrap(err, "failed send email from ses")
+	}
+
+	// 決済確定メール送信(toプロジェクトオーナー)
+	toOwnerEmailTemp := entity.NewThanksPurchaseForOwnerTemplate(projectOwner.Name, gifts.TitlesOnEmail(idInquiryCodeMap), charge.ID, util.WithComma(s.CfProjectConfig.SystemFee), util.WithComma(includeCommissionPrice), address.Email, address.FullAddress(), address.PhoneNumber, address.FullName())
+	if err := s.MailCommandRepository.SendTemplateMail([]string{projectOwner.Email}, toOwnerEmailTemp); err != nil {
 		return nil, errors.Wrap(err, "failed send email from ses")
 	}
 

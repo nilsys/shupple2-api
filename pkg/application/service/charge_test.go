@@ -64,7 +64,10 @@ var _ = Describe("ChargeServiceImpl", func() {
 				cfProjectCmdRepo.(*mock.MockCfProjectCommandRepository).EXPECT().IncrementAchievedPrice(gomock.Any(), cfProjectID, cfReturnGiftPrice).Return(nil)
 				paymentQueryRepo.(*mock.MockPaymentQueryRepository).EXPECT().FindByID(gomock.Any(), paymentIDForChargeTest).Return(newPayment(), nil)
 				chargeCmdRepo.(*mock.MockChargeCommandRepository).EXPECT().Capture(newChargeRes(true).ID).Return(nil)
-				mailCmdRepo.(*mock.MockMailCommandRepository).EXPECT().SendTemplateMail([]string{newShippingAddress().Email}, newThanksPurchaseTemplate()).Return(nil)
+				gomock.InOrder(
+					mailCmdRepo.(*mock.MockMailCommandRepository).EXPECT().SendTemplateMail([]string{newShippingAddress().Email}, newThanksPurchaseTemplate()).Return(nil),
+					mailCmdRepo.(*mock.MockMailCommandRepository).EXPECT().SendTemplateMail([]string{newUser(ownerUserID).Email}, newThanksPurchaseForOwnerTemplate()).Return(nil),
+				)
 			})
 
 			It("エラーなし", func() {
