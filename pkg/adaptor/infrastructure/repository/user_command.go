@@ -35,6 +35,12 @@ var UserCommandRepositorySet = wire.NewSet(
 )
 
 func (r *UserCommandRepositoryImpl) Store(ctx context.Context, user *entity.User) error {
+	return errors.Wrap(r.DB(ctx).Save(user).Error, "failed to save user")
+}
+
+// StoreはUpdateにも対応している、その為論理削除されたものにStore()を使うと、新たに作成(INSERT)しようとするので、PKで不整合が起きる
+// 論理削除された物を更新等する場合はStore()では無く、この関数を使う事
+func (r *UserCommandRepositoryImpl) UnscopedStore(ctx context.Context, user *entity.User) error {
 	return errors.Wrap(r.DB(ctx).Unscoped().Save(user).Error, "failed to save user")
 }
 

@@ -53,6 +53,20 @@ func (mr *MockUserCommandRepositoryMockRecorder) Store(ctx, user interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockUserCommandRepository)(nil).Store), ctx, user)
 }
 
+// UnscopedStore mocks base method
+func (m *MockUserCommandRepository) UnscopedStore(ctx context.Context, user *entity.User) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UnscopedStore", ctx, user)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UnscopedStore indicates an expected call of UnscopedStore
+func (mr *MockUserCommandRepositoryMockRecorder) UnscopedStore(ctx, user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnscopedStore", reflect.TypeOf((*MockUserCommandRepository)(nil).UnscopedStore), ctx, user)
+}
+
 // Update mocks base method
 func (m *MockUserCommandRepository) Update(user *entity.User) error {
 	m.ctrl.T.Helper()

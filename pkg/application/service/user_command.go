@@ -81,7 +81,10 @@ func (s *UserCommandServiceImpl) SignUp(user *entity.User, cognitoToken string, 
 	}
 
 	return s.TransactionService.Do(func(ctx context.Context) error {
-		if err := s.UserCommandRepository.Store(ctx, user); err != nil {
+
+		// 非ログインユーザーは基本的なクエリに掛からない様、論理削除されている
+		// その為、論理削除も更新対象であるUnscopedStore()を使う
+		if err := s.UserCommandRepository.UnscopedStore(ctx, user); err != nil {
 			return errors.Wrap(err, "failed to store user")
 		}
 
