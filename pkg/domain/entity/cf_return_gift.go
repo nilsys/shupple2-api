@@ -114,7 +114,6 @@ func (r *CfReturnGiftSnapshotTiny) IsExpired() bool {
 func (r *CfReturnGiftSoldCountList) GetSoldCount(id int) int {
 	for _, summary := range r.List {
 		if summary.CfReturnGiftID == id {
-			fmt.Println(summary.SoldCount)
 			return summary.SoldCount
 		}
 	}

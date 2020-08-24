@@ -22,6 +22,7 @@ var CfReturnGiftQueryServiceSet = wire.NewSet(
 	wire.Bind(new(CfReturnGiftQueryService), new(*CfReturnGiftQueryServiceImpl)),
 )
 
+// TODO: SoldCount, SupporterCountは別で取る
 func (s *CfReturnGiftQueryServiceImpl) ListByCfProjectID(projectID int) (*entity.CfReturnGiftWithCountList, error) {
 	gifts, err := s.CfReturnGiftQueryRepository.FindByCfProjectID(projectID)
 	if err != nil {

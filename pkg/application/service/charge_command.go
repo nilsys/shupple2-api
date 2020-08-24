@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service/helper"
 
@@ -210,8 +211,8 @@ func (s *ChargeCommandServiceImpl) create(c context.Context, cmd *command.Create
 	if err != nil {
 		return nil, errors.Wrap(err, "failed find project owner")
 	}
-	soldCountList, err := s.CfReturnGiftQueryRepository.FindSoldCountByReturnGiftIDs(c, cmd.ReturnIDs())
 
+	soldCountList, err := s.CfReturnGiftQueryRepository.FindSoldCountByReturnGiftIDs(c, cmd.ReturnIDs())
 	if err != nil {
 		return nil, errors.Wrap(err, "failed find sold_count list")
 	}
@@ -229,6 +230,9 @@ func (s *ChargeCommandServiceImpl) create(c context.Context, cmd *command.Create
 		}
 
 		// 残り在庫数確認
+		fmt.Println(giftIDMap[payment.ReturnGiftID].Snapshot.FullAmount)
+		fmt.Println(soldCountList.GetSoldCount(payment.ReturnGiftID))
+		fmt.Println(payment.Amount)
 		if giftIDMap[payment.ReturnGiftID].Snapshot.FullAmount < soldCountList.GetSoldCount(payment.ReturnGiftID)+payment.Amount {
 			// 在庫が確保できなかった場合
 			return nil, serror.New(nil, serror.CodeInvalidParam, "failed stock acquisition")
