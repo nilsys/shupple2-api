@@ -4842,6 +4842,7 @@ components:
         - Undefined
         - Unreserved
         - Reserved
+        - Canceled
       default: Undefined
       description: |
         giftTypeがReservedTicketの場合有効

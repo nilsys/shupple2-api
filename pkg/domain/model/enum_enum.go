@@ -801,14 +801,17 @@ const (
 	PaymentCfReturnGiftReservedTicketTypeStatusUnreserved
 	// PaymentCfReturnGiftReservedTicketTypeStatusReserved is a PaymentCfReturnGiftReservedTicketTypeStatus of type Reserved
 	PaymentCfReturnGiftReservedTicketTypeStatusReserved
+	// PaymentCfReturnGiftReservedTicketTypeStatusCanceled is a PaymentCfReturnGiftReservedTicketTypeStatus of type Canceled
+	PaymentCfReturnGiftReservedTicketTypeStatusCanceled
 )
 
-const _PaymentCfReturnGiftReservedTicketTypeStatusName = "UndefinedUnreservedReserved"
+const _PaymentCfReturnGiftReservedTicketTypeStatusName = "UndefinedUnreservedReservedCanceled"
 
 var _PaymentCfReturnGiftReservedTicketTypeStatusMap = map[PaymentCfReturnGiftReservedTicketTypeStatus]string{
 	0: _PaymentCfReturnGiftReservedTicketTypeStatusName[0:9],
 	1: _PaymentCfReturnGiftReservedTicketTypeStatusName[9:19],
 	2: _PaymentCfReturnGiftReservedTicketTypeStatusName[19:27],
+	3: _PaymentCfReturnGiftReservedTicketTypeStatusName[27:35],
 }
 
 // String implements the Stringer interface.
@@ -823,6 +826,7 @@ var _PaymentCfReturnGiftReservedTicketTypeStatusValue = map[string]PaymentCfRetu
 	_PaymentCfReturnGiftReservedTicketTypeStatusName[0:9]:   0,
 	_PaymentCfReturnGiftReservedTicketTypeStatusName[9:19]:  1,
 	_PaymentCfReturnGiftReservedTicketTypeStatusName[19:27]: 2,
+	_PaymentCfReturnGiftReservedTicketTypeStatusName[27:35]: 3,
 }
 
 // ParsePaymentCfReturnGiftReservedTicketTypeStatus attempts to convert a string to a PaymentCfReturnGiftReservedTicketTypeStatus

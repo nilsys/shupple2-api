@@ -106,7 +106,7 @@ ENUM(Undefined, OwnerUnconfirmed, OwnerConfirmed, Canceled)
 type PaymentCfReturnGiftOtherTypeStatus int
 
 /*
-ENUM(Undefined, Unreserved, Reserved)
+ENUM(Undefined, Unreserved, Reserved, Canceled)
 宿泊券以外の場合はUndefined
 */
 type PaymentCfReturnGiftReservedTicketTypeStatus int
