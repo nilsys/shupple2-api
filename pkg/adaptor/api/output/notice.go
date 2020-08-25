@@ -1,6 +1,10 @@
 package output
 
-import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+import (
+	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+)
 
 type (
 	Notice struct {
@@ -9,6 +13,7 @@ type (
 		ActionTarget   *model.NoticeActionTargetType `json:"actionTarget"`
 		ActionTargetID int                           `json:"actionTargetId"`
 		IsRead         bool                          `json:"isRead"`
+		CreatedAt      model.TimeResponse            `json:"createdAt"`
 	}
 
 	NoticeList struct {
@@ -17,12 +22,13 @@ type (
 	}
 )
 
-func NewNotice(user *UserSummary, actionType *model.NoticeActionType, actionTarget *model.NoticeActionTargetType, actionTargetID int, isRead bool) *Notice {
+func NewNotice(user *UserSummary, actionType *model.NoticeActionType, actionTarget *model.NoticeActionTargetType, actionTargetID int, isRead bool, createdAt time.Time) *Notice {
 	return &Notice{
 		User:           user,
 		ActionType:     actionType,
 		ActionTarget:   actionTarget,
 		ActionTargetID: actionTargetID,
 		IsRead:         isRead,
+		CreatedAt:      model.TimeResponse(createdAt),
 	}
 }

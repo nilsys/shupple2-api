@@ -3257,15 +3257,7 @@ components:
       type: object
       properties:
         user:
-          type: object
-          description: 通知のフックとなったアクションを起こしたユーザー
-          properties:
-            id:
-              type: integer
-            name:
-              type: string
-            iconUrl:
-              type: string
+          $ref: "#/components/schemas/UserSummary"
         actionType:
           $ref: "#/components/schemas/NoticeType"
         actionTarget:
@@ -3278,6 +3270,8 @@ components:
           type: boolean
           description: 既読かどうか
           example: false
+        createdAt:
+          $ref: "#/components/schemas/createdAt"
     Review:
       type: object
       properties:
