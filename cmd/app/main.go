@@ -221,7 +221,7 @@ func setRoutes(app *App) {
 	}
 
 	{
-		notices := api.Group("/notice")
+		notices := api.Group("/notices")
 		notices.GET("", auth.Require(app.NoticeQueryController.ListNotices))
 	}
 

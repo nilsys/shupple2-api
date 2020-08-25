@@ -319,7 +319,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserSummaryWithIsFollowList"
-  /notice:
+  /notices:
     get:
       security:
         - iDPCognito: []
