@@ -9,39 +9,27 @@ import (
 )
 
 const (
-	tickTimeMinutes = 5 * time.Minute
+	fifthTickTimeMinutes  = 5 * time.Minute
+	eighthTickTimeMinutes = 8 * time.Minute
 )
 
 func (b *Batch) cliCfProjectNotice() cli.Command {
 	return cli.Command{
-		Name:  "cf_project_notice",
-		Usage: "cf_project関連の通知メール、サブコマンドで指定",
-		Subcommands: []cli.Command{
-			b.cliCfProjectAchievementEmail(),
-			b.cliCfProjectNewPostEmail(),
-		},
+		Name:   "cf_project_notice",
+		Usage:  "cf_project関連の通知メールを全て実行",
+		Action: b.cfProjectNoticeFullWrapper,
 	}
 }
 
-func (b *Batch) cliCfProjectAchievementEmail() cli.Command {
-	return cli.Command{
-		Name:   "achievement",
-		Usage:  "達成金額に達しているプロジェクトをサポート（購入）したユーザーに通知のメールを送る",
-		Action: b.cfProjectAchievementEmailTickWrapper,
-	}
-}
-
-func (b *Batch) cliCfProjectNewPostEmail() cli.Command {
-	return cli.Command{
-		Name:   "new_post",
-		Usage:  "新たに報告（Post）が投稿されたプロジェクトをサポート（購入）したユーザーに通知のメールを送る",
-		Action: b.cfProjectNewPostEmailTickWrapper,
-	}
+// fargateタスク数を減らす為に一度に動かす
+func (b *Batch) cfProjectNoticeFullWrapper(c *cli.Context) {
+	go b.cfProjectAchievementEmailTickWrapper(c)
+	b.cfProjectNewPostEmailTickWrapper(c)
 }
 
 // CfProject達成メール
 func (b *Batch) cfProjectAchievementEmailTickWrapper(c *cli.Context) {
-	for range time.Tick(tickTimeMinutes) {
+	for range time.Tick(fifthTickTimeMinutes) {
 		if err := b.CfProjectFacade.SendAchievementEmail(); err != nil {
 			logger.Error(err.Error())
 		}
@@ -50,7 +38,7 @@ func (b *Batch) cfProjectAchievementEmailTickWrapper(c *cli.Context) {
 
 // CfProjectに新しい報告(post)が投稿された通知メール
 func (b *Batch) cfProjectNewPostEmailTickWrapper(c *cli.Context) {
-	for range time.Tick(tickTimeMinutes) {
+	for range time.Tick(eighthTickTimeMinutes) {
 		if err := b.CfProjectFacade.SendNewPostEmail(); err != nil {
 			logger.Error(err.Error())
 		}
