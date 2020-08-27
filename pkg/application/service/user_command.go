@@ -189,7 +189,7 @@ func (s *UserCommandServiceImpl) Follow(user *entity.User, targetID int) error {
 			return errors.Wrap(err, "failed to store follow")
 		}
 
-		return s.NoticeDomainService.FollowUser(c, following)
+		return s.NoticeDomainService.FollowUser(c, following, user)
 	})
 }
 

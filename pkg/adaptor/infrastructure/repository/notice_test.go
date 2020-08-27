@@ -20,6 +20,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 		targetUserID := userID
 		triggeredUserID := userID + 1
 		actionTargetID := 1
+		endpoint := "dummy"
 
 		BeforeEach(func() {
 			command = &NoticeCommandRepositoryImpl{DAO: DAO{UnderlyingDB: db}}
@@ -41,6 +42,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 					model.NoticeActionTypeCOMMENT,
 					model.NoticeActionTargetTypeREVIEW,
 					actionTargetID,
+					endpoint,
 				)
 
 				err := command.StoreNotice(context.TODO(), notice)
@@ -131,7 +133,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 				actual, err := query.ListNotice(targetUserID, 2)
 				Expect(err).To(Succeed())
 
-				Expect(len(actual)).To(Equal(2))
+				Expect(len(actual.List)).To(Equal(2))
 			},
 			Entry("正常系"),
 		)
@@ -139,5 +141,5 @@ var _ = Describe("ReviewRepositoryTest", func() {
 })
 
 func newNotice(userID, triggeredUser int, actionTargetID int) *entity.Notice {
-	return entity.NewNotice(userID, triggeredUser, model.NoticeActionTypeTAGGED, model.NoticeActionTargetTypeREVIEW, actionTargetID)
+	return entity.NewNotice(userID, triggeredUser, model.NoticeActionTypeTAGGED, model.NoticeActionTargetTypeREVIEW, actionTargetID, "dummy")
 }

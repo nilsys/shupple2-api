@@ -699,6 +699,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	noticeQueryServiceImpl := &service.NoticeQueryServiceImpl{
 		NoticeQueryRepository:   noticeQueryRepositoryImpl,
 		NoticeCommandRepository: noticeCommandRepositoryImpl,
+		ReviewQueryRepository:   reviewQueryRepositoryImpl,
 		TransactionService:      transactionServiceImpl,
 	}
 	noticeQueryController := api.NoticeQueryController{

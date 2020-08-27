@@ -9,12 +9,13 @@ import (
 
 type (
 	NoticeQueryService interface {
-		ListNotice(user *entity.User) ([]*entity.Notice, error)
+		ListNotice(user *entity.User) (*entity.NoticeList, error)
 	}
 
 	NoticeQueryServiceImpl struct {
 		repository.NoticeQueryRepository
 		repository.NoticeCommandRepository
+		repository.ReviewQueryRepository
 		TransactionService
 	}
 )
@@ -26,22 +27,14 @@ var NoticeQueryServiceSet = wire.NewSet(
 
 var noticeLimit = 100
 
-func (s *NoticeQueryServiceImpl) ListNotice(user *entity.User) ([]*entity.Notice, error) {
+func (s *NoticeQueryServiceImpl) ListNotice(user *entity.User) (*entity.NoticeList, error) {
 	notices, err := s.NoticeQueryRepository.ListNotice(user.ID, noticeLimit)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get notices")
 	}
 
-	// 未読のお知らせを取得する
-	unreadNoticeIds := make([]int, 0, len(notices))
-	for _, notice := range notices {
-		if !notice.IsRead {
-			unreadNoticeIds = append(unreadNoticeIds, notice.ID)
-		}
-	}
-
 	// 未読のお知らせを既読にする
-	if err := s.NoticeCommandRepository.MarkAsRead(unreadNoticeIds); err != nil {
+	if err := s.NoticeCommandRepository.MarkAsRead(notices.UnreadIDs()); err != nil {
 		return nil, errors.Wrap(err, "Failed to change finished reading notices")
 	}
 

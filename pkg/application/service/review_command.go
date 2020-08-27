@@ -124,7 +124,12 @@ func (s *ReviewCommandServiceImpl) CreateReviewCommentReply(user *entity.User, c
 			return errors.Wrap(err, "failed to find review_comment by id")
 		}
 
-		return s.NoticeDomainService.ReviewCommentReply(c, reviewCommentReply, comment)
+		review, err := s.ReviewQueryRepository.FindByID(comment.ReviewID)
+		if err != nil {
+			return errors.Wrap(err, "failed find review")
+		}
+
+		return s.NoticeDomainService.ReviewCommentReply(c, reviewCommentReply, comment, review)
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create review_comment_reply transaction")
@@ -165,7 +170,12 @@ func (s *ReviewCommandServiceImpl) FavoriteReviewComment(user *entity.User, revi
 			return errors.Wrap(err, "failed to find review_comment by id")
 		}
 
-		return s.NoticeDomainService.FavoriteReviewComment(c, favorite, comment)
+		review, err := s.ReviewQueryRepository.FindByID(comment.ReviewID)
+		if err != nil {
+			return errors.Wrap(err, "failed find review")
+		}
+
+		return s.NoticeDomainService.FavoriteReviewComment(c, favorite, comment, review)
 	})
 }
 

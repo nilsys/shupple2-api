@@ -13,6 +13,6 @@ type (
 	}
 
 	NoticeQueryRepository interface {
-		ListNotice(userID int, limit int) ([]*entity.Notice, error)
+		ListNotice(userID int, limit int) (*entity.NoticeList, error)
 	}
 )

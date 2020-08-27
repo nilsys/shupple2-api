@@ -5,10 +5,10 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 )
 
-func (c Converters) ConvertListNoticeToOutput(notices []*entity.Notice) *output.NoticeList {
-	responses := make([]*output.Notice, len(notices))
+func (c Converters) ConvertListNoticeToOutput(notices *entity.NoticeList) *output.NoticeList {
+	responses := make([]*output.Notice, len(notices.List))
 	unReadCount := 0
-	for i, notice := range notices {
+	for i, notice := range notices.List {
 		responses[i] = c.convertNoticeToOutput(notice)
 		if !notice.IsRead {
 			unReadCount++
@@ -22,5 +22,5 @@ func (c Converters) ConvertListNoticeToOutput(notices []*entity.Notice) *output.
 }
 
 func (c Converters) convertNoticeToOutput(notice *entity.Notice) *output.Notice {
-	return output.NewNotice(c.NewUserSummaryFromUser(notice.TriggeredUser), &notice.ActionType, &notice.ActionTargetType, notice.ActionTargetID, notice.IsRead, notice.CreatedAt)
+	return output.NewNotice(c.NewUserSummaryFromUser(notice.TriggeredUser), &notice.ActionType, &notice.ActionTargetType, notice.ActionTargetID, notice.IsRead, notice.CreatedAt, notice.Endpoint)
 }

@@ -17,18 +17,18 @@ var NoticeQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.NoticeQueryRepository), new(*NoticeQueryRepositoryImpl)),
 )
 
-func (r NoticeQueryRepositoryImpl) ListNotice(userID int, limit int) ([]*entity.Notice, error) {
-	var results []*entity.Notice
+func (r NoticeQueryRepositoryImpl) ListNotice(userID int, limit int) (*entity.NoticeList, error) {
+	var results entity.NoticeList
 	err := r.DB.
 		Where("user_id = ?", userID).
 		Order("created_at DESC").
 		Limit(limit).
-		Find(&results).
+		Find(&results.List).
 		Error
 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed find notices")
 	}
 
-	return results, nil
+	return &results, nil
 }

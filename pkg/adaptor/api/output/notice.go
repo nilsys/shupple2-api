@@ -14,6 +14,7 @@ type (
 		ActionTargetID int                           `json:"actionTargetId"`
 		IsRead         bool                          `json:"isRead"`
 		CreatedAt      model.TimeResponse            `json:"createdAt"`
+		Endpoint       string                        `json:"endpoint"`
 	}
 
 	NoticeList struct {
@@ -22,7 +23,7 @@ type (
 	}
 )
 
-func NewNotice(user *UserSummary, actionType *model.NoticeActionType, actionTarget *model.NoticeActionTargetType, actionTargetID int, isRead bool, createdAt time.Time) *Notice {
+func NewNotice(user *UserSummary, actionType *model.NoticeActionType, actionTarget *model.NoticeActionTargetType, actionTargetID int, isRead bool, createdAt time.Time, endpoint string) *Notice {
 	return &Notice{
 		User:           user,
 		ActionType:     actionType,
@@ -30,5 +31,6 @@ func NewNotice(user *UserSummary, actionType *model.NoticeActionType, actionTarg
 		ActionTargetID: actionTargetID,
 		IsRead:         isRead,
 		CreatedAt:      model.TimeResponse(createdAt),
+		Endpoint:       endpoint,
 	}
 }

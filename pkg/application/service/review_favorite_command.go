@@ -139,7 +139,17 @@ func (s *ReviewFavoriteCommandServiceImpl) FavoriteReviewCommentReply(user *enti
 			return errors.Wrap(err, "failed to find review by id")
 		}
 
-		return s.NoticeDomainService.FavoriteReviewCommentReply(c, favorite, reviewCommentReply)
+		reviewComment, err := s.ReviewQueryRepository.FindReviewCommentByID(reviewCommentReply.ReviewCommentID)
+		if err != nil {
+			return errors.Wrap(err, "failed find review_comment")
+		}
+
+		review, err := s.ReviewQueryRepository.FindByID(reviewComment.ReviewID)
+		if err != nil {
+			return errors.Wrap(err, "failed find review")
+		}
+
+		return s.NoticeDomainService.FavoriteReviewCommentReply(c, favorite, reviewCommentReply, review)
 	})
 }
 
