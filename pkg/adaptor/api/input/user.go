@@ -87,6 +87,10 @@ type (
 		Page    int `query:"page"`
 	}
 
+	DeviceToken struct {
+		Value string `json:"deviceToken" validate:"required"`
+	}
+
 	PhoneNumber struct {
 		Val string `param:"phoneNumber" validate:"required"`
 	}

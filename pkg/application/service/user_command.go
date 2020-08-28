@@ -27,6 +27,7 @@ type (
 	UserCommandService interface {
 		SignUp(user *entity.User, cognitoToken string, migrationCode *string) error
 		Update(user *entity.User, cmd *command.UpdateUser) error
+		UpdateDeviceToken(user *entity.User, deviceToken string) error
 		ImportFromWordpressByID(wordpressUserID int) error
 		Follow(user *entity.User, targetID int) error
 		Unfollow(user *entity.User, targetID int) error
@@ -207,8 +208,17 @@ func (s *UserCommandServiceImpl) Update(user *entity.User, cmd *command.UpdateUs
 		return errors.Wrap(err, "failed to update user")
 	}
 
+	// 画像だけは更新が無い場合はputされない
 	if err := s.persistUserImage(cmd); err != nil {
 		return errors.Wrap(err, "failed to persist user image")
+	}
+
+	return nil
+}
+
+func (s *UserCommandServiceImpl) UpdateDeviceToken(user *entity.User, deviceToken string) error {
+	if err := s.UserCommandRepository.UpdateDeviceTokenByID(user.ID, deviceToken); err != nil {
+		return errors.Wrap(err, "failed find update device_token")
 	}
 
 	return nil

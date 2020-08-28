@@ -17,6 +17,7 @@ type (
 		Store(ctx context.Context, user *entity.User) error
 		UnscopedStore(ctx context.Context, user *entity.User) error
 		Update(user *entity.User) error
+		UpdateDeviceTokenByID(id int, deviceToken string) error
 		StoreWithAvatar(user *entity.User, avatar io.Reader, contentType string) error
 		UpdateWordpressID(userID, wordpressUserID int) error
 		StoreFollow(c context.Context, following *entity.UserFollowing, followed *entity.UserFollowed) error

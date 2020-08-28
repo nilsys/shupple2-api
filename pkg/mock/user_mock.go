@@ -81,6 +81,20 @@ func (mr *MockUserCommandRepositoryMockRecorder) Update(user interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockUserCommandRepository)(nil).Update), user)
 }
 
+// UpdateDeviceTokenByID mocks base method
+func (m *MockUserCommandRepository) UpdateDeviceTokenByID(id int, deviceToken string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateDeviceTokenByID", id, deviceToken)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateDeviceTokenByID indicates an expected call of UpdateDeviceTokenByID
+func (mr *MockUserCommandRepositoryMockRecorder) UpdateDeviceTokenByID(id, deviceToken interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDeviceTokenByID", reflect.TypeOf((*MockUserCommandRepository)(nil).UpdateDeviceTokenByID), id, deviceToken)
+}
+
 // StoreWithAvatar mocks base method
 func (m *MockUserCommandRepository) StoreWithAvatar(user *entity.User, avatar io.Reader, contentType string) error {
 	m.ctrl.T.Helper()

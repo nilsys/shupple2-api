@@ -38,7 +38,7 @@ func (c *UserCommandController) SignUp(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, "ok")
 }
 
-// uid以外の要素を更新可能
+// uid,deviceToken以外の要素を更新可能
 func (c *UserCommandController) Update(ctx echo.Context, user entity.User) error {
 	p := input.UpdateUser{}
 	if err := BindAndValidate(ctx, &p); err != nil {
@@ -51,6 +51,19 @@ func (c *UserCommandController) Update(ctx echo.Context, user entity.User) error
 	}
 
 	return ctx.JSON(http.StatusOK, "ok")
+}
+
+func (c *UserCommandController) UpdateDeviceToken(ctx echo.Context, user entity.User) error {
+	i := input.DeviceToken{}
+	if err := BindAndValidate(ctx, &i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	if err := c.UserCommandService.UpdateDeviceToken(&user, i.Value); err != nil {
+		return errors.Wrap(err, "failed update device_token")
+	}
+
+	return ctx.NoContent(http.StatusNoContent)
 }
 
 func (c *UserCommandController) Follow(ctx echo.Context, user entity.User) error {

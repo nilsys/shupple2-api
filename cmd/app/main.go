@@ -107,6 +107,7 @@ func setRoutes(app *App) {
 		users := api.Group("/users")
 		users.POST("", app.UserCommandController.SignUp)
 		users.PUT("", auth.Require(app.UserCommandController.Update))
+		users.PUT("/device_token", auth.Require(app.UserCommandController.UpdateDeviceToken))
 		users.GET("", auth.Require(app.UserQueryController.MyPage))
 		users.GET("/uid/:uid", auth.Optional(app.UserQueryController.ShowByUID))
 		users.GET("/id/:id", app.UserQueryController.ShowByID)

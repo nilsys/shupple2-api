@@ -57,6 +57,18 @@ paths:
                 $ref: "#/components/schemas/User"
       security:
         - iDPCognito: []
+  /users/device_token:
+    put:
+      tags:
+        - user
+      summary: デバイストークン更新
+      security:
+        - iDPCognito: []
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateDeviceTokenRequest"
+      responses:
+        "204":
+          description: nocontent
   /users/uid/{uid}:
     get:
       tags:
@@ -2622,6 +2634,11 @@ components:
           schema:
             $ref: "#/components/schemas/UserUpdateRequest"
       required: true
+    UpdateDeviceTokenRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateDeviceTokenRequest"
     ReviewRequest:
       content:
         application/json:
@@ -2691,6 +2708,12 @@ components:
       format: date-time
       description: 更新日時, ISO 8601形式
       example: 2020-01-01T13:16+09:00
+    UpdateDeviceTokenRequest:
+      type: object
+      properties:
+        deviceToken:
+          type: string
+          description: fcmトークン
     UserUpdateRequest:
       type: object
       properties:

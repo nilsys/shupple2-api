@@ -52,6 +52,13 @@ func (r *UserCommandRepositoryImpl) Update(user *entity.User) error {
 	return nil
 }
 
+func (r *UserCommandRepositoryImpl) UpdateDeviceTokenByID(id int, deviceToken string) error {
+	if err := r.DB(context.TODO()).Exec("UPDATE user SET device_token = ? WHERE id = ?", deviceToken, id).Error; err != nil {
+		return errors.Wrap(err, "failed update user.device_token")
+	}
+	return nil
+}
+
 func (r *UserCommandRepositoryImpl) StoreWithAvatar(user *entity.User, avatar io.Reader, contentType string) error {
 	user.AvatarUUID = uuid.NewV4().String()
 	return Transaction(r.DB(context.TODO()), func(tx *gorm.DB) error {
