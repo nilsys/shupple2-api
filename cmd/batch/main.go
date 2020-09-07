@@ -38,6 +38,7 @@ type Batch struct {
 	MailCommandRepository      repository.MailCommandRepository
 	CfProjectCommandService    service.CfProjectCommandService
 	CfProjectFacade            facade.CfProjectFacade
+	PaymentCommandRepository   repository.PaymentCommandRepository
 }
 
 func main() {

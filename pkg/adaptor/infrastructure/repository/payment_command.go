@@ -55,3 +55,15 @@ func (r *PaymentCommandRepositoryImpl) MarkPaymentCfReturnGiftAsReserved(c conte
 	}
 	return nil
 }
+
+// 有効期限切れのPaymentCfReturnGiftを全て期限切れステータスへ
+func (r *PaymentCommandRepositoryImpl) MarkExpiredAllPaymentCfReturnGiftAsExpired() error {
+	if err := r.DB(context.Background()).
+		Exec(`UPDATE payment_cf_return_gift SET gift_type_reserved_ticket_status = ? WHERE gift_type_reserved_ticket_status IS NOT NULL AND (payment_id, cf_return_gift_id) IN
+			(SELECT * FROM (SELECT payment_cf_return_gift.payment_id, payment_cf_return_gift.cf_return_gift_id FROM payment_cf_return_gift INNER JOIN cf_return_gift_snapshot ON payment_cf_return_gift.cf_return_gift_snapshot_id = cf_return_gift_snapshot.id AND cf_return_gift_snapshot.deadline < NOW()) t)`, model.PaymentCfReturnGiftReservedTicketTypeStatusExpired).
+		Error; err != nil {
+		return errors.Wrap(err, "failed update payment_cf_return_git.gift_type_reserved_ticket_status")
+	}
+
+	return nil
+}

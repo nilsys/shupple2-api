@@ -134,18 +134,18 @@ func (m *MockPaymentCommandRepository) EXPECT() *MockPaymentCommandRepositoryMoc
 	return m.recorder
 }
 
-// Validate mocks base method
+// Store mocks base method
 func (m *MockPaymentCommandRepository) Store(c context.Context, payment *entity.PaymentTiny) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Validate", c, payment)
+	ret := m.ctrl.Call(m, "Store", c, payment)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Validate indicates an expected call of Validate
+// Store indicates an expected call of Store
 func (mr *MockPaymentCommandRepositoryMockRecorder) Store(c, payment interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockPaymentCommandRepository)(nil).Store), c, payment)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockPaymentCommandRepository)(nil).Store), c, payment)
 }
 
 // StorePaymentReturnGiftList mocks base method
@@ -188,4 +188,18 @@ func (m *MockPaymentCommandRepository) MarkPaymentCfReturnGiftAsReserved(c conte
 func (mr *MockPaymentCommandRepositoryMockRecorder) MarkPaymentCfReturnGiftAsReserved(c, paymentID, cfReturnGiftID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkPaymentCfReturnGiftAsReserved", reflect.TypeOf((*MockPaymentCommandRepository)(nil).MarkPaymentCfReturnGiftAsReserved), c, paymentID, cfReturnGiftID)
+}
+
+// MarkExpiredAllPaymentCfReturnGiftAsExpired mocks base method
+func (m *MockPaymentCommandRepository) MarkExpiredAllPaymentCfReturnGiftAsExpired() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MarkExpiredAllPaymentCfReturnGiftAsExpired")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MarkExpiredAllPaymentCfReturnGiftAsExpired indicates an expected call of MarkExpiredAllPaymentCfReturnGiftAsExpired
+func (mr *MockPaymentCommandRepositoryMockRecorder) MarkExpiredAllPaymentCfReturnGiftAsExpired() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkExpiredAllPaymentCfReturnGiftAsExpired", reflect.TypeOf((*MockPaymentCommandRepository)(nil).MarkExpiredAllPaymentCfReturnGiftAsExpired))
 }

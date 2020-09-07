@@ -18,6 +18,7 @@ type (
 		service.CfProjectCommandService
 		service.CfReturnGiftCommandService
 		repository.CfProjectQueryRepository
+		repository.CfProjectCommandRepository
 		repository.PostQueryRepository
 		repository.WordpressQueryRepository
 	}

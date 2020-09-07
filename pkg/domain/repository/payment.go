@@ -22,5 +22,6 @@ type (
 		StorePaymentReturnGiftList(c context.Context, list []*entity.PaymentCfReturnGiftTiny, paymentID int) error
 		MarkPaymentCfReturnGiftAsCancel(c context.Context, paymentID, cfReturnID int) error
 		MarkPaymentCfReturnGiftAsReserved(c context.Context, paymentID, cfReturnGiftID int) error
+		MarkExpiredAllPaymentCfReturnGiftAsExpired() error
 	}
 )

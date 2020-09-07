@@ -15,8 +15,8 @@ const (
 
 func (b *Batch) cliCfProjectNotice() cli.Command {
 	return cli.Command{
-		Name:   "cf_project_notice",
-		Usage:  "cf_project関連の通知メールを全て実行",
+		Name:   "cf_project",
+		Usage:  "cf_project関連のバッチを全て実行",
 		Action: b.cfProjectNoticeFullWrapper,
 	}
 }
@@ -24,6 +24,7 @@ func (b *Batch) cliCfProjectNotice() cli.Command {
 // fargateタスク数を減らす為に一度に動かす
 func (b *Batch) cfProjectNoticeFullWrapper(c *cli.Context) {
 	go b.cfProjectAchievementEmailTickWrapper(c)
+	go b.paymentCfReturnGiftExpiredTickWrapper(c)
 	b.cfProjectNewPostEmailTickWrapper(c)
 }
 
@@ -40,6 +41,15 @@ func (b *Batch) cfProjectAchievementEmailTickWrapper(c *cli.Context) {
 func (b *Batch) cfProjectNewPostEmailTickWrapper(c *cli.Context) {
 	for range time.Tick(eighthTickTimeMinutes) {
 		if err := b.CfProjectFacade.SendNewPostEmail(); err != nil {
+			logger.Error(err.Error())
+		}
+	}
+}
+
+// 有効期限切れのPaymentCfReturnGiftのステータスを変更
+func (b *Batch) paymentCfReturnGiftExpiredTickWrapper(c *cli.Context) {
+	for range time.Tick(fifthTickTimeMinutes) {
+		if err := b.PaymentCommandRepository.MarkExpiredAllPaymentCfReturnGiftAsExpired(); err != nil {
 			logger.Error(err.Error())
 		}
 	}

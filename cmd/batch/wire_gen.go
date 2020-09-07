@@ -250,8 +250,12 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		CfProjectCommandService:    cfProjectCommandServiceImpl,
 		CfReturnGiftCommandService: cfReturnGiftCommandServiceImpl,
 		CfProjectQueryRepository:   cfProjectQueryRepositoryImpl,
+		CfProjectCommandRepository: cfProjectCommandRepositoryImpl,
 		PostQueryRepository:        postQueryRepositoryImpl,
 		WordpressQueryRepository:   wordpressQueryRepositoryImpl,
+	}
+	paymentCommandRepositoryImpl := &repository.PaymentCommandRepositoryImpl{
+		DAO: dao,
 	}
 	batch := &Batch{
 		Config:                     configConfig,
@@ -270,6 +274,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		MailCommandRepository:      mailCommandRepository,
 		CfProjectCommandService:    cfProjectCommandServiceImpl,
 		CfProjectFacade:            cfProjectFacadeImpl,
+		PaymentCommandRepository:   paymentCommandRepositoryImpl,
 	}
 	return batch, nil
 }
