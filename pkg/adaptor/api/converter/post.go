@@ -35,10 +35,17 @@ func (c Converters) ConvertFindPostListParamToQuery(param *input.ListPostParam) 
 	}
 }
 
-func (c Converters) ConvertListFeedPostParamToQuery(param *input.ListFeedPostParam) *query.FindListPaginationQuery {
+func (c Converters) ConvertListFavoritePostParamToQuery(param *input.ListFavoritePostParam) *query.FindListPaginationQuery {
 	return &query.FindListPaginationQuery{
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffSet(),
+	}
+}
+
+func (c Converters) ConvertListFeedPostInputToQuery(i *input.PaginationQuery) *query.FindListPaginationQuery {
+	return &query.FindListPaginationQuery{
+		Limit:  i.GetPostLimit(),
+		Offset: i.GetPostOffset(),
 	}
 }
 

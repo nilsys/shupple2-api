@@ -44,15 +44,15 @@ func (c *ReviewQueryController) LisReview(ctx echo.Context, ouser entity.Optiona
 	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteListToOutput(list, idIsFollowMap))
 }
 
-func (c *ReviewQueryController) ListFeedReview(ctx echo.Context, ouser entity.OptionalUser) error {
-	p := &input.ListFeedReviewParam{}
+func (c *ReviewQueryController) ListFeedReview(ctx echo.Context, user entity.User) error {
+	p := &input.PaginationQuery{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation feed review input")
 	}
 
-	q := c.ConvertListFeedReviewParamToQuery(p)
+	q := c.ConvertListFeedReviewInputToQuery(p)
 
-	reviews, idIsFollowMap, err := c.ReviewQueryScenario.ListFeed(p.UserID, q, ouser)
+	reviews, idIsFollowMap, err := c.ReviewQueryScenario.ListFeed(q, user)
 	if err != nil {
 		return errors.Wrap(err, "failed to show feed review list")
 	}
@@ -89,12 +89,12 @@ func (c *ReviewQueryController) ListReviewCommentByReviewID(ctx echo.Context, ou
 }
 
 func (c *ReviewQueryController) ListFavoriteReview(ctx echo.Context, ouser entity.OptionalUser) error {
-	p := &input.ListFeedReviewParam{}
+	p := &input.ListFavoriteReviewParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list favorite review")
 	}
 
-	q := c.ConvertListFeedReviewParamToQuery(p)
+	q := c.ConvertListFavoriteReviewParamToQuery(p)
 
 	reviews, idIsFollowMap, err := c.ReviewQueryScenario.ListFavorite(p.UserID, q, ouser)
 	if err != nil {

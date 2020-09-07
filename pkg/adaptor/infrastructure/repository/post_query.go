@@ -168,27 +168,10 @@ func (r *PostQueryRepositoryImpl) FindListWithIsFavoriteByParams(query *query.Fi
 	return &postList, nil
 }
 
-// ユーザーIDからフォローしているハッシュタグ or ユーザーのpost一覧を参照
-func (r *PostQueryRepositoryImpl) FindFeedListByUserID(targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
+func (r *PostQueryRepositoryImpl) FindFeedListWithIsFavoriteByUserID(userID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
 	var rows entity.PostList
 
-	q := r.buildFindFeedListQuery(targetUserID)
-
-	if err := q.
-		Order("created_at DESC").
-		Limit(query.Limit).
-		Offset(query.Offset).
-		Find(&rows.Posts).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
-		return nil, errors.Wrapf(err, "failed find feed posts")
-	}
-
-	return &rows, nil
-}
-
-func (r *PostQueryRepositoryImpl) FindFeedListWithIsFavoriteByUserID(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.PostList, error) {
-	var rows entity.PostList
-
-	q := r.buildFindFeedListQuery(targetUserID)
+	q := r.buildFindFeedListQuery(userID)
 
 	if err := q.
 		Select("post.*, CASE WHEN user_favorite_post.post_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").

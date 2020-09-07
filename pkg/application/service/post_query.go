@@ -13,7 +13,7 @@ type (
 		ShowByID(id int, ouser *entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, error)
 		ShowBySlug(slug string, ouser *entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, error)
 		ListByParams(query *query.FindPostListQuery, ouser *entity.OptionalUser) (*entity.PostList, error)
-		ListFeed(targetUserID int, query *query.FindListPaginationQuery, ouser *entity.OptionalUser) (*entity.PostList, error)
+		ListFeed(query *query.FindListPaginationQuery, user *entity.User) (*entity.PostList, error)
 		ListFavoritePost(targetUserID int, query *query.FindListPaginationQuery, ouser *entity.OptionalUser) (*entity.PostList, error)
 	}
 
@@ -52,11 +52,8 @@ func (s *PostQueryServiceImpl) ListByParams(query *query.FindPostListQuery, ouse
 }
 
 // ユーザーがフォローしたユーザー or ハッシュタグの記事一覧参照
-func (s *PostQueryServiceImpl) ListFeed(targetUserID int, query *query.FindListPaginationQuery, ouser *entity.OptionalUser) (*entity.PostList, error) {
-	if ouser.IsAuthorized() {
-		return s.PostQueryRepository.FindFeedListWithIsFavoriteByUserID(ouser.ID, targetUserID, query)
-	}
-	return s.PostQueryRepository.FindFeedListByUserID(targetUserID, query)
+func (s *PostQueryServiceImpl) ListFeed(query *query.FindListPaginationQuery, user *entity.User) (*entity.PostList, error) {
+	return s.PostQueryRepository.FindFeedListWithIsFavoriteByUserID(user.ID, query)
 }
 
 // ユーザーがいいねした記事一覧参照

@@ -101,6 +101,7 @@ func setRoutes(app *App) {
 		posts.GET("/:slug/slug", auth.Optional(app.PostQueryController.ShowBySlug))
 		posts.PUT("/:id/favorite", auth.Require(app.PostFavoriteCommandController.Store))
 		posts.DELETE("/:id/favorite", auth.Require(app.PostFavoriteCommandController.Delete))
+		posts.GET("/feed", auth.Require(app.PostQueryController.ListFeedPost))
 	}
 
 	{
@@ -118,8 +119,6 @@ func setRoutes(app *App) {
 		users.DELETE("/:id/follow", auth.Require(app.UserCommandController.Unfollow))
 		users.GET("/:id/following", auth.Optional(app.UserQueryController.ListFollowingUsers))
 		users.GET("/:id/followed", auth.Optional(app.UserQueryController.ListFollowedUsers))
-		users.GET("/:id/feed/posts", auth.Optional(app.PostQueryController.ListFeedPost))
-		users.GET("/:id/feed/reviews", auth.Optional(app.ReviewQueryController.ListFeedReview))
 		users.GET("/:id/favorite/posts", auth.Optional(app.PostQueryController.ListFavoritePost))
 		users.GET("/:id/favorite/reviews", auth.Optional(app.ReviewQueryController.ListFavoriteReview))
 		users.GET("/favorite/reviews/:id", auth.Optional(app.UserQueryController.ListFavoriteReviewUser))
@@ -149,6 +148,7 @@ func setRoutes(app *App) {
 		reviews.DELETE("/comment/:id/favorite", auth.Require(app.ReviewCommandController.UnfavoriteReviewComment))
 		reviews.PUT("/:id/favorite", auth.Require(app.ReviewFavoriteCommandController.Store))
 		reviews.DELETE("/:id/favorite", auth.Require(app.ReviewFavoriteCommandController.Delete))
+		reviews.GET("/feed", auth.Require(app.ReviewQueryController.ListFeedReview))
 	}
 
 	{

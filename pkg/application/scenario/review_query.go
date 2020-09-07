@@ -12,7 +12,7 @@ import (
 type (
 	ReviewQueryScenario interface {
 		ListByParams(query *query.ShowReviewListQuery, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavoriteList, map[int]bool, error)
-		ListFeed(userID int, query *query.FindListPaginationQuery, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavoriteList, map[int]bool, error)
+		ListFeed(query *query.FindListPaginationQuery, user entity.User) (*entity.ReviewDetailWithIsFavoriteList, map[int]bool, error)
 		ListFavorite(userID int, query *query.FindListPaginationQuery, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavoriteList, map[int]bool, error)
 		Show(id int, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavorite, map[int]bool, error)
 	}
@@ -48,20 +48,18 @@ func (s *ReviewQueryScenarioImpl) ListByParams(query *query.ShowReviewListQuery,
 	return list, idIsFollowMap, nil
 }
 
-func (s *ReviewQueryScenarioImpl) ListFeed(userID int, query *query.FindListPaginationQuery, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavoriteList, map[int]bool, error) {
+func (s *ReviewQueryScenarioImpl) ListFeed(query *query.FindListPaginationQuery, user entity.User) (*entity.ReviewDetailWithIsFavoriteList, map[int]bool, error) {
 	var idIsFollowMap map[int]bool
 
-	list, err := s.ReviewQueryService.ListFeed(ouser, userID, query)
+	list, err := s.ReviewQueryService.ListFeed(user, query)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed find reviews")
 	}
 
-	if ouser.IsAuthorized() {
-		// 認証されている場合、Review.Userをfollowしているかフラグを取得
-		idIsFollowMap, err = s.UserQueryRepository.IsFollowing(ouser.ID, list.UserIDs())
-		if err != nil {
-			return nil, nil, errors.Wrap(err, "failed find user_following")
-		}
+	// 認証されている場合、Review.Userをfollowしているかフラグを取得
+	idIsFollowMap, err = s.UserQueryRepository.IsFollowing(user.ID, list.UserIDs())
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "failed find user_following")
 	}
 
 	return list, idIsFollowMap, nil

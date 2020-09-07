@@ -71,15 +71,15 @@ func (c *PostQueryController) ListPost(ctx echo.Context, ouser entity.OptionalUs
 	return ctx.JSON(http.StatusOK, c.ConvertPostListTinyWithCategoryDetailForListToOutput(posts, areaCategoriesMap, themeCategoriesMap, idIsFollowMap))
 }
 
-func (c *PostQueryController) ListFeedPost(ctx echo.Context, ouser entity.OptionalUser) error {
-	p := &input.ListFeedPostParam{}
+func (c *PostQueryController) ListFeedPost(ctx echo.Context, user entity.User) error {
+	p := &input.PaginationQuery{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrapf(err, "validation find feed post list input")
 	}
 
-	q := c.ConvertListFeedPostParamToQuery(p)
+	q := c.ConvertListFeedPostInputToQuery(p)
 
-	posts, areaCategoriesMap, themeCategories, idIsFollowMap, err := c.PostQueryScenario.ListFeed(p.UserID, q, &ouser)
+	posts, areaCategoriesMap, themeCategories, idIsFollowMap, err := c.PostQueryScenario.ListFeed(q, &user)
 	if err != nil {
 		return errors.Wrap(err, "failed to show feed posts")
 	}
@@ -88,12 +88,12 @@ func (c *PostQueryController) ListFeedPost(ctx echo.Context, ouser entity.Option
 }
 
 func (c *PostQueryController) ListFavoritePost(ctx echo.Context, ouser entity.OptionalUser) error {
-	p := &input.ListFeedPostParam{}
+	p := &input.ListFavoritePostParam{}
 	if err := BindAndValidate(ctx, p); err != nil {
 		return errors.Wrap(err, "validation list favorite post")
 	}
 
-	q := c.ConvertListFeedPostParamToQuery(p)
+	q := c.ConvertListFavoritePostParamToQuery(p)
 
 	posts, areaCategoriesMap, themeCategories, idIsFollowMap, err := c.PostQueryScenario.LitFavorite(p.UserID, q, &ouser)
 	if err != nil {

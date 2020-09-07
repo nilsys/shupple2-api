@@ -21,4 +21,4 @@ docker-compose.override.yaml
 .idea
 dummy.sql
 .DS_STORE
-stayway-flutter-firebase-adminsdk.json
+stayway-flutter-firebase-admin-sdk-key.json

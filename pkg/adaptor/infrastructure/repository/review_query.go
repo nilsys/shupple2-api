@@ -56,27 +56,10 @@ func (r *ReviewQueryRepositoryImpl) ShowReviewWithIsFavoriteListByParams(query *
 	return &rows, nil
 }
 
-// ユーザーIDからフォローしているハッシュタグ or ユーザーのreview一覧を参照
-func (r *ReviewQueryRepositoryImpl) FindFeedReviewListByUserID(userID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error) {
+func (r *ReviewQueryRepositoryImpl) FindFeedReviewWithIsFavoriteListByUserID(userID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error) {
 	var rows entity.ReviewDetailWithIsFavoriteList
 
 	q := r.buildFindFeedListQuery(userID)
-
-	if err := q.
-		Limit(query.Limit).
-		Offset(query.Offset).
-		Order("created_at DESC").
-		Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
-		return nil, errors.Wrap(err, "failed find feed reviews")
-	}
-
-	return &rows, nil
-}
-
-func (r *ReviewQueryRepositoryImpl) FindFeedReviewWithIsFavoriteListByUserID(userID, targetUserID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error) {
-	var rows entity.ReviewDetailWithIsFavoriteList
-
-	q := r.buildFindFeedListQuery(targetUserID)
 
 	if err := q.
 		Select("review.*, CASE WHEN user_favorite_review.review_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").

@@ -30,10 +30,17 @@ func (c Converters) ConvertFindReviewListParamToQuery(param *input.ListReviewPar
 	}
 }
 
-func (c Converters) ConvertListFeedReviewParamToQuery(param *input.ListFeedReviewParam) *query.FindListPaginationQuery {
+func (c Converters) ConvertListFavoriteReviewParamToQuery(param *input.ListFavoriteReviewParam) *query.FindListPaginationQuery {
 	return &query.FindListPaginationQuery{
 		Limit:  param.GetLimit(),
 		Offset: param.GetOffset(),
+	}
+}
+
+func (c Converters) ConvertListFeedReviewInputToQuery(i *input.PaginationQuery) *query.FindListPaginationQuery {
+	return &query.FindListPaginationQuery{
+		Limit:  i.GetReviewLimit(),
+		Offset: i.GetReviewOffset(),
 	}
 }
 
