@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	firebaseEntity "github.com/stayway-corp/stayway-media-api/pkg/domain/entity/firebase"
+
 	"go.uber.org/zap"
 
 	"firebase.google.com/go/messaging"
@@ -25,21 +27,21 @@ const (
 	androidDefaultDataVal = "FLUTTER_NOTIFICATION_CLICK"
 )
 
-func (r *CloudMessageRepositoryImpl) Send(token, body string, data map[string]string, badge int) error {
+func (r *CloudMessageRepositoryImpl) Send(cloudMsgData *firebaseEntity.CloudMessageData) error {
 	// マストのdata
-	data[androidDefaultDataKey] = androidDefaultDataVal
+	cloudMsgData.AddData(androidDefaultDataKey, androidDefaultDataVal)
 
 	msg := &messaging.Message{
-		Token: token,
-		Data:  data,
+		Token: cloudMsgData.Token,
+		Data:  cloudMsgData.Data,
 		Notification: &messaging.Notification{
 			Title: "Stayway",
-			Body:  body,
+			Body:  cloudMsgData.Body,
 		},
 		APNS: &messaging.APNSConfig{
 			Payload: &messaging.APNSPayload{
 				Aps: &messaging.Aps{
-					Badge: &badge,
+					Badge: &cloudMsgData.Badge,
 				},
 			},
 		},
@@ -53,13 +55,15 @@ func (r *CloudMessageRepositoryImpl) Send(token, body string, data map[string]st
 	return nil
 }
 
-func (r *CloudMessageRepositoryForLocalImpl) Send(token, body string, data map[string]string, badge int) error {
+func (r *CloudMessageRepositoryForLocalImpl) Send(cloudMsgData *firebaseEntity.CloudMessageData) error {
 	var dataStr []string
 
-	for k, v := range data {
+	cloudMsgData.AddData(androidDefaultDataKey, androidDefaultDataVal)
+
+	for k, v := range cloudMsgData.Data {
 		dataStr = append(dataStr, fmt.Sprintf("%s: %s", k, v))
 	}
 
-	logger.Info("Push Notification", zap.String("Token", token), zap.String("Body", body), zap.Strings("Data", dataStr), zap.Int("Badge", badge))
+	logger.Info("Push Notification", zap.String("Token", cloudMsgData.Token), zap.String("Body", cloudMsgData.Body), zap.Strings("Data", dataStr), zap.Int("Badge", cloudMsgData.Badge))
 	return nil
 }

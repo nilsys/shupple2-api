@@ -1,7 +1,9 @@
 package firebase
 
+import firebaseEntity "github.com/stayway-corp/stayway-media-api/pkg/domain/entity/firebase"
+
 type (
 	CloudMessageCommandRepository interface {
-		Send(token, body string, data map[string]string, badge int) error
+		Send(cloudMsgData *firebaseEntity.CloudMessageData) error
 	}
 )

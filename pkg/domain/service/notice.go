@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strconv"
 
+	firebaseEntity "github.com/stayway-corp/stayway-media-api/pkg/domain/entity/firebase"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 
 	"github.com/pkg/errors"
@@ -270,10 +272,9 @@ func (s *NoticeDomainServiceImpl) send(c context.Context, notice *entity.Notice,
 		return errors.Wrap(err, "failed count unread push_notice")
 	}
 
-	if err := s.CloudMessageCommandRepository.Send(
-		user.DeviceToken.String,
-		model.PushNoticeBody(triggeredUser.Name, notice.ActionTargetType, notice.ActionType),
-		map[string]string{"endpoint": notice.Endpoint, "noticeId": strconv.Itoa(notice.ID)}, unReadCount); err != nil {
+	cloudMsgData := firebaseEntity.NewCloudMessageData(user.DeviceToken.String, model.PushNoticeBody(triggeredUser.Name, notice.ActionTargetType, notice.ActionType), map[string]string{"endpoint": notice.Endpoint, "noticeId": strconv.Itoa(notice.ID)}, unReadCount)
+
+	if err := s.CloudMessageCommandRepository.Send(cloudMsgData); err != nil {
 		// MEMO: プッシュ通知のエラーは握り潰す
 		logger.Error(err.Error())
 	}

@@ -3,8 +3,6 @@ package api
 import (
 	"net/http"
 
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository/firebase"
-
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
@@ -16,7 +14,6 @@ import (
 type HealthCheckController struct {
 	converter.Converters
 	repository.HealthCheckRepository
-	firebase.CloudMessageCommandRepository
 	Config *config.Config
 }
 

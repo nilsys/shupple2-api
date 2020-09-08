@@ -541,10 +541,9 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		DB: db,
 	}
 	healthCheckController := api.HealthCheckController{
-		Converters:                    converters,
-		HealthCheckRepository:         healthCheckRepositoryImpl,
-		CloudMessageCommandRepository: cloudMessageCommandRepository,
-		Config:                        configConfig,
+		Converters:            converters,
+		HealthCheckRepository: healthCheckRepositoryImpl,
+		Config:                configConfig,
 	}
 	areaCategoryCommandRepositoryImpl := &repository.AreaCategoryCommandRepositoryImpl{
 		DAO: dao,
