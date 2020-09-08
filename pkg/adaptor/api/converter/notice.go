@@ -22,5 +22,5 @@ func (c Converters) ConvertListNoticeToOutput(notices *entity.NoticeList) *outpu
 }
 
 func (c Converters) convertNoticeToOutput(notice *entity.Notice) *output.Notice {
-	return output.NewNotice(c.NewUserSummaryFromUser(notice.TriggeredUser), &notice.ActionType, &notice.ActionTargetType, notice.ActionTargetID, notice.IsRead, notice.CreatedAt, notice.Endpoint)
+	return output.NewNotice(notice.ID, c.NewUserSummaryFromUser(notice.TriggeredUser), &notice.ActionType, &notice.ActionTargetType, notice.ActionTargetID, notice.IsRead, notice.CreatedAt, notice.Endpoint)
 }

@@ -34,32 +34,31 @@ var _ = Describe("ReviewRepositoryTest", func() {
 			Expect(db.Save(newReviewComment(triggeredUserID, reviewID)))
 		})
 
-		DescribeTable("正常系",
-			func() {
-				notice := entity.NewNotice(
-					triggeredUserID,
-					targetUserID,
-					model.NoticeActionTypeCOMMENT,
-					model.NoticeActionTargetTypeREVIEW,
-					actionTargetID,
-					endpoint,
-				)
+		DescribeTable("正常系", func() {
+			notice := entity.NewNotice(
+				triggeredUserID,
+				targetUserID,
+				model.NoticeActionTypeCOMMENT,
+				model.NoticeActionTargetTypeREVIEW,
+				actionTargetID,
+				endpoint,
+			)
 
-				err := command.StoreNotice(context.TODO(), notice)
-				Expect(err).To(Succeed())
+			err := command.StoreNotice(context.TODO(), notice)
+			Expect(err).To(Succeed())
 
-				actual := &entity.Notice{}
-				err = db.
-					Where("id = ?", notice.ID).
-					Find(actual).
-					Error
-				Expect(err).To(Succeed())
-				Expect(actual.UserID).To(Equal(triggeredUserID))
-				Expect(actual.TriggeredUserID).To(Equal(targetUserID))
-				Expect(actual.ActionTargetType).To(Equal(model.NoticeActionTargetTypeREVIEW))
-				Expect(actual.ActionType).To(Equal(model.NoticeActionTypeCOMMENT))
-				Expect(actual.ActionTargetID).To(Equal(actionTargetID))
-			},
+			actual := &entity.Notice{}
+			err = db.
+				Where("id = ?", notice.ID).
+				Find(actual).
+				Error
+			Expect(err).To(Succeed())
+			Expect(actual.UserID).To(Equal(triggeredUserID))
+			Expect(actual.TriggeredUserID).To(Equal(targetUserID))
+			Expect(actual.ActionTargetType).To(Equal(model.NoticeActionTargetTypeREVIEW))
+			Expect(actual.ActionType).To(Equal(model.NoticeActionTypeCOMMENT))
+			Expect(actual.ActionTargetID).To(Equal(actionTargetID))
+		},
 			Entry("正常系"),
 		)
 	})
@@ -86,23 +85,21 @@ var _ = Describe("ReviewRepositoryTest", func() {
 
 		DescribeTable("正常系",
 			func() {
-				var ids []int
-				err := db.Table("notice").Select("id").Find(&ids).Error
+				var notice entity.Notice
+				err := db.First(&notice).Error
 				Expect(err).To(Succeed())
 
-				err = command.MarkAsRead(ids)
+				err = command.MarkAsRead(context.Background(), notice.ID, targetUserID)
 				Expect(err).To(Succeed())
 
-				var actual int
-				err = db.
-					Table("notice").
-					Where("is_read = ?", true).
-					Count(&actual).
-					Error
+				var actual entity.Notice
+				err = db.First(&actual, notice.ID).Error
+
+				notice.IsRead = true
 
 				// 全部既読になっているか
 				Expect(err).To(Succeed())
-				Expect(actual).To(Equal(0))
+				Expect(actual).To(Equal(notice))
 			},
 			Entry("正常系"),
 		)
@@ -113,7 +110,7 @@ var _ = Describe("ReviewRepositoryTest", func() {
 		triggeredUserID := userID + 1
 
 		BeforeEach(func() {
-			query = &NoticeQueryRepositoryImpl{DB: db}
+			query = &NoticeQueryRepositoryImpl{DAO: DAO{UnderlyingDB: db}}
 
 			truncate(db)
 			Expect(db.Save(newTouristSpot(touristSpotID, nil, nil, nil)))

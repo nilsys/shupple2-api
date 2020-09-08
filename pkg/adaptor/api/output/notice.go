@@ -8,6 +8,7 @@ import (
 
 type (
 	Notice struct {
+		ID             int                           `json:"id"`
 		User           *UserSummary                  `json:"user"`
 		ActionType     *model.NoticeActionType       `json:"actionType"`
 		ActionTarget   *model.NoticeActionTargetType `json:"actionTarget"`
@@ -23,8 +24,9 @@ type (
 	}
 )
 
-func NewNotice(user *UserSummary, actionType *model.NoticeActionType, actionTarget *model.NoticeActionTargetType, actionTargetID int, isRead bool, createdAt time.Time, endpoint string) *Notice {
+func NewNotice(id int, user *UserSummary, actionType *model.NoticeActionType, actionTarget *model.NoticeActionTargetType, actionTargetID int, isRead bool, createdAt time.Time, endpoint string) *Notice {
 	return &Notice{
+		ID:             id,
 		User:           user,
 		ActionType:     actionType,
 		ActionTarget:   actionTarget,

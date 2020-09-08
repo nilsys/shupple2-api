@@ -3,6 +3,7 @@ module github.com/stayway-corp/stayway-media-api
 go 1.13
 
 require (
+	firebase.google.com/go v3.13.0+incompatible
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/aws/aws-sdk-go v1.28.10
 	github.com/cosmtrek/air v1.12.0

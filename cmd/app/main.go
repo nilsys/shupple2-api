@@ -63,6 +63,7 @@ type App struct {
 	AreaQueryController                  api.AreaQueryController
 	InnQueryController                   api.InnQueryController
 	NoticeQueryController                api.NoticeQueryController
+	NoticeCommandController              api.NoticeCommandController
 	ReportCommandController              api.ReportCommandController
 	ComicFavoriteCommandController       api.ComicFavoriteCommandController
 	VlogFavoriteCommandController        api.VlogFavoriteCommandController
@@ -224,6 +225,7 @@ func setRoutes(app *App) {
 	{
 		notices := api.Group("/notices")
 		notices.GET("", auth.Require(app.NoticeQueryController.ListNotices))
+		notices.PUT("/:id", auth.Require(app.NoticeCommandController.MarkAsRead))
 	}
 
 	{

@@ -64,12 +64,27 @@ func InitializeScript(configFilePath config.FilePath) (*Script, error) {
 	noticeCommandRepositoryImpl := &repository.NoticeCommandRepositoryImpl{
 		DAO: dao,
 	}
+	noticeQueryRepositoryImpl := &repository.NoticeQueryRepositoryImpl{
+		DAO: dao,
+	}
+	firebaseAppWrap, err := repository.ProvideFirebaseApp(session, configConfig)
+	if err != nil {
+		return nil, err
+	}
+	fcmClientWrap, err := repository.ProvideFcmClient(firebaseAppWrap)
+	if err != nil {
+		return nil, err
+	}
+	cloudMessageCommandRepository := repository.ProvideFcmRepo(fcmClientWrap)
 	taggedUserDomainServiceImpl := service.TaggedUserDomainServiceImpl{
 		UserQueryRepository: userQueryRepositoryImpl,
 	}
 	noticeDomainServiceImpl := &service.NoticeDomainServiceImpl{
-		NoticeCommandRepository: noticeCommandRepositoryImpl,
-		TaggedUserDomainService: taggedUserDomainServiceImpl,
+		NoticeCommandRepository:       noticeCommandRepositoryImpl,
+		UserQueryRepository:           userQueryRepositoryImpl,
+		NoticeQueryRepository:         noticeQueryRepositoryImpl,
+		CloudMessageCommandRepository: cloudMessageCommandRepository,
+		TaggedUserDomainService:       taggedUserDomainServiceImpl,
 	}
 	transactionServiceImpl := &repository.TransactionServiceImpl{
 		DB: db,

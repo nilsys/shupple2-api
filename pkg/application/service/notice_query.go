@@ -33,10 +33,5 @@ func (s *NoticeQueryServiceImpl) ListNotice(user *entity.User) (*entity.NoticeLi
 		return nil, errors.Wrap(err, "Failed to get notices")
 	}
 
-	// 未読のお知らせを既読にする
-	if err := s.NoticeCommandRepository.MarkAsRead(notices.UnreadIDs()); err != nil {
-		return nil, errors.Wrap(err, "Failed to change finished reading notices")
-	}
-
 	return notices, nil
 }

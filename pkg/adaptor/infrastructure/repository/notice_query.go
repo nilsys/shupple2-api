@@ -1,15 +1,16 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/google/wire"
-	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
 type NoticeQueryRepositoryImpl struct {
-	DB *gorm.DB
+	DAO
 }
 
 var NoticeQueryRepositorySet = wire.NewSet(
@@ -19,7 +20,7 @@ var NoticeQueryRepositorySet = wire.NewSet(
 
 func (r NoticeQueryRepositoryImpl) ListNotice(userID int, limit int) (*entity.NoticeList, error) {
 	var results entity.NoticeList
-	err := r.DB.
+	err := r.DB(context.Background()).
 		Where("user_id = ?", userID).
 		Order("created_at DESC").
 		Limit(limit).
@@ -31,4 +32,18 @@ func (r NoticeQueryRepositoryImpl) ListNotice(userID int, limit int) (*entity.No
 	}
 
 	return &results, nil
+}
+
+func (r NoticeQueryRepositoryImpl) UnreadPushNoticeCount(c context.Context, userID int) (int, error) {
+	var count int
+
+	if err := r.DB(c).
+		Table("notice").
+		Where("user_id = ? AND is_read = false", userID).
+		Count(&count).
+		Error; err != nil {
+		return 0, errors.Wrap(err, "failed count unread push_notice")
+	}
+
+	return count, nil
 }

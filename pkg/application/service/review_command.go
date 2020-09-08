@@ -15,11 +15,8 @@ import (
 type (
 	// Reviewコマンド系サービス
 	ReviewCommandService interface {
-		// 以下2つは処理が特別複雑なので、別途シナリオクラスを作成している
-		//*************************************************
-		StoreTouristSpotReview(review *entity.Review) error
-		StoreInnReview(review *entity.Review) error
-		//*************************************************
+		StoreTouristSpotReview(user *entity.User, review *entity.Review) error
+		StoreInnReview(user *entity.User, review *entity.Review) error
 		UpdateReview(review *entity.Review, cmd *command.UpdateReview) error
 		DeleteReview(review *entity.Review) error
 		CreateReviewComment(user *entity.User, reviewID int, body string) (*entity.ReviewComment, error)
@@ -48,7 +45,7 @@ var ReviewCommandServiceSet = wire.NewSet(
 )
 
 // touristSpotと紐付くレビューの場合
-func (s *ReviewCommandServiceImpl) StoreTouristSpotReview(review *entity.Review) error {
+func (s *ReviewCommandServiceImpl) StoreTouristSpotReview(user *entity.User, review *entity.Review) error {
 	// TODO: lock時間長くなるのが気になる
 	return s.TransactionService.Do(func(c context.Context) error {
 		if err := s.ReviewCommandRepository.StoreReview(c, review); err != nil {
@@ -64,12 +61,12 @@ func (s *ReviewCommandServiceImpl) StoreTouristSpotReview(review *entity.Review)
 			return errors.Wrap(err, "failed tourist_spot.rate")
 		}
 
-		return s.NoticeDomainService.Review(c, review)
+		return s.NoticeDomainService.Review(c, review, user)
 	})
 }
 
 // innと紐付くレビューの場合
-func (s *ReviewCommandServiceImpl) StoreInnReview(review *entity.Review) error {
+func (s *ReviewCommandServiceImpl) StoreInnReview(user *entity.User, review *entity.Review) error {
 	return s.TransactionService.Do(func(c context.Context) error {
 		if err := s.ReviewCommandRepository.StoreReview(c, review); err != nil {
 			return errors.Wrap(err, "failed store review")
@@ -79,7 +76,7 @@ func (s *ReviewCommandServiceImpl) StoreInnReview(review *entity.Review) error {
 			return errors.Wrap(err, "failed to persist media")
 		}
 
-		return s.NoticeDomainService.Review(c, review)
+		return s.NoticeDomainService.Review(c, review, user)
 	})
 }
 
@@ -129,7 +126,7 @@ func (s *ReviewCommandServiceImpl) CreateReviewCommentReply(user *entity.User, c
 			return errors.Wrap(err, "failed find review")
 		}
 
-		return s.NoticeDomainService.ReviewCommentReply(c, reviewCommentReply, comment, review)
+		return s.NoticeDomainService.ReviewCommentReply(c, reviewCommentReply, comment, review, user)
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create review_comment_reply transaction")
@@ -175,7 +172,7 @@ func (s *ReviewCommandServiceImpl) FavoriteReviewComment(user *entity.User, revi
 			return errors.Wrap(err, "failed find review")
 		}
 
-		return s.NoticeDomainService.FavoriteReviewComment(c, favorite, comment, review)
+		return s.NoticeDomainService.FavoriteReviewComment(c, favorite, comment, review, user)
 	})
 }
 
@@ -238,7 +235,7 @@ func (s *ReviewCommandServiceImpl) CreateReviewComment(user *entity.User, review
 			return err
 		}
 
-		return s.NoticeDomainService.ReviewComment(c, reviewComment, review)
+		return s.NoticeDomainService.ReviewComment(c, reviewComment, review, user)
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create review_comment")

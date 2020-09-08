@@ -4,7 +4,20 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"os"
 	"reflect"
+
+	firebase "firebase.google.com/go"
+
+	"google.golang.org/api/option"
+
+	firebaseRepo "github.com/stayway-corp/stayway-media-api/pkg/domain/repository/firebase"
+
+	"github.com/aws/aws-sdk-go/service/ssm"
+
+	"firebase.google.com/go/messaging"
+
+	firebaseRepoAdaptor "github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/firebase"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 
@@ -35,11 +48,23 @@ const (
 	dummyCredential                 = "staywaydummy"
 	defaultSearchSuggestionsNumber  = 10
 	defaultFollowRecommendUserLimit = 20
+	firebaseAdminSDKKeySSMKey       = "stayway-flutter-firebase-admin-sdk-key"
+	firebaseAdminSDKKeyFilename     = "stayway-flutter-firebase-admin-sdk-key.json"
 )
 
 type (
 	DAO struct {
 		UnderlyingDB *gorm.DB
+	}
+
+	FirebaseAppWrap struct {
+		App   *firebase.App
+		Valid bool
+	}
+
+	FcmClientWrap struct {
+		Client *messaging.Client
+		Valid  bool
 	}
 )
 
@@ -129,6 +154,9 @@ var RepositoriesSet = wire.NewSet(
 	ProvidePayjp,
 	MetasearchAreaQueryRepositorySet,
 	ProvideMailer,
+	ProvideFirebaseApp,
+	ProvideFcmClient,
+	ProvideFcmRepo,
 )
 
 func ProvideDB(config *config.Config) (*gorm.DB, error) {
@@ -176,6 +204,72 @@ func ProvidePayjp(config *config.Config) *payjp.Service {
 	return payjp.New(config.Payjp.SecretKey, nil)
 }
 
+func ProvideFcmClient(app *FirebaseAppWrap) (*FcmClientWrap, error) {
+	if !app.Valid {
+		return &FcmClientWrap{
+			Client: nil,
+			Valid:  false,
+		}, nil
+	}
+
+	cli, err := app.App.Messaging(context.Background())
+	if err != nil {
+		return nil, errors.Wrap(err, "failed init firebase cloud message client")
+	}
+
+	return &FcmClientWrap{
+		Client: cli,
+		Valid:  true,
+	}, nil
+}
+
+func ProvideFirebaseApp(sess *session.Session, config *config.Config) (*FirebaseAppWrap, error) {
+	if config.IsDev() {
+		_, err := os.Stat(firebaseAdminSDKKeyFilename)
+		if os.IsNotExist(err) {
+			return &FirebaseAppWrap{
+				App:   nil,
+				Valid: false,
+			}, nil
+		}
+		// ローカルに対象のファイルがある場合
+		opt := option.WithCredentialsFile(firebaseAdminSDKKeyFilename)
+
+		app, err := firebase.NewApp(context.Background(), nil, opt)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed init firebase app")
+		}
+
+		return &FirebaseAppWrap{
+			App:   app,
+			Valid: true,
+		}, nil
+	}
+
+	svc := ssm.New(sess, aws.NewConfig().WithRegion(config.AWS.Region))
+	res, err := svc.GetParameter(&ssm.GetParameterInput{
+		Name:           aws.String(firebaseAdminSDKKeySSMKey),
+		WithDecryption: aws.Bool(true),
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed get ssm")
+	}
+
+	key := []byte(*res.Parameter.Value)
+
+	opt := option.WithCredentialsJSON(key)
+
+	app, err := firebase.NewApp(context.Background(), nil, opt)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed init firebase app")
+	}
+
+	return &FirebaseAppWrap{
+		App:   app,
+		Valid: true,
+	}, nil
+}
+
 func ProvideMailer(config *config.Config, sess *session.Session) repository.MailCommandRepository {
 	if config.IsDev() {
 		return &MailCommandRepositoryForLocalImpl{}
@@ -185,6 +279,14 @@ func ProvideMailer(config *config.Config, sess *session.Session) repository.Mail
 		AWSSession: sess,
 		AWSConfig:  config.AWS,
 	}
+}
+
+func ProvideFcmRepo(client *FcmClientWrap) firebaseRepo.CloudMessageCommandRepository {
+	if !client.Valid {
+		return &firebaseRepoAdaptor.CloudMessageRepositoryForLocalImpl{}
+	}
+
+	return &firebaseRepoAdaptor.CloudMessageRepositoryImpl{Client: client.Client}
 }
 
 func Transaction(db *gorm.DB, f func(db *gorm.DB) error) (err error) {

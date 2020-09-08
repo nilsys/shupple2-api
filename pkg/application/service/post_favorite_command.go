@@ -67,7 +67,7 @@ func (s *PostFavoriteCommandServiceImpl) Store(user *entity.User, postID int) er
 			return errors.Wrap(err, "failed to find post by id")
 		}
 
-		return s.NoticeDomainService.FavoritePost(c, favorite, post)
+		return s.NoticeDomainService.FavoritePost(c, favorite, post, user)
 	})
 }
 

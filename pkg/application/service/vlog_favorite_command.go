@@ -67,7 +67,7 @@ func (s *VlogFavoriteCommandServiceImpl) Store(user *entity.User, vlogID int) er
 			return errors.Wrap(err, "failed to find vlog by id")
 		}
 
-		return s.NoticeDomainService.FavoriteVlog(c, favorite, vlog)
+		return s.NoticeDomainService.FavoriteVlog(c, favorite, vlog, user)
 	})
 }
 

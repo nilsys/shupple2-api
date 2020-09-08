@@ -69,7 +69,7 @@ func (s *ReviewFavoriteCommandServiceImpl) Store(user *entity.User, reviewID int
 			return errors.Wrap(err, "failed to find review by id")
 		}
 
-		return s.NoticeDomainService.FavoriteReview(c, favorite, review)
+		return s.NoticeDomainService.FavoriteReview(c, favorite, review, user)
 	})
 }
 
@@ -149,7 +149,7 @@ func (s *ReviewFavoriteCommandServiceImpl) FavoriteReviewCommentReply(user *enti
 			return errors.Wrap(err, "failed find review")
 		}
 
-		return s.NoticeDomainService.FavoriteReviewCommentReply(c, favorite, reviewCommentReply, review)
+		return s.NoticeDomainService.FavoriteReviewCommentReply(c, favorite, reviewCommentReply, review, user)
 	})
 }
 

@@ -346,6 +346,32 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NoticeList"
+  /notices/{id}:
+    put:
+      security:
+        - iDPCognito: []
+      tags:
+        - notice
+      summary: 通知既読変更API
+      description: プッシュ通知のステータスを既読へ変更後、未読数を返す
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: notice.id
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  unreadCount:
+                    type: integer
+                    description: 未読数
   /s3:
     post:
       security:
@@ -3273,6 +3299,8 @@ components:
     Notice:
       type: object
       properties:
+        id:
+          type: integer
         user:
           $ref: "#/components/schemas/UserSummary"
         actionType:
@@ -4854,6 +4882,7 @@ components:
         - Unreserved
         - Reserved
         - Canceled
+        - Expired
       default: Undefined
       description: |
         giftTypeがReservedTicketの場合有効

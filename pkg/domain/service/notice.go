@@ -3,6 +3,13 @@ package service
 import (
 	"context"
 	"fmt"
+	"strconv"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
+
+	"github.com/pkg/errors"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository/firebase"
 
 	"github.com/google/wire"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
@@ -12,22 +19,25 @@ import (
 
 type (
 	NoticeDomainService interface {
-		Review(c context.Context, review *entity.Review) error
-		ReviewComment(c context.Context, reviewComment *entity.ReviewComment, review *entity.Review) error
-		ReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply, comment *entity.ReviewComment, review *entity.Review) error
-		FavoritePost(c context.Context, favoritePost *entity.UserFavoritePost, post *entity.Post) error
-		FavoriteReview(c context.Context, favoriteReview *entity.UserFavoriteReview, review *entity.Review) error
-		FavoriteReviewComment(c context.Context, favoriteReviewComment *entity.UserFavoriteReviewComment, reviewComment *entity.ReviewComment, review *entity.Review) error
-		FavoriteComic(c context.Context, favoriteComic *entity.UserFavoriteComic, comic *entity.Comic) error
-		FavoriteReviewCommentReply(c context.Context, favoriteReviewCommentReply *entity.UserFavoriteReviewCommentReply, reviewCommentReply *entity.ReviewCommentReply, review *entity.Review) error
-		FavoriteVlog(c context.Context, favoriteVlog *entity.UserFavoriteVlog, vlog *entity.Vlog) error
-		FollowUser(c context.Context, following *entity.UserFollowing, user *entity.User) error
+		Review(c context.Context, review *entity.Review, triggeredUser *entity.User) error
+		ReviewComment(c context.Context, reviewComment *entity.ReviewComment, review *entity.Review, triggeredUser *entity.User) error
+		ReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply, comment *entity.ReviewComment, review *entity.Review, triggeredUser *entity.User) error
+		FavoritePost(c context.Context, favoritePost *entity.UserFavoritePost, post *entity.Post, triggeredUser *entity.User) error
+		FavoriteReview(c context.Context, favoriteReview *entity.UserFavoriteReview, review *entity.Review, triggeredUser *entity.User) error
+		FavoriteReviewComment(c context.Context, favoriteReviewComment *entity.UserFavoriteReviewComment, reviewComment *entity.ReviewComment, review *entity.Review, triggeredUser *entity.User) error
+		FavoriteComic(c context.Context, favoriteComic *entity.UserFavoriteComic, comic *entity.Comic, triggeredUser *entity.User) error
+		FavoriteReviewCommentReply(c context.Context, favoriteReviewCommentReply *entity.UserFavoriteReviewCommentReply, reviewCommentReply *entity.ReviewCommentReply, review *entity.Review, triggeredUser *entity.User) error
+		FavoriteVlog(c context.Context, favoriteVlog *entity.UserFavoriteVlog, vlog *entity.Vlog, triggeredUser *entity.User) error
+		FollowUser(c context.Context, following *entity.UserFollowing, triggeredUser *entity.User) error
 		// TODO: enhancement
 		//FavoriteVlog()
 	}
 
 	NoticeDomainServiceImpl struct {
 		repository.NoticeCommandRepository
+		repository.UserQueryRepository
+		repository.NoticeQueryRepository
+		firebase.CloudMessageCommandRepository
 		TaggedUserDomainService
 	}
 )
@@ -37,14 +47,14 @@ var NoticeDomainServiceSet = wire.NewSet(
 	wire.Bind(new(NoticeDomainService), new(*NoticeDomainServiceImpl)),
 )
 
-func (s *NoticeDomainServiceImpl) Review(c context.Context, review *entity.Review) error {
+func (s *NoticeDomainServiceImpl) Review(c context.Context, review *entity.Review, triggeredUser *entity.User) error {
 	taggedUsers, err := s.TaggedUserDomainService.FindTaggedUsers(review.Body)
 	if err != nil {
 		return err
 	}
 
 	for _, taggedUser := range taggedUsers {
-		if err = s.taggedAtReview(c, review, taggedUser.ID); err != nil {
+		if err = s.taggedAtReview(c, review, taggedUser.ID, triggeredUser); err != nil {
 			return err
 		}
 	}
@@ -52,7 +62,7 @@ func (s *NoticeDomainServiceImpl) Review(c context.Context, review *entity.Revie
 	return nil
 }
 
-func (s *NoticeDomainServiceImpl) FavoritePost(c context.Context, favoritePost *entity.UserFavoritePost, post *entity.Post) error {
+func (s *NoticeDomainServiceImpl) FavoritePost(c context.Context, favoritePost *entity.UserFavoritePost, post *entity.Post, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		post.UserID,
 		favoritePost.UserID,
@@ -62,10 +72,10 @@ func (s *NoticeDomainServiceImpl) FavoritePost(c context.Context, favoritePost *
 		fmt.Sprintf("/%s", post.Slug),
 	)
 
-	return s.send(c, notice)
+	return s.send(c, notice, post.UserID, triggeredUser)
 }
 
-func (s *NoticeDomainServiceImpl) FavoriteReview(c context.Context, favoriteReview *entity.UserFavoriteReview, review *entity.Review) error {
+func (s *NoticeDomainServiceImpl) FavoriteReview(c context.Context, favoriteReview *entity.UserFavoriteReview, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		review.UserID,
 		favoriteReview.UserID,
@@ -75,10 +85,10 @@ func (s *NoticeDomainServiceImpl) FavoriteReview(c context.Context, favoriteRevi
 		s.reviewEndpoint(review),
 	)
 
-	return s.send(c, notice)
+	return s.send(c, notice, review.UserID, triggeredUser)
 }
 
-func (s *NoticeDomainServiceImpl) FavoriteReviewComment(c context.Context, favoriteReviewComment *entity.UserFavoriteReviewComment, reviewComment *entity.ReviewComment, review *entity.Review) error {
+func (s *NoticeDomainServiceImpl) FavoriteReviewComment(c context.Context, favoriteReviewComment *entity.UserFavoriteReviewComment, reviewComment *entity.ReviewComment, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		reviewComment.UserID,
 		favoriteReviewComment.UserID,
@@ -88,9 +98,9 @@ func (s *NoticeDomainServiceImpl) FavoriteReviewComment(c context.Context, favor
 		s.reviewCommentEndpoint(review, reviewComment),
 	)
 
-	return s.send(c, notice)
+	return s.send(c, notice, reviewComment.UserID, triggeredUser)
 }
-func (s *NoticeDomainServiceImpl) FavoriteReviewCommentReply(c context.Context, favoriteReviewCommentReply *entity.UserFavoriteReviewCommentReply, reviewCommentReply *entity.ReviewCommentReply, review *entity.Review) error {
+func (s *NoticeDomainServiceImpl) FavoriteReviewCommentReply(c context.Context, favoriteReviewCommentReply *entity.UserFavoriteReviewCommentReply, reviewCommentReply *entity.ReviewCommentReply, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		reviewCommentReply.UserID,
 		favoriteReviewCommentReply.UserID,
@@ -100,10 +110,10 @@ func (s *NoticeDomainServiceImpl) FavoriteReviewCommentReply(c context.Context, 
 		s.reviewCommentReplyEndpoint(review, reviewCommentReply),
 	)
 
-	return s.send(c, notice)
+	return s.send(c, notice, reviewCommentReply.UserID, triggeredUser)
 }
 
-func (s *NoticeDomainServiceImpl) FavoriteComic(c context.Context, favoriteComic *entity.UserFavoriteComic, comic *entity.Comic) error {
+func (s *NoticeDomainServiceImpl) FavoriteComic(c context.Context, favoriteComic *entity.UserFavoriteComic, comic *entity.Comic, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		comic.UserID,
 		favoriteComic.UserID,
@@ -113,10 +123,10 @@ func (s *NoticeDomainServiceImpl) FavoriteComic(c context.Context, favoriteComic
 		fmt.Sprintf("/tourism/comic/%d", comic.ID),
 	)
 
-	return s.send(c, notice)
+	return s.send(c, notice, comic.UserID, triggeredUser)
 }
 
-func (s *NoticeDomainServiceImpl) FavoriteVlog(c context.Context, favoriteVlog *entity.UserFavoriteVlog, vlog *entity.Vlog) error {
+func (s *NoticeDomainServiceImpl) FavoriteVlog(c context.Context, favoriteVlog *entity.UserFavoriteVlog, vlog *entity.Vlog, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		vlog.UserID,
 		favoriteVlog.UserID,
@@ -126,11 +136,11 @@ func (s *NoticeDomainServiceImpl) FavoriteVlog(c context.Context, favoriteVlog *
 		fmt.Sprintf("/tourism/movie/%d", vlog.ID),
 	)
 
-	return s.send(c, notice)
+	return s.send(c, notice, vlog.UserID, triggeredUser)
 }
 
 // レビューへコメントがあった場合
-func (s *NoticeDomainServiceImpl) ReviewComment(c context.Context, reviewComment *entity.ReviewComment, review *entity.Review) error {
+func (s *NoticeDomainServiceImpl) ReviewComment(c context.Context, reviewComment *entity.ReviewComment, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		review.UserID,
 		reviewComment.UserID,
@@ -146,16 +156,16 @@ func (s *NoticeDomainServiceImpl) ReviewComment(c context.Context, reviewComment
 	}
 	for _, taggedUser := range taggedUsers {
 		// ユーザのタグ付がが含まれていれるユーザにNoticeを送る
-		if err = s.taggedAtComment(c, reviewComment, taggedUser.ID, review); err != nil {
+		if err = s.taggedAtComment(c, reviewComment, taggedUser.ID, review, triggeredUser); err != nil {
 			return err
 		}
 	}
 
-	return s.send(c, notice)
+	return s.send(c, notice, review.UserID, triggeredUser)
 }
 
 // レビューのコメントへリプライがあった場合
-func (s *NoticeDomainServiceImpl) ReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply, comment *entity.ReviewComment, review *entity.Review) error {
+func (s *NoticeDomainServiceImpl) ReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply, comment *entity.ReviewComment, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		comment.UserID,
 		reply.UserID,
@@ -171,29 +181,29 @@ func (s *NoticeDomainServiceImpl) ReviewCommentReply(c context.Context, reply *e
 	}
 	for _, taggedUser := range taggedUsers {
 		// ユーザのタグ付がが含まれていれるユーザにNoticeを送る
-		if err = s.taggedAtReply(c, reply, taggedUser.ID, review); err != nil {
+		if err = s.taggedAtReply(c, reply, taggedUser.ID, review, triggeredUser); err != nil {
 			return err
 		}
 	}
 
-	return s.send(c, notice)
+	return s.send(c, notice, comment.UserID, triggeredUser)
 }
 
-func (s *NoticeDomainServiceImpl) FollowUser(c context.Context, following *entity.UserFollowing, user *entity.User) error {
+func (s *NoticeDomainServiceImpl) FollowUser(c context.Context, following *entity.UserFollowing, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		following.TargetID,
 		following.UserID,
 		model.NoticeActionTypeFOLLOW,
 		model.NoticeActionTargetTypeUSER,
 		following.UserID,
-		fmt.Sprintf("/users/%s", user.UID),
+		fmt.Sprintf("/users/%s", triggeredUser.UID),
 	)
 
-	return s.send(c, notice)
+	return s.send(c, notice, following.TargetID, triggeredUser)
 }
 
 // ユーザがレビュー内でタグ付されていた場合
-func (s *NoticeDomainServiceImpl) taggedAtReview(c context.Context, review *entity.Review, taggedUserID int) error {
+func (s *NoticeDomainServiceImpl) taggedAtReview(c context.Context, review *entity.Review, taggedUserID int, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		taggedUserID,
 		review.UserID,
@@ -203,11 +213,11 @@ func (s *NoticeDomainServiceImpl) taggedAtReview(c context.Context, review *enti
 		s.reviewEndpoint(review),
 	)
 
-	return s.send(c, notice)
+	return s.send(c, notice, taggedUserID, triggeredUser)
 }
 
 // ユーザがコメント内でタグ付されていた場合
-func (s *NoticeDomainServiceImpl) taggedAtComment(c context.Context, reviewComment *entity.ReviewComment, taggedUserID int, review *entity.Review) error {
+func (s *NoticeDomainServiceImpl) taggedAtComment(c context.Context, reviewComment *entity.ReviewComment, taggedUserID int, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		taggedUserID,
 		reviewComment.UserID,
@@ -217,11 +227,11 @@ func (s *NoticeDomainServiceImpl) taggedAtComment(c context.Context, reviewComme
 		s.reviewCommentEndpoint(review, reviewComment),
 	)
 
-	return s.send(c, notice)
+	return s.send(c, notice, taggedUserID, triggeredUser)
 }
 
 // ユーザがリプライ内でタグ付されていた場合
-func (s *NoticeDomainServiceImpl) taggedAtReply(c context.Context, reviewCommentReply *entity.ReviewCommentReply, taggedUserID int, review *entity.Review) error {
+func (s *NoticeDomainServiceImpl) taggedAtReply(c context.Context, reviewCommentReply *entity.ReviewCommentReply, taggedUserID int, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		taggedUserID,
 		reviewCommentReply.UserID,
@@ -231,15 +241,44 @@ func (s *NoticeDomainServiceImpl) taggedAtReply(c context.Context, reviewComment
 		s.reviewCommentReplyEndpoint(review, reviewCommentReply),
 	)
 
-	return s.send(c, notice)
+	return s.send(c, notice, taggedUserID, triggeredUser)
 }
 
-func (s *NoticeDomainServiceImpl) send(c context.Context, notice *entity.Notice) error {
+func (s *NoticeDomainServiceImpl) send(c context.Context, notice *entity.Notice, sendTargetUserID int, triggeredUser *entity.User) error {
 	if notice.IsOwnNotice() {
 		return nil
 	}
 
-	return s.NoticeCommandRepository.StoreNotice(c, notice)
+	user, err := s.UserQueryRepository.FindByID(sendTargetUserID)
+	if err != nil {
+		return errors.Wrap(err, "failed find user")
+	}
+
+	// アプリユーザーでない場合は通知処理しない
+	if !user.DeviceToken.Valid {
+		return nil
+	}
+
+	if err := s.NoticeCommandRepository.StoreNotice(c, notice); err != nil {
+		return errors.Wrap(err, "failed store notice")
+	}
+
+	// 未読のプッシュ通知数
+	// アプリに表示するバッジの数
+	unReadCount, err := s.NoticeQueryRepository.UnreadPushNoticeCount(c, sendTargetUserID)
+	if err != nil {
+		return errors.Wrap(err, "failed count unread push_notice")
+	}
+
+	if err := s.CloudMessageCommandRepository.Send(
+		user.DeviceToken.String,
+		model.PushNoticeBody(triggeredUser.Name, notice.ActionTargetType, notice.ActionType),
+		map[string]string{"endpoint": notice.Endpoint, "noticeId": strconv.Itoa(notice.ID)}, unReadCount); err != nil {
+		// MEMO: プッシュ通知のエラーは握り潰す
+		logger.Error(err.Error())
+	}
+
+	return nil
 }
 
 func (s *NoticeDomainServiceImpl) reviewEndpoint(review *entity.Review) string {

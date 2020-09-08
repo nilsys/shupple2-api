@@ -26,8 +26,8 @@ func (r *NoticeCommandRepositoryImpl) StoreNotice(c context.Context, notice *ent
 	return nil
 }
 
-func (r *NoticeCommandRepositoryImpl) MarkAsRead(noticeIDs []int) error {
-	if err := r.DB(context.TODO()).Exec("UPDATE notice SET is_read = true WHERE id IN (?)", noticeIDs).Error; err != nil {
+func (r *NoticeCommandRepositoryImpl) MarkAsRead(c context.Context, noticeID, userID int) error {
+	if err := r.DB(c).Exec("UPDATE notice SET is_read = true WHERE id = ? AND user_id = ?", noticeID, userID).Error; err != nil {
 		return errors.Wrap(err, "Failed update to be marked as read")
 	}
 

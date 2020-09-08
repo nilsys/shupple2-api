@@ -47,11 +47,11 @@ func (s *ReviewCommandScenarioImpl) Create(user *entity.User, param *command.Cre
 
 	// touristSpotと紐付くレビューの場合
 	if review.TouristSpotID.Valid {
-		if err := s.ReviewCommandService.StoreTouristSpotReview(review); err != nil {
+		if err := s.ReviewCommandService.StoreTouristSpotReview(user, review); err != nil {
 			return nil, errors.Wrap(err, "failed to store touristSpotReview")
 		}
 	} else {
-		if err := s.ReviewCommandService.StoreInnReview(review); err != nil {
+		if err := s.ReviewCommandService.StoreInnReview(user, review); err != nil {
 			return nil, errors.Wrap(err, "failed to store innReview")
 		}
 	}
