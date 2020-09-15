@@ -207,9 +207,10 @@ func setRoutes(app *App) {
 
 	{
 		hashtags := api.Group("/hashtags")
-		hashtags.GET("/recommend", app.HashtagQueryController.ListRecommendHashtag)
+		hashtags.GET("/recommend", auth.Optional(app.HashtagQueryController.ListRecommendHashtag))
 		hashtags.POST("/:id/follow", auth.Require(app.HashtagCommandController.FollowHashtag))
 		hashtags.DELETE("/:id/follow", auth.Require(app.HashtagCommandController.UnfollowHashtag))
+		hashtags.GET("/:name", auth.Optional(app.HashtagQueryController.Show))
 	}
 
 	{

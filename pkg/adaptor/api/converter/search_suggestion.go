@@ -20,7 +20,8 @@ func (c Converters) ConvertSearchSuggestionsToOutput(suggestions *entity.SearchS
 	}
 
 	for i, hashtag := range suggestions.Hashtag {
-		hashtags[i] = output.NewHashtag(hashtag.ID, hashtag.Name)
+		// MEMO: 現状isFollowを必要としない為第３引数にfalseを入れている
+		hashtags[i] = output.NewHashtag(hashtag.ID, hashtag.Name, false)
 	}
 
 	for i, user := range suggestions.User {

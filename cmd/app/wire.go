@@ -66,6 +66,7 @@ var scenarioSet = wire.NewSet(
 	scenario.ReviewQueryScenarioSet,
 	scenario.PostQueryScenarioSet,
 	scenario.FeatureQueryScenarioSet,
+	scenario.HashtagQueryScenarioSet,
 	scenario.VlogQueryScenarioSet,
 	scenario.TouristSpotQueryScenarioSet,
 	scenario.CfProjectQueryScenarioSet,

@@ -8,6 +8,10 @@ type (
 		SubSubAreaID int `json:"subSubAreaId"`
 		PerPage      int `json:"perPage"`
 	}
+
+	ShowHashtag struct {
+		Name PathString `param:"name" validate:"required"`
+	}
 )
 
 const listHashtagDefaultPerPage = 10

@@ -1787,6 +1787,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HashtagList"
+  /hashtags/{name}:
+    get:
+      tags:
+        - hashtag
+      summary: ハッシュタグ取得API
+      description: 投稿数が多い順でハッシュタグ取得
+      parameters:
+        - in: path
+          name: name
+          required: true
+          description: |
+            ハッシュタグ名
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Hashtag"
   /hashtags/{id}/follow:
     post:
       tags:
@@ -4000,6 +4021,8 @@ components:
           type: string
           description: ハッシュタグ名
           example: 春に行きたい
+        isFollow:
+          type: boolean
     SearchSuggestions:
       type: object
       properties:

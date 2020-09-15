@@ -87,6 +87,8 @@ type (
 		HashtagID int `gorm:"primary_key"`
 	}
 
+	UserFollowHashtags []*UserFollowHashtag
+
 	UserFollowed struct {
 		// フォローされた人
 		UserID int `gorm:"primary_key"`
@@ -238,6 +240,22 @@ func (u UserFollowings) ToIDExistMap(userIDs []int) map[int]bool {
 	for _, id := range userIDs {
 		for _, tiny := range []*UserFollowing(u) {
 			if id == tiny.TargetID {
+				resolve[id] = true
+			} else {
+				resolve[id] = false
+			}
+		}
+	}
+
+	return resolve
+}
+
+func (u UserFollowHashtags) ToIDExistMap(userIDs []int) map[int]bool {
+	resolve := make(map[int]bool, len(userIDs))
+
+	for _, id := range userIDs {
+		for _, tiny := range []*UserFollowHashtag(u) {
+			if id == tiny.HashtagID {
 				resolve[id] = true
 			} else {
 				resolve[id] = false

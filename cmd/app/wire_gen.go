@@ -471,9 +471,13 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	rssController := api.RSSController{
 		RSSService: rssServiceImpl,
 	}
+	hashtagQueryScenarioImpl := &scenario.HashtagQueryScenarioImpl{
+		HashtagQueryService:    hashtagQueryServiceImpl,
+		HashtagQueryRepository: hashtagQueryRepositoryImpl,
+	}
 	hashtagQueryController := api.HashtagQueryController{
-		Converters:          converters,
-		HashtagQueryService: hashtagQueryServiceImpl,
+		Converters:           converters,
+		HashtagQueryScenario: hashtagQueryScenarioImpl,
 	}
 	hashtagCommandController := api.HashtagCommandController{
 		Converters:            converters,
@@ -843,7 +847,7 @@ var (
 
 var controllerSet = wire.NewSet(converter.ConvertersSet, api.ShippingQueryControllerSet, api.ShippingCommandControllerSet, api.ChargeCommandControllerSet, api.CardQueryControllerSet, api.CardCommandControllerSet, api.PostQueryControllerSet, api.PostFavoriteCommandControllerSet, api.CfProjectQueryControllerSet, api.CfReturnGiftQueryControllerSet, api.CategoryQueryControllerSet, api.CfProjectCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.RSSControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.ThemeQueryControllerSet, api.WordpressCallbackControllerSet, api.SitemapControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet, api.AreaQueryControllerSet, api.InnQueryControllerSet, api.NoticeQueryControllerSet, api.NoticeCommandControllerSet, api.PaymentQueryControllerSet, api.CfReserveRequestCommandControllerSet, api.ReportCommandControllerSet, api.ComicFavoriteCommandControllerSet, api.VlogFavoriteCommandControllerSet)
 
-var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.ReviewQueryScenarioSet, scenario.PostQueryScenarioSet, scenario.FeatureQueryScenarioSet, scenario.VlogQueryScenarioSet, scenario.TouristSpotQueryScenarioSet, scenario.CfProjectQueryScenarioSet, scenario.ComicQueryScenarioSet, scenario.ChargeCommandScenarioSet)
+var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.ReviewQueryScenarioSet, scenario.PostQueryScenarioSet, scenario.FeatureQueryScenarioSet, scenario.HashtagQueryScenarioSet, scenario.VlogQueryScenarioSet, scenario.TouristSpotQueryScenarioSet, scenario.CfProjectQueryScenarioSet, scenario.ComicQueryScenarioSet, scenario.ChargeCommandScenarioSet)
 
 var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet, service2.UserValidatorDomainServiceSet)
 

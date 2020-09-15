@@ -32,8 +32,8 @@ func (r *HashtagQueryRepositoryImpl) FindByNames(names []string) (map[string]*en
 	return result, nil
 }
 
-func (r *HashtagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSubAreaID, limit int) ([]*entity.Hashtag, error) {
-	var rows []*entity.Hashtag
+func (r *HashtagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSubAreaID, limit int) (*entity.Hashtags, error) {
+	var rows entity.Hashtags
 
 	q := r.buildFindRecommendListQuery(areaID, subAreaID, subSubAreaID)
 
@@ -45,7 +45,23 @@ func (r *HashtagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSub
 		return nil, errors.Wrapf(err, "failed to find get recommend reviews")
 	}
 
-	return rows, nil
+	return &rows, nil
+}
+
+func (r *HashtagQueryRepositoryImpl) FindByName(name string) (*entity.Hashtag, error) {
+	var row entity.Hashtag
+	if err := r.DB.Where("name = ?", name).First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "hashtag(name=%s)", name)
+	}
+	return &row, nil
+}
+
+func (r *HashtagQueryRepositoryImpl) IsFollowing(userID int, hashtagIDs []int) (map[int]bool, error) {
+	var rows entity.UserFollowHashtags
+	if err := r.DB.Where("user_id = ? AND hashtag_id IN (?)", userID, hashtagIDs).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find user_follow_hashtag")
+	}
+	return rows.ToIDExistMap(hashtagIDs), nil
 }
 
 func (r *HashtagQueryRepositoryImpl) SearchByName(name string) ([]*entity.Hashtag, error) {
