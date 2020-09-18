@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/config"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/slack"
 
 	"github.com/google/wire"
@@ -28,6 +30,8 @@ type (
 		repository.SlackRepository
 		repository.ReportCommandRepository
 		repository.ReportQueryRepository
+		repository.UserQueryRepository
+		config.StaywayMedia
 		TransactionService
 	}
 )
@@ -45,30 +49,38 @@ func (s *ReportCommandServiceImpl) Report(user *entity.User, cmd *command.Report
 	// TODO:　ロジックを他に置く、ドメインサービス作った方が良さげ
 	// 通報対象の情報を取得
 	switch cmd.TargetType {
-	case model.ReportTargetTypeREVIEW:
+	case model.ReportTargetTypeReview:
 		review, err := s.ReviewQueryRepository.FindByID(cmd.TargetID)
 		if err != nil {
 			return errors.Wrap(err, "failed to find review")
 		}
-		targetURL = review.WebURL()
+		targetURL = review.MediaWebURL(s.StaywayMedia.BaseURL).String()
 		body = review.Body
 		reportedUserID = review.UserID
-	case model.ReportTargetTypeCOMMENT:
-		comment, err := s.ReviewQueryRepository.FindReviewCommentByID(cmd.TargetID)
+	case model.ReportTargetTypeComment:
+		comment, err := s.ReviewQueryRepository.FindReviewCommentDetailByID(cmd.TargetID)
 		if err != nil {
 			return errors.Wrap(err, "failed to find review_comment")
 		}
-		targetURL = comment.WebURL()
+		targetURL = comment.Review.MediaWebURL(s.StaywayMedia.BaseURL).String()
 		body = comment.Body
 		reportedUserID = comment.UserID
-	case model.ReportTargetTypeREPLY:
-		reply, err := s.ReviewQueryRepository.FindReviewCommentReplyByID(cmd.TargetID)
+	case model.ReportTargetTypeReply:
+		reply, err := s.ReviewQueryRepository.FindReviewCommentReplyDetailByID(cmd.TargetID)
 		if err != nil {
 			return errors.Wrap(err, "failed to find review_comment_reply")
 		}
-		targetURL = reply.WebURL()
+		targetURL = reply.ReviewCommentDetail.Review.MediaWebURL(s.StaywayMedia.BaseURL).String()
 		body = reply.Body
 		reportedUserID = reply.UserID
+	case model.ReportTargetTypeUser:
+		targetUser, err := s.UserQueryRepository.FindByID(cmd.TargetID)
+		if err != nil {
+			return errors.Wrap(err, "failed find user")
+		}
+		targetURL = targetUser.MediaWebURL(s.StaywayMedia.BaseURL).String()
+		body = targetUser.Profile
+		reportedUserID = targetUser.ID
 	default:
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid target Type")
 	}
@@ -118,15 +130,15 @@ func (s *ReportCommandServiceImpl) MarkAsDone(cmd *command.MarkAsReport) error {
 		// 通報が承認された場合,通報対象を論理削除
 		if cmd.IsApproved {
 			switch cmd.TargetType {
-			case model.ReportTargetTypeREVIEW:
+			case model.ReportTargetTypeReview:
 				if err := s.ReviewCommandRepository.DeleteReviewByID(c, cmd.TargetID); err != nil {
 					return errors.Wrap(err, "failed to delete review")
 				}
-			case model.ReportTargetTypeCOMMENT:
+			case model.ReportTargetTypeComment:
 				if err := s.ReviewCommandRepository.DeleteReviewCommentByID(c, cmd.TargetID); err != nil {
 					return errors.Wrap(err, "failed to delete review_comment")
 				}
-			case model.ReportTargetTypeREPLY:
+			case model.ReportTargetTypeReply:
 				if err := s.ReviewCommandRepository.DeleteReviewCommentReplyByID(c, cmd.TargetID); err != nil {
 					return errors.Wrap(err, "failed to delete review_comment_reply")
 				}

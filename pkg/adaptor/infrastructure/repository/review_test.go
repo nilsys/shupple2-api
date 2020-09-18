@@ -339,7 +339,7 @@ func newReviewDetailWithIsFavorite(hashtagName string, hashtagID int) *entity.Re
 	return queryReview
 }
 
-func newReviewComment(userID, reviewID int) *entity.ReviewComment {
+func newReviewComment(userID, reviewID int) *entity.ReviewCommentTiny {
 	return entity.NewReviewComment(
 		userID,
 		reviewID,

@@ -291,3 +291,8 @@ func NewIsNonLoginUserTiny(name string) (*UserTiny, error) {
 		},
 	}, nil
 }
+
+func (u *UserTiny) MediaWebURL(baseURL config.URL) *config.URL {
+	baseURL.Path = fmt.Sprintf("/users/%s", u.UID)
+	return &baseURL
+}

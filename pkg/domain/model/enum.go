@@ -75,12 +75,12 @@ ENUM(Transaction = 1)
 type ContextKey int
 
 /*
-ENUM(REVIEW = 1, COMMENT, REPLY)
+ENUM(Review = 1, Comment, Reply, User)
 */
 type ReportTargetType int
 
 /*
-ENUM(UNKNOWN =1, SEXUAL, INAPPROPRIATE, COPYRIGHT, SELFHARM, LIE, UNRELATED, AD)
+ENUM(Unknown =1, Sexual, Inappropriate, Copyright, SelfHarm, Lie, Unrelated, Ad)
 */
 type ReportReasonType int
 

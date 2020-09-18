@@ -862,25 +862,25 @@ func (x *PaymentCfReturnGiftReservedTicketTypeStatus) UnmarshalText(text []byte)
 }
 
 const (
-	// ReportReasonTypeUNKNOWN is a ReportReasonType of type UNKNOWN
-	ReportReasonTypeUNKNOWN ReportReasonType = iota + 1
-	// ReportReasonTypeSEXUAL is a ReportReasonType of type SEXUAL
-	ReportReasonTypeSEXUAL
-	// ReportReasonTypeINAPPROPRIATE is a ReportReasonType of type INAPPROPRIATE
-	ReportReasonTypeINAPPROPRIATE
-	// ReportReasonTypeCOPYRIGHT is a ReportReasonType of type COPYRIGHT
-	ReportReasonTypeCOPYRIGHT
-	// ReportReasonTypeSELFHARM is a ReportReasonType of type SELFHARM
-	ReportReasonTypeSELFHARM
-	// ReportReasonTypeLIE is a ReportReasonType of type LIE
-	ReportReasonTypeLIE
-	// ReportReasonTypeUNRELATED is a ReportReasonType of type UNRELATED
-	ReportReasonTypeUNRELATED
-	// ReportReasonTypeAD is a ReportReasonType of type AD
-	ReportReasonTypeAD
+	// ReportReasonTypeUnknown is a ReportReasonType of type Unknown
+	ReportReasonTypeUnknown ReportReasonType = iota + 1
+	// ReportReasonTypeSexual is a ReportReasonType of type Sexual
+	ReportReasonTypeSexual
+	// ReportReasonTypeInappropriate is a ReportReasonType of type Inappropriate
+	ReportReasonTypeInappropriate
+	// ReportReasonTypeCopyright is a ReportReasonType of type Copyright
+	ReportReasonTypeCopyright
+	// ReportReasonTypeSelfHarm is a ReportReasonType of type SelfHarm
+	ReportReasonTypeSelfHarm
+	// ReportReasonTypeLie is a ReportReasonType of type Lie
+	ReportReasonTypeLie
+	// ReportReasonTypeUnrelated is a ReportReasonType of type Unrelated
+	ReportReasonTypeUnrelated
+	// ReportReasonTypeAd is a ReportReasonType of type Ad
+	ReportReasonTypeAd
 )
 
-const _ReportReasonTypeName = "UNKNOWNSEXUALINAPPROPRIATECOPYRIGHTSELFHARMLIEUNRELATEDAD"
+const _ReportReasonTypeName = "UnknownSexualInappropriateCopyrightSelfHarmLieUnrelatedAd"
 
 var _ReportReasonTypeMap = map[ReportReasonType]string{
 	1: _ReportReasonTypeName[0:7],
@@ -937,20 +937,23 @@ func (x *ReportReasonType) UnmarshalText(text []byte) error {
 }
 
 const (
-	// ReportTargetTypeREVIEW is a ReportTargetType of type REVIEW
-	ReportTargetTypeREVIEW ReportTargetType = iota + 1
-	// ReportTargetTypeCOMMENT is a ReportTargetType of type COMMENT
-	ReportTargetTypeCOMMENT
-	// ReportTargetTypeREPLY is a ReportTargetType of type REPLY
-	ReportTargetTypeREPLY
+	// ReportTargetTypeReview is a ReportTargetType of type Review
+	ReportTargetTypeReview ReportTargetType = iota + 1
+	// ReportTargetTypeComment is a ReportTargetType of type Comment
+	ReportTargetTypeComment
+	// ReportTargetTypeReply is a ReportTargetType of type Reply
+	ReportTargetTypeReply
+	// ReportTargetTypeUser is a ReportTargetType of type User
+	ReportTargetTypeUser
 )
 
-const _ReportTargetTypeName = "REVIEWCOMMENTREPLY"
+const _ReportTargetTypeName = "ReviewCommentReplyUser"
 
 var _ReportTargetTypeMap = map[ReportTargetType]string{
 	1: _ReportTargetTypeName[0:6],
 	2: _ReportTargetTypeName[6:13],
 	3: _ReportTargetTypeName[13:18],
+	4: _ReportTargetTypeName[18:22],
 }
 
 // String implements the Stringer interface.
@@ -965,6 +968,7 @@ var _ReportTargetTypeValue = map[string]ReportTargetType{
 	_ReportTargetTypeName[0:6]:   1,
 	_ReportTargetTypeName[6:13]:  2,
 	_ReportTargetTypeName[13:18]: 3,
+	_ReportTargetTypeName[18:22]: 4,
 }
 
 // ParseReportTargetType attempts to convert a string to a ReportTargetType

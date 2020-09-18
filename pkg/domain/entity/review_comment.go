@@ -1,11 +1,7 @@
 package entity
 
-import (
-	"strconv"
-)
-
 type (
-	ReviewComment struct {
+	ReviewCommentTiny struct {
 		ID            int `gorm:"primary_key"`
 		UserID        int
 		ReviewID      int
@@ -14,6 +10,11 @@ type (
 		ReplyCount    int
 		FavoriteCount int
 		Times
+	}
+
+	ReviewCommentDetail struct {
+		ReviewCommentTiny
+		Review *Review `gorm:"foreignkey:ID;association_foreignkey:ReviewID"`
 	}
 
 	ReviewCommentWithIsFavorite struct {
@@ -28,7 +29,7 @@ type (
 		Times
 	}
 
-	ReviewCommentReply struct {
+	ReviewCommentReplyTiny struct {
 		ID              int `gorm:"primary_key"`
 		UserID          int
 		ReviewCommentID int
@@ -36,6 +37,11 @@ type (
 		Body            string
 		FavoriteCount   int
 		Times
+	}
+
+	ReviewCommentReplyDetail struct {
+		ReviewCommentReplyTiny
+		ReviewCommentDetail *ReviewCommentDetail `gorm:"foreignkey:ID;association_foreignkey:ReviewCommentID"`
 	}
 
 	ReviewCommentReplyWithIsFavorite struct {
@@ -60,9 +66,8 @@ type (
 	}
 )
 
-func NewReviewComment(userID, reviewID int, body string) *ReviewComment {
-	// IDはオートインクリメントされるのでなにも入れない
-	return &ReviewComment{
+func NewReviewComment(userID, reviewID int, body string) *ReviewCommentTiny {
+	return &ReviewCommentTiny{
 		UserID:   userID,
 		ReviewID: reviewID,
 		Body:     body,
@@ -83,12 +88,8 @@ func NewUserFavoriteReviewCommentReply(userID, reviewCommentReplyID int) *UserFa
 	}
 }
 
-func (r *ReviewComment) WebURL() string {
-	return "https://stayway.jp/tourism" + strconv.Itoa(r.ID)
-}
-
-func (r *ReviewCommentReply) WebURL() string {
-	return "https://stayway.jp/tourism" + strconv.Itoa(r.ID)
+func (r *ReviewCommentReplyTiny) TableName() string {
+	return "review_comment_reply"
 }
 
 func (r *ReviewCommentWithIsFavorite) TableName() string {
@@ -97,4 +98,12 @@ func (r *ReviewCommentWithIsFavorite) TableName() string {
 
 func (r *ReviewCommentReplyWithIsFavorite) TableName() string {
 	return "review_comment_reply"
+}
+
+func (r *ReviewCommentTiny) TableName() string {
+	return "review_comment"
+}
+
+func (r *ReviewCommentDetail) TableName() string {
+	return "review_comment"
 }

@@ -44,7 +44,7 @@ func (c Converters) ConvertListFeedReviewInputToQuery(i *input.PaginationQuery) 
 	}
 }
 
-func (c Converters) ConvertReviewCommentToOutput(reviewComment *entity.ReviewComment) *output.ReviewComment {
+func (c Converters) ConvertReviewCommentToOutput(reviewComment *entity.ReviewCommentTiny) *output.ReviewComment {
 	return output.NewReviewComment(
 		c.NewUserSummaryFromUser(reviewComment.User),
 		reviewComment.Body,

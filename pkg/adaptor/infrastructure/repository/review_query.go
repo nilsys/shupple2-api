@@ -299,7 +299,7 @@ func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyWithIsFavoriteListByRe
 }
 
 func (r *ReviewQueryRepositoryImpl) IsExistReviewComment(id int) (bool, error) {
-	var row entity.ReviewComment
+	var row entity.ReviewCommentTiny
 
 	err := r.DB.Find(&row, id).Error
 
@@ -314,8 +314,8 @@ func (r *ReviewQueryRepositoryImpl) IsExistReviewCommentFavorite(userID, reviewC
 	return ErrorToIsExist(err, "review_comment_favorite(user_id=%d,review_comment_id=%d)", userID, reviewCommentID)
 }
 
-func (r *ReviewQueryRepositoryImpl) FindReviewCommentByID(id int) (*entity.ReviewComment, error) {
-	var row entity.ReviewComment
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentByID(id int) (*entity.ReviewCommentTiny, error) {
+	var row entity.ReviewCommentTiny
 
 	if err := r.DB.Find(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "review_comment(id=%d)", id)
@@ -324,8 +324,28 @@ func (r *ReviewQueryRepositoryImpl) FindReviewCommentByID(id int) (*entity.Revie
 	return &row, nil
 }
 
-func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyByID(id int) (*entity.ReviewCommentReply, error) {
-	var row entity.ReviewCommentReply
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentDetailByID(id int) (*entity.ReviewCommentDetail, error) {
+	var row entity.ReviewCommentDetail
+
+	if err := r.DB.Find(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "review_comment(id=%d)", id)
+	}
+
+	return &row, nil
+}
+
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyByID(id int) (*entity.ReviewCommentReplyTiny, error) {
+	var row entity.ReviewCommentReplyTiny
+
+	if err := r.DB.Find(&row, id).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "review_comment(id=%d)", id)
+	}
+
+	return &row, nil
+}
+
+func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyDetailByID(id int) (*entity.ReviewCommentReplyDetail, error) {
+	var row entity.ReviewCommentReplyDetail
 
 	if err := r.DB.Find(&row, id).Error; err != nil {
 		return nil, ErrorToFindSingleRecord(err, "review_comment(id=%d)", id)
@@ -335,7 +355,7 @@ func (r *ReviewQueryRepositoryImpl) FindReviewCommentReplyByID(id int) (*entity.
 }
 
 func (r *ReviewQueryRepositoryImpl) IsExistReviewCommentReply(id int) (bool, error) {
-	var row entity.ReviewCommentReply
+	var row entity.ReviewCommentReplyTiny
 
 	err := r.DB.Find(&row, id).Error
 

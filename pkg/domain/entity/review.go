@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"path"
 	"sort"
 	"time"
 
@@ -108,9 +109,14 @@ func (r *Review) HashHashtagIDs() bool {
 	return len(r.HashtagIDs) > 0
 }
 
-// TODO: 仮置き
-func (r *Review) WebURL() string {
-	return fmt.Sprintf("https://stayway.jp/tourism/location/%d/review/%d", r.TouristSpotID.Int64, r.ID)
+func (r *Review) MediaWebURL(baseURL config.URL) *config.URL {
+	if r.TouristSpotID.Valid {
+		baseURL.Path = path.Join(baseURL.Path, fmt.Sprintf("/location/%d/review/%d", r.TouristSpotID.Int64, r.ID))
+		return &baseURL
+	}
+
+	baseURL.Path = fmt.Sprintf("/hotels/h_%d/review/%d", r.InnID.Int64, r.ID)
+	return &baseURL
 }
 
 func (rdi ReviewDetailWithIsFavorite) TableName() string {

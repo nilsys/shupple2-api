@@ -34,7 +34,7 @@ func (c Converters) ConvertReviewCommentReplyWithIsFavoriteToOutput(r *entity.Re
 	}
 }
 
-func (c Converters) ConvertReviewCommentReplyToOutput(r *entity.ReviewCommentReply) *output.ReviewCommentReply {
+func (c Converters) ConvertReviewCommentReplyToOutput(r *entity.ReviewCommentReplyTiny) *output.ReviewCommentReply {
 	return &output.ReviewCommentReply{
 		ID:            r.ID,
 		UserSummary:   c.NewUserSummaryFromUser(r.User),

@@ -27,8 +27,10 @@ type (
 		IsExistReviewComment(id int) (bool, error)
 		IsExistReviewCommentReply(id int) (bool, error)
 		IsExistReviewCommentFavorite(userID, reviewCommentID int) (bool, error)
-		FindReviewCommentByID(id int) (*entity.ReviewComment, error)
-		FindReviewCommentReplyByID(id int) (*entity.ReviewCommentReply, error)
+		FindReviewCommentByID(id int) (*entity.ReviewCommentTiny, error)
+		FindReviewCommentDetailByID(id int) (*entity.ReviewCommentDetail, error)
+		FindReviewCommentReplyByID(id int) (*entity.ReviewCommentReplyTiny, error)
+		FindReviewCommentReplyDetailByID(id int) (*entity.ReviewCommentReplyDetail, error)
 		FindLatestHasMediaReviewByTouristSpotIDs(touristSpotID []int) (*entity.ReviewList, error)
 	}
 
@@ -41,9 +43,9 @@ type (
 		IncrementFavoriteCount(c context.Context, reviewID int) error
 		DecrementFavoriteCount(c context.Context, reviewID int) error
 		PersistReviewMedia(reviewMedia *entity.ReviewMedia) error
-		ShowReviewComment(c context.Context, commentID int) (*entity.ReviewComment, error)
-		StoreReviewComment(c context.Context, comment *entity.ReviewComment) error
-		StoreReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply) error
+		ShowReviewComment(c context.Context, commentID int) (*entity.ReviewCommentTiny, error)
+		StoreReviewComment(c context.Context, comment *entity.ReviewCommentTiny) error
+		StoreReviewCommentReply(c context.Context, reply *entity.ReviewCommentReplyTiny) error
 		IncrementReviewCommentReplyCount(c context.Context, reviewCommentID int) error
 		DecrementReviewCommentReplyCount(c context.Context, reviewCommentID int) error
 		IncrementReviewCommentFavoriteCount(c context.Context, reviewCommentID int) error

@@ -2560,7 +2560,7 @@ paths:
     post:
       tags:
         - report
-      summary: メディア通報API
+      summary: 通報API
       description: |
         通報
       security:
@@ -4830,20 +4830,21 @@ components:
     ReportReasonType:
       type: string
       enum:
-        - UNKNOWN
-        - SEXUAL
-        - INAPPROPRIATE
-        - COPYRIGHT
-        - SELFHARM
-        - LIE
-        - UNRELATED
-        - AD
+        - Unknown
+        - Sexual
+        - Inappropriate
+        - Copyright
+        - SelfHarm
+        - Lie
+        - Unrelated
+        - Ad
     ReportTargetType:
       type: string
       enum:
-        - REVIEW
-        - COMMENT
-        - REPLY
+        - Review
+        - Comment
+        - Reply
+        - User
     Accompanying:
       type: string
       enum:

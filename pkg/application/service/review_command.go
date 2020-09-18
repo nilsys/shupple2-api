@@ -19,8 +19,8 @@ type (
 		StoreInnReview(user *entity.User, review *entity.Review) error
 		UpdateReview(review *entity.Review, cmd *command.UpdateReview) error
 		DeleteReview(review *entity.Review) error
-		CreateReviewComment(user *entity.User, reviewID int, body string) (*entity.ReviewComment, error)
-		CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) (*entity.ReviewCommentReply, error)
+		CreateReviewComment(user *entity.User, reviewID int, body string) (*entity.ReviewCommentTiny, error)
+		CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) (*entity.ReviewCommentReplyTiny, error)
 		DeleteReviewComment(user *entity.User, commentID int) error
 		DeleteReviewCommentReply(user *entity.User, replyID int) error
 		FavoriteReviewComment(user *entity.User, reviewCommentID int) error
@@ -104,7 +104,7 @@ func (s *ReviewCommandServiceImpl) UpdateReview(review *entity.Review, cmd *comm
 	})
 }
 
-func (s *ReviewCommandServiceImpl) CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) (*entity.ReviewCommentReply, error) {
+func (s *ReviewCommandServiceImpl) CreateReviewCommentReply(user *entity.User, cmd *command.CreateReviewCommentReply) (*entity.ReviewCommentReplyTiny, error) {
 	reviewCommentReply := s.convertCreateReviewCommentReplyToEntity(user, cmd)
 
 	err := s.TransactionService.Do(func(c context.Context) error {
@@ -216,7 +216,7 @@ func (s *ReviewCommandServiceImpl) UnfavoriteReviewComment(user *entity.User, re
 	})
 }
 
-func (s *ReviewCommandServiceImpl) CreateReviewComment(user *entity.User, reviewID int, body string) (*entity.ReviewComment, error) {
+func (s *ReviewCommandServiceImpl) CreateReviewComment(user *entity.User, reviewID int, body string) (*entity.ReviewCommentTiny, error) {
 	reviewComment := entity.NewReviewComment(user.ID, reviewID, body)
 
 	err := s.TransactionService.Do(func(c context.Context) error {
@@ -301,8 +301,8 @@ func (s *ReviewCommandServiceImpl) DeleteReviewCommentReply(user *entity.User, r
 	})
 }
 
-func (s *ReviewCommandServiceImpl) convertCreateReviewCommentReplyToEntity(user *entity.User, cmd *command.CreateReviewCommentReply) *entity.ReviewCommentReply {
-	return &entity.ReviewCommentReply{
+func (s *ReviewCommandServiceImpl) convertCreateReviewCommentReplyToEntity(user *entity.User, cmd *command.CreateReviewCommentReply) *entity.ReviewCommentReplyTiny {
+	return &entity.ReviewCommentReplyTiny{
 		UserID:          user.ID,
 		ReviewCommentID: cmd.ReviewCommentID,
 		Body:            cmd.Body,

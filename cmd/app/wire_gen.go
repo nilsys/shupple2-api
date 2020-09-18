@@ -751,6 +751,8 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		SlackRepository:         slackRepositoryImpl,
 		ReportCommandRepository: reportCommandRepositoryImpl,
 		ReportQueryRepository:   reportQueryRepositoryImpl,
+		UserQueryRepository:     userQueryRepositoryImpl,
+		StaywayMedia:            staywayMedia,
 		TransactionService:      transactionServiceImpl,
 	}
 	reportCommandController := api.ReportCommandController{

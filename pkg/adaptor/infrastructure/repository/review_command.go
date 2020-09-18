@@ -41,15 +41,15 @@ func (r *ReviewCommandRepositoryImpl) DeleteReview(c context.Context, review *en
 	return nil
 }
 
-func (r *ReviewCommandRepositoryImpl) StoreReviewComment(c context.Context, comment *entity.ReviewComment) error {
+func (r *ReviewCommandRepositoryImpl) StoreReviewComment(c context.Context, comment *entity.ReviewCommentTiny) error {
 	if err := r.DB(c).Save(comment).Error; err != nil {
 		return errors.Wrap(err, "failed to save review_comment")
 	}
 	return nil
 }
 
-func (r *ReviewCommandRepositoryImpl) ShowReviewComment(c context.Context, commentID int) (*entity.ReviewComment, error) {
-	reviewComment := &entity.ReviewComment{}
+func (r *ReviewCommandRepositoryImpl) ShowReviewComment(c context.Context, commentID int) (*entity.ReviewCommentTiny, error) {
+	reviewComment := &entity.ReviewCommentTiny{}
 	err := r.DB(c).
 		Where("id=?", commentID).
 		Find(reviewComment).
@@ -107,7 +107,7 @@ func (r *ReviewCommandRepositoryImpl) PersistReviewMedia(reviewMedia *entity.Rev
 	return nil
 }
 
-func (r *ReviewCommandRepositoryImpl) StoreReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply) error {
+func (r *ReviewCommandRepositoryImpl) StoreReviewCommentReply(c context.Context, reply *entity.ReviewCommentReplyTiny) error {
 	if err := r.DB(c).Save(reply).Error; err != nil {
 		return errors.Wrap(err, "failed to save review_comment_reply")
 	}
@@ -186,14 +186,14 @@ func (r *ReviewCommandRepositoryImpl) DeleteReviewByID(c context.Context, id int
 }
 
 func (r *ReviewCommandRepositoryImpl) DeleteReviewCommentByID(c context.Context, id int) error {
-	if err := r.DB(c).Where("id = ?", id).Delete(entity.ReviewComment{}).Error; err != nil {
+	if err := r.DB(c).Where("id = ?", id).Delete(entity.ReviewCommentTiny{}).Error; err != nil {
 		return errors.Wrap(err, "failed to update review_comment.deleted_at")
 	}
 	return nil
 }
 
 func (r *ReviewCommandRepositoryImpl) DeleteReviewCommentReplyByID(c context.Context, id int) error {
-	if err := r.DB(c).Where("id = ?", id).Delete(entity.ReviewCommentReply{}).Error; err != nil {
+	if err := r.DB(c).Where("id = ?", id).Delete(entity.ReviewCommentReplyTiny{}).Error; err != nil {
 		return errors.Wrap(err, "failed to update review_comment_reply.deleted_at")
 	}
 	return nil

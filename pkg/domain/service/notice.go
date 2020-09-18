@@ -22,13 +22,13 @@ import (
 type (
 	NoticeDomainService interface {
 		Review(c context.Context, review *entity.Review, triggeredUser *entity.User) error
-		ReviewComment(c context.Context, reviewComment *entity.ReviewComment, review *entity.Review, triggeredUser *entity.User) error
-		ReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply, comment *entity.ReviewComment, review *entity.Review, triggeredUser *entity.User) error
+		ReviewComment(c context.Context, reviewComment *entity.ReviewCommentTiny, review *entity.Review, triggeredUser *entity.User) error
+		ReviewCommentReply(c context.Context, reply *entity.ReviewCommentReplyTiny, comment *entity.ReviewCommentTiny, review *entity.Review, triggeredUser *entity.User) error
 		FavoritePost(c context.Context, favoritePost *entity.UserFavoritePost, post *entity.Post, triggeredUser *entity.User) error
 		FavoriteReview(c context.Context, favoriteReview *entity.UserFavoriteReview, review *entity.Review, triggeredUser *entity.User) error
-		FavoriteReviewComment(c context.Context, favoriteReviewComment *entity.UserFavoriteReviewComment, reviewComment *entity.ReviewComment, review *entity.Review, triggeredUser *entity.User) error
+		FavoriteReviewComment(c context.Context, favoriteReviewComment *entity.UserFavoriteReviewComment, reviewComment *entity.ReviewCommentTiny, review *entity.Review, triggeredUser *entity.User) error
 		FavoriteComic(c context.Context, favoriteComic *entity.UserFavoriteComic, comic *entity.Comic, triggeredUser *entity.User) error
-		FavoriteReviewCommentReply(c context.Context, favoriteReviewCommentReply *entity.UserFavoriteReviewCommentReply, reviewCommentReply *entity.ReviewCommentReply, review *entity.Review, triggeredUser *entity.User) error
+		FavoriteReviewCommentReply(c context.Context, favoriteReviewCommentReply *entity.UserFavoriteReviewCommentReply, reviewCommentReply *entity.ReviewCommentReplyTiny, review *entity.Review, triggeredUser *entity.User) error
 		FavoriteVlog(c context.Context, favoriteVlog *entity.UserFavoriteVlog, vlog *entity.Vlog, triggeredUser *entity.User) error
 		FollowUser(c context.Context, following *entity.UserFollowing, triggeredUser *entity.User) error
 		// TODO: enhancement
@@ -90,7 +90,7 @@ func (s *NoticeDomainServiceImpl) FavoriteReview(c context.Context, favoriteRevi
 	return s.send(c, notice, review.UserID, triggeredUser)
 }
 
-func (s *NoticeDomainServiceImpl) FavoriteReviewComment(c context.Context, favoriteReviewComment *entity.UserFavoriteReviewComment, reviewComment *entity.ReviewComment, review *entity.Review, triggeredUser *entity.User) error {
+func (s *NoticeDomainServiceImpl) FavoriteReviewComment(c context.Context, favoriteReviewComment *entity.UserFavoriteReviewComment, reviewComment *entity.ReviewCommentTiny, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		reviewComment.UserID,
 		favoriteReviewComment.UserID,
@@ -102,7 +102,7 @@ func (s *NoticeDomainServiceImpl) FavoriteReviewComment(c context.Context, favor
 
 	return s.send(c, notice, reviewComment.UserID, triggeredUser)
 }
-func (s *NoticeDomainServiceImpl) FavoriteReviewCommentReply(c context.Context, favoriteReviewCommentReply *entity.UserFavoriteReviewCommentReply, reviewCommentReply *entity.ReviewCommentReply, review *entity.Review, triggeredUser *entity.User) error {
+func (s *NoticeDomainServiceImpl) FavoriteReviewCommentReply(c context.Context, favoriteReviewCommentReply *entity.UserFavoriteReviewCommentReply, reviewCommentReply *entity.ReviewCommentReplyTiny, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		reviewCommentReply.UserID,
 		favoriteReviewCommentReply.UserID,
@@ -142,7 +142,7 @@ func (s *NoticeDomainServiceImpl) FavoriteVlog(c context.Context, favoriteVlog *
 }
 
 // レビューへコメントがあった場合
-func (s *NoticeDomainServiceImpl) ReviewComment(c context.Context, reviewComment *entity.ReviewComment, review *entity.Review, triggeredUser *entity.User) error {
+func (s *NoticeDomainServiceImpl) ReviewComment(c context.Context, reviewComment *entity.ReviewCommentTiny, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		review.UserID,
 		reviewComment.UserID,
@@ -167,7 +167,7 @@ func (s *NoticeDomainServiceImpl) ReviewComment(c context.Context, reviewComment
 }
 
 // レビューのコメントへリプライがあった場合
-func (s *NoticeDomainServiceImpl) ReviewCommentReply(c context.Context, reply *entity.ReviewCommentReply, comment *entity.ReviewComment, review *entity.Review, triggeredUser *entity.User) error {
+func (s *NoticeDomainServiceImpl) ReviewCommentReply(c context.Context, reply *entity.ReviewCommentReplyTiny, comment *entity.ReviewCommentTiny, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		comment.UserID,
 		reply.UserID,
@@ -219,7 +219,7 @@ func (s *NoticeDomainServiceImpl) taggedAtReview(c context.Context, review *enti
 }
 
 // ユーザがコメント内でタグ付されていた場合
-func (s *NoticeDomainServiceImpl) taggedAtComment(c context.Context, reviewComment *entity.ReviewComment, taggedUserID int, review *entity.Review, triggeredUser *entity.User) error {
+func (s *NoticeDomainServiceImpl) taggedAtComment(c context.Context, reviewComment *entity.ReviewCommentTiny, taggedUserID int, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		taggedUserID,
 		reviewComment.UserID,
@@ -233,7 +233,7 @@ func (s *NoticeDomainServiceImpl) taggedAtComment(c context.Context, reviewComme
 }
 
 // ユーザがリプライ内でタグ付されていた場合
-func (s *NoticeDomainServiceImpl) taggedAtReply(c context.Context, reviewCommentReply *entity.ReviewCommentReply, taggedUserID int, review *entity.Review, triggeredUser *entity.User) error {
+func (s *NoticeDomainServiceImpl) taggedAtReply(c context.Context, reviewCommentReply *entity.ReviewCommentReplyTiny, taggedUserID int, review *entity.Review, triggeredUser *entity.User) error {
 	notice := entity.NewNotice(
 		taggedUserID,
 		reviewCommentReply.UserID,
@@ -293,12 +293,12 @@ func (s *NoticeDomainServiceImpl) reviewEndpoint(review *entity.Review) string {
 	return endpoint
 }
 
-func (s *NoticeDomainServiceImpl) reviewCommentEndpoint(review *entity.Review, comment *entity.ReviewComment) string {
+func (s *NoticeDomainServiceImpl) reviewCommentEndpoint(review *entity.Review, comment *entity.ReviewCommentTiny) string {
 	baseEndpoint := s.reviewEndpoint(review)
 	return fmt.Sprintf("%s?type=Comment&id=%d", baseEndpoint, comment.ID)
 }
 
-func (s *NoticeDomainServiceImpl) reviewCommentReplyEndpoint(review *entity.Review, reply *entity.ReviewCommentReply) string {
+func (s *NoticeDomainServiceImpl) reviewCommentReplyEndpoint(review *entity.Review, reply *entity.ReviewCommentReplyTiny) string {
 	baseEndpoint := s.reviewEndpoint(review)
 	return fmt.Sprintf("%s?type=Reply&id=%d", baseEndpoint, reply.ID)
 }
