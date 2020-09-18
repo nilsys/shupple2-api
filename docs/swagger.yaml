@@ -4832,7 +4832,6 @@ components:
       enum:
         - Unknown
         - Sexual
-        - Inappropriate
         - Copyright
         - SelfHarm
         - Lie

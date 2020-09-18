@@ -73,3 +73,17 @@ func (r *PostCommandRepositoryImpl) UpdateWeeklyViewsByID(id, views int) error {
 	}
 	return nil
 }
+
+func (r *PostCommandRepositoryImpl) UpdateFacebookCountByID(id, count int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE post SET facebook_count = ?, updated_at = updated_at WHERE id = ?", count, id).Error; err != nil {
+		return errors.Wrap(err, "failed to update post.facebook_count")
+	}
+	return nil
+}
+
+func (r *PostCommandRepositoryImpl) UpdateTwitterCountByID(id, count int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE post SET twitter_count = ?, updated_at = updated_at WHERE id = ?", count, id).Error; err != nil {
+		return errors.Wrap(err, "failed to update post.twitter_count")
+	}
+	return nil
+}

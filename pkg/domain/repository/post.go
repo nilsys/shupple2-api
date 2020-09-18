@@ -18,6 +18,8 @@ type (
 		UpdateViewsByID(id, views int) error
 		UpdateMonthlyViewsByID(id, views int) error
 		UpdateWeeklyViewsByID(id, views int) error
+		UpdateFacebookCountByID(id, count int) error
+		UpdateTwitterCountByID(id, count int) error
 	}
 
 	PostQueryRepository interface {

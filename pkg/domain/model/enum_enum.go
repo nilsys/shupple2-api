@@ -346,6 +346,77 @@ func (x *ContextKey) UnmarshalText(text []byte) error {
 }
 
 const (
+	// EntityTypePost is a EntityType of type Post
+	EntityTypePost EntityType = iota
+	// EntityTypeVlog is a EntityType of type Vlog
+	EntityTypeVlog
+	// EntityTypeCfProject is a EntityType of type CfProject
+	EntityTypeCfProject
+	// EntityTypeReview is a EntityType of type Review
+	EntityTypeReview
+	// EntityTypeComic is a EntityType of type Comic
+	EntityTypeComic
+	// EntityTypeFeature is a EntityType of type Feature
+	EntityTypeFeature
+	// EntityTypeAll is a EntityType of type All
+	EntityTypeAll
+)
+
+const _EntityTypeName = "PostVlogCfProjectReviewComicFeatureAll"
+
+var _EntityTypeMap = map[EntityType]string{
+	0: _EntityTypeName[0:4],
+	1: _EntityTypeName[4:8],
+	2: _EntityTypeName[8:17],
+	3: _EntityTypeName[17:23],
+	4: _EntityTypeName[23:28],
+	5: _EntityTypeName[28:35],
+	6: _EntityTypeName[35:38],
+}
+
+// String implements the Stringer interface.
+func (x EntityType) String() string {
+	if str, ok := _EntityTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("EntityType(%d)", x)
+}
+
+var _EntityTypeValue = map[string]EntityType{
+	_EntityTypeName[0:4]:   0,
+	_EntityTypeName[4:8]:   1,
+	_EntityTypeName[8:17]:  2,
+	_EntityTypeName[17:23]: 3,
+	_EntityTypeName[23:28]: 4,
+	_EntityTypeName[28:35]: 5,
+	_EntityTypeName[35:38]: 6,
+}
+
+// ParseEntityType attempts to convert a string to a EntityType
+func ParseEntityType(name string) (EntityType, error) {
+	if x, ok := _EntityTypeValue[name]; ok {
+		return x, nil
+	}
+	return EntityType(0), fmt.Errorf("%s is not a valid EntityType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x EntityType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *EntityType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseEntityType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// GenderUndefined is a Gender of type Undefined
 	GenderUndefined Gender = iota
 	// GenderMale is a Gender of type Male
@@ -866,8 +937,6 @@ const (
 	ReportReasonTypeUnknown ReportReasonType = iota + 1
 	// ReportReasonTypeSexual is a ReportReasonType of type Sexual
 	ReportReasonTypeSexual
-	// ReportReasonTypeInappropriate is a ReportReasonType of type Inappropriate
-	ReportReasonTypeInappropriate
 	// ReportReasonTypeCopyright is a ReportReasonType of type Copyright
 	ReportReasonTypeCopyright
 	// ReportReasonTypeSelfHarm is a ReportReasonType of type SelfHarm
@@ -880,17 +949,16 @@ const (
 	ReportReasonTypeAd
 )
 
-const _ReportReasonTypeName = "UnknownSexualInappropriateCopyrightSelfHarmLieUnrelatedAd"
+const _ReportReasonTypeName = "UnknownSexualCopyrightSelfHarmLieUnrelatedAd"
 
 var _ReportReasonTypeMap = map[ReportReasonType]string{
 	1: _ReportReasonTypeName[0:7],
 	2: _ReportReasonTypeName[7:13],
-	3: _ReportReasonTypeName[13:26],
-	4: _ReportReasonTypeName[26:35],
-	5: _ReportReasonTypeName[35:43],
-	6: _ReportReasonTypeName[43:46],
-	7: _ReportReasonTypeName[46:55],
-	8: _ReportReasonTypeName[55:57],
+	3: _ReportReasonTypeName[13:22],
+	4: _ReportReasonTypeName[22:30],
+	5: _ReportReasonTypeName[30:33],
+	6: _ReportReasonTypeName[33:42],
+	7: _ReportReasonTypeName[42:44],
 }
 
 // String implements the Stringer interface.
@@ -904,12 +972,11 @@ func (x ReportReasonType) String() string {
 var _ReportReasonTypeValue = map[string]ReportReasonType{
 	_ReportReasonTypeName[0:7]:   1,
 	_ReportReasonTypeName[7:13]:  2,
-	_ReportReasonTypeName[13:26]: 3,
-	_ReportReasonTypeName[26:35]: 4,
-	_ReportReasonTypeName[35:43]: 5,
-	_ReportReasonTypeName[43:46]: 6,
-	_ReportReasonTypeName[46:55]: 7,
-	_ReportReasonTypeName[55:57]: 8,
+	_ReportReasonTypeName[13:22]: 3,
+	_ReportReasonTypeName[22:30]: 4,
+	_ReportReasonTypeName[30:33]: 5,
+	_ReportReasonTypeName[33:42]: 6,
+	_ReportReasonTypeName[42:44]: 7,
 }
 
 // ParseReportReasonType attempts to convert a string to a ReportReasonType

@@ -7,6 +7,14 @@ import (
 	"os"
 	"reflect"
 
+	facebook2 "github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/facebook"
+
+	widgetoon_jsoon "github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/widgetoonjsoon"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
+
+	"github.com/huandu/facebook/v2"
+
 	firebase "firebase.google.com/go"
 
 	"google.golang.org/api/option"
@@ -150,6 +158,7 @@ var RepositoriesSet = wire.NewSet(
 	ReportCommandRepositorySet,
 	ReportQueryRepositorySet,
 	SlackRepositorySet,
+	widgetoon_jsoon.QueryRepositorySet,
 	ProvideAWSSession,
 	ProvidePayjp,
 	MetasearchAreaQueryRepositorySet,
@@ -157,6 +166,7 @@ var RepositoriesSet = wire.NewSet(
 	ProvideFirebaseApp,
 	ProvideFcmClient,
 	ProvideFcmRepo,
+	facebook2.QueryRepositorySet,
 )
 
 func ProvideDB(config *config.Config) (*gorm.DB, error) {
@@ -287,6 +297,25 @@ func ProvideFcmRepo(client *FcmClientWrap) firebaseRepo.CloudMessageCommandRepos
 	}
 
 	return &firebaseRepoAdaptor.CloudMessageRepositoryImpl{Client: client.Client}
+}
+
+func ProvideFacebookSession(config *config.Config, httpClient client.Client) (*facebook.Session, error) {
+	globalApp := facebook.New(config.Facebook.AppID, config.Facebook.AppSecret)
+	var credential struct {
+		AccessToken string `json:"access_token"`
+	}
+	opts := &client.Option{
+		QueryParams: map[string][]string{},
+	}
+	opts.QueryParams.Add("client_id", config.Facebook.AppID)
+	opts.QueryParams.Add("client_secret", config.Facebook.AppSecret)
+	opts.QueryParams.Add("grant_type", "client_credentials")
+	err := httpClient.GetJSON("https://graph.facebook.com/oauth/access_token", opts, &credential)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed get facebook creds")
+	}
+	sess := globalApp.Session(credential.AccessToken)
+	return sess, nil
 }
 
 func Transaction(db *gorm.DB, f func(db *gorm.DB) error) (err error) {

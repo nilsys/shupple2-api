@@ -8,6 +8,8 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ssm"
@@ -37,12 +39,10 @@ const (
 	tourismPrefix   = "/tourism"
 	postsLimit      = 100
 	ssmKey          = "sw-media-api-analytics-config"
-	postTable       = "post"
-	reviewTable     = "review"
-	vlogTable       = "vlog"
-	featureTable    = "feature"
 	spanWeekly      = "weekly"
 	spanMonthly     = "monthly"
+	flagNameMedia   = "media"
+	flagNameSpan    = "span"
 )
 
 type (
@@ -53,7 +53,7 @@ type (
 
 	Entry struct {
 		ID    int
-		Table string
+		Type  model.EntityType
 		Slug  string
 		Score int
 	}
@@ -70,7 +70,7 @@ func (b *Batch) cliImportViews() cli.Command {
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				Name:     flagNameMedia,
-				Usage:    "取り込むviewsのmediaを指定(post,review,vlog,feature,all(全て))",
+				Usage:    "取り込むviewsのmediaを指定(Post,Review,Vlog,Feature,All(全て))",
 				Required: true,
 			},
 			cli.StringFlag{
@@ -116,7 +116,10 @@ func (b *Batch) importViews(c *cli.Context) error {
 		return errors.Wrap(err, "failed to gen google analytics service")
 	}
 
-	mediaType := c.String(flagNameMedia)
+	mediaType, err := model.ParseEntityType(c.String(flagNameMedia))
+	if err != nil {
+		return errors.Wrap(err, "can't parse entity type")
+	}
 	span := c.String(flagNameSpan)
 	gaToday := time.Now().Format(gaDateFmt)
 	var gaStart string
@@ -240,28 +243,28 @@ func (r *Row) AddViews(views int) {
 	r.Views += views
 }
 
-func (b *Batch) aggregate(mediaType, span string, garesResults []*analytics.GaData) error {
+func (b *Batch) aggregate(mediaType model.EntityType, span string, garesResults []*analytics.GaData) error {
 	rows := make([]Row, 0)
 	for _, gares := range garesResults {
 		rows = append(rows, analyticsDataToRows(gares)...)
 	}
 
 	switch mediaType {
-	case postTable:
+	case model.EntityTypePost:
 		entries, err := b.postAggregate(rows, span)
 		if err != nil {
 			return errors.Wrap(err, "failed post aggregate")
 		}
 		return b.adjustmentViews(entries, span)
-	case reviewTable:
+	case model.EntityTypeReview:
 		return b.reviewAggregate(rows, span)
-	case vlogTable:
+	case model.EntityTypeVlog:
 		entries, err := b.vlogAggregate(rows, span)
 		if err != nil {
 			return errors.Wrap(err, "failed vlog aggregate")
 		}
 		return b.adjustmentViews(entries, span)
-	case featureTable:
+	case model.EntityTypeFeature:
 		entries, err := b.featureAggregate(rows, span)
 		if err != nil {
 			return errors.Wrap(err, "failed feature aggregate")
@@ -309,58 +312,58 @@ func (b *Batch) adjustmentViews(entries []Entry, span string) error {
 
 		switch span {
 		case spanWeekly:
-			switch entry.Table {
-			case postTable:
+			switch entry.Type {
+			case model.EntityTypePost:
 				if err := b.PostCommandRepository.UpdateWeeklyViewsByID(entry.ID, entry.Score); err != nil {
 					return errors.Wrap(err, "failed to update review.weekly_views")
 				}
-			case reviewTable:
+			case model.EntityTypeReview:
 				if err := b.ReviewCommandRepository.UpdateWeeklyViewsByID(entry.ID, entry.Score); err != nil {
 					return errors.Wrap(err, "failed to update review.weekly_views")
 				}
-			case vlogTable:
+			case model.EntityTypeVlog:
 				if err := b.VlogCommandRepository.UpdateWeeklyViewsByID(entry.ID, entry.Score); err != nil {
 					return errors.Wrap(err, "failed to update vlog.weekly_views")
 				}
-			case featureTable:
+			case model.EntityTypeFeature:
 				if err := b.FeatureCommandRepository.UpdateWeeklyViewsByID(entry.ID, entry.Score); err != nil {
 					return errors.Wrap(err, "failed to update feature.weekly_views")
 				}
 			}
 		case spanMonthly:
-			switch entry.Table {
-			case postTable:
+			switch entry.Type {
+			case model.EntityTypePost:
 				if err := b.PostCommandRepository.UpdateMonthlyViewsByID(entry.ID, entry.Score); err != nil {
 					return errors.Wrap(err, "failed to update review.monthly_views")
 				}
-			case reviewTable:
+			case model.EntityTypeReview:
 				if err := b.ReviewCommandRepository.UpdateMonthlyViewsByID(entry.ID, entry.Score); err != nil {
 					return errors.Wrap(err, "failed to update review.monthly_views")
 				}
-			case vlogTable:
+			case model.EntityTypeVlog:
 				if err := b.VlogCommandRepository.UpdateMonthlyViewsByID(entry.ID, entry.Score); err != nil {
 					return errors.Wrap(err, "failed to update vlog.monthly_views")
 				}
-			case featureTable:
+			case model.EntityTypeFeature:
 				if err := b.FeatureCommandRepository.UpdateMonthlyViewsByID(entry.ID, entry.Score); err != nil {
 					return errors.Wrap(err, "failed to update feature.monthly_views")
 				}
 			}
 		default:
-			switch entry.Table {
-			case postTable:
+			switch entry.Type {
+			case model.EntityTypePost:
 				if err := b.PostCommandRepository.UpdateViewsByID(entry.ID, entry.Score); err != nil {
 					return errors.Wrap(err, "failed to update review.views")
 				}
-			case reviewTable:
+			case model.EntityTypeReview:
 				if err := b.ReviewCommandRepository.UpdateViewsByID(entry.ID, entry.Score); err != nil {
 					return errors.Wrap(err, "failed to update review.views")
 				}
-			case vlogTable:
+			case model.EntityTypeVlog:
 				if err := b.VlogCommandRepository.UpdateViewsByID(entry.ID, entry.Score); err != nil {
 					return errors.Wrap(err, "failed to update vlog.views")
 				}
-			case featureTable:
+			case model.EntityTypeFeature:
 				if err := b.FeatureCommandRepository.UpdateViewsByID(entry.ID, entry.Score); err != nil {
 					return errors.Wrap(err, "failed to update feature.views")
 				}
@@ -402,7 +405,7 @@ func (b *Batch) postAggregate(rows []Row, span string) ([]Entry, error) {
 			}
 			entries = append(entries, Entry{
 				ID:    post.ID,
-				Table: postTable,
+				Type:  model.EntityTypePost,
 				Slug:  post.Slug,
 				Score: row.Views,
 			})
@@ -469,7 +472,7 @@ func (b *Batch) vlogAggregate(rows []Row, span string) ([]Entry, error) {
 		}
 		entries = append(entries, Entry{
 			ID:    vlog.ID,
-			Table: vlogTable,
+			Type:  model.EntityTypeVlog,
 			Slug:  vlog.Slug,
 			Score: row.Views,
 		})
@@ -505,7 +508,7 @@ func (b *Batch) featureAggregate(rows []Row, span string) ([]Entry, error) {
 		}
 		entries = append(entries, Entry{
 			ID:    feature.ID,
-			Table: featureTable,
+			Type:  model.EntityTypeFeature,
 			Slug:  feature.Slug,
 			Score: row.Views,
 		})

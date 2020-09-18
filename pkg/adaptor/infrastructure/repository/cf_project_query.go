@@ -36,6 +36,14 @@ func (r *CfProjectQueryRepositoryImpl) FindByID(id int) (*entity.CfProjectDetail
 	return &row, nil
 }
 
+func (r *CfProjectQueryRepositoryImpl) FindByLastID(lastID, limit int) ([]*entity.CfProjectTiny, error) {
+	var rows []*entity.CfProjectTiny
+	if err := r.DB(context.Background()).Where("id > ?", lastID).Limit(limit).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find cf_project")
+	}
+	return rows, nil
+}
+
 func (r *CfProjectQueryRepositoryImpl) FindListByQuery(query *query.FindCfProjectQuery) (*entity.CfProjectDetailList, error) {
 	var rows entity.CfProjectDetailList
 

@@ -35,6 +35,16 @@ func (r *VlogQueryRepositoryImpl) FindDetailByID(id int) (*entity.VlogDetail, er
 	return &row, nil
 }
 
+func (r *VlogQueryRepositoryImpl) FindByLastID(lastID, limit int) ([]*entity.Vlog, error) {
+	var rows []*entity.Vlog
+
+	if err := r.DB.Where("id > ?", lastID).Limit(limit).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find vlog")
+	}
+
+	return rows, nil
+}
+
 func (r *VlogQueryRepositoryImpl) FindDetailWithIsFavoriteByID(id, userID int) (*entity.VlogDetail, error) {
 	var row entity.VlogDetail
 

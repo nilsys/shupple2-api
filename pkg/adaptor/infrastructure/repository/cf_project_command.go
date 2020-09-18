@@ -137,3 +137,17 @@ func (r *CfProjectCommandRepositoryImpl) UpdateLatestPostID(ctx context.Context,
 	}
 	return nil
 }
+
+func (r *CfProjectCommandRepositoryImpl) UpdateFacebookCountByID(id, count int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE cf_project SET facebook_count = ?, updated_at = updated_at WHERE id = ?", count, id).Error; err != nil {
+		return errors.Wrap(err, "failed update facebook_count")
+	}
+	return nil
+}
+
+func (r *CfProjectCommandRepositoryImpl) UpdateTwitterCountByID(id, count int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE cf_project SET twitter_count = ?, updated_at = updated_at WHERE id = ?", count, id).Error; err != nil {
+		return errors.Wrap(err, "failed update twitter_count")
+	}
+	return nil
+}

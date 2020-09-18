@@ -80,7 +80,7 @@ ENUM(Review = 1, Comment, Reply, User)
 type ReportTargetType int
 
 /*
-ENUM(Unknown =1, Sexual, Inappropriate, Copyright, SelfHarm, Lie, Unrelated, Ad)
+ENUM(Unknown =1, Sexual, Copyright, SelfHarm, Lie, Unrelated, Ad)
 */
 type ReportReasonType int
 
@@ -125,3 +125,8 @@ Unavailable = 入金不可能になった
 Done = 入金申請済になった
 */
 type UserSalesReasonType int
+
+/*
+ENUM(Post, Vlog, CfProject, Review, Comic, Feature, All)
+*/
+type EntityType int

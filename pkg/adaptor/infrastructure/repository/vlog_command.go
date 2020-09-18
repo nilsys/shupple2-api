@@ -73,3 +73,17 @@ func (r *VlogCommandRepositoryImpl) UpdateWeeklyViewsByID(id, views int) error {
 	}
 	return nil
 }
+
+func (r *VlogCommandRepositoryImpl) UpdateFacebookCountByID(id, count int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE vlog SET facebook_count = ?, updated_at = updated_at WHERE id = ?", count, id).Error; err != nil {
+		return errors.Wrap(err, "failed to update vlog.facebook_count")
+	}
+	return nil
+}
+
+func (r *VlogCommandRepositoryImpl) UpdateTwitterCountByID(id, count int) error {
+	if err := r.DB(context.Background()).Exec("UPDATE vlog SET twitter_count = ?, updated_at = updated_at WHERE id = ?", count, id).Error; err != nil {
+		return errors.Wrap(err, "failed to update vlog.twitter_count")
+	}
+	return nil
+}

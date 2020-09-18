@@ -36,18 +36,18 @@ func (m *MockCfProjectCommandRepository) EXPECT() *MockCfProjectCommandRepositor
 	return m.recorder
 }
 
-// Validate mocks base method
+// Store mocks base method
 func (m *MockCfProjectCommandRepository) Store(arg0 context.Context, arg1 *entity.CfProject) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Validate", arg0, arg1)
+	ret := m.ctrl.Call(m, "Store", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Validate indicates an expected call of Validate
+// Store indicates an expected call of Store
 func (mr *MockCfProjectCommandRepositoryMockRecorder) Store(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockCfProjectCommandRepository)(nil).Store), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockCfProjectCommandRepository)(nil).Store), arg0, arg1)
 }
 
 // Lock mocks base method
@@ -247,6 +247,34 @@ func (mr *MockCfProjectCommandRepositoryMockRecorder) UpdateLatestPostID(ctx, id
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateLatestPostID", reflect.TypeOf((*MockCfProjectCommandRepository)(nil).UpdateLatestPostID), ctx, id, postID)
 }
 
+// UpdateFacebookCountByID mocks base method
+func (m *MockCfProjectCommandRepository) UpdateFacebookCountByID(id, count int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateFacebookCountByID", id, count)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateFacebookCountByID indicates an expected call of UpdateFacebookCountByID
+func (mr *MockCfProjectCommandRepositoryMockRecorder) UpdateFacebookCountByID(id, count interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateFacebookCountByID", reflect.TypeOf((*MockCfProjectCommandRepository)(nil).UpdateFacebookCountByID), id, count)
+}
+
+// UpdateTwitterCountByID mocks base method
+func (m *MockCfProjectCommandRepository) UpdateTwitterCountByID(id, count int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTwitterCountByID", id, count)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateTwitterCountByID indicates an expected call of UpdateTwitterCountByID
+func (mr *MockCfProjectCommandRepositoryMockRecorder) UpdateTwitterCountByID(id, count interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTwitterCountByID", reflect.TypeOf((*MockCfProjectCommandRepository)(nil).UpdateTwitterCountByID), id, count)
+}
+
 // MockCfProjectQueryRepository is a mock of CfProjectQueryRepository interface
 type MockCfProjectQueryRepository struct {
 	ctrl     *gomock.Controller
@@ -283,6 +311,21 @@ func (m *MockCfProjectQueryRepository) FindByID(id int) (*entity.CfProjectDetail
 func (mr *MockCfProjectQueryRepositoryMockRecorder) FindByID(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockCfProjectQueryRepository)(nil).FindByID), id)
+}
+
+// FindByLastID mocks base method
+func (m *MockCfProjectQueryRepository) FindByLastID(lastID, limit int) ([]*entity.CfProjectTiny, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByLastID", lastID, limit)
+	ret0, _ := ret[0].([]*entity.CfProjectTiny)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByLastID indicates an expected call of FindByLastID
+func (mr *MockCfProjectQueryRepositoryMockRecorder) FindByLastID(lastID, limit interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByLastID", reflect.TypeOf((*MockCfProjectQueryRepository)(nil).FindByLastID), lastID, limit)
 }
 
 // FindListByQuery mocks base method

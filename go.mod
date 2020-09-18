@@ -17,6 +17,7 @@ require (
 	github.com/golangci/golangci-lint v1.23.1
 	github.com/google/uuid v1.1.1
 	github.com/google/wire v0.3.0
+	github.com/huandu/facebook/v2 v2.5.2
 	github.com/jinzhu/gorm v1.9.12
 	github.com/labstack/echo/v4 v4.1.13
 	github.com/labstack/gommon v0.3.0
@@ -28,6 +29,7 @@ require (
 	github.com/onsi/gomega v1.8.1
 	github.com/payjp/payjp-go v0.0.0-20200228021714-4bd8d1d836fa
 	github.com/pkg/errors v0.9.1
+	github.com/prometheus/common v0.4.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/satori/uuid v1.2.0
 	github.com/sergi/go-diff v1.1.0 // indirect
@@ -37,6 +39,7 @@ require (
 	golang.org/x/crypto v0.0.0-20200117160349-530e935923ad // indirect
 	golang.org/x/net v0.0.0-20200114155413-6afb5195e5aa // indirect
 	golang.org/x/oauth2 v0.0.0-20190402181905-9f3314589c9a
+	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	golang.org/x/sys v0.0.0-20200117145432-59e60aa80a0c // indirect
 	golang.org/x/tools v0.0.0-20200117170720-ade7f2547e48 // indirect
 	google.golang.org/api v0.4.0

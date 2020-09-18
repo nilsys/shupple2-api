@@ -16,11 +16,6 @@ import (
 	"github.com/urfave/cli"
 )
 
-const (
-	flagNameMedia = "media"
-	flagNameSpan  = "span"
-)
-
 type Batch struct {
 	Config                     *config.Config
 	WordpressCallbackService   service.WordpressCallbackService
@@ -39,6 +34,7 @@ type Batch struct {
 	CfProjectCommandService    service.CfProjectCommandService
 	CfProjectFacade            facade.CfProjectFacade
 	PaymentCommandRepository   repository.PaymentCommandRepository
+	ImportSnsShareCountFacade  facade.ImportSnsShareCountFacade
 }
 
 func main() {
@@ -68,6 +64,7 @@ func (b *Batch) Run(args []string) error {
 		b.cliImportWordpress(),
 		b.cliImportViews(),
 		b.cliCfProjectNotice(),
+		b.cliImportSnsShareCount(),
 	}
 
 	return app.Run(args)

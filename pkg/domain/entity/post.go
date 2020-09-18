@@ -1,7 +1,10 @@
 package entity
 
 import (
+	"path"
 	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/config"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 	"gopkg.in/guregu/null.v3"
@@ -253,4 +256,9 @@ func (p *PostDetailList) ToCfProjectIDMap() map[int]*PostDetail {
 		resolve[int(tiny.CfProjectID.Int64)] = tiny
 	}
 	return resolve
+}
+
+func (p *PostTiny) MediaWebURL(baseURL config.URL) *config.URL {
+	baseURL.Path = path.Join(baseURL.Path, p.Slug)
+	return &baseURL
 }

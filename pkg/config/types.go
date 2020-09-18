@@ -6,7 +6,7 @@ import (
 
 	"go.uber.org/zap"
 	"gopkg.in/go-playground/validator.v9"
-	yaml "gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v3"
 )
 
 type (
@@ -25,6 +25,7 @@ type (
 		GoogleAnalytics GoogleAnalytics `validate:"required" yaml:"google_analytics"`
 		Payjp           Payjp           `validate:"required" yaml:"payjp"`
 		CfProject       CfProject       `validate:"required" yaml:"cf_project"`
+		Facebook        Facebook        `validate:"" yaml:"facebook"`
 		Env             Env
 
 		// scripts配下のスクリプト固有の設定
@@ -104,6 +105,11 @@ type (
 
 	Payjp struct {
 		SecretKey string `validate:"required" yaml:"secret_key"`
+	}
+
+	Facebook struct {
+		AppID     string `validate:"" yaml:"app_id"`
+		AppSecret string `validate:"" yaml:"app_secret"`
 	}
 
 	CfProject struct {

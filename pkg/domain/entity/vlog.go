@@ -1,7 +1,11 @@
 package entity
 
 import (
+	"fmt"
+	"path"
 	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/config"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
@@ -93,47 +97,47 @@ func NewVlog(tiny VlogTiny, areaCategoryIDs, themeCategoryIDs, touristSpotIDs, e
 	return vlog
 }
 
-func (vlog *Vlog) SetAreaCategories(areaCategoryIDs []int) {
-	vlog.AreaCategoryIDs = make([]*VlogAreaCategory, len(areaCategoryIDs))
+func (v *Vlog) SetAreaCategories(areaCategoryIDs []int) {
+	v.AreaCategoryIDs = make([]*VlogAreaCategory, len(areaCategoryIDs))
 	for i, c := range areaCategoryIDs {
-		vlog.AreaCategoryIDs[i] = &VlogAreaCategory{
-			VlogID:         vlog.ID,
+		v.AreaCategoryIDs[i] = &VlogAreaCategory{
+			VlogID:         v.ID,
 			AreaCategoryID: c,
 		}
 	}
 }
 
-func (vlog *Vlog) SetThemeCategories(themeCategoryIDs []int) {
-	vlog.ThemeCategoryIDs = make([]*VlogThemeCategory, len(themeCategoryIDs))
+func (v *Vlog) SetThemeCategories(themeCategoryIDs []int) {
+	v.ThemeCategoryIDs = make([]*VlogThemeCategory, len(themeCategoryIDs))
 	for i, c := range themeCategoryIDs {
-		vlog.ThemeCategoryIDs[i] = &VlogThemeCategory{
-			VlogID:          vlog.ID,
+		v.ThemeCategoryIDs[i] = &VlogThemeCategory{
+			VlogID:          v.ID,
 			ThemeCategoryID: c,
 		}
 	}
 }
 
-func (vlog *Vlog) SetTouristSpots(touristSpotIDs []int) {
-	vlog.TouristSpotIDs = make([]*VlogTouristSpot, len(touristSpotIDs))
+func (v *Vlog) SetTouristSpots(touristSpotIDs []int) {
+	v.TouristSpotIDs = make([]*VlogTouristSpot, len(touristSpotIDs))
 	for i, l := range touristSpotIDs {
-		vlog.TouristSpotIDs[i] = &VlogTouristSpot{
-			VlogID:        vlog.ID,
+		v.TouristSpotIDs[i] = &VlogTouristSpot{
+			VlogID:        v.ID,
 			TouristSpotID: l,
 		}
 	}
 }
 
-func (vlog *Vlog) SetEditors(editors []int) {
-	vlog.Editors = make([]*VlogEditor, len(editors))
+func (v *Vlog) SetEditors(editors []int) {
+	v.Editors = make([]*VlogEditor, len(editors))
 	for i, e := range editors {
-		vlog.Editors[i] = &VlogEditor{
-			VlogID: vlog.ID,
+		v.Editors[i] = &VlogEditor{
+			VlogID: v.ID,
 			UserID: e,
 		}
 	}
 }
 
-func (queryVlog *VlogTiny) TableName() string {
+func (v *VlogTiny) TableName() string {
 	return "vlog"
 }
 
@@ -230,4 +234,9 @@ func (v *VlogDetail) UserIDs() []int {
 	}
 	ids[len(ids)-1] = v.UserID
 	return ids
+}
+
+func (v *VlogTiny) MediaWebURL(baseURL config.URL) *config.URL {
+	baseURL.Path = path.Join(baseURL.Path, fmt.Sprintf("/movie/%d", v.ID))
+	return &baseURL
 }

@@ -1,7 +1,10 @@
 package entity
 
 import (
+	"fmt"
 	"time"
+
+	"github.com/stayway-corp/stayway-media-api/pkg/config"
 
 	"gopkg.in/guregu/null.v3"
 )
@@ -226,4 +229,9 @@ func (c UserSupportCfProjectList) ToIDIsSupportMap(cfProjectIDs []int) map[int]b
 	}
 
 	return resolve
+}
+
+func (c CfProjectTiny) MediaWebURL(baseURL config.URL) *config.URL {
+	baseURL.Path = fmt.Sprintf("/projects/%d", c.ID)
+	return &baseURL
 }

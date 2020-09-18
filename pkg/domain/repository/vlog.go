@@ -18,11 +18,14 @@ type (
 		DecrementFavoriteCount(c context.Context, vlogID int) error
 		UpdateMonthlyViewsByID(id, views int) error
 		UpdateWeeklyViewsByID(id, views int) error
+		UpdateFacebookCountByID(id, count int) error
+		UpdateTwitterCountByID(id, count int) error
 	}
 
 	VlogQueryRepository interface {
 		FindAll() ([]*entity.Vlog, error)
 		FindByID(id int) (*entity.Vlog, error)
+		FindByLastID(lastID, limit int) ([]*entity.Vlog, error)
 		FindListByParams(query *query.FindVlogListQuery) (*entity.VlogList, error)
 		FindWithIsFavoriteListByParams(query *query.FindVlogListQuery, userID int) (*entity.VlogList, error)
 		FindDetailByID(id int) (*entity.VlogDetail, error)

@@ -25,10 +25,13 @@ type (
 		MarkAsIsSentAchievementNoticeEmail(id int) error
 		MarkAsIsSentNewPostEmail(ctx context.Context, id int) error
 		UpdateLatestPostID(ctx context.Context, id, postID int) error
+		UpdateFacebookCountByID(id, count int) error
+		UpdateTwitterCountByID(id, count int) error
 	}
 
 	CfProjectQueryRepository interface {
 		FindByID(id int) (*entity.CfProjectDetail, error)
+		FindByLastID(lastID, limit int) ([]*entity.CfProjectTiny, error)
 		FindListByQuery(query *query.FindCfProjectQuery) (*entity.CfProjectDetailList, error)
 		FindSupportCommentListByCfProjectID(projectID, limit int) (*entity.CfProjectSupportCommentList, error)
 		FindNotSentAchievementNoticeEmailAndAchievedListByLastID(lastID, limit int) (*entity.CfProjectDetailList, error)

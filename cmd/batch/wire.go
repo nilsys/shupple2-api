@@ -4,6 +4,7 @@ package main
 
 import (
 	"github.com/google/wire"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/facade"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
@@ -42,6 +43,7 @@ var serviceSet = wire.NewSet(
 
 var facadeSet = wire.NewSet(
 	facade.CfProjectFacadeSet,
+	facade.ImportSnsShareCountFacadeSet,
 )
 
 var domainServiceSet = wire.NewSet(
@@ -55,11 +57,14 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		wire.Struct(new(Batch), "*"),
 		config.GetConfig,
 		wire.FieldsOf(new(*config.Config), "AWS"),
+		client.NewClient,
+		wire.Value(&client.Config{}),
 		serviceSet,
 		facadeSet,
 		domainServiceSet,
 		repository.RepositoriesSet,
 		repository.ProvideS3Uploader,
+		repository.ProvideFacebookSession,
 	)
 
 	return new(Batch), nil

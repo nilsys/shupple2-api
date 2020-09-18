@@ -7,8 +7,11 @@ package main
 
 import (
 	"github.com/google/wire"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/facebook"
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/payjp"
+	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/widgetoonjsoon"
 	"github.com/stayway-corp/stayway-media-api/pkg/application/facade"
 	service2 "github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
@@ -272,6 +275,29 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	paymentCommandRepositoryImpl := &repository.PaymentCommandRepositoryImpl{
 		DAO: dao,
 	}
+	clientConfig := _wireConfigValue
+	clientClient := client.NewClient(clientConfig)
+	facebookSession, err := repository.ProvideFacebookSession(configConfig, clientClient)
+	if err != nil {
+		return nil, err
+	}
+	queryRepositoryImpl := &facebook.QueryRepositoryImpl{
+		FacebookSession: facebookSession,
+	}
+	widgetoonjsoonQueryRepositoryImpl := &widgetoonjsoon.QueryRepositoryImpl{
+		Client: clientClient,
+	}
+	importSnsShareCountFacadeImpl := &facade.ImportSnsShareCountFacadeImpl{
+		FacebookQueryRepository:       queryRepositoryImpl,
+		WidgetoonJsoonQueryRepository: widgetoonjsoonQueryRepositoryImpl,
+		PostQueryRepository:           postQueryRepositoryImpl,
+		PostCommandRepository:         postCommandRepositoryImpl,
+		VlogQueryRepository:           vlogQueryRepositoryImpl,
+		VlogCommandRepository:         vlogCommandRepositoryImpl,
+		CfProjectQueryRepository:      cfProjectQueryRepositoryImpl,
+		CfProjectCommandRepository:    cfProjectCommandRepositoryImpl,
+		Config:                        configConfig,
+	}
 	batch := &Batch{
 		Config:                     configConfig,
 		WordpressCallbackService:   wordpressCallbackServiceImpl,
@@ -290,14 +316,19 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		CfProjectCommandService:    cfProjectCommandServiceImpl,
 		CfProjectFacade:            cfProjectFacadeImpl,
 		PaymentCommandRepository:   paymentCommandRepositoryImpl,
+		ImportSnsShareCountFacade:  importSnsShareCountFacadeImpl,
 	}
 	return batch, nil
 }
+
+var (
+	_wireConfigValue = &client.Config{}
+)
 
 // wire.go:
 
 var serviceSet = wire.NewSet(service2.PostQueryServiceSet, service2.PostCommandServiceSet, service2.AreaCategoryQueryServiceSet, service2.AreaCategoryCommandServiceSet, service2.ThemeCategoryCommandServiceSet, service2.CategoryQueryServiceSet, service2.ComicQueryServiceSet, service2.ComicCommandServiceSet, service2.ReviewQueryServiceSet, service2.WordpressServiceSet, service2.SearchQueryServiceSet, service2.FeatureQueryServiceSet, service2.FeatureCommandServiceSet, service2.VlogQueryServiceSet, service2.VlogCommandServiceSet, service2.HashtagQueryServiceSet, service2.HashtagCommandServiceSet, service2.TouristSpotCommandServiceSet, service2.CategoryCommandServiceSet, service2.SpotCategoryCommandServiceSet, service2.WordpressCallbackServiceSet, service2.UserQueryServiceSet, service2.UserCommandServiceSet, service2.CfProjectCommandServiceSet, service2.CfReturnGiftCommandServiceSet, service2.ProvideAuthService)
 
-var facadeSet = wire.NewSet(facade.CfProjectFacadeSet)
+var facadeSet = wire.NewSet(facade.CfProjectFacadeSet, facade.ImportSnsShareCountFacadeSet)
 
 var domainServiceSet = wire.NewSet(service.NoticeDomainServiceSet, service.TaggedUserDomainServiceSet, service.UserValidatorDomainServiceSet)
