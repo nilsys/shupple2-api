@@ -30,6 +30,7 @@ type (
 		FindByUIDs(uIDs []string) ([]*entity.User, error)
 		FindByCognitoID(cognitoID string) (*entity.User, error)
 		FindByWordpressID(id int) (*entity.User, error)
+		FindByAssociateID(associateID string) (*entity.UserTiny, error)
 		UnscopedFindByMigrationCode(code string) (*entity.UserTiny, error)
 		FindByMigrationCode(code string) (*entity.UserTiny, error)
 		FindUserRankingListByParams(query *query.FindUserRankingListQuery) ([]*entity.UserDetail, error)
@@ -40,7 +41,6 @@ type (
 		FindRecommendFollowUserList(interestIDs []int) ([]*entity.UserTiny, error)
 		IsExistByUID(uid string) (bool, error)
 		FindByCognitoUserName(cognitoUserName []string) ([]*entity.UserTiny, error)
-		// name部分一致検索
 		SearchByNameOrUID(name string) ([]*entity.UserTiny, error)
 		FindFollowingByID(query *query.FindFollowUser) ([]*entity.UserTinyWithIsFollow, error)
 		FindFollowedByID(query *query.FindFollowUser) ([]*entity.UserTinyWithIsFollow, error)

@@ -61,6 +61,14 @@ func (r *UserQueryRepositoryImpl) FindByWordpressID(wordpressUserID int) (*entit
 	return &row, nil
 }
 
+func (r *UserQueryRepositoryImpl) FindByAssociateID(associateID string) (*entity.UserTiny, error) {
+	var row entity.UserTiny
+	if err := r.DB.Where("associate_id = ?", associateID).First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "user(associate_id=%s)", associateID)
+	}
+	return &row, nil
+}
+
 // 非ログインユーザーの場合論理削除されている為、論理削除されているUserも対象に含める
 func (r *UserQueryRepositoryImpl) UnscopedFindByMigrationCode(code string) (*entity.UserTiny, error) {
 	var row entity.UserTiny

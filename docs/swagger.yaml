@@ -3154,6 +3154,11 @@ components:
           description: |
             備考
           example: TシャツはMサイズで
+        associateId:
+          type: string
+          description: |
+            アソシエイトId
+          example: eioqwhr9023qujfi0ove
     CreateInstantChargeRequest:
       type: object
       required:

@@ -24,6 +24,7 @@ type (
 		TotalPrice              int
 		CommissionPrice         int
 		Remark                  string
+		AssociateUserID         null.Int
 		OwnerDepositRequestedAt *time.Time
 		Times
 	}
@@ -80,6 +81,20 @@ func NewPaymentTiny(userID, projectOwnerID, cardID, addressID int, chargeID stri
 		TotalPrice:        price,
 		CommissionPrice:   commissionPrice,
 		Remark:            remark,
+	}
+}
+
+func NewAssociatePaymentTiny(userID, projectOwnerID, cardID, addressID int, chargeID string, price, commissionPrice int, remark string, associateUserID int) *PaymentTiny {
+	return &PaymentTiny{
+		UserID:            userID,
+		ProjectOwnerID:    projectOwnerID,
+		CardID:            cardID,
+		ChargeID:          chargeID,
+		ShippingAddressID: addressID,
+		TotalPrice:        price,
+		CommissionPrice:   commissionPrice,
+		Remark:            remark,
+		AssociateUserID:   null.IntFrom(int64(associateUserID)),
 	}
 }
 

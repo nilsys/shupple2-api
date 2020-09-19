@@ -42,6 +42,7 @@ type (
 		YoutubeURL      string
 		LivingArea      string
 		DeviceToken     null.String
+		AssociateID     null.String
 		IsNonLogin      bool
 		Times
 		// 如何なる場面でも必要な為Userの最小単位に置いておく

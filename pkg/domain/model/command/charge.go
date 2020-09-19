@@ -11,6 +11,7 @@ type (
 		List               []*Charge
 		SupportCommentBody string
 		Remark             string
+		AssociateID        string
 	}
 )
 

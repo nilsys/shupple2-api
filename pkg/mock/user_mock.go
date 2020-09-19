@@ -248,6 +248,21 @@ func (mr *MockUserQueryRepositoryMockRecorder) FindByWordpressID(id interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByWordpressID", reflect.TypeOf((*MockUserQueryRepository)(nil).FindByWordpressID), id)
 }
 
+// FindByAssociateID mocks base method
+func (m *MockUserQueryRepository) FindByAssociateID(associateID string) (*entity.UserTiny, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByAssociateID", associateID)
+	ret0, _ := ret[0].(*entity.UserTiny)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByAssociateID indicates an expected call of FindByAssociateID
+func (mr *MockUserQueryRepositoryMockRecorder) FindByAssociateID(associateID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByAssociateID", reflect.TypeOf((*MockUserQueryRepository)(nil).FindByAssociateID), associateID)
+}
+
 // UnscopedFindByMigrationCode mocks base method
 func (m *MockUserQueryRepository) UnscopedFindByMigrationCode(code string) (*entity.UserTiny, error) {
 	m.ctrl.T.Helper()

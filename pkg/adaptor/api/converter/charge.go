@@ -27,5 +27,6 @@ func (c Converters) ConvertCaptureChargeToCmd(charge *input.CreateCharge) *comma
 		List:               result,
 		SupportCommentBody: charge.SupportCommentBody,
 		Remark:             charge.Remark,
+		AssociateID:        charge.AssociateID,
 	}
 }

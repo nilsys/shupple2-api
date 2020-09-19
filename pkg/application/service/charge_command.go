@@ -266,8 +266,19 @@ func (s *ChargeCommandServiceImpl) create(c context.Context, cmd *command.Create
 		return nil, serror.New(nil, serror.CodePayAgentError, "card authorization error")
 	}
 
+	var payment *entity.PaymentTiny
+	// アフィリエイトリンクから購入される場合
+	if cmd.AssociateID != "" {
+		associateUser, err := s.UserQueryRepository.FindByAssociateID(cmd.AssociateID)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed find user by associate_id")
+		}
+		payment = entity.NewAssociatePaymentTiny(user.ID, project.UserID, card.ID, address.ID, charge.ID, price, s.CfProjectConfig.SystemFee, cmd.Remark, associateUser.ID)
+	} else {
+		payment = entity.NewPaymentTiny(user.ID, project.UserID, card.ID, address.ID, charge.ID, price, s.CfProjectConfig.SystemFee, cmd.Remark)
+	}
+
 	// 支払い情報を保存
-	payment := entity.NewPaymentTiny(user.ID, project.UserID, card.ID, address.ID, charge.ID, price, s.CfProjectConfig.SystemFee, cmd.Remark)
 	if err := s.PaymentCommandRepository.Store(c, payment); err != nil {
 		return nil, errors.Wrap(err, "failed store payment")
 	}
