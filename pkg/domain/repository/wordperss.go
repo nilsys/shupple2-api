@@ -1,6 +1,9 @@
 package repository
 
-import "github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
+import (
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+)
 
 type (
 	WordpressQueryRepository interface {
@@ -17,7 +20,7 @@ type (
 		FindCfProjectByID(id int) (*wordpress.CfProject, error)
 		FindCfReturnGiftByID(id int) (*wordpress.CfReturnGift, error)
 		FindCfReturnGiftsByCfProjectID(id int) ([]*wordpress.CfReturnGift, error)
-		FetchMediaBodyByID(id int) (*wordpress.MediaBody, error)
-		FetchResource(url string) (*wordpress.MediaBody, error)
+		FetchMediaBodyByID(id int) (*model.MediaBody, error)
+		FetchResource(url string) (*model.MediaBody, error)
 	}
 )

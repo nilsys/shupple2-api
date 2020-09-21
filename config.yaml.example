@@ -20,6 +20,7 @@ aws:
   user_pool_id: changeme
   client_id: changeme
   metasearch_bucket: changeme
+  persist_media_queue: changeme
 wordpress:
   base_url: https://stg-admin.stayway.jp/tourism
   user: changeme

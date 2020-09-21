@@ -15,12 +15,14 @@ mockgen=$(BIN)/mockgen
 linter=$(BIN)/golangci-lint
 go-enum=$(BIN)/go-enum
 
-build: build-app build-batch
+build: build-app build-batch build-lambda
 
 build-app:
 	go build $(BUILD_OPTS) -o bin/stayway-media-api ./cmd/app
 build-batch:
 	go build $(BUILD_OPTS) -o bin/stayway-media-batch ./cmd/batch
+build-lambda:
+	go build $(BUILD_OPTS) -o bin/stayway-media-lambda ./cmd/lambda
 
 install-cli: $(air) $(migrate) $(wire) $(ginkgo) $(mockgen) $(linter) $(go-enum)
 $(air):

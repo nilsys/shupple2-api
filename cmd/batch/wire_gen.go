@@ -92,6 +92,20 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	transactionServiceImpl := &repository.TransactionServiceImpl{
 		DB: db,
 	}
+	mediaQueryRepositoryImpl := &repository.MediaQueryRepositoryImpl{
+		AWSConfig:  aws,
+		AWSSession: session,
+	}
+	mediaCommandRepositoryImpl := &repository.MediaCommandRepositoryImpl{
+		AWSConfig:  aws,
+		AWSSession: session,
+	}
+	mediaCommandServiceImpl := &service2.MediaCommandServiceImpl{
+		AWSConfig:              aws,
+		AWSSession:             session,
+		MediaQueryRepository:   mediaQueryRepositoryImpl,
+		MediaCommandRepository: mediaCommandRepositoryImpl,
+	}
 	userCommandServiceImpl := &service2.UserCommandServiceImpl{
 		UserCommandRepository:      userCommandRepositoryImpl,
 		UserQueryRepository:        userQueryRepositoryImpl,
@@ -102,6 +116,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		AuthService:                authService,
 		NoticeDomainService:        noticeDomainServiceImpl,
 		TransactionService:         transactionServiceImpl,
+		MediaCommandService:        mediaCommandServiceImpl,
 	}
 	areaCategoryCommandRepositoryImpl := &repository.AreaCategoryCommandRepositoryImpl{
 		DAO: dao,
@@ -327,7 +342,7 @@ var (
 
 // wire.go:
 
-var serviceSet = wire.NewSet(service2.PostQueryServiceSet, service2.PostCommandServiceSet, service2.AreaCategoryQueryServiceSet, service2.AreaCategoryCommandServiceSet, service2.ThemeCategoryCommandServiceSet, service2.CategoryQueryServiceSet, service2.ComicQueryServiceSet, service2.ComicCommandServiceSet, service2.ReviewQueryServiceSet, service2.WordpressServiceSet, service2.SearchQueryServiceSet, service2.FeatureQueryServiceSet, service2.FeatureCommandServiceSet, service2.VlogQueryServiceSet, service2.VlogCommandServiceSet, service2.HashtagQueryServiceSet, service2.HashtagCommandServiceSet, service2.TouristSpotCommandServiceSet, service2.CategoryCommandServiceSet, service2.SpotCategoryCommandServiceSet, service2.WordpressCallbackServiceSet, service2.UserQueryServiceSet, service2.UserCommandServiceSet, service2.CfProjectCommandServiceSet, service2.CfReturnGiftCommandServiceSet, service2.ProvideAuthService)
+var serviceSet = wire.NewSet(service2.PostQueryServiceSet, service2.PostCommandServiceSet, service2.AreaCategoryQueryServiceSet, service2.AreaCategoryCommandServiceSet, service2.ThemeCategoryCommandServiceSet, service2.CategoryQueryServiceSet, service2.ComicQueryServiceSet, service2.ComicCommandServiceSet, service2.ReviewQueryServiceSet, service2.WordpressServiceSet, service2.SearchQueryServiceSet, service2.FeatureQueryServiceSet, service2.FeatureCommandServiceSet, service2.VlogQueryServiceSet, service2.VlogCommandServiceSet, service2.HashtagQueryServiceSet, service2.HashtagCommandServiceSet, service2.TouristSpotCommandServiceSet, service2.CategoryCommandServiceSet, service2.SpotCategoryCommandServiceSet, service2.WordpressCallbackServiceSet, service2.UserQueryServiceSet, service2.UserCommandServiceSet, service2.CfProjectCommandServiceSet, service2.CfReturnGiftCommandServiceSet, service2.MediaCommandServiceSet, service2.ProvideAuthService)
 
 var facadeSet = wire.NewSet(facade.CfProjectFacadeSet, facade.ImportSnsShareCountFacadeSet)
 

@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
+	"strings"
 
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
@@ -32,10 +34,12 @@ type (
 		repository.ReviewQueryRepository
 		repository.ReviewCommandRepository
 		repository.HashtagCommandRepository
+		repository.MediaCommandRepository
 		repository.InnQueryRepository
 		repository.TouristSpotCommandRepository
 		service.NoticeDomainService
 		TransactionService
+		MediaCommandService
 	}
 )
 
@@ -250,9 +254,22 @@ func (s *ReviewCommandServiceImpl) CreateReviewComment(user *entity.User, review
 	return comment, nil
 }
 
-func (s *ReviewCommandServiceImpl) persistReviewMedia(medias []*entity.ReviewMedia) error {
-	for _, media := range medias {
-		if err := s.ReviewCommandRepository.PersistReviewMedia(media); err != nil {
+func (s *ReviewCommandServiceImpl) persistReviewMedia(mediaList []*entity.ReviewMedia) error {
+	// 先に全部のMimeTypeをチェックする
+	mediaTypes := make([]model.MediaType, len(mediaList))
+	for i, media := range mediaList {
+		switch {
+		case strings.HasPrefix(media.MimeType, "video/"):
+			mediaTypes[i] = model.MediaTypeReviewVideo
+		case strings.HasPrefix(media.MimeType, "image/"):
+			mediaTypes[i] = model.MediaTypeReviewImage
+		default:
+			return serror.New(nil, serror.CodeUnsupportedMedia, "unsupported media: %s", media.MimeType)
+		}
+	}
+
+	for i, media := range mediaList {
+		if err := s.MediaCommandService.PreparePersist(media.ID, media.S3Path(), mediaTypes[i]); err != nil {
 			return errors.Wrapf(err, "failed to persist media(id=%s)", media.ID)
 		}
 	}

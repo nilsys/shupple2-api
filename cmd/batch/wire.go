@@ -38,6 +38,7 @@ var serviceSet = wire.NewSet(
 	service.UserCommandServiceSet,
 	service.CfProjectCommandServiceSet,
 	service.CfReturnGiftCommandServiceSet,
+	service.MediaCommandServiceSet,
 	service.ProvideAuthService,
 )
 

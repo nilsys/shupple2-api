@@ -19,6 +19,7 @@ aws:
   user_pool_id: ap-northeast-1_fFTdgpwP4
   client_id: 4ebecsu6tpndo160ee95inerki
   from_email: dummy
+  persist_media_queue: dummy
 stayway:
   metasearch:
     base_url: https://stg.stayway.jp

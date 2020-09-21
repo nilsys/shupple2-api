@@ -14,6 +14,7 @@ type (
 
 	Config struct {
 		Version         string
+		Env             Env
 		Development     *Development    `validate:"omitempty" yaml:"development"`
 		Database        string          `validate:"required" yaml:"database"`
 		Migrate         Migrate         `validate:"" yaml:"migrate"`
@@ -26,7 +27,6 @@ type (
 		Payjp           Payjp           `validate:"required" yaml:"payjp"`
 		CfProject       CfProject       `validate:"required" yaml:"cf_project"`
 		Facebook        Facebook        `validate:"" yaml:"facebook"`
-		Env             Env
 
 		// scripts配下のスクリプト固有の設定
 		Scripts yaml.Node `validate:"" yaml:"scripts"`
@@ -35,12 +35,6 @@ type (
 	Migrate struct {
 		Auto     bool   `yaml:"auto"`
 		FilesDir string `yaml:"files_dir"`
-	}
-
-	Env struct {
-		IsDev bool
-		IsStg bool
-		IsPrd bool
 	}
 
 	Development struct {
@@ -79,13 +73,14 @@ type (
 	}
 
 	AWS struct {
-		Endpoint     string        `validate:"" yaml:"endpoint"`
-		Region       string        `validate:"required" yaml:"region"`
-		FilesBucket  string        `validate:"required" yaml:"files_bucket"`
-		UserPoolID   string        `validate:"required" yaml:"user_pool_id"`
-		ClientID     string        `validate:"required" yaml:"client_id"`
-		UploadExpire time.Duration `validate:"required" yaml:"upload_expire"`
-		FromEmail    string        `validate:"required" yaml:"from_email"`
+		Endpoint          string        `validate:"" yaml:"endpoint"`
+		Region            string        `validate:"required" yaml:"region"`
+		FilesBucket       string        `validate:"required" yaml:"files_bucket"`
+		UserPoolID        string        `validate:"required" yaml:"user_pool_id"`
+		ClientID          string        `validate:"required" yaml:"client_id"`
+		UploadExpire      time.Duration `validate:"required" yaml:"upload_expire"`
+		FromEmail         string        `validate:"required" yaml:"from_email"`
+		PersistMediaQueue string        `validate:"required" yaml:"persist_media_queue"`
 	}
 
 	GoogleAnalytics struct {
@@ -148,29 +143,5 @@ func URLRequiredValidation(sl validator.StructLevel) {
 	zero := url.URL{}
 	if u.URL == zero {
 		sl.ReportError(u, "URL", "URL", "required", "")
-	}
-}
-
-func NewDevEnv() Env {
-	return Env{
-		IsDev: true,
-		IsStg: false,
-		IsPrd: false,
-	}
-}
-
-func NewStgEnv() Env {
-	return Env{
-		IsDev: false,
-		IsStg: true,
-		IsPrd: false,
-	}
-}
-
-func NewPrdEnv() Env {
-	return Env{
-		IsDev: false,
-		IsStg: false,
-		IsPrd: true,
 	}
 }

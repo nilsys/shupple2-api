@@ -2,15 +2,12 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
 	"time"
-	"unicode/utf8"
-
-	"github.com/labstack/gommon/log"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -26,17 +23,17 @@ import (
 var Version = "unknown"
 
 const (
-	Region                 = "ap-northeast-1"
-	StgSsmKey              = "sw-stg-media-api-config"
-	PrdSsmKey              = "sw-prd-media-api-config"
-	PrdContainerNamePrefix = "sw-prd"
-	DefaultConfigFilePath  = "config.yaml"
+	region                 = "ap-northeast-1"
+	ssmKeyFormat           = "sw-%s-media-api-config"
+	prdContainerNamePrefix = "sw-prd"
+
+	DefaultConfigFilePath = "config.yaml"
 )
 
 func GetConfig(filename FilePath) (*Config, error) {
 	// 環境を判断
 	url := os.Getenv("ECS_CONTAINER_METADATA_URI")
-	if utf8.RuneCountInString(url) > 0 {
+	if url != "" {
 		resp, err := http.Get(url)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to fetch ecs container metadata")
@@ -48,18 +45,11 @@ func GetConfig(filename FilePath) (*Config, error) {
 		}
 
 		var metaData MetaData
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Debug("failed aws meta data read output body")
-		}
-		log.Debugf("ECS CONTAINER METADATA: %s", string(bodyBytes))
-
-		err = json.Unmarshal(bodyBytes, &metaData)
-		if err != nil {
-			log.Debug("failed aws meta data unmarshal")
+		if err := json.NewDecoder(resp.Body).Decode(&metaData); err != nil {
+			return nil, errors.Wrap(err, "failed aws meta data unmarshal")
 		}
 
-		return getConfigFromSSM(metaData.GetSSMKEY())
+		return GetConfigFromSSM(getEnvFromEcsMetadata(&metaData))
 	}
 
 	// ローカルの場合
@@ -69,19 +59,17 @@ func GetConfig(filename FilePath) (*Config, error) {
 	}
 	defer f.Close()
 
-	return loadConfig(f, NewDevEnv())
+	return loadConfig(f, EnvDev)
 }
 
-func getConfigFromSSM(ssmKey string) (*Config, error) {
+func GetConfigFromSSM(env Env) (*Config, error) {
+	ssmKey := fmt.Sprintf(ssmKeyFormat, env)
 	res, err := fetchParameterStore(ssmKey)
 	if err != nil {
 		return nil, err
 	}
-	if ssmKey == PrdSsmKey {
-		return loadConfig(strings.NewReader(res), NewPrdEnv())
-	}
 
-	return loadConfig(strings.NewReader(res), NewStgEnv())
+	return loadConfig(strings.NewReader(res), env)
 }
 
 func loadConfig(reader io.Reader, env Env) (*Config, error) {
@@ -97,7 +85,6 @@ func loadConfig(reader io.Reader, env Env) (*Config, error) {
 	}
 
 	config.Version = Version
-	config.Env = env
 
 	return &config, nil
 }
@@ -107,7 +94,7 @@ func fetchParameterStore(param string) (string, error) {
 	sess := session.Must(session.NewSession())
 	svc := ssm.New(
 		sess,
-		aws.NewConfig().WithRegion(Region),
+		aws.NewConfig().WithRegion(region),
 	)
 	res, err := svc.GetParameter(&ssm.GetParameterInput{
 		Name:           aws.String(param),
@@ -148,10 +135,10 @@ type MetaData struct {
 	} `json:"Networks"`
 }
 
-// SSMKEYを環境で切り替え
-func (m *MetaData) GetSSMKEY() string {
-	if strings.HasPrefix(m.Name, PrdContainerNamePrefix) {
-		return PrdSsmKey
+// TODO: 環境変数から取ったほうが良さそう
+func getEnvFromEcsMetadata(m *MetaData) Env {
+	if strings.HasPrefix(m.Name, prdContainerNamePrefix) {
+		return EnvPrd
 	}
-	return StgSsmKey
+	return EnvStg
 }

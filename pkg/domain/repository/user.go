@@ -6,8 +6,6 @@ import (
 
 	"github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
 
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
-
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
@@ -22,7 +20,6 @@ type (
 		UpdateWordpressID(userID, wordpressUserID int) error
 		StoreFollow(c context.Context, following *entity.UserFollowing, followed *entity.UserFollowed) error
 		DeleteFollow(userID, targetID int) error
-		PersistUserImage(cmd *command.UpdateUser) error
 	}
 
 	UserQueryRepository interface {

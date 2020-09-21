@@ -43,6 +43,7 @@ type (
 		AuthService
 		service.NoticeDomainService
 		TransactionService
+		MediaCommandService
 	}
 )
 
@@ -157,7 +158,7 @@ func (s *UserCommandServiceImpl) updateMapping(wpUser *wordpress.User) error {
 
 func (s *UserCommandServiceImpl) storeWithAvatar(user *entity.User, wpUser *wordpress.User) error {
 	var (
-		avatar *wordpress.MediaBody
+		avatar *model.MediaBody
 		err    error
 	)
 
@@ -202,7 +203,7 @@ func (s *UserCommandServiceImpl) Unfollow(user *entity.User, targetID int) error
 }
 
 func (s *UserCommandServiceImpl) Update(user *entity.User, cmd *command.UpdateUser) error {
-	s.updateUserCmd(user, cmd)
+	s.updateUserByCmd(user, cmd)
 
 	if err := s.UserCommandRepository.Update(user); err != nil {
 		return errors.Wrap(err, "failed to update user")
@@ -225,13 +226,22 @@ func (s *UserCommandServiceImpl) UpdateDeviceToken(user *entity.User, deviceToke
 }
 
 func (s *UserCommandServiceImpl) persistUserImage(cmd *command.UpdateUser) error {
-	if err := s.UserCommandRepository.PersistUserImage(cmd); err != nil {
-		return errors.Wrapf(err, "failed to persist user image")
+	if cmd.IconUUID != "" {
+		if err := s.MediaCommandService.PreparePersist(cmd.IconUUID, model.UserS3Path(cmd.IconUUID), model.MediaTypeUserIcon); err != nil {
+			return errors.Wrap(err, "failed to persist avatar")
+		}
 	}
+
+	if cmd.HeaderUUID != "" {
+		if err := s.MediaCommandService.PreparePersist(cmd.HeaderUUID, model.UserS3Path(cmd.HeaderUUID), model.MediaTypeUserHeader); err != nil {
+			return errors.Wrap(err, "failed to persist header")
+		}
+	}
+
 	return nil
 }
 
-func (s *UserCommandServiceImpl) updateUserCmd(user *entity.User, cmd *command.UpdateUser) {
+func (s *UserCommandServiceImpl) updateUserByCmd(user *entity.User, cmd *command.UpdateUser) {
 	user.Name = cmd.Name
 	user.Email = cmd.Email
 	user.Birthdate = time.Time(cmd.BirthDate)

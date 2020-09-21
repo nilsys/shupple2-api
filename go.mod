@@ -5,9 +5,9 @@ go 1.13
 require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/PuerkitoBio/goquery v1.5.0
+	github.com/aws/aws-lambda-go v1.19.1
 	github.com/aws/aws-sdk-go v1.28.10
 	github.com/cosmtrek/air v1.12.0
-	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dustin/go-humanize v1.0.0
 	github.com/go-playground/locales v0.12.1 // indirect
@@ -48,6 +48,7 @@ require (
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.0
 	gopkg.in/guregu/null.v3 v3.4.0
+	gopkg.in/vansante/go-ffprobe.v2 v2.0.2
 	gopkg.in/yaml.v2 v2.2.8 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200121175148-a6ecf24a6d71
+	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
 )

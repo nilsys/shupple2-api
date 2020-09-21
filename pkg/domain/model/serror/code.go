@@ -5,7 +5,7 @@ import "net/http"
 //go:generate go-enum -f=$GOFILE --marshal
 
 /*
-ENUM(Undefined, InvalidParam, NotFound, ImportDeleted, Unauthorized, Forbidden, InvalidCategoryType, PayAgentError, DuplicateCard)
+ENUM(Undefined, InvalidParam, NotFound, ImportDeleted, Unauthorized, Forbidden, InvalidCategoryType, PayAgentError, DuplicateCard, UnsupportedMedia)
 */
 type Code int
 
@@ -23,6 +23,8 @@ func (c Code) HTTPStatusCode() int {
 		return http.StatusForbidden
 	case CodePayAgentError:
 		return http.StatusPaymentRequired
+	case CodeUnsupportedMedia:
+		return http.StatusBadRequest
 	}
 
 	return http.StatusInternalServerError

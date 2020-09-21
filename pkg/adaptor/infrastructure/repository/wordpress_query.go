@@ -20,6 +20,7 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity/wordpress"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
@@ -151,7 +152,7 @@ func (r *WordpressQueryRepositoryImpl) FindMediaByID(id int) (*wordpress.Media, 
 	return &res, r.getSingleResource(mediaPath, id, &res)
 }
 
-func (r *WordpressQueryRepositoryImpl) FetchMediaBodyByID(id int) (*wordpress.MediaBody, error) {
+func (r *WordpressQueryRepositoryImpl) FetchMediaBodyByID(id int) (*model.MediaBody, error) {
 	media, err := r.FindMediaByID(id)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to get media body(id=%d)", id)
@@ -160,14 +161,13 @@ func (r *WordpressQueryRepositoryImpl) FetchMediaBodyByID(id int) (*wordpress.Me
 	return r.FetchResource(media.SourceURL)
 }
 
-// http通信するだけなのでどこにでも置けるが、便宜的にココに置く
-func (r *WordpressQueryRepositoryImpl) FetchResource(avatarURL string) (*wordpress.MediaBody, error) {
+func (r *WordpressQueryRepositoryImpl) FetchResource(avatarURL string) (*model.MediaBody, error) {
 	resp, err := r.httpGet(avatarURL, false)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get avatar")
 	}
 
-	return &wordpress.MediaBody{
+	return &model.MediaBody{
 		ContentType: resp.Header.Get(echo.HeaderContentType),
 		Body:        resp.Body,
 	}, nil

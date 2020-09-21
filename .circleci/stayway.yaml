@@ -17,6 +17,7 @@ aws:
   user_pool_id: dummy
   client_id: dummy
   from_email: noreply@stayway.jp
+  persist_media_queue: dummy
 wordpress:
   base_url: "https://stg-admin.stayway.jp/tourism"
   basic_auth:

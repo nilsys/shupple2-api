@@ -127,6 +127,11 @@ Done = 入金申請済になった
 type UserSalesReasonType int
 
 /*
+ENUM(UserIcon = 1, UserHeader, ReviewImage, ReviewVideo)
+*/
+type MediaType int
+
+/*
 ENUM(Post, Vlog, CfProject, Review, Comic, Feature, All)
 */
 type EntityType int

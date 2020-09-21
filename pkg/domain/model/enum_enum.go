@@ -677,6 +677,65 @@ func (x *MediaSortBy) UnmarshalText(text []byte) error {
 }
 
 const (
+	// MediaTypeUserIcon is a MediaType of type UserIcon
+	MediaTypeUserIcon MediaType = iota + 1
+	// MediaTypeUserHeader is a MediaType of type UserHeader
+	MediaTypeUserHeader
+	// MediaTypeReviewImage is a MediaType of type ReviewImage
+	MediaTypeReviewImage
+	// MediaTypeReviewVideo is a MediaType of type ReviewVideo
+	MediaTypeReviewVideo
+)
+
+const _MediaTypeName = "UserIconUserHeaderReviewImageReviewVideo"
+
+var _MediaTypeMap = map[MediaType]string{
+	1: _MediaTypeName[0:8],
+	2: _MediaTypeName[8:18],
+	3: _MediaTypeName[18:29],
+	4: _MediaTypeName[29:40],
+}
+
+// String implements the Stringer interface.
+func (x MediaType) String() string {
+	if str, ok := _MediaTypeMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("MediaType(%d)", x)
+}
+
+var _MediaTypeValue = map[string]MediaType{
+	_MediaTypeName[0:8]:   1,
+	_MediaTypeName[8:18]:  2,
+	_MediaTypeName[18:29]: 3,
+	_MediaTypeName[29:40]: 4,
+}
+
+// ParseMediaType attempts to convert a string to a MediaType
+func ParseMediaType(name string) (MediaType, error) {
+	if x, ok := _MediaTypeValue[name]; ok {
+		return x, nil
+	}
+	return MediaType(0), fmt.Errorf("%s is not a valid MediaType", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x MediaType) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *MediaType) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseMediaType(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// NoticeActionTargetTypePOST is a NoticeActionTargetType of type POST
 	NoticeActionTargetTypePOST NoticeActionTargetType = iota + 1
 	// NoticeActionTargetTypeVLOG is a NoticeActionTargetType of type VLOG

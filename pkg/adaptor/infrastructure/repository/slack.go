@@ -12,7 +12,6 @@ import (
 
 type SlackRepositoryImpl struct {
 	SlackConfig config.Slack
-	EnvConfig   config.Env
 	Client      client.Client
 }
 

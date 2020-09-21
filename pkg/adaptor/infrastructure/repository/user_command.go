@@ -2,10 +2,7 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"io"
-
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -79,7 +76,6 @@ func (r *UserCommandRepositoryImpl) StoreWithAvatar(user *entity.User, avatar io
 		}
 
 		return nil
-
 	})
 }
 
@@ -108,53 +104,6 @@ func (r *UserCommandRepositoryImpl) DeleteFollow(userID, targetID int) error {
 
 	if err := r.DB(context.Background()).Where("user_id = ? AND target_id = ?", targetID, userID).Delete(entity.UserFollowed{}).Error; err != nil {
 		return errors.Wrap(err, "failed to delete user_followed")
-	}
-
-	return nil
-}
-
-func (r *UserCommandRepositoryImpl) PersistUserImage(cmd *command.UpdateUser) error {
-	svc := s3.New(r.AWSSession)
-
-	if cmd.IconUUID != "" {
-		if err := r.persistImage(svc, cmd.IconUUID, model.UserS3Path(cmd.IconUUID)); err != nil {
-			return errors.Wrap(err, "failed to persist avatar")
-		}
-	}
-
-	if cmd.HeaderUUID != "" {
-		if err := r.persistImage(svc, cmd.HeaderUUID, model.UserS3Path(cmd.HeaderUUID)); err != nil {
-			return errors.Wrap(err, "failed to persist header")
-		}
-	}
-
-	return nil
-}
-
-func (r *UserCommandRepositoryImpl) persistImage(svc *s3.S3, uuid, dest string) error {
-	from := fmt.Sprint(r.AWSConfig.FilesBucket, "/", model.UploadedS3Path(uuid))
-
-	headReq := &s3.HeadObjectInput{
-		Bucket: aws.String(r.AWSConfig.FilesBucket),
-		Key:    aws.String(model.UploadedS3Path(uuid)),
-	}
-
-	o, err := svc.HeadObject(headReq)
-	if err != nil {
-		return errors.Wrap(err, "failed to get s3 tmp object")
-	}
-
-	copyReq := &s3.CopyObjectInput{
-		CopySource:  aws.String(from),
-		Bucket:      aws.String(r.AWSConfig.FilesBucket),
-		Key:         aws.String(dest),
-		ACL:         aws.String(s3.ObjectCannedACLPublicRead),
-		ContentType: o.ContentType,
-	}
-
-	_, err = svc.CopyObject(copyReq)
-	if err != nil {
-		return errors.Wrap(err, "failed to copy s3 object")
 	}
 
 	return nil

@@ -274,6 +274,20 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		CloudMessageCommandRepository: cloudMessageCommandRepository,
 		TaggedUserDomainService:       taggedUserDomainServiceImpl,
 	}
+	mediaQueryRepositoryImpl := &repository.MediaQueryRepositoryImpl{
+		AWSConfig:  aws,
+		AWSSession: session,
+	}
+	mediaCommandRepositoryImpl := &repository.MediaCommandRepositoryImpl{
+		AWSConfig:  aws,
+		AWSSession: session,
+	}
+	mediaCommandServiceImpl := &service.MediaCommandServiceImpl{
+		AWSConfig:              aws,
+		AWSSession:             session,
+		MediaQueryRepository:   mediaQueryRepositoryImpl,
+		MediaCommandRepository: mediaCommandRepositoryImpl,
+	}
 	userCommandServiceImpl := &service.UserCommandServiceImpl{
 		UserCommandRepository:      userCommandRepositoryImpl,
 		UserQueryRepository:        userQueryRepositoryImpl,
@@ -284,6 +298,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		AuthService:                authService,
 		NoticeDomainService:        noticeDomainServiceImpl,
 		TransactionService:         transactionServiceImpl,
+		MediaCommandService:        mediaCommandServiceImpl,
 	}
 	chargeCommandScenarioImpl := &scenario.ChargeCommandScenarioImpl{
 		ChargeCommandService:       chargeCommandServiceImpl,
@@ -423,10 +438,12 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		ReviewQueryRepository:        reviewQueryRepositoryImpl,
 		ReviewCommandRepository:      reviewCommandRepositoryImpl,
 		HashtagCommandRepository:     hashtagCommandRepositoryImpl,
+		MediaCommandRepository:       mediaCommandRepositoryImpl,
 		InnQueryRepository:           innQueryRepositoryImpl,
 		TouristSpotCommandRepository: touristSpotCommandRepositoryImpl,
 		NoticeDomainService:          noticeDomainServiceImpl,
 		TransactionService:           transactionServiceImpl,
+		MediaCommandService:          mediaCommandServiceImpl,
 	}
 	reviewCommandScenarioImpl := &scenario.ReviewCommandScenarioImpl{
 		ReviewQueryService:    reviewQueryServiceImpl,
@@ -731,10 +748,8 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		NoticeCommand: noticeCommandServiceImpl,
 	}
 	slack := configConfig.Slack
-	env := configConfig.Env
 	slackRepositoryImpl := &repository.SlackRepositoryImpl{
 		SlackConfig: slack,
-		EnvConfig:   env,
 		Client:      clientClient,
 	}
 	reportCommandRepositoryImpl := &repository.ReportCommandRepositoryImpl{
@@ -853,6 +868,6 @@ var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.Review
 
 var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet, service2.UserValidatorDomainServiceSet)
 
-var serviceSet = wire.NewSet(service.ShippingQueryServiceSet, service.ShippingCommandServiceSet, service.CfProjectCommandServiceSet, service.CfProjectQueryServiceSet, service.ChargeCommandServiceSet, service.CardCommandServiceSet, service.CardQueryServiceSet, service.PaymentQueryServiceSet, service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.CfReturnGiftQueryServiceSet, service.CfReturnGiftCommandServiceSet, service.CfInnReserveRequestCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryQueryServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.RssServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.SpotCategoryCommandServiceSet, service.SitemapServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet, service.NoticeQueryServiceSet, service.NoticeCommandServiceSet, service.ReportCommandServiceSet, service.ComicFavoriteCommandServiceSet, service.VlogFavoriteCommandServiceSet, helper.InquiryCodeGeneratorSet)
+var serviceSet = wire.NewSet(service.ShippingQueryServiceSet, service.ShippingCommandServiceSet, service.CfProjectCommandServiceSet, service.CfProjectQueryServiceSet, service.ChargeCommandServiceSet, service.CardCommandServiceSet, service.CardQueryServiceSet, service.PaymentQueryServiceSet, service.PostQueryServiceSet, service.PostCommandServiceSet, service.PostFavoriteCommandServiceSet, service.CategoryQueryServiceSet, service.CategoryCommandServiceSet, service.CfReturnGiftQueryServiceSet, service.CfReturnGiftCommandServiceSet, service.CfInnReserveRequestCommandServiceSet, service.AreaCategoryQueryServiceSet, service.AreaCategoryCommandServiceSet, service.ThemeCategoryQueryServiceSet, service.ThemeCategoryCommandServiceSet, service.ComicQueryServiceSet, service.ComicCommandServiceSet, service.ReviewQueryServiceSet, service.ReviewCommandServiceSet, service.ReviewFavoriteCommandServiceSet, service.RssServiceSet, service.WordpressServiceSet, service.TouristSpotQueryServiceSet, service.SearchQueryServiceSet, service.FeatureQueryServiceSet, service.FeatureCommandServiceSet, service.VlogQueryServiceSet, service.VlogCommandServiceSet, service.HashtagQueryServiceSet, service.HashtagCommandServiceSet, service.TouristSpotCommandServiceSet, service.SpotCategoryCommandServiceSet, service.SitemapServiceSet, service.WordpressCallbackServiceSet, service.UserQueryServiceSet, service.UserCommandServiceSet, service.S3CommandServiceSet, service.ProvideAuthService, service.InterestQueryServiceSet, service.InnQueryServiceSet, service.NoticeQueryServiceSet, service.NoticeCommandServiceSet, service.ReportCommandServiceSet, service.ComicFavoriteCommandServiceSet, service.VlogFavoriteCommandServiceSet, service.MediaCommandServiceSet, helper.InquiryCodeGeneratorSet)
 
 var factorySet = wire.NewSet(factory.S3SignatureFactorySet, factory.CategoryIDMapFactorySet)
