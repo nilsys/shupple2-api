@@ -118,6 +118,8 @@ func setRoutes(app *App) {
 		users.GET("/recommend/follow", app.UserQueryController.ListRecommendFollowUser)
 		users.POST("/:id/follow", auth.Require(app.UserCommandController.Follow))
 		users.DELETE("/:id/follow", auth.Require(app.UserCommandController.Unfollow))
+		users.PUT("/:id/block", auth.Require(app.UserCommandController.Block))
+		users.DELETE("/:id/block", auth.Require(app.UserCommandController.Unblock))
 		users.GET("/:id/following", auth.Optional(app.UserQueryController.ListFollowingUsers))
 		users.GET("/:id/followed", auth.Optional(app.UserQueryController.ListFollowedUsers))
 		users.GET("/:id/favorite/posts", auth.Optional(app.PostQueryController.ListFavoritePost))

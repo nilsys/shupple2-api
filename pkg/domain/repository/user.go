@@ -20,6 +20,8 @@ type (
 		UpdateWordpressID(userID, wordpressUserID int) error
 		StoreFollow(c context.Context, following *entity.UserFollowing, followed *entity.UserFollowed) error
 		DeleteFollow(userID, targetID int) error
+		StoreUserBlock(userBlock *entity.UserBlockUser) error
+		DeleteUserBlock(userBlock *entity.UserBlockUser) error
 	}
 
 	UserQueryRepository interface {

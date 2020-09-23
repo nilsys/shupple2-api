@@ -91,3 +91,29 @@ func (c *UserCommandController) Unfollow(ctx echo.Context, user entity.User) err
 
 	return ctx.JSON(http.StatusOK, "ok")
 }
+
+func (c *UserCommandController) Block(ctx echo.Context, user entity.User) error {
+	i := input.IDParam{}
+	if err := BindAndValidate(ctx, &i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	if err := c.UserCommandService.Block(&user, i.ID); err != nil {
+		return errors.Wrap(err, "failed user block")
+	}
+
+	return ctx.NoContent(http.StatusNoContent)
+}
+
+func (c *UserCommandController) Unblock(ctx echo.Context, user entity.User) error {
+	i := input.IDParam{}
+	if err := BindAndValidate(ctx, &i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	if err := c.UserCommandService.Unblock(&user, i.ID); err != nil {
+		return errors.Wrap(err, "failed user unblock")
+	}
+
+	return ctx.NoContent(http.StatusNoContent)
+}

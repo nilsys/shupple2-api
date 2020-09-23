@@ -108,3 +108,17 @@ func (r *UserCommandRepositoryImpl) DeleteFollow(userID, targetID int) error {
 
 	return nil
 }
+
+func (r *UserCommandRepositoryImpl) StoreUserBlock(userBlock *entity.UserBlockUser) error {
+	if err := r.DB(context.Background()).Save(userBlock).Error; err != nil {
+		return errors.Wrap(err, "failed store user_block_user")
+	}
+	return nil
+}
+
+func (r *UserCommandRepositoryImpl) DeleteUserBlock(userBlock *entity.UserBlockUser) error {
+	if err := r.DB(context.Background()).Delete(userBlock).Error; err != nil {
+		return errors.Wrap(err, "failed delete user_block_user")
+	}
+	return nil
+}

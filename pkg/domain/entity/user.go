@@ -47,6 +47,7 @@ type (
 		Times
 		// 如何なる場面でも必要な為Userの最小単位に置いておく
 		UserAttributes []*UserAttribute `gorm:"foreignkey:UserID"`
+		UserBlocks     []*UserBlockUser `gorm:"foreignkey:UserID"`
 	}
 
 	UserTinyList struct {
@@ -81,6 +82,11 @@ type (
 	UserInterest struct {
 		UserID     int `gorm:"primary_key"`
 		InterestID int `gorm:"primary_key"`
+	}
+
+	UserBlockUser struct {
+		UserID        int `gorm:"primary_key"`
+		BlockedUserID int `gorm:"primary_key"`
 	}
 
 	UserFollowHashtag struct {
@@ -130,6 +136,13 @@ func NewUserByWordpressUser(wpUser *wordpress.User) *User {
 			InstagramURL:  wpUser.Meta.Instagram,
 			YoutubeURL:    wpUser.Meta.Youtube,
 		},
+	}
+}
+
+func NewUserBlock(userID, blockedUserID int) *UserBlockUser {
+	return &UserBlockUser{
+		UserID:        userID,
+		BlockedUserID: blockedUserID,
 	}
 }
 
@@ -296,4 +309,13 @@ func NewIsNonLoginUserTiny(name string) (*UserTiny, error) {
 func (u *UserTiny) MediaWebURL(baseURL config.URL) *config.URL {
 	baseURL.Path = fmt.Sprintf("/users/%s", u.UID)
 	return &baseURL
+}
+
+func (u *UserTiny) IsBlockingUserID(blockedUserID int) bool {
+	for _, block := range u.UserBlocks {
+		if block.BlockedUserID == blockedUserID {
+			return true
+		}
+	}
+	return false
 }

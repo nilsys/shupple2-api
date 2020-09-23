@@ -254,6 +254,39 @@ paths:
           description: ok
       security:
         - iDPCognito: []
+  /users/{id}/block:
+    put:
+      tags:
+        - user
+      summary: ユーザーブロック
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ブロックするUserのid
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: ok
+      security:
+        - iDPCognito: []
+    delete:
+      tags:
+        - user
+      summary: ユーザーブロック解除
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ブロックしたUserのid
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: ok
+      security:
+        - iDPCognito: []
   /users/{id}/following:
     get:
       tags:

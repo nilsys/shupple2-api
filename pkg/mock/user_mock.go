@@ -12,7 +12,6 @@ import (
 	cognitoidentityprovider "github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
 	gomock "github.com/golang/mock/gomock"
 	entity "github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
-	command "github.com/stayway-corp/stayway-media-api/pkg/domain/model/command"
 	query "github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
@@ -151,18 +150,32 @@ func (mr *MockUserCommandRepositoryMockRecorder) DeleteFollow(userID, targetID i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteFollow", reflect.TypeOf((*MockUserCommandRepository)(nil).DeleteFollow), userID, targetID)
 }
 
-// PersistUserImage mocks base method
-func (m *MockUserCommandRepository) PersistUserImage(cmd *command.UpdateUser) error {
+// StoreUserBlock mocks base method
+func (m *MockUserCommandRepository) StoreUserBlock(userBlock *entity.UserBlockUser) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PersistUserImage", cmd)
+	ret := m.ctrl.Call(m, "StoreUserBlock", userBlock)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// PersistUserImage indicates an expected call of PersistUserImage
-func (mr *MockUserCommandRepositoryMockRecorder) PersistUserImage(cmd interface{}) *gomock.Call {
+// StoreUserBlock indicates an expected call of StoreUserBlock
+func (mr *MockUserCommandRepositoryMockRecorder) StoreUserBlock(userBlock interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PersistUserImage", reflect.TypeOf((*MockUserCommandRepository)(nil).PersistUserImage), cmd)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreUserBlock", reflect.TypeOf((*MockUserCommandRepository)(nil).StoreUserBlock), userBlock)
+}
+
+// DeleteUserBlock mocks base method
+func (m *MockUserCommandRepository) DeleteUserBlock(userBlock *entity.UserBlockUser) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteUserBlock", userBlock)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteUserBlock indicates an expected call of DeleteUserBlock
+func (mr *MockUserCommandRepositoryMockRecorder) DeleteUserBlock(userBlock interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUserBlock", reflect.TypeOf((*MockUserCommandRepository)(nil).DeleteUserBlock), userBlock)
 }
 
 // MockUserQueryRepository is a mock of UserQueryRepository interface

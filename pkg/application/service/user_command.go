@@ -31,6 +31,8 @@ type (
 		ImportFromWordpressByID(wordpressUserID int) error
 		Follow(user *entity.User, targetID int) error
 		Unfollow(user *entity.User, targetID int) error
+		Block(user *entity.User, blockedUserID int) error
+		Unblock(user *entity.User, blockedUserID int) error
 	}
 
 	UserCommandServiceImpl struct {
@@ -200,6 +202,20 @@ func (s *UserCommandServiceImpl) Unfollow(user *entity.User, targetID int) error
 		return serror.New(nil, serror.CodeInvalidParam, "can not un follow self")
 	}
 	return s.UserCommandRepository.DeleteFollow(user.ID, targetID)
+}
+
+func (s *UserCommandServiceImpl) Block(user *entity.User, blockedUserID int) error {
+	if user.IsSelfID(blockedUserID) {
+		return serror.New(nil, serror.CodeInvalidParam, "can't block self")
+	}
+	return s.UserCommandRepository.StoreUserBlock(entity.NewUserBlock(user.ID, blockedUserID))
+}
+
+func (s *UserCommandServiceImpl) Unblock(user *entity.User, blockedUserID int) error {
+	if user.IsSelfID(blockedUserID) {
+		return serror.New(nil, serror.CodeInvalidParam, "can't unblock self")
+	}
+	return s.UserCommandRepository.DeleteUserBlock(entity.NewUserBlock(user.ID, blockedUserID))
 }
 
 func (s *UserCommandServiceImpl) Update(user *entity.User, cmd *command.UpdateUser) error {

@@ -5,6 +5,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
@@ -35,27 +36,31 @@ var UserQueryServiceSet = wire.NewSet(
 )
 
 func (s *UserQueryServiceImpl) ShowByUID(uid string, ouser entity.OptionalUser) (*entity.UserDetailWithMediaCount, error) {
-	userTable, err := s.UserQueryRepository.FindByUID(uid)
+	showTargetUser, err := s.UserQueryRepository.FindByUID(uid)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed find user by uid")
 	}
 
 	if ouser.Authenticated {
-		user, err := s.UserQueryRepository.FindUserDetailWithCountByID(userTable.ID)
+		if ouser.IsBlockingUserID(showTargetUser.ID) {
+			return nil, serror.New(nil, serror.CodeInvalidParam, "blocking user")
+		}
+
+		user, err := s.UserQueryRepository.FindUserDetailWithCountByID(showTargetUser.ID)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed find user by id")
 		}
-		idIsFollowMap, err := s.UserQueryRepository.IsFollowing(ouser.ID, []int{userTable.ID})
+		idIsFollowMap, err := s.UserQueryRepository.IsFollowing(ouser.ID, []int{showTargetUser.ID})
 		if err != nil {
 			return nil, errors.Wrap(err, "failed find user_following")
 		}
 
-		user.IsFollow = idIsFollowMap[userTable.ID]
+		user.IsFollow = idIsFollowMap[showTargetUser.ID]
 
 		return user, nil
 	}
 
-	return s.UserQueryRepository.FindUserDetailWithCountByID(userTable.ID)
+	return s.UserQueryRepository.FindUserDetailWithCountByID(showTargetUser.ID)
 }
 
 func (s *UserQueryServiceImpl) ShowByID(id int) (*entity.UserDetailWithMediaCount, error) {
