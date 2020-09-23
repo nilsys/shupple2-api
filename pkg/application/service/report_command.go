@@ -91,7 +91,7 @@ func (s *ReportCommandServiceImpl) Report(user *entity.User, cmd *command.Report
 		return errors.Wrap(err, "failed to find report is exist")
 	}
 	if isExist {
-		return serror.New(nil, serror.CodeInvalidParam, "Invalid duplicate report")
+		return serror.New(nil, serror.CodeDuplicateReport, "Invalid duplicate report")
 	}
 
 	report := entity.NewReport(user.ID, cmd.TargetID, cmd.TargetType, cmd.Reason, cmd.Body)

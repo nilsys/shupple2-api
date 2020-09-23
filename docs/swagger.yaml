@@ -4926,8 +4926,25 @@ components:
         Common = 一般User
         WP = wpにも登録されているクリエイター
         CfProjectOwner = CfProjectのowner
+    ErrorCode:
+      type: string
+      enum:
+        - Undefined
+        - InvalidParam
+        - NotFound
+        - ImportDeleted
+        - Unauthorized
+        - Forbidden
+        - InvalidCategoryType
+        - PayAgentError
+        - DuplicateCard
+        - DuplicateReport
     Error:
       type: object
       properties:
-        Message:
+        status:
+          type: string
+        error:
+          $ref: "#/components/schemas/ErrorCode"
+        body:
           type: string

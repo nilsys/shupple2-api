@@ -52,7 +52,7 @@ func ErrorHandler(err error, ctx echo.Context) {
 }
 
 func GetErrorString(err error) string {
-	if serr, ok := err.(*serror.SError); ok {
+	if serr, ok := errors.Cause(err).(*serror.SError); ok {
 		return serr.Code.String()
 	}
 
