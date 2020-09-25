@@ -65,6 +65,10 @@ func (s *ReviewCommandServiceImpl) StoreTouristSpotReview(user *entity.User, rev
 			return errors.Wrap(err, "failed tourist_spot.rate")
 		}
 
+		if err := s.HashtagCommandRepository.IncrementReviewCountByReviewID(c, review.ID); err != nil {
+			return errors.Wrap(err, "failed increment hashtag.review_count")
+		}
+
 		return s.NoticeDomainService.Review(c, review, user)
 	})
 }
@@ -78,6 +82,10 @@ func (s *ReviewCommandServiceImpl) StoreInnReview(user *entity.User, review *ent
 
 		if err := s.persistReviewMedia(review.Medias); err != nil {
 			return errors.Wrap(err, "failed to persist media")
+		}
+
+		if err := s.HashtagCommandRepository.IncrementReviewCountByReviewID(c, review.ID); err != nil {
+			return errors.Wrap(err, "failed increment hashtag.review_count")
 		}
 
 		return s.NoticeDomainService.Review(c, review, user)
@@ -182,6 +190,10 @@ func (s *ReviewCommandServiceImpl) FavoriteReviewComment(user *entity.User, revi
 
 func (s *ReviewCommandServiceImpl) DeleteReview(review *entity.Review) error {
 	return s.TransactionService.Do(func(ctx context.Context) error {
+		if err := s.HashtagCommandRepository.DecrementReviewCountByReviewID(ctx, review.ID); err != nil {
+			return errors.Wrap(err, "failed decrement hashtag.review_count")
+		}
+
 		if err := s.ReviewCommandRepository.DeleteReview(ctx, review); err != nil {
 			return errors.Wrap(err, "failed to delete delete")
 		}
@@ -191,6 +203,7 @@ func (s *ReviewCommandServiceImpl) DeleteReview(review *entity.Review) error {
 				return errors.Wrap(err, "filed update tourist_spot.score")
 			}
 		}
+
 		return nil
 	})
 }

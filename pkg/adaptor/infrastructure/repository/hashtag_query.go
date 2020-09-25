@@ -38,7 +38,7 @@ func (r *HashtagQueryRepositoryImpl) FindRecommendList(areaID, subAreaID, subSub
 	q := r.buildFindRecommendListQuery(areaID, subAreaID, subSubAreaID)
 
 	if err := q.
-		Order("post_count + review_count DESC").
+		Order("score DESC").
 		Limit(limit).
 		Find(&rows).
 		Error; err != nil {
