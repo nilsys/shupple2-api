@@ -52,7 +52,7 @@ func (s *ImportSnsShareCountFacadeImpl) ImportPostSnsShareCount() error {
 		for _, post := range posts {
 			mediaWebURLStr := post.MediaWebURL(s.Config.Stayway.Media.BaseURL).String()
 
-			twitterShareCnt, err := s.WidgetoonJsoonQueryRepository.TwitterCountByURL(mediaWebURLStr)
+			twitterShareCnt, err := s.WidgetoonJsoonQueryRepository.GetTwitterCountByURL(mediaWebURLStr)
 			if err != nil {
 				return errors.Wrap(err, "failed get twitter count")
 			}
@@ -90,7 +90,7 @@ func (s *ImportSnsShareCountFacadeImpl) ImportVlogSnsShareCount() error {
 		for _, vlog := range vlogs {
 			mediaWebURLStr := vlog.MediaWebURL(s.Config.Stayway.Media.BaseURL).String()
 
-			twitterShareCnt, err := s.WidgetoonJsoonQueryRepository.TwitterCountByURL(mediaWebURLStr)
+			twitterShareCnt, err := s.WidgetoonJsoonQueryRepository.GetTwitterCountByURL(mediaWebURLStr)
 			if err != nil {
 				return errors.Wrap(err, "failed get twitter count")
 			}
@@ -128,7 +128,7 @@ func (s *ImportSnsShareCountFacadeImpl) ImportCfProjectSnsShareCount() error {
 		for _, project := range projects {
 			mediaWebURLStr := project.MediaWebURL(s.Config.Stayway.Media.BaseURL).String()
 
-			twitterShareCnt, err := s.WidgetoonJsoonQueryRepository.TwitterCountByURL(mediaWebURLStr)
+			twitterShareCnt, err := s.WidgetoonJsoonQueryRepository.GetTwitterCountByURL(mediaWebURLStr)
 			if err != nil {
 				return errors.Wrap(err, "failed get twitter count")
 			}

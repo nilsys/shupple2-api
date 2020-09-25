@@ -4,6 +4,6 @@ import widgetoonJsoonDto "github.com/stayway-corp/stayway-media-api/pkg/adaptor/
 
 type (
 	QueryRepository interface {
-		TwitterCountByURL(url string) (*widgetoonJsoonDto.TwitterCount, error)
+		GetTwitterCountByURL(url string) (*widgetoonJsoonDto.TwitterCount, error)
 	}
 )

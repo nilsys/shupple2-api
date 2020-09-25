@@ -1,6 +1,8 @@
 package facebook
 
 import (
+	"encoding/json"
+
 	"github.com/google/wire"
 	"github.com/huandu/facebook/v2"
 	"github.com/pkg/errors"
@@ -25,12 +27,17 @@ func (r *QueryRepositoryImpl) GetShareCountByURL(url string) (int, error) {
 		return 0, errors.Wrap(err, "failed facebook graph api")
 	}
 
-	engagement, ok := res["engagement"].(map[string]int)
+	engagement := res["engagement"].(map[string]interface{})
+
+	shareCnt, ok := engagement["share_count"].(json.Number)
 	if !ok {
-		return 0, errors.New("can't assert engagement")
+		return 0, errors.New("can't assert engagement.share_count -> json.Number")
 	}
 
-	shareCnt := engagement["share_count"]
+	shareCntInt64, err := shareCnt.Int64()
+	if err != nil {
+		return 0, errors.Wrap(err, "can't assert engagement.share_count.(json.Number) -> int64")
+	}
 
-	return shareCnt, nil
+	return int(shareCntInt64), nil
 }

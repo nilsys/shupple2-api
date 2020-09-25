@@ -22,7 +22,7 @@ var QueryRepositorySet = wire.NewSet(
 	wire.Bind(new(widgetoonJsoon.QueryRepository), new(*QueryRepositoryImpl)),
 )
 
-func (r *QueryRepositoryImpl) TwitterCountByURL(url string) (*widgetoonJsoonDto.TwitterCount, error) {
+func (r *QueryRepositoryImpl) GetTwitterCountByURL(url string) (*widgetoonJsoonDto.TwitterCount, error) {
 	var res widgetoonJsoonDto.TwitterCount
 	opts := &client.Option{
 		QueryParams: map[string][]string{},
