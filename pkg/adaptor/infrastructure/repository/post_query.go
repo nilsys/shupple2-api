@@ -253,23 +253,23 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 	//
 
 	if query.MetasearchAreaID != 0 {
-		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_area_id` = ?))", query.MetasearchAreaID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE metasearch_area_id = ?))", query.MetasearchAreaID)
 	}
 
 	if query.MetasearchSubAreaID != 0 {
-		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_sub_area_id` = ?))", query.MetasearchSubAreaID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE metasearch_sub_area_id = ?))", query.MetasearchSubAreaID)
 	}
 
 	if query.MetasearchSubSubAreaID != 0 {
-		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_sub_sub_area_id` = ?))", query.MetasearchSubSubAreaID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE metasearch_sub_sub_area_id = ?))", query.MetasearchSubSubAreaID)
 	}
 
-	if query.InnTypeID != 0 {
-		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_inn_type_id` = ?))", query.InnTypeID)
+	if query.MetasearchInnTypeID != 0 {
+		q = q.Where("post.id IN (SELECT post_id FROM post_theme_category WHERE theme_category_id IN (SELECT id FROM theme_category WHERE metasearch_inn_type_id = ?))", query.MetasearchInnTypeID)
 	}
 
-	if query.InnDiscerningType != 0 {
-		q = q.Where("post.id IN (SELECT post_id FROM post_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE `metasearch_discerning_condition_id` = ?))", query.InnDiscerningType)
+	if query.MetasearchTagID != 0 {
+		q = q.Where("post.id IN (SELECT post_id FROM post_theme_category WHERE theme_category_id IN (SELECT id FROM theme_category WHERE metasearch_tag_id = ?))", query.MetasearchTagID)
 	}
 
 	if query.ThemeID != 0 {

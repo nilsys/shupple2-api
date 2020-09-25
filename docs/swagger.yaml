@@ -1128,14 +1128,14 @@ paths:
           schema:
             type: integer
         - in: query
-          name: innTypeId
+          name: metasearchInnTypeId
           description: |
             宿タイプID
             いずれか1つ以上必須
           schema:
             type: integer
         - in: query
-          name: innDiscerningType
+          name: metasearchTagId
           description: |
             宿こだわり条件ID
             いずれか1つ以上必須

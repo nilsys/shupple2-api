@@ -26,8 +26,8 @@ type (
 		MetasearchAreaID       int               `query:"metasearchAreaId"`
 		MetasearchSubAreaID    int               `query:"metasearchSubAreaId"`
 		MetasearchSubSubAreaID int               `query:"metasearchSubSubAreaId"`
-		InnTypeID              int               `json:"innTypeId"`
-		InnDiscerningType      int               `json:"innDiscerningType"`
+		MetasearchInnTypeID    int               `json:"metasearchInnTypeId"`
+		MetasearchTagID        int               `json:"metasearchTagId"`
 		ThemeID                int               `query:"themeId"`
 		HashTag                string            `query:"hashTag"`
 		SortBy                 model.MediaSortBy `query:"sortBy"`
@@ -53,7 +53,7 @@ const findPostListDefaultPerPage = 10
 
 // いずれのクエリも飛んでこない場合 or sortの値が期待値以外の場合エラーを返す
 func (param ListPostParam) Validate() error {
-	if param.UserID == 0 && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.MetasearchAreaID == 0 && param.MetasearchSubAreaID == 0 && param.MetasearchSubSubAreaID == 0 && param.InnTypeID == 0 && param.InnDiscerningType == 0 && param.HashTag == "" && param.Keyward == "" && param.CfProjectID == 0 && param.SortBy == 0 {
+	if param.UserID == 0 && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.MetasearchAreaID == 0 && param.MetasearchSubAreaID == 0 && param.MetasearchSubSubAreaID == 0 && param.MetasearchInnTypeID == 0 && param.MetasearchTagID == 0 && param.HashTag == "" && param.Keyward == "" && param.CfProjectID == 0 && param.SortBy == 0 {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid find post list input")
 	}
 

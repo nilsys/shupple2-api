@@ -15,8 +15,8 @@ type (
 		MetasearchAreaID       int
 		MetasearchSubAreaID    int
 		MetasearchSubSubAreaID int
-		InnTypeID              int
-		InnDiscerningType      int
+		MetasearchInnTypeID    int
+		MetasearchTagID        int
 		ThemeID                int
 		HashTag                string
 		SortBy                 model.MediaSortBy
