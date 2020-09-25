@@ -100,6 +100,7 @@ type (
 		AreaCategories  []*AreaCategory  `gorm:"many2many:post_area_category;jointable_foreignkey:post_id;"`
 		ThemeCategories []*ThemeCategory `gorm:"many2many:post_theme_category;jointable_foreignkey:post_id;"`
 		Hashtag         []*Hashtag       `gorm:"many2many:post_hashtag;jointable_foreignkey:post_id;"`
+		Features        []*Feature       `gorm:"many2many:feature_post;jointable_foreignkey:post_id"`
 	}
 )
 

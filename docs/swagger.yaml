@@ -3650,6 +3650,8 @@ components:
           $ref: "#/components/schemas/updatedAt"
         editedAt:
           $ref: "#/components/schemas/editedAt"
+        features:
+          $ref: "#/components/schemas/FeaturePostList"
     PostBody:
       type: object
       properties:

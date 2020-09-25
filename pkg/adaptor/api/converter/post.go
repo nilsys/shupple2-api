@@ -49,7 +49,7 @@ func (c Converters) ConvertListFeedPostInputToQuery(i *input.PaginationQuery) *q
 	}
 }
 
-func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idIsFollowMap map[int]bool) *output.PostShow {
+func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idIsFollowMap map[int]bool) *output.PostDetail {
 	var hashtags = make([]*output.Hashtag, len(post.Hashtag))
 	var bodies = make([]*output.PostBody, len(post.Bodies))
 
@@ -71,7 +71,12 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 		themeCategoriesRes[i] = c.ConvertThemeCategoryDetailFromThemeCategory(themeCate, themeCategories)
 	}
 
-	return &output.PostShow{
+	features := make([]*output.Feature, len(post.Features))
+	for i, feature := range post.Features {
+		features[i] = c.convertFeatureToOutput(feature)
+	}
+
+	return &output.PostDetail{
 		PostTiny: output.PostTiny{
 			ID:             post.ID,
 			Thumbnail:      post.PostTiny.Thumbnail,
@@ -96,6 +101,7 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
 		Hashtags:        hashtags,
+		Features:        features,
 	}
 }
 

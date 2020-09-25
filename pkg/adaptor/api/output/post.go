@@ -36,7 +36,7 @@ type (
 		Posts       []*PostWithCategoryDetail `json:"posts"`
 	}
 
-	PostShow struct {
+	PostDetail struct {
 		PostTiny
 		IsFavorite      bool                   `json:"isFavorite"`
 		Body            []*PostBody            `json:"body"`
@@ -44,6 +44,7 @@ type (
 		AreaCategories  []*AreaCategoryDetail  `json:"areaCategories"`
 		ThemeCategories []*ThemeCategoryDetail `json:"themeCategories"`
 		Hashtags        []*Hashtag             `json:"hashtags"`
+		Features        []*Feature             `json:"features"`
 	}
 
 	PostBody struct {
