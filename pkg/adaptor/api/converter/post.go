@@ -55,7 +55,7 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 
 	for i, hashtag := range post.Hashtag {
 		// MEMO: 現状isFollowを必要としない為第３引数にfalseを入れている
-		hashtags[i] = output.NewHashtag(hashtag.ID, hashtag.Name, false)
+		hashtags[i] = output.NewHashtag(hashtag.ID, hashtag.Name, false, hashtag.PostCount, hashtag.ReviewCount, hashtag.Score)
 	}
 	for i, body := range post.Bodies {
 		bodies[i] = output.NewPostBody(body.Page, body.Body)

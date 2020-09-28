@@ -4063,6 +4063,13 @@ components:
           example: 春に行きたい
         isFollow:
           type: boolean
+        postCount:
+          type: integer
+        reviewCount:
+          type: integer
+        score:
+          type: integer
+          description: postCount + reviewCount
     SearchSuggestions:
       type: object
       properties:

@@ -9,7 +9,7 @@ func (c Converters) ConvertHashtagListToOutput(hashtags *entity.Hashtags, isFoll
 	res := make([]*output.Hashtag, len([]*entity.Hashtag(*hashtags)))
 
 	for i, hashtag := range []*entity.Hashtag(*hashtags) {
-		res[i] = output.NewHashtag(hashtag.ID, hashtag.Name, isFollowMap[hashtag.ID])
+		res[i] = output.NewHashtag(hashtag.ID, hashtag.Name, isFollowMap[hashtag.ID], hashtag.PostCount, hashtag.ReviewCount, hashtag.Score)
 	}
 
 	return res

@@ -49,5 +49,5 @@ func (c *HashtagQueryController) Show(ctx echo.Context, ouser entity.OptionalUse
 		return errors.Wrap(err, "failed show hashtag")
 	}
 
-	return ctx.JSON(http.StatusOK, output.NewHashtag(hashtag.ID, hashtag.Name, isFollowMap[hashtag.ID]))
+	return ctx.JSON(http.StatusOK, output.NewHashtag(hashtag.ID, hashtag.Name, isFollowMap[hashtag.ID], hashtag.PostCount, hashtag.ReviewCount, hashtag.Score))
 }
