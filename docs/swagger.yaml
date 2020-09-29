@@ -5010,6 +5010,7 @@ components:
         - PayAgentError
         - DuplicateCard
         - DuplicateReport
+        - Expired
     Error:
       type: object
       properties:

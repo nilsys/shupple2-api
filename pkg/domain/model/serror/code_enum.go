@@ -30,9 +30,11 @@ const (
 	CodeUnsupportedMedia
 	// CodeDuplicateReport is a Code of type DuplicateReport
 	CodeDuplicateReport
+	// CodeExpired is a Code of type Expired
+	CodeExpired
 )
 
-const _CodeName = "UndefinedInvalidParamNotFoundImportDeletedUnauthorizedForbiddenInvalidCategoryTypePayAgentErrorDuplicateCardUnsupportedMediaDuplicateReport"
+const _CodeName = "UndefinedInvalidParamNotFoundImportDeletedUnauthorizedForbiddenInvalidCategoryTypePayAgentErrorDuplicateCardUnsupportedMediaDuplicateReportExpired"
 
 var _CodeMap = map[Code]string{
 	0:  _CodeName[0:9],
@@ -46,6 +48,7 @@ var _CodeMap = map[Code]string{
 	8:  _CodeName[95:108],
 	9:  _CodeName[108:124],
 	10: _CodeName[124:139],
+	11: _CodeName[139:146],
 }
 
 // String implements the Stringer interface.
@@ -68,6 +71,7 @@ var _CodeValue = map[string]Code{
 	_CodeName[95:108]:  8,
 	_CodeName[108:124]: 9,
 	_CodeName[124:139]: 10,
+	_CodeName[139:146]: 11,
 }
 
 // ParseCode attempts to convert a string to a Code

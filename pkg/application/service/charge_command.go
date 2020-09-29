@@ -206,6 +206,11 @@ func (s *ChargeCommandServiceImpl) create(c context.Context, cmd *command.Create
 		return nil, errors.Wrap(err, "failed lock cf_project")
 	}
 
+	// プロジェクトが終了してる場合
+	if project.Snapshot.IsExpired() {
+		return nil, serror.New(nil, serror.CodeExpired, "expired project")
+	}
+
 	projectOwner, err := s.UserQueryRepository.FindByID(project.UserID)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed find project owner")

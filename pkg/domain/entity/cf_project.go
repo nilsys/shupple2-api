@@ -235,3 +235,10 @@ func (c CfProjectTiny) MediaWebURL(baseURL config.URL) *config.URL {
 	baseURL.Path = fmt.Sprintf("/projects/%d", c.ID)
 	return &baseURL
 }
+
+func (c *CfProjectSnapshotTiny) IsExpired() bool {
+	if c.Deadline.Before(time.Now()) {
+		return true
+	}
+	return false
+}
