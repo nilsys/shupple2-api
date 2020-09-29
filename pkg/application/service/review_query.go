@@ -21,6 +21,7 @@ type (
 		ListReviewCommentByReviewID(reviewID int, limit int, ouser entity.OptionalUser) ([]*entity.ReviewCommentWithIsFavorite, error)
 		ListFavoriteReview(ouser entity.OptionalUser, userID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error)
 		ListReviewCommentReplyByReviewCommentID(reviewCommentID int, ouser *entity.OptionalUser) ([]*entity.ReviewCommentReplyWithIsFavorite, error)
+		ListMyLocation(query *query.FindListPaginationQuery, user *entity.User) (*entity.ReviewDetailWithIsFavoriteList, error)
 	}
 
 	// Review参照系サービス実装
@@ -133,4 +134,8 @@ func (s *ReviewQueryServiceImpl) ListReviewCommentReplyByReviewCommentID(reviewC
 		return s.ReviewQueryRepository.FindReviewCommentReplyWithIsFavoriteListByReviewCommentID(reviewCommentID, ouser.ID)
 	}
 	return s.ReviewQueryRepository.FindReviewCommentReplyListByReviewCommentID(reviewCommentID)
+}
+
+func (s *ReviewQueryServiceImpl) ListMyLocation(query *query.FindListPaginationQuery, user *entity.User) (*entity.ReviewDetailWithIsFavoriteList, error) {
+	return s.ReviewQueryRepository.FindRelationLocationReview(query, user.ID)
 }

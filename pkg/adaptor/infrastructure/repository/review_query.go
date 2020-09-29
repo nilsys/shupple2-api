@@ -374,3 +374,18 @@ func (r *ReviewQueryRepositoryImpl) FindLatestHasMediaReviewByTouristSpotIDs(tou
 
 	return &rows, nil
 }
+
+// Userに紐づくTouristSpot or Inn のReviewを返す
+func (r *ReviewQueryRepositoryImpl) FindRelationLocationReview(query *query.FindListPaginationQuery, userID int) (*entity.ReviewDetailWithIsFavoriteList, error) {
+	var rows entity.ReviewDetailWithIsFavoriteList
+
+	if err := r.DB.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM user_tourist_spot WHERE user_id = ?) OR inn_id IN (SELECT inn_id FROM user_inn WHERE user_id = ?)", userID, userID).
+		Offset(query.Offset).
+		Limit(query.Limit).
+		Order("created_at DESC").
+		Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find review")
+	}
+
+	return &rows, nil
+}

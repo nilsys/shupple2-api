@@ -15,6 +15,7 @@ type (
 		ListFeed(query *query.FindListPaginationQuery, user entity.User) (*entity.ReviewDetailWithIsFavoriteList, map[int]bool, error)
 		ListFavorite(userID int, query *query.FindListPaginationQuery, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavoriteList, map[int]bool, error)
 		Show(id int, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavorite, map[int]bool, error)
+		ListMyLocation(query *query.FindListPaginationQuery, user *entity.User) (*entity.ReviewDetailWithIsFavoriteList, map[int]bool, error)
 	}
 
 	ReviewQueryScenarioImpl struct {
@@ -101,4 +102,18 @@ func (s *ReviewQueryScenarioImpl) Show(id int, ouser entity.OptionalUser) (*enti
 	}
 
 	return review, idIsFollowMap, nil
+}
+
+func (s *ReviewQueryScenarioImpl) ListMyLocation(query *query.FindListPaginationQuery, user *entity.User) (*entity.ReviewDetailWithIsFavoriteList, map[int]bool, error) {
+	reviews, err := s.ReviewQueryService.ListMyLocation(query, user)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "failed list relation location review")
+	}
+
+	idIsFollowMap, err := s.UserQueryRepository.IsFollowing(user.ID, reviews.UserIDs())
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "failed find user_following")
+	}
+
+	return reviews, idIsFollowMap, nil
 }

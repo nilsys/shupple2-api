@@ -116,6 +116,16 @@ type (
 		UserID    int                 `gorm:"primary_key"`
 		Attribute model.UserAttribute `gorm:"primary_key"`
 	}
+
+	UserInn struct {
+		UserID int `gorm:"primary_key"`
+		InnID  int `gorm:"primary_key"`
+	}
+
+	UserTouristSpot struct {
+		UserID        int `gorm:"primary_key"`
+		TouristSpotID int `gorm:"primary_key"`
+	}
 )
 
 const (
