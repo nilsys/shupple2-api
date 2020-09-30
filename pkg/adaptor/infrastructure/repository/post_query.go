@@ -281,7 +281,8 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 	}
 
 	if query.Keyword != "" {
-		q = q.Where("post.title LIKE ?", query.SQLLikeKeyword()).Or("post.id IN (SELECT post_id FROM post_body WHERE body LIKE ?)", query.SQLLikeKeyword())
+		// 半角全角を区別しない
+		q = q.Where("post.title LIKE ?", query.SQLLikeKeyword()).Or("post.id IN (SELECT post_id FROM post_body WHERE convert(body using utf8) collate utf8_unicode_ci LIKE ?)", query.SQLLikeKeyword())
 	}
 
 	return q
