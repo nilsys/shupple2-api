@@ -33,8 +33,10 @@ type (
 		SortBy                 model.MediaSortBy `query:"sortBy"`
 		Keyward                string            `query:"q"`
 		CfProjectID            int               `query:"cfProjectId"`
-		Page                   int               `query:"page"`
-		PerPage                int               `query:"perPage"`
+		// 特別なフラグが増えてきたらenumを検討
+		NotHaveAreaID bool `query:"notHaveAreaId"`
+		Page          int  `query:"page"`
+		PerPage       int  `query:"perPage"`
 	}
 
 	// ユーザーフィード記事取得APIパラメータ
@@ -53,7 +55,7 @@ const findPostListDefaultPerPage = 10
 
 // いずれのクエリも飛んでこない場合 or sortの値が期待値以外の場合エラーを返す
 func (param ListPostParam) Validate() error {
-	if param.UserID == 0 && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.MetasearchAreaID == 0 && param.MetasearchSubAreaID == 0 && param.MetasearchSubSubAreaID == 0 && param.MetasearchInnTypeID == 0 && param.MetasearchTagID == 0 && param.HashTag == "" && param.Keyward == "" && param.CfProjectID == 0 && param.SortBy == 0 {
+	if param.UserID == 0 && param.AreaID == 0 && param.SubAreaID == 0 && param.SubSubAreaID == 0 && param.ThemeID == 0 && param.MetasearchAreaID == 0 && param.MetasearchSubAreaID == 0 && param.MetasearchSubSubAreaID == 0 && param.MetasearchInnTypeID == 0 && param.MetasearchTagID == 0 && param.HashTag == "" && param.Keyward == "" && param.CfProjectID == 0 && param.SortBy == 0 && !param.NotHaveAreaID {
 		return serror.New(nil, serror.CodeInvalidParam, "Invalid find post list input")
 	}
 

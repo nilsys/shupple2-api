@@ -22,6 +22,7 @@ type (
 		SortBy                 model.MediaSortBy
 		Keyword                string
 		CfProjectID            int
+		NoHaveAreaID           bool
 		Limit                  int
 		OffSet                 int
 	}

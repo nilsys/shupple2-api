@@ -285,6 +285,10 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 		q = q.Where("post.title LIKE ?", query.SQLLikeKeyword()).Or("post.id IN (SELECT post_id FROM post_body WHERE convert(body using utf8) collate utf8_unicode_ci LIKE ?)", query.SQLLikeKeyword())
 	}
 
+	if query.NoHaveAreaID {
+		q = q.Where("post.id NOT IN (SELECT post_id FROM post_area_category)")
+	}
+
 	return q
 }
 

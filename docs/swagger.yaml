@@ -1192,6 +1192,12 @@ paths:
           schema:
             type: string
         - in: query
+          name: notHaveAreaId
+          description: |
+            areaと紐付かない物か
+          schema:
+            type: boolean
+        - in: query
           name: page
           description: ページ数(pagination時)
           schema:
@@ -1854,7 +1860,7 @@ paths:
       tags:
         - hashtag
       summary: ハッシュタグ取得API
-      description: 投稿数が多い順でハッシュタグ取得
+      description: ハッシュタグ取得
       parameters:
         - in: path
           name: name
