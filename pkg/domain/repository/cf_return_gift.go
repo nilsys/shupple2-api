@@ -3,6 +3,8 @@ package repository
 import (
 	"context"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 )
 
@@ -17,6 +19,6 @@ type (
 	CfReturnGiftQueryRepository interface {
 		FindByID(id int) (*entity.CfReturnGift, error)
 		FindSoldCountByReturnGiftIDs(c context.Context, ids []int) (*entity.CfReturnGiftSoldCountList, error)
-		FindByCfProjectID(projectID int) (*entity.CfReturnGiftWithCountList, error)
+		FindByQuery(query *query.ListCfReturnGiftQuery) (*entity.CfReturnGiftWithCountList, error)
 	}
 )

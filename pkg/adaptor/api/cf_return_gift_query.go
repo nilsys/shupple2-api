@@ -23,12 +23,12 @@ var CfReturnGiftQueryControllerSet = wire.NewSet(
 )
 
 func (c *CfReturnGiftQueryController) List(ctx echo.Context) error {
-	i := &input.IDParam{}
+	i := &input.ListCfReturnGift{}
 	if err := BindAndValidate(ctx, i); err != nil {
 		return errors.Wrap(err, "failed bind input")
 	}
 
-	gifts, err := c.CfReturnGiftQueryService.ListByCfProjectID(i.ID)
+	gifts, err := c.CfReturnGiftQueryService.ListByCfProjectID(c.ConvertListCfReturnGiftInputToQuery(i))
 	if err != nil {
 		return errors.Wrap(err, "failed list cf_return_gift")
 	}

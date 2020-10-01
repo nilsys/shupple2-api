@@ -59,7 +59,8 @@ type (
 	}
 
 	CfReturnGiftWithCountList struct {
-		List []*CfReturnGiftWithCount
+		TotalNumber int
+		List        []*CfReturnGiftWithCount
 	}
 )
 

@@ -4,12 +4,13 @@ import (
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
 type (
 	CfReturnGiftQueryService interface {
-		ListByCfProjectID(projectID int) (*entity.CfReturnGiftWithCountList, error)
+		ListByCfProjectID(query *query.ListCfReturnGiftQuery) (*entity.CfReturnGiftWithCountList, error)
 	}
 
 	CfReturnGiftQueryServiceImpl struct {
@@ -23,8 +24,8 @@ var CfReturnGiftQueryServiceSet = wire.NewSet(
 )
 
 // TODO: SoldCount, SupporterCountは別で取る
-func (s *CfReturnGiftQueryServiceImpl) ListByCfProjectID(projectID int) (*entity.CfReturnGiftWithCountList, error) {
-	gifts, err := s.CfReturnGiftQueryRepository.FindByCfProjectID(projectID)
+func (s *CfReturnGiftQueryServiceImpl) ListByCfProjectID(query *query.ListCfReturnGiftQuery) (*entity.CfReturnGiftWithCountList, error) {
+	gifts, err := s.CfReturnGiftQueryRepository.FindByQuery(query)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed find cf_return_gift")
 	}

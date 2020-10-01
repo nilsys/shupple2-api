@@ -269,7 +269,7 @@ func setRoutes(app *App) {
 		projects.GET("/:id/comment", auth.Optional(app.CfProjectQueryController.ListSupportComment))
 		projects.PUT("/:id/favorite", auth.Require(app.CfProjectCommandController.Favorite))
 		projects.DELETE("/:id/favorite", auth.Require(app.CfProjectCommandController.Unfavorite))
-		projects.GET("/:id/gift", app.CfReturnGiftQueryController.List)
+		projects.GET("/gift", app.CfReturnGiftQueryController.List)
 		projects.GET("/supported", auth.Require(app.CfProjectQueryController.ListSupported))
 	}
 

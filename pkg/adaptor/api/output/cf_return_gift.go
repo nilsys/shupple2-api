@@ -3,6 +3,11 @@ package output
 import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 
 type (
+	CfReturnGiftList struct {
+		TotalNumber int             `json:"totalNumber"`
+		List        []*CfReturnGift `json:"gifts"`
+	}
+
 	CfReturnGift struct {
 		ID             int                    `json:"id"`
 		SnapshotID     int                    `json:"snapshotId"`

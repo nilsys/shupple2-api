@@ -3,6 +3,9 @@ package repository
 import (
 	"context"
 
+	"github.com/jinzhu/gorm"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 
 	"github.com/pkg/errors"
@@ -44,15 +47,32 @@ func (r *CfReturnGiftQueryRepositoryImpl) FindSoldCountByReturnGiftIDs(c context
 	return &rows, nil
 }
 
-func (r *CfReturnGiftQueryRepositoryImpl) FindByCfProjectID(projectID int) (*entity.CfReturnGiftWithCountList, error) {
+func (r *CfReturnGiftQueryRepositoryImpl) FindByQuery(query *query.ListCfReturnGiftQuery) (*entity.CfReturnGiftWithCountList, error) {
 	var rows entity.CfReturnGiftWithCountList
 
-	if err := r.DB(context.Background()).
+	q := r.buildFindByQuery(query)
+
+	if err := q.
 		Select("*").
 		Joins("LEFT JOIN (SELECT payment_cf_return_gift.cf_return_gift_id AS id, COUNT(DISTINCT user_id) AS supporter_count, SUM(payment_cf_return_gift.amount) AS sold_count FROM payment INNER JOIN payment_cf_return_gift ON payment.id = payment_cf_return_gift.payment_id AND (payment_cf_return_gift.gift_type_other_status != ? OR payment_cf_return_gift.gift_type_reserved_ticket_status != ?) GROUP BY payment_cf_return_gift.cf_return_gift_id) pc ON cf_return_gift.id = pc.id INNER JOIN cf_return_gift_snapshot ON cf_return_gift.latest_snapshot_id = cf_return_gift_snapshot.id", model.PaymentCfReturnGiftOtherTypeStatusCanceled, model.PaymentCfReturnGiftReservedTicketTypeStatusCanceled).
-		Where("cf_return_gift.cf_project_id = ?", projectID).Order("cf_return_gift_snapshot.sort_order").Find(&rows.List).Error; err != nil {
+		Order("cf_return_gift_snapshot.sort_order").
+		Offset(query.Offset).Limit(query.Limit).Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find cf_return_gift")
 	}
 
 	return &rows, nil
+}
+
+func (r *CfReturnGiftQueryRepositoryImpl) buildFindByQuery(query *query.ListCfReturnGiftQuery) *gorm.DB {
+	q := r.DB(context.Background())
+
+	if query.ProjectID != 0 {
+		q = q.Where("cf_return_gift.cf_project_id = ?", query.ProjectID)
+	}
+
+	if query.UserID != 0 {
+		q = q.Where("cf_return_gift.cf_project_id IN (SELECT id FROM cf_project WHERE user_id = ?)", query.UserID)
+	}
+
+	return q
 }

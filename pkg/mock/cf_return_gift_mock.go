@@ -10,6 +10,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	entity "github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	query "github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 )
 
 // MockCfReturnGiftCommandRepository is a mock of CfReturnGiftCommandRepository interface
@@ -35,18 +36,18 @@ func (m *MockCfReturnGiftCommandRepository) EXPECT() *MockCfReturnGiftCommandRep
 	return m.recorder
 }
 
-// Validate mocks base method
+// Store mocks base method
 func (m *MockCfReturnGiftCommandRepository) Store(arg0 context.Context, arg1 *entity.CfReturnGift) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Validate", arg0, arg1)
+	ret := m.ctrl.Call(m, "Store", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Validate indicates an expected call of Validate
+// Store indicates an expected call of Store
 func (mr *MockCfReturnGiftCommandRepositoryMockRecorder) Store(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockCfReturnGiftCommandRepository)(nil).Store), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockCfReturnGiftCommandRepository)(nil).Store), arg0, arg1)
 }
 
 // LockByIDs mocks base method
@@ -145,17 +146,17 @@ func (mr *MockCfReturnGiftQueryRepositoryMockRecorder) FindSoldCountByReturnGift
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindSoldCountByReturnGiftIDs", reflect.TypeOf((*MockCfReturnGiftQueryRepository)(nil).FindSoldCountByReturnGiftIDs), c, ids)
 }
 
-// FindByCfProjectID mocks base method
-func (m *MockCfReturnGiftQueryRepository) FindByCfProjectID(projectID int) (*entity.CfReturnGiftWithCountList, error) {
+// FindByQuery mocks base method
+func (m *MockCfReturnGiftQueryRepository) FindByQuery(query *query.ListCfReturnGiftQuery) (*entity.CfReturnGiftWithCountList, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByCfProjectID", projectID)
+	ret := m.ctrl.Call(m, "FindByQuery", query)
 	ret0, _ := ret[0].(*entity.CfReturnGiftWithCountList)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindByCfProjectID indicates an expected call of FindByCfProjectID
-func (mr *MockCfReturnGiftQueryRepositoryMockRecorder) FindByCfProjectID(projectID interface{}) *gomock.Call {
+// FindByQuery indicates an expected call of FindByQuery
+func (mr *MockCfReturnGiftQueryRepositoryMockRecorder) FindByQuery(query interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByCfProjectID", reflect.TypeOf((*MockCfReturnGiftQueryRepository)(nil).FindByCfProjectID), projectID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByQuery", reflect.TypeOf((*MockCfReturnGiftQueryRepository)(nil).FindByQuery), query)
 }

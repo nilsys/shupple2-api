@@ -2553,26 +2553,38 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CfProject"
-  /projects/{id}/gift:
+  /projects/gift:
     get:
       tags:
         - project
-      summary: クラウドファンディングプロジェクトギフト一覧API
+      summary: クラウドファンディングプロジェクトギフト検索API
       parameters:
-        - in: path
-          name: id
+        - in: query
+          name: projectId
           description: |
             プロジェクトid
           schema:
             type: integer
-          required: true
+        - in: query
+          name: userId
+          description: |
+            ユーザー(オーナー)id
+          schema:
+            type: integer
       responses:
         "200":
           description: ok
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CfReturnGiftList"
+                type: object
+                properties:
+                  totalNumber:
+                    type: integer
+                    description: 検索総件数
+                    example: 120
+                  gifts:
+                    $ref: "#/components/schemas/CfReturnGiftList"
   /projects/{id}/comment:
     get:
       tags:
