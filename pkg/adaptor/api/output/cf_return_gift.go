@@ -5,7 +5,7 @@ import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 type (
 	CfReturnGiftList struct {
 		TotalNumber int             `json:"totalNumber"`
-		List        []*CfReturnGift `json:"gifts"`
+		List        []*CfReturnGift `json:"cfReturnGifts"`
 	}
 
 	CfReturnGift struct {
