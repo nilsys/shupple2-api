@@ -2572,6 +2572,12 @@ paths:
           schema:
             type: integer
         - in: query
+          name: sessionStatus
+          description: |
+            開催ステータス
+          schema:
+            $ref: "#/components/schemas/SessionStatus"
+        - in: query
           name: page
           required: false
           description: ページ
@@ -5029,6 +5035,12 @@ components:
         Common = 一般User
         WP = wpにも登録されているクリエイター
         CfProjectOwner = CfProjectのowner
+    SessionStatus:
+      type: string
+      enum:
+        - InSession
+      description: |
+        開催ステータス
     ErrorCode:
       type: string
       enum:

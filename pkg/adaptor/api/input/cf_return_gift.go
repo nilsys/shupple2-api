@@ -1,9 +1,12 @@
 package input
 
+import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
+
 type (
 	ListCfReturnGift struct {
-		ProjectID int `query:"projectId"`
-		UserID    int `query:"userId"`
+		ProjectID     int                 `query:"projectId"`
+		UserID        int                 `query:"userId"`
+		SessionStatus model.SessionStatus `query:"sessionStatus"`
 		PaginationQuery
 	}
 )

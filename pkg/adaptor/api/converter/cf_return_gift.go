@@ -73,8 +73,9 @@ func (c *Converters) convertCfReturnGiftToOutput(gift *entity.CfReturnGift) *out
 
 func (c *Converters) ConvertListCfReturnGiftInputToQuery(input *input.ListCfReturnGift) *query.ListCfReturnGiftQuery {
 	return &query.ListCfReturnGiftQuery{
-		ProjectID: input.ProjectID,
-		UserID:    input.UserID,
+		ProjectID:     input.ProjectID,
+		UserID:        input.UserID,
+		SessionStatus: input.SessionStatus,
 		FindListPaginationQuery: query.FindListPaginationQuery{
 			Limit:  input.GetListCfReturnGiftLimit(),
 			Offset: input.GetListCfReturnGiftOffset(),

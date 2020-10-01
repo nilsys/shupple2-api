@@ -1173,6 +1173,57 @@ func (x *ReviewSortBy) UnmarshalText(text []byte) error {
 }
 
 const (
+	// SessionStatusUndefined is a SessionStatus of type Undefined
+	SessionStatusUndefined SessionStatus = iota
+	// SessionStatusInSession is a SessionStatus of type InSession
+	SessionStatusInSession
+)
+
+const _SessionStatusName = "UndefinedInSession"
+
+var _SessionStatusMap = map[SessionStatus]string{
+	0: _SessionStatusName[0:9],
+	1: _SessionStatusName[9:18],
+}
+
+// String implements the Stringer interface.
+func (x SessionStatus) String() string {
+	if str, ok := _SessionStatusMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("SessionStatus(%d)", x)
+}
+
+var _SessionStatusValue = map[string]SessionStatus{
+	_SessionStatusName[0:9]:  0,
+	_SessionStatusName[9:18]: 1,
+}
+
+// ParseSessionStatus attempts to convert a string to a SessionStatus
+func ParseSessionStatus(name string) (SessionStatus, error) {
+	if x, ok := _SessionStatusValue[name]; ok {
+		return x, nil
+	}
+	return SessionStatus(0), fmt.Errorf("%s is not a valid SessionStatus", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x SessionStatus) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *SessionStatus) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseSessionStatus(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// SpotCategoryTypeUndefined is a SpotCategoryType of type Undefined
 	SpotCategoryTypeUndefined SpotCategoryType = iota
 	// SpotCategoryTypeSpotCategory is a SpotCategoryType of type SpotCategory

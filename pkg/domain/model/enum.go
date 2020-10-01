@@ -135,3 +135,8 @@ type MediaType int
 ENUM(Post, Vlog, CfProject, Review, Comic, Feature, All)
 */
 type EntityType int
+
+/*
+ENUM(Undefined, InSession)
+*/
+type SessionStatus int
