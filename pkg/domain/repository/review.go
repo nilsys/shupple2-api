@@ -32,7 +32,6 @@ type (
 		FindReviewCommentReplyByID(id int) (*entity.ReviewCommentReplyTiny, error)
 		FindReviewCommentReplyDetailByID(id int) (*entity.ReviewCommentReplyDetail, error)
 		FindLatestHasMediaReviewByTouristSpotIDs(touristSpotID []int) (*entity.ReviewList, error)
-		FindRelationLocationReview(query *query.FindListPaginationQuery, userID int) (*entity.ReviewDetailWithIsFavoriteList, error)
 	}
 
 	// Review更新系レポジトリ

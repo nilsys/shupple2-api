@@ -8,6 +8,7 @@ type (
 	// repositoryで使用するクエリ発行用構造体
 	ShowReviewListQuery struct {
 		UserID                 int
+		OwnerID                int
 		InnID                  int
 		TouristSpotID          int
 		HashTag                string

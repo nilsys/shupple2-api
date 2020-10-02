@@ -154,6 +154,10 @@ func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowRe
 		q = q.Where("review.user_id = ?", query.UserID)
 	}
 
+	if query.OwnerID != 0 {
+		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM user_tourist_spot WHERE user_id = ?) OR inn_id IN (SELECT inn_id FROM user_inn WHERE user_id = ?)", query.OwnerID, query.OwnerID)
+	}
+
 	if query.InnID != 0 {
 		q = q.Where("inn_id = ?", query.InnID)
 	}
@@ -369,21 +373,6 @@ func (r *ReviewQueryRepositoryImpl) FindLatestHasMediaReviewByTouristSpotIDs(tou
 	if err := r.DB.Joins("INNER JOIN (SELECT tourist_spot_id, MAX(created_at) as latestDate FROM review GROUP BY tourist_spot_id) tm ON review.tourist_spot_id = tm.tourist_spot_id AND review.created_at = tm.latestDate").
 		Where("review.id IN (SELECT review_id FROM review_media) AND review.tourist_spot_id IN (?)", touristSpotIDs).
 		Find(&rows.List).Error; err != nil {
-		return nil, errors.Wrap(err, "failed find review")
-	}
-
-	return &rows, nil
-}
-
-// Userに紐づくTouristSpot or Inn のReviewを返す
-func (r *ReviewQueryRepositoryImpl) FindRelationLocationReview(query *query.FindListPaginationQuery, userID int) (*entity.ReviewDetailWithIsFavoriteList, error) {
-	var rows entity.ReviewDetailWithIsFavoriteList
-
-	if err := r.DB.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM user_tourist_spot WHERE user_id = ?) OR inn_id IN (SELECT inn_id FROM user_inn WHERE user_id = ?)", userID, userID).
-		Offset(query.Offset).
-		Limit(query.Limit).
-		Order("created_at DESC").
-		Find(&rows.List).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find review")
 	}
 

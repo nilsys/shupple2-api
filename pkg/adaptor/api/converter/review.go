@@ -13,6 +13,7 @@ import (
 func (c Converters) ConvertFindReviewListParamToQuery(param *input.ListReviewParams) *query.ShowReviewListQuery {
 	return &query.ShowReviewListQuery{
 		UserID:                 param.UserID,
+		OwnerID:                param.OwnerID,
 		InnID:                  param.InnID,
 		TouristSpotID:          param.TouristSpotID,
 		HashTag:                param.HashTag,

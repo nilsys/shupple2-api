@@ -14,14 +14,13 @@ import (
 type (
 	// Review参照系サービス
 	ReviewQueryService interface {
-		ShowReviewListByParams(query *query.ShowReviewListQuery, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavoriteList, error)
+		ListByParams(query *query.ShowReviewListQuery, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavoriteList, error)
 		ListFeed(user entity.User, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error)
 		ShowQueryReview(id int, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavorite, error)
 		ShowReview(id int) (*entity.Review, error)
 		ListReviewCommentByReviewID(reviewID int, limit int, ouser entity.OptionalUser) ([]*entity.ReviewCommentWithIsFavorite, error)
 		ListFavoriteReview(ouser entity.OptionalUser, userID int, query *query.FindListPaginationQuery) (*entity.ReviewDetailWithIsFavoriteList, error)
 		ListReviewCommentReplyByReviewCommentID(reviewCommentID int, ouser *entity.OptionalUser) ([]*entity.ReviewCommentReplyWithIsFavorite, error)
-		ListMyLocation(query *query.FindListPaginationQuery, user *entity.User) (*entity.ReviewDetailWithIsFavoriteList, error)
 	}
 
 	// Review参照系サービス実装
@@ -39,7 +38,7 @@ var ReviewQueryServiceSet = wire.NewSet(
 
 // TODO: リファクタ
 // クエリで飛んで来た検索条件を用いreviewを検索
-func (s *ReviewQueryServiceImpl) ShowReviewListByParams(q *query.ShowReviewListQuery, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavoriteList, error) {
+func (s *ReviewQueryServiceImpl) ListByParams(q *query.ShowReviewListQuery, ouser entity.OptionalUser) (*entity.ReviewDetailWithIsFavoriteList, error) {
 	if q.AreaID != 0 || q.SubAreaID != 0 || q.SubSubAreaID != 0 {
 		findInnQuery := &query.FindInn{}
 
@@ -134,8 +133,4 @@ func (s *ReviewQueryServiceImpl) ListReviewCommentReplyByReviewCommentID(reviewC
 		return s.ReviewQueryRepository.FindReviewCommentReplyWithIsFavoriteListByReviewCommentID(reviewCommentID, ouser.ID)
 	}
 	return s.ReviewQueryRepository.FindReviewCommentReplyListByReviewCommentID(reviewCommentID)
-}
-
-func (s *ReviewQueryServiceImpl) ListMyLocation(query *query.FindListPaginationQuery, user *entity.User) (*entity.ReviewDetailWithIsFavoriteList, error) {
-	return s.ReviewQueryRepository.FindRelationLocationReview(query, user.ID)
 }

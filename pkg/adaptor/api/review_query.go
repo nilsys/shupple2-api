@@ -117,17 +117,3 @@ func (c *ReviewQueryController) ListReviewCommentReply(ctx echo.Context, ouser e
 
 	return ctx.JSON(http.StatusOK, c.ConvertReviewCommentReplyListToOutput(replies))
 }
-
-func (c *ReviewQueryController) ListMyLocation(ctx echo.Context, user entity.User) error {
-	i := &input.PaginationQuery{}
-	if err := BindAndValidate(ctx, i); err != nil {
-		return errors.Wrap(err, "failed bind input")
-	}
-
-	reviews, idIsFollowMap, err := c.ReviewQueryScenario.ListMyLocation(c.ConvertListFeedReviewInputToQuery(i), &user)
-	if err != nil {
-		return errors.Wrap(err, "failed list relation review")
-	}
-
-	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews, idIsFollowMap))
-}

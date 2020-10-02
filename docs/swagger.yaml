@@ -455,6 +455,11 @@ paths:
           schema:
             type: integer
         - in: query
+          name: ownerId
+          description: 指定したユーザーが所有etc...するロケーションのレビューを取得する
+          schema:
+            type: integer
+        - in: query
           name: innId
           description: innに紐づくレビューを取得する
           schema:
@@ -666,35 +671,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /reviews/owned_location:
-    get:
-      tags:
-        - review
-      parameters:
-        - in: query
-          name: perPage
-          schema:
-            type: integer
-            default: 10
-        - in: query
-          name: page
-          schema:
-            type: integer
-            default: 1
-      responses:
-        "200":
-          description: 成功
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  totalNumber:
-                    type: integer
-                    description: 検索総件数
-                    example: 120
-                  reviews:
-                    $ref: "#/components/schemas/Review"
   /reviews/{id}/comment:
     get:
       tags:
