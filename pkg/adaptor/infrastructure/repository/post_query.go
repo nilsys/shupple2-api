@@ -276,6 +276,10 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 		q = q.Where("post.id IN (SELECT post_id FROM post_theme_category WHERE theme_category_id = ?)", query.ThemeID)
 	}
 
+	if query.ThemeSlug != "" {
+		q = q.Where("post.id IN (SELECT post_id FROM post_theme_category INNER JOIN theme_category ON post_theme_category.theme_category_id = theme_category.id WHERE theme_category.slug = ?)", query.ThemeSlug)
+	}
+
 	if query.HashTag != "" {
 		q = q.Where("post.id IN (SELECT post_id FROM post_hashtag WHERE hashtag_id = (SELECT id FROM hashtag WHERE name = ?))", query.HashTag)
 	}

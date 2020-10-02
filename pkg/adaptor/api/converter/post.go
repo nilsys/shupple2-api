@@ -26,6 +26,7 @@ func (c Converters) ConvertFindPostListParamToQuery(param *input.ListPostParam) 
 		MetasearchInnTypeID:    param.MetasearchInnTypeID,
 		MetasearchTagID:        param.MetasearchTagID,
 		ThemeID:                param.ThemeID,
+		ThemeSlug:              param.ThemeSlug,
 		HashTag:                param.HashTag,
 		SortBy:                 param.SortBy,
 		Keyword:                param.Keyward,

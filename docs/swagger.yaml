@@ -1139,6 +1139,13 @@ paths:
           schema:
             type: integer
         - in: query
+          name: themeSlug
+          description: |
+            テーマスラッグ
+            いずれか1つ以上必須
+          schema:
+            type: string
+        - in: query
           name: metasearchInnTypeId
           description: |
             宿タイプID
