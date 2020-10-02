@@ -31,7 +31,7 @@ func (c Converters) ConvertComicListToOutput(comics *entity.ComicList) output.Co
 	}
 }
 
-func (c Converters) ConvertComicDetailToOutput(comic *entity.ComicDetail, idIsFollowMap map[int]bool) *output.ShowComic {
+func (c Converters) ConvertComicDetailToOutput(comic *entity.ComicDetail, idRelationFlgMap *entity.UserRelationFlgMap) *output.ShowComic {
 	return &output.ShowComic{
 		ID:            comic.Comic.ID,
 		Slug:          comic.Comic.Slug,
@@ -41,7 +41,7 @@ func (c Converters) ConvertComicDetailToOutput(comic *entity.ComicDetail, idIsFo
 		FavoriteCount: comic.FavoriteCount,
 		IsFavorite:    comic.IsFavorite,
 		CreatedAt:     model.TimeResponse(comic.Comic.CreatedAt),
-		Creator:       c.NewCreatorFromUser(comic.User, idIsFollowMap[comic.UserID]),
+		Creator:       c.NewCreatorFromUser(comic.User, idRelationFlgMap.IsFollowByUserID(comic.UserID), idRelationFlgMap.IsBlockingByUserID(comic.UserID)),
 	}
 }
 

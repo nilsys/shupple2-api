@@ -3038,6 +3038,9 @@ components:
         isFollow:
           type: boolean
           description: フォローしてるか
+        isBlocking:
+          type: boolean
+          description: ブロックしてるか
         attributes:
           type: array
           items:
@@ -4270,7 +4273,11 @@ components:
         isFollow:
           type: boolean
           description: フォローしているか
-          example: 1
+          example: true
+        isBlocking:
+          type: boolean
+          description: ブロックしているか
+          example: false
     Category:
       type: object
       required:

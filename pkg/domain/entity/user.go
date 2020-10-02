@@ -47,7 +47,6 @@ type (
 		Times
 		// 如何なる場面でも必要な為Userの最小単位に置いておく
 		UserAttributes []*UserAttribute `gorm:"foreignkey:UserID"`
-		UserBlocks     []*UserBlockUser `gorm:"foreignkey:UserID"`
 	}
 
 	UserTinyList struct {
@@ -72,6 +71,7 @@ type (
 		ReviewCount    int
 		VlogCount      int
 		IsFollow       bool
+		IsBlocking     bool
 	}
 
 	UserDetail struct {
@@ -112,11 +112,18 @@ type (
 
 	UserFollowings []*UserFollowing
 
+	UserBlocking []*UserBlockUser
+
 	UserAttribute struct {
 		UserID    int                 `gorm:"primary_key"`
 		Attribute model.UserAttribute `gorm:"primary_key"`
 	}
 
+	// それぞれのmapを持った値オブジェクト
+	UserRelationFlgMap struct {
+		IDIsFollowMap   map[int]bool
+		IDIsBlockingMap map[int]bool
+	}
 	UserInn struct {
 		UserID int `gorm:"primary_key"`
 		InnID  int `gorm:"primary_key"`
@@ -262,11 +269,24 @@ func (u UserFollowings) ToIDExistMap(userIDs []int) map[int]bool {
 	resolve := make(map[int]bool, len(userIDs))
 
 	for _, id := range userIDs {
-		for _, tiny := range []*UserFollowing(u) {
+		for _, tiny := range u {
 			if id == tiny.TargetID {
 				resolve[id] = true
-			} else {
-				resolve[id] = false
+			}
+		}
+	}
+
+	return resolve
+}
+
+// id:IsExist のMapを返す
+func (u UserBlocking) ToIDExistMap(userIDs []int) map[int]bool {
+	resolve := make(map[int]bool, len(userIDs))
+
+	for _, id := range userIDs {
+		for _, tiny := range u {
+			if id == tiny.BlockedUserID {
+				resolve[id] = true
 			}
 		}
 	}
@@ -321,11 +341,10 @@ func (u *UserTiny) MediaWebURL(baseURL config.URL) *config.URL {
 	return &baseURL
 }
 
-func (u *UserTiny) IsBlockingUserID(blockedUserID int) bool {
-	for _, block := range u.UserBlocks {
-		if block.BlockedUserID == blockedUserID {
-			return true
-		}
-	}
-	return false
+func (u *UserRelationFlgMap) IsFollowByUserID(targetUserID int) bool {
+	return u.IDIsFollowMap[targetUserID]
+}
+
+func (u *UserRelationFlgMap) IsBlockingByUserID(targetUserID int) bool {
+	return u.IDIsBlockingMap[targetUserID]
 }

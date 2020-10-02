@@ -50,7 +50,7 @@ func (c Converters) ConvertListFeedPostInputToQuery(i *input.PaginationQuery) *q
 	}
 }
 
-func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idIsFollowMap map[int]bool) *output.PostDetail {
+func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *entity.PostDetailWithHashtagAndIsFavorite, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idRelationFlgMap *entity.UserRelationFlgMap) *output.PostDetail {
 	var hashtags = make([]*output.Hashtag, len(post.Hashtag))
 	var bodies = make([]*output.PostBody, len(post.Bodies))
 
@@ -98,7 +98,7 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 		},
 		Body:            bodies,
 		IsFavorite:      post.IsFavorite,
-		Creator:         c.NewCreatorFromUser(post.User, idIsFollowMap[post.UserID]),
+		Creator:         c.NewCreatorFromUser(post.User, idRelationFlgMap.IsFollowByUserID(post.UserID), idRelationFlgMap.IsBlockingByUserID(post.UserID)),
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
 		Hashtags:        hashtags,
@@ -106,11 +106,11 @@ func (c Converters) ConvertPostDetailWithHashtagAndIsFavoriteToOutput(post *enti
 	}
 }
 
-func (c Converters) ConvertPostListTinyWithCategoryDetailForListToOutput(posts *entity.PostList, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idIsFollowMap map[int]bool) *output.PostWithCategoryDetailList {
+func (c Converters) ConvertPostListTinyWithCategoryDetailForListToOutput(posts *entity.PostList, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idRelationFlgMap *entity.UserRelationFlgMap) *output.PostWithCategoryDetailList {
 	postsRes := make([]*output.PostWithCategoryDetail, len(posts.Posts))
 
 	for i, post := range posts.Posts {
-		postsRes[i] = c.ConvertPostListTinyWithCategoryDetailToOutput(post, areaCategories, themeCategories, idIsFollowMap)
+		postsRes[i] = c.ConvertPostListTinyWithCategoryDetailToOutput(post, areaCategories, themeCategories, idRelationFlgMap)
 	}
 
 	return &output.PostWithCategoryDetailList{
@@ -119,7 +119,7 @@ func (c Converters) ConvertPostListTinyWithCategoryDetailForListToOutput(posts *
 	}
 }
 
-func (c Converters) ConvertPostListTinyWithCategoryDetailToOutput(post *entity.PostListTiny, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idIsFollowMap map[int]bool) *output.PostWithCategoryDetail {
+func (c Converters) ConvertPostListTinyWithCategoryDetailToOutput(post *entity.PostListTiny, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idRelationFlgMap *entity.UserRelationFlgMap) *output.PostWithCategoryDetail {
 	areaCategoriesRes := make([]*output.AreaCategoryDetail, len(post.AreaCategories))
 	for i, areaCate := range post.AreaCategories {
 		areaCategoriesRes[i] = c.ConvertAreaCategoryDetailFromAreaCategory(areaCate, areaCategories)
@@ -150,7 +150,7 @@ func (c Converters) ConvertPostListTinyWithCategoryDetailToOutput(post *entity.P
 			EditedAt:       model.TimeResponse(post.EditedAt),
 		},
 		IsFavorite:      post.IsFavorite,
-		Creator:         c.NewCreatorFromUser(post.User, idIsFollowMap[post.UserID]),
+		Creator:         c.NewCreatorFromUser(post.User, idRelationFlgMap.IsFollowByUserID(post.UserID), idRelationFlgMap.IsBlockingByUserID(post.UserID)),
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,
 	}

@@ -208,6 +208,19 @@ func (s *UserCommandServiceImpl) Block(user *entity.User, blockedUserID int) err
 	if user.IsSelfID(blockedUserID) {
 		return serror.New(nil, serror.CodeInvalidParam, "can't block self")
 	}
+
+	isFollowMap, err := s.UserQueryRepository.IsFollowing(user.ID, []int{blockedUserID})
+	if err != nil {
+		return errors.Wrap(err, "failed ref user_blocking")
+	}
+
+	// フォローしている場合はフォロー解除する
+	if isFollowMap[blockedUserID] {
+		if err := s.UserCommandRepository.DeleteFollow(user.ID, blockedUserID); err != nil {
+			return errors.Wrap(err, "failed del user_following")
+		}
+	}
+
 	return s.UserCommandRepository.StoreUserBlock(entity.NewUserBlock(user.ID, blockedUserID))
 }
 

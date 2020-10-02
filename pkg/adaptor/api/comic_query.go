@@ -29,12 +29,12 @@ func (c *ComicQueryController) Show(ctx echo.Context, ouser entity.OptionalUser)
 		return errors.Wrapf(err, "validation show comic input")
 	}
 
-	comicDetail, idIsFollowMap, err := c.ComicQueryScenario.Show(param.ID, &ouser)
+	comicDetail, idRelationFlgMap, err := c.ComicQueryScenario.Show(param.ID, &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed show comic")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertComicDetailToOutput(comicDetail, idIsFollowMap))
+	return ctx.JSON(http.StatusOK, c.ConvertComicDetailToOutput(comicDetail, idRelationFlgMap))
 }
 
 func (c *ComicQueryController) ListComic(ctx echo.Context, ouser entity.OptionalUser) error {

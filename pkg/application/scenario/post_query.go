@@ -7,22 +7,21 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
 type (
 	PostQueryScenario interface {
-		Show(id int, ouser *entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error)
-		ShowBySlug(slug string, ouser *entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error)
-		ListByParams(query *query.FindPostListQuery, ouser *entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error)
-		ListFeed(query *query.FindListPaginationQuery, user *entity.User) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error)
-		LitFavorite(targetUserID int, query *query.FindListPaginationQuery, ouser *entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error)
+		Show(id int, ouser *entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error)
+		ShowBySlug(slug string, ouser *entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error)
+		ListByParams(query *query.FindPostListQuery, ouser *entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error)
+		ListFeed(query *query.FindListPaginationQuery, user *entity.User) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error)
+		LitFavorite(targetUserID int, query *query.FindListPaginationQuery, ouser *entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error)
 	}
 
 	PostQueryScenarioImpl struct {
 		factory.CategoryIDMapFactory
 		service.PostQueryService
-		repository.UserQueryRepository
+		service.UserQueryService
 	}
 )
 
@@ -31,8 +30,8 @@ var PostQueryScenarioSet = wire.NewSet(
 	wire.Bind(new(PostQueryScenario), new(*PostQueryScenarioImpl)),
 )
 
-func (s *PostQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error) {
-	var idIsFollowMap map[int]bool
+func (s *PostQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error) {
+	idRelationFlgMap := &entity.UserRelationFlgMap{}
 
 	post, err := s.PostQueryService.ShowByID(id, ouser)
 	if err != nil {
@@ -40,10 +39,10 @@ func (s *PostQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*entit
 	}
 
 	if ouser.Authenticated {
-		// 認証されている場合Post.Userをfollowしているかフラグを取得
-		idIsFollowMap, err = s.UserQueryRepository.IsFollowing(ouser.ID, []int{post.UserID})
+		// 認証されている場合Post.Userをfollow, blockしているかフラグを取得
+		idRelationFlgMap, err = s.UserQueryService.RelationFlgMaps(ouser.ID, []int{post.UserID})
 		if err != nil {
-			return nil, nil, nil, nil, errors.Wrap(err, "failed list user_following")
+			return nil, nil, nil, nil, errors.Wrap(err, "failed find is doing flg")
 		}
 	}
 
@@ -52,11 +51,11 @@ func (s *PostQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*entit
 		return nil, nil, nil, nil, errors.Wrap(err, "failed gen category map")
 	}
 
-	return post, areaCategoriesMap, themeCategoriesMap, idIsFollowMap, nil
+	return post, areaCategoriesMap, themeCategoriesMap, idRelationFlgMap, nil
 }
 
-func (s *PostQueryScenarioImpl) ShowBySlug(slug string, ouser *entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error) {
-	var idIsFollowMap map[int]bool
+func (s *PostQueryScenarioImpl) ShowBySlug(slug string, ouser *entity.OptionalUser) (*entity.PostDetailWithHashtagAndIsFavorite, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error) {
+	idRelationFlgMap := &entity.UserRelationFlgMap{}
 
 	post, err := s.PostQueryService.ShowBySlug(slug, ouser)
 	if err != nil {
@@ -64,10 +63,10 @@ func (s *PostQueryScenarioImpl) ShowBySlug(slug string, ouser *entity.OptionalUs
 	}
 
 	if ouser.Authenticated {
-		// 認証されている場合Post.Userをfollowしているかフラグを取得
-		idIsFollowMap, err = s.UserQueryRepository.IsFollowing(ouser.ID, []int{post.UserID})
+		// 認証されている場合Post.Userをfollow, blockしているかフラグを取得
+		idRelationFlgMap, err = s.UserQueryService.RelationFlgMaps(ouser.ID, []int{post.UserID})
 		if err != nil {
-			return nil, nil, nil, nil, errors.Wrap(err, "failed list user_following")
+			return nil, nil, nil, nil, errors.Wrap(err, "failed find is doing flg")
 		}
 	}
 
@@ -76,11 +75,11 @@ func (s *PostQueryScenarioImpl) ShowBySlug(slug string, ouser *entity.OptionalUs
 		return nil, nil, nil, nil, errors.Wrap(err, "failed gen category map")
 	}
 
-	return post, areaCategoriesMap, themeCategoriesMap, idIsFollowMap, nil
+	return post, areaCategoriesMap, themeCategoriesMap, idRelationFlgMap, nil
 }
 
-func (s *PostQueryScenarioImpl) ListByParams(query *query.FindPostListQuery, ouser *entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error) {
-	var idIsFollowMap map[int]bool
+func (s *PostQueryScenarioImpl) ListByParams(query *query.FindPostListQuery, ouser *entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error) {
+	idRelationFlgMap := &entity.UserRelationFlgMap{}
 
 	posts, err := s.PostQueryService.ListByParams(query, ouser)
 	if err != nil {
@@ -88,10 +87,10 @@ func (s *PostQueryScenarioImpl) ListByParams(query *query.FindPostListQuery, ous
 	}
 
 	if ouser.Authenticated {
-		// 認証されている場合Post.Userをfollowしているかフラグを取得
-		idIsFollowMap, err = s.UserQueryRepository.IsFollowing(ouser.ID, posts.UserIDs())
+		// 認証されている場合Post.Userをfollow, blockしているかフラグを取得
+		idRelationFlgMap, err = s.UserQueryService.RelationFlgMaps(ouser.ID, posts.UserIDs())
 		if err != nil {
-			return nil, nil, nil, nil, errors.Wrap(err, "failed list user_following")
+			return nil, nil, nil, nil, errors.Wrap(err, "failed find is doing flg")
 		}
 	}
 
@@ -100,21 +99,19 @@ func (s *PostQueryScenarioImpl) ListByParams(query *query.FindPostListQuery, ous
 		return nil, nil, nil, nil, errors.Wrap(err, "failed gen category map")
 	}
 
-	return posts, areaCategoriesMap, themeCategoriesMap, idIsFollowMap, nil
+	return posts, areaCategoriesMap, themeCategoriesMap, idRelationFlgMap, nil
 }
 
-func (s *PostQueryScenarioImpl) ListFeed(query *query.FindListPaginationQuery, user *entity.User) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error) {
-	var idIsFollowMap map[int]bool
-
+func (s *PostQueryScenarioImpl) ListFeed(query *query.FindListPaginationQuery, user *entity.User) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error) {
 	posts, err := s.PostQueryService.ListFeed(query, user)
 	if err != nil {
 		return nil, nil, nil, nil, errors.Wrap(err, "failed list feed post")
 	}
 
-	// 認証されている場合Post.Userをfollowしているかフラグを取得
-	idIsFollowMap, err = s.UserQueryRepository.IsFollowing(user.ID, posts.UserIDs())
+	// Post.Userをfollow, blockしているかフラグを取得
+	idRelationFlgMap, err := s.UserQueryService.RelationFlgMaps(user.ID, posts.UserIDs())
 	if err != nil {
-		return nil, nil, nil, nil, errors.Wrap(err, "failed list user_following")
+		return nil, nil, nil, nil, errors.Wrap(err, "failed find is doing flg")
 	}
 
 	areaCategoriesMap, themeCategoriesMap, err := s.CategoryIDMapFactory.GenerateCategoryIDMap(posts.AreaCategoryIDs(), posts.ThemeCategoryIDs())
@@ -122,11 +119,11 @@ func (s *PostQueryScenarioImpl) ListFeed(query *query.FindListPaginationQuery, u
 		return nil, nil, nil, nil, errors.Wrap(err, "failed gen category map")
 	}
 
-	return posts, areaCategoriesMap, themeCategoriesMap, idIsFollowMap, nil
+	return posts, areaCategoriesMap, themeCategoriesMap, idRelationFlgMap, nil
 }
 
-func (s *PostQueryScenarioImpl) LitFavorite(targetUserID int, query *query.FindListPaginationQuery, ouser *entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error) {
-	var idIsFollowMap map[int]bool
+func (s *PostQueryScenarioImpl) LitFavorite(targetUserID int, query *query.FindListPaginationQuery, ouser *entity.OptionalUser) (*entity.PostList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error) {
+	idRelationFlgMap := &entity.UserRelationFlgMap{}
 
 	posts, err := s.PostQueryService.ListFavoritePost(targetUserID, query, ouser)
 	if err != nil {
@@ -134,10 +131,10 @@ func (s *PostQueryScenarioImpl) LitFavorite(targetUserID int, query *query.FindL
 	}
 
 	if ouser.Authenticated {
-		// 認証されている場合Post.Userをfollowしているかフラグを取得
-		idIsFollowMap, err = s.UserQueryRepository.IsFollowing(ouser.ID, posts.UserIDs())
+		// 認証されている場合Post.Userをfollow, blockしているかフラグを取得
+		idRelationFlgMap, err = s.UserQueryService.RelationFlgMaps(ouser.ID, posts.UserIDs())
 		if err != nil {
-			return nil, nil, nil, nil, errors.Wrap(err, "failed list user_following")
+			return nil, nil, nil, nil, errors.Wrap(err, "failed find is doing flg")
 		}
 	}
 
@@ -146,5 +143,5 @@ func (s *PostQueryScenarioImpl) LitFavorite(targetUserID int, query *query.FindL
 		return nil, nil, nil, nil, errors.Wrap(err, "failed gen category map")
 	}
 
-	return posts, areaCategoriesMap, themeCategoriesMap, idIsFollowMap, nil
+	return posts, areaCategoriesMap, themeCategoriesMap, idRelationFlgMap, nil
 }

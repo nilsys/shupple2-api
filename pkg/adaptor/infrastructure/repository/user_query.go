@@ -134,10 +134,18 @@ func (r *UserQueryRepositoryImpl) IsFollowing(baseUserID int, userIDs []int) (ma
 	var rows entity.UserFollowings
 
 	if err := r.DB.Where("user_id = ? AND target_id IN (?)", baseUserID, userIDs).Find(&rows).Error; err != nil {
-		return nil, errors.Wrap(err, "failed find ")
+		return nil, errors.Wrap(err, "failed find user_following")
 	}
 
 	return rows.ToIDExistMap(userIDs), nil
+}
+
+func (r *UserQueryRepositoryImpl) IsBlocking(baseUserID int, blockedUserIDs []int) (map[int]bool, error) {
+	var rows entity.UserBlocking
+	if err := r.DB.Where("user_id = ? AND blocked_user_id IN (?)", baseUserID, blockedUserIDs).Find(&rows).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find user_block_user")
+	}
+	return rows.ToIDExistMap(blockedUserIDs), nil
 }
 
 func (r *UserQueryRepositoryImpl) UnscopedFindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error) {

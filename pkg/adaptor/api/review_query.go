@@ -36,12 +36,12 @@ func (c *ReviewQueryController) LisReview(ctx echo.Context, ouser entity.Optiona
 
 	reviewQuery := c.ConvertFindReviewListParamToQuery(reviewParam)
 
-	list, idIsFollowMap, err := c.ReviewQueryScenario.ListByParams(reviewQuery, ouser)
+	list, idRelationFlgMap, err := c.ReviewQueryScenario.ListByParams(reviewQuery, ouser)
 	if err != nil {
 		return errors.Wrap(err, "Failed to show review list")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteListToOutput(list, idIsFollowMap))
+	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteListToOutput(list, idRelationFlgMap))
 }
 
 func (c *ReviewQueryController) ListFeedReview(ctx echo.Context, user entity.User) error {
@@ -52,12 +52,12 @@ func (c *ReviewQueryController) ListFeedReview(ctx echo.Context, user entity.Use
 
 	q := c.ConvertListFeedReviewInputToQuery(p)
 
-	reviews, idIsFollowMap, err := c.ReviewQueryScenario.ListFeed(q, user)
+	reviews, idRelationFlgMap, err := c.ReviewQueryScenario.ListFeed(q, user)
 	if err != nil {
 		return errors.Wrap(err, "failed to show feed review list")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews, idIsFollowMap))
+	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews, idRelationFlgMap))
 }
 
 func (c *ReviewQueryController) ShowReview(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -66,12 +66,12 @@ func (c *ReviewQueryController) ShowReview(ctx echo.Context, ouser entity.Option
 		return errors.Wrap(err, "required review id")
 	}
 
-	review, idIsFollowMap, err := c.ReviewQueryScenario.Show(p.ID, ouser)
+	review, idRelationFlgMap, err := c.ReviewQueryScenario.Show(p.ID, ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed show review")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteToOutput(review, idIsFollowMap))
+	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteToOutput(review, idRelationFlgMap))
 }
 
 func (c *ReviewQueryController) ListReviewCommentByReviewID(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -96,12 +96,12 @@ func (c *ReviewQueryController) ListFavoriteReview(ctx echo.Context, ouser entit
 
 	q := c.ConvertListFavoriteReviewParamToQuery(p)
 
-	reviews, idIsFollowMap, err := c.ReviewQueryScenario.ListFavorite(p.UserID, q, ouser)
+	reviews, idRelationFlgMap, err := c.ReviewQueryScenario.ListFavorite(p.UserID, q, ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed list favorite review")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews, idIsFollowMap))
+	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews, idRelationFlgMap))
 }
 
 func (c *ReviewQueryController) ListReviewCommentReply(ctx echo.Context, ouser entity.OptionalUser) error {

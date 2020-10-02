@@ -29,12 +29,12 @@ func (c *FeatureQueryController) Show(ctx echo.Context, ouser entity.OptionalUse
 		return errors.Wrap(err, "validation show feature")
 	}
 
-	queryFeature, areaCategories, themeCategories, idIsFollowMap, err := c.FeatureQueryScenario.Show(p.ID, &ouser)
+	queryFeature, areaCategories, themeCategories, idRelationFlgMap, err := c.FeatureQueryScenario.Show(p.ID, &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed show query feature")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertFeatureDetailPostsToOutput(queryFeature, areaCategories, themeCategories, idIsFollowMap))
+	return ctx.JSON(http.StatusOK, c.ConvertFeatureDetailPostsToOutput(queryFeature, areaCategories, themeCategories, idRelationFlgMap))
 }
 
 func (c *FeatureQueryController) List(ctx echo.Context) error {

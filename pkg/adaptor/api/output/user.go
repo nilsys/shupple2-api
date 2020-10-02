@@ -17,6 +17,7 @@ type (
 		YoutubeURL   string `json:"youtubeUrl"`
 		URL          string `json:"url"`
 		IsFollow     bool   `json:"isFollow"`
+		IsBlocking   bool   `json:"isBlocking"`
 	}
 
 	// ユーザーランキングで返すレスポンス型
@@ -63,6 +64,7 @@ type (
 		Interests      []Interest            `json:"interests"`
 		Attributes     []model.UserAttribute `json:"attributes"`
 		IsFollow       bool                  `json:"isFollow"`
+		IsBlocking     bool                  `json:"isBlocking"`
 	}
 
 	Interest struct {
@@ -72,7 +74,7 @@ type (
 	}
 )
 
-func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL, twitterURL, youtubeURL, url string, isFollow bool) Creator {
+func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL, twitterURL, youtubeURL, url string, isFollow, isBlocking bool) Creator {
 	return Creator{
 		ID:           id,
 		UID:          uid,
@@ -85,6 +87,7 @@ func NewCreator(id int, uid, thumbnail, name, profile, facebookURL, instagramURL
 		YoutubeURL:   youtubeURL,
 		URL:          url,
 		IsFollow:     isFollow,
+		IsBlocking:   isBlocking,
 	}
 }
 

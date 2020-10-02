@@ -36,7 +36,7 @@ func (c Converters) ConvertVlogListToOutput(queryVlogs *entity.VlogList, areaCat
 	}
 }
 
-func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail, touristSpotReviewCount map[int]*entity.TouristSpotReviewCount, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idIsFollowMap map[int]bool) *output.VlogDetail {
+func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail, touristSpotReviewCount map[int]*entity.TouristSpotReviewCount, areaCategories map[int]*entity.AreaCategory, themeCategories map[int]*entity.ThemeCategory, idRelationFlgMap *entity.UserRelationFlgMap) *output.VlogDetail {
 	touristSpots := make([]*output.TouristSpotTiny, len(vlog.TouristSpots))
 	for i, touristSpot := range vlog.TouristSpots {
 		touristSpots[i] = output.NewTouristSpotTinyFromEntity(touristSpot, touristSpotReviewCount[touristSpot.ID].ReviewCount)
@@ -44,7 +44,7 @@ func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail, touristSpotReview
 
 	editors := make([]*output.Creator, len(vlog.Editors))
 	for i, editor := range vlog.Editors {
-		e := c.NewCreatorFromUser(editor, idIsFollowMap[editor.ID])
+		e := c.NewCreatorFromUser(editor, idRelationFlgMap.IsFollowByUserID(editor.ID), idRelationFlgMap.IsBlockingByUserID(editor.ID))
 		editors[i] = &e
 	}
 
@@ -73,7 +73,7 @@ func (c Converters) ConvertVlogDetail(vlog *entity.VlogDetail, touristSpotReview
 		TwitterCount:    vlog.TwitterCount,
 		FavoriteCount:   vlog.FavoriteCount,
 		IsFavorite:      vlog.IsFavorite,
-		Creator:         c.NewCreatorFromUser(vlog.User, idIsFollowMap[vlog.UserID]),
+		Creator:         c.NewCreatorFromUser(vlog.User, idRelationFlgMap.IsFollowByUserID(vlog.UserID), idRelationFlgMap.IsBlockingByUserID(vlog.UserID)),
 		Editors:         editors,
 		AreaCategories:  areaCategoriesRes,
 		ThemeCategories: themeCategoriesRes,

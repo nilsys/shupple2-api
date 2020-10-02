@@ -34,12 +34,12 @@ func (c *CfProjectQueryController) List(ctx echo.Context, ouser entity.OptionalU
 		return errors.Wrap(err, "failed bind input")
 	}
 
-	projects, idIsFollowMap, idIsSupportMap, err := c.CfProjectQueryScenario.List(c.Converters.ConvertCfProjectListInputToQuery(i), &ouser)
+	projects, idRelationFlgMap, idIsSupportMap, err := c.CfProjectQueryScenario.List(c.Converters.ConvertCfProjectListInputToQuery(i), &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed list cf_project")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertCfProjectDetailListToOutput(projects, idIsFollowMap, idIsSupportMap))
+	return ctx.JSON(http.StatusOK, c.ConvertCfProjectDetailListToOutput(projects, idRelationFlgMap, idIsSupportMap))
 }
 
 func (c *CfProjectQueryController) Show(ctx echo.Context, ouser entity.OptionalUser) error {
@@ -47,12 +47,12 @@ func (c *CfProjectQueryController) Show(ctx echo.Context, ouser entity.OptionalU
 	if err := BindAndValidate(ctx, i); err != nil {
 		return errors.Wrap(err, "failed bind input")
 	}
-	project, idIsFollowMap, idIsSupportMap, err := c.CfProjectQueryScenario.Show(i.ID, &ouser)
+	project, idRelationFlgMap, idIsSupportMap, err := c.CfProjectQueryScenario.Show(i.ID, &ouser)
 	if err != nil {
 		return errors.Wrap(err, "failed show cf_project")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertCfProjectDetailToOutput(project, idIsFollowMap, idIsSupportMap))
+	return ctx.JSON(http.StatusOK, c.ConvertCfProjectDetailToOutput(project, idRelationFlgMap, idIsSupportMap))
 
 }
 
@@ -76,10 +76,10 @@ func (c *CfProjectQueryController) ListSupported(ctx echo.Context, user entity.U
 		return errors.Wrap(err, "failed bind input")
 	}
 
-	projects, idIsFollowMap, idIsSupportMap, err := c.CfProjectQueryScenario.ListSupported(&user, c.Converters.ConvertSupportedCfProjectListInputToQuery(i))
+	projects, idRelationFlgMap, idIsSupportMap, err := c.CfProjectQueryScenario.ListSupported(&user, c.Converters.ConvertSupportedCfProjectListInputToQuery(i))
 	if err != nil {
 		return errors.Wrap(err, "failed list cf_project")
 	}
 
-	return ctx.JSON(http.StatusOK, c.ConvertCfProjectDetailListToOutput(projects, idIsFollowMap, idIsSupportMap))
+	return ctx.JSON(http.StatusOK, c.ConvertCfProjectDetailListToOutput(projects, idRelationFlgMap, idIsSupportMap))
 }

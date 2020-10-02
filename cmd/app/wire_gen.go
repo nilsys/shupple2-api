@@ -68,9 +68,12 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	cfProjectQueryServiceImpl := &service.CfProjectQueryServiceImpl{
 		CfProjectQueryRepository: cfProjectQueryRepositoryImpl,
 	}
+	userQueryServiceImpl := &service.UserQueryServiceImpl{
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
 	cfProjectQueryScenarioImpl := &scenario.CfProjectQueryScenarioImpl{
 		CfProjectQueryService:    cfProjectQueryServiceImpl,
-		UserQueryRepository:      userQueryRepositoryImpl,
+		UserQueryService:         userQueryServiceImpl,
 		CfProjectQueryRepository: cfProjectQueryRepositoryImpl,
 	}
 	cfProjectQueryController := api.CfProjectQueryController{
@@ -347,7 +350,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	postQueryScenarioImpl := &scenario.PostQueryScenarioImpl{
 		CategoryIDMapFactory: categoryIDMapFactory,
 		PostQueryService:     postQueryServiceImpl,
-		UserQueryRepository:  userQueryRepositoryImpl,
+		UserQueryService:     userQueryServiceImpl,
 	}
 	postQueryController := api.PostQueryController{
 		Converters:        converters,
@@ -391,8 +394,8 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		UserQueryRepository:  userQueryRepositoryImpl,
 	}
 	comicQueryQueryScenarioImpl := &scenario.ComicQueryQueryScenarioImpl{
-		ComicQueryService:   comicQueryServiceImpl,
-		UserQueryRepository: userQueryRepositoryImpl,
+		ComicQueryService: comicQueryServiceImpl,
+		UserQueryService:  userQueryServiceImpl,
 	}
 	comicQueryController := api.ComicQueryController{
 		Converters:         converters,
@@ -418,8 +421,8 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		MetasearchAreaQueryRepository: metasearchAreaQueryRepositoryImpl,
 	}
 	reviewQueryScenarioImpl := &scenario.ReviewQueryScenarioImpl{
-		ReviewQueryService:  reviewQueryServiceImpl,
-		UserQueryRepository: userQueryRepositoryImpl,
+		ReviewQueryService: reviewQueryServiceImpl,
+		UserQueryService:   userQueryServiceImpl,
 	}
 	reviewQueryController := api.ReviewQueryController{
 		Converters:          converters,
@@ -524,7 +527,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	featureQueryScenarioImpl := &scenario.FeatureQueryScenarioImpl{
 		CategoryIDMapFactory: categoryIDMapFactory,
 		FeatureQueryService:  featureQueryServiceImpl,
-		UserQueryRepository:  userQueryRepositoryImpl,
+		UserQueryService:     userQueryServiceImpl,
 	}
 	featureQueryController := api.FeatureQueryController{
 		Converters:           converters,
@@ -541,14 +544,11 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	vlogQueryScenarioImpl := &scenario.VlogQueryScenarioImpl{
 		VlogQueryService:     vlogQueryServiceImpl,
 		CategoryIDMapFactory: categoryIDMapFactory,
-		UserQueryRepository:  userQueryRepositoryImpl,
+		UserQueryService:     userQueryServiceImpl,
 	}
 	vlogQueryController := api.VlogQueryController{
 		Converters:        converters,
 		VlogQueryScenario: vlogQueryScenarioImpl,
-	}
-	userQueryServiceImpl := &service.UserQueryServiceImpl{
-		UserQueryRepository: userQueryRepositoryImpl,
 	}
 	userQueryController := api.UserQueryController{
 		Converters:       converters,

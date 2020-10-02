@@ -381,6 +381,21 @@ func (mr *MockUserQueryRepositoryMockRecorder) IsFollowing(baseUserID, userIDs i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsFollowing", reflect.TypeOf((*MockUserQueryRepository)(nil).IsFollowing), baseUserID, userIDs)
 }
 
+// IsBlocking mocks base method
+func (m *MockUserQueryRepository) IsBlocking(baseUserID int, blockedUserIDs []int) (map[int]bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsBlocking", baseUserID, blockedUserIDs)
+	ret0, _ := ret[0].(map[int]bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IsBlocking indicates an expected call of IsBlocking
+func (mr *MockUserQueryRepositoryMockRecorder) IsBlocking(baseUserID, blockedUserIDs interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsBlocking", reflect.TypeOf((*MockUserQueryRepository)(nil).IsBlocking), baseUserID, blockedUserIDs)
+}
+
 // FindRecommendFollowUserList mocks base method
 func (m *MockUserQueryRepository) FindRecommendFollowUserList(interestIDs []int) ([]*entity.UserTiny, error) {
 	m.ctrl.T.Helper()

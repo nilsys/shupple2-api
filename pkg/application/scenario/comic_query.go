@@ -6,18 +6,17 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/application/service"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
 type (
 	ComicQueryScenario interface {
-		Show(id int, ouser *entity.OptionalUser) (*entity.ComicDetail, map[int]bool, error)
+		Show(id int, ouser *entity.OptionalUser) (*entity.ComicDetail, *entity.UserRelationFlgMap, error)
 		List(query *query.FindListPaginationQuery, ouser *entity.OptionalUser) (*entity.ComicList, error)
 	}
 
 	ComicQueryQueryScenarioImpl struct {
 		service.ComicQueryService
-		repository.UserQueryRepository
+		service.UserQueryService
 	}
 )
 
@@ -26,8 +25,8 @@ var ComicQueryScenarioSet = wire.NewSet(
 	wire.Bind(new(ComicQueryScenario), new(*ComicQueryQueryScenarioImpl)),
 )
 
-func (s *ComicQueryQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*entity.ComicDetail, map[int]bool, error) {
-	var idIsFollowMap map[int]bool
+func (s *ComicQueryQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*entity.ComicDetail, *entity.UserRelationFlgMap, error) {
+	idRelationFlgMap := &entity.UserRelationFlgMap{}
 
 	comic, err := s.ComicQueryService.Show(id, ouser)
 	if err != nil {
@@ -35,14 +34,14 @@ func (s *ComicQueryQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (
 	}
 
 	if ouser.IsAuthorized() {
-		// 認証されている場合、Comic.Userをfollowしているかフラグを取得
-		idIsFollowMap, err = s.IsFollowing(ouser.ID, []int{comic.UserID})
+		// 認証されている場合、Comic.Userをfollow, blockしているかフラグを取得
+		idRelationFlgMap, err = s.UserQueryService.RelationFlgMaps(ouser.ID, []int{comic.UserID})
 		if err != nil {
-			return nil, nil, errors.Wrap(err, "failed list user_following")
+			return nil, nil, errors.Wrap(err, "failed find is doing flg")
 		}
 	}
 
-	return comic, idIsFollowMap, nil
+	return comic, idRelationFlgMap, nil
 }
 
 // MEMO: 現時点ではid:IsFollowのMapが必要ない

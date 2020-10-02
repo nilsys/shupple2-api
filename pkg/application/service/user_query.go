@@ -5,7 +5,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
@@ -23,6 +22,7 @@ type (
 		ListFavoriteComicUser(comicID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error)
 		ListFavoriteVlogUser(vlogID int, ouser *entity.OptionalUser, query *query.FindListPaginationQuery) ([]*entity.UserTinyWithIsFollow, error)
 		IsExistByPhoneNumber(number string) (bool, error)
+		RelationFlgMaps(baseUserID int, targetUserIDs []int) (*entity.UserRelationFlgMap, error)
 	}
 
 	UserQueryServiceImpl struct {
@@ -42,20 +42,17 @@ func (s *UserQueryServiceImpl) ShowByUID(uid string, ouser entity.OptionalUser) 
 	}
 
 	if ouser.Authenticated {
-		if ouser.IsBlockingUserID(showTargetUser.ID) {
-			return nil, serror.New(nil, serror.CodeInvalidParam, "blocking user")
-		}
-
 		user, err := s.UserQueryRepository.FindUserDetailWithCountByID(showTargetUser.ID)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed find user by id")
 		}
-		idIsFollowMap, err := s.UserQueryRepository.IsFollowing(ouser.ID, []int{showTargetUser.ID})
+		idRelationFlgMap, err := s.RelationFlgMaps(ouser.ID, []int{showTargetUser.ID})
 		if err != nil {
 			return nil, errors.Wrap(err, "failed find user_following")
 		}
 
-		user.IsFollow = idIsFollowMap[showTargetUser.ID]
+		user.IsFollow = idRelationFlgMap.IsFollowByUserID(showTargetUser.ID)
+		user.IsBlocking = idRelationFlgMap.IsBlockingByUserID(showTargetUser.ID)
 
 		return user, nil
 	}
@@ -150,4 +147,24 @@ func (s *UserQueryServiceImpl) IsExistByPhoneNumber(number string) (bool, error)
 	}
 
 	return len(user) > 0, nil
+}
+
+/*
+MEMO: IsFollow, IsBlockingのmapをを持つentityを返す
+      他にIsXXXのフラグが必要になった場合はここに足す事
+*/
+func (s *UserQueryServiceImpl) RelationFlgMaps(baseUserID int, targetUserIDs []int) (*entity.UserRelationFlgMap, error) {
+	idIsFollowMap, err := s.UserQueryRepository.IsFollowing(baseUserID, targetUserIDs)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed find user_following")
+	}
+	idIsBlockingMap, err := s.UserQueryRepository.IsBlocking(baseUserID, targetUserIDs)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed find user_blocking")
+	}
+
+	return &entity.UserRelationFlgMap{
+		IDIsFollowMap:   idIsFollowMap,
+		IDIsBlockingMap: idIsBlockingMap,
+	}, nil
 }

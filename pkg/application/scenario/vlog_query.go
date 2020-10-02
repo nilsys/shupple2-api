@@ -7,19 +7,18 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
 type (
 	VlogQueryScenario interface {
-		Show(id int, ouser *entity.OptionalUser) (*entity.VlogDetail, map[int]*entity.TouristSpotReviewCount, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error)
+		Show(id int, ouser *entity.OptionalUser) (*entity.VlogDetail, map[int]*entity.TouristSpotReviewCount, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error)
 		List(query *query.FindVlogListQuery, ouser *entity.OptionalUser) (*entity.VlogList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error)
 	}
 
 	VlogQueryScenarioImpl struct {
 		service.VlogQueryService
 		factory.CategoryIDMapFactory
-		repository.UserQueryRepository
+		service.UserQueryService
 	}
 )
 
@@ -28,8 +27,8 @@ var VlogQueryScenarioSet = wire.NewSet(
 	wire.Bind(new(VlogQueryScenario), new(*VlogQueryScenarioImpl)),
 )
 
-func (s *VlogQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*entity.VlogDetail, map[int]*entity.TouristSpotReviewCount, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error) {
-	var idIsFollowMap map[int]bool
+func (s *VlogQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*entity.VlogDetail, map[int]*entity.TouristSpotReviewCount, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error) {
+	idRelationFlgMap := &entity.UserRelationFlgMap{}
 
 	vlog, touristSpotReviewCountList, err := s.VlogQueryService.Show(id, ouser)
 	if err != nil {
@@ -42,14 +41,14 @@ func (s *VlogQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*entit
 	}
 
 	if ouser.IsAuthorized() {
-		// 認証されている場合Vlog.Userをfollowしているかフラグを取得
-		idIsFollowMap, err = s.UserQueryRepository.IsFollowing(ouser.ID, vlog.UserIDs())
+		// 認証されている場合Vlog.Userをfollow, blockしているかフラグを取得
+		idRelationFlgMap, err = s.UserQueryService.RelationFlgMaps(ouser.ID, vlog.UserIDs())
 		if err != nil {
-			return nil, nil, nil, nil, nil, errors.Wrap(err, "failed find")
+			return nil, nil, nil, nil, nil, errors.Wrap(err, "failed find is doing flg")
 		}
 	}
 
-	return vlog, touristSpotReviewCountList.IDMap(), areaCategoriesMap, themeCategoriesMap, idIsFollowMap, nil
+	return vlog, touristSpotReviewCountList.IDMap(), areaCategoriesMap, themeCategoriesMap, idRelationFlgMap, nil
 }
 
 func (s *VlogQueryScenarioImpl) List(query *query.FindVlogListQuery, ouser *entity.OptionalUser) (*entity.VlogList, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, error) {

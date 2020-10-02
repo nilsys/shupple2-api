@@ -77,10 +77,10 @@ func (c Converters) ConvertReviewCommentWithIsFavoriteToOutput(reviewComment *en
 	)
 }
 
-func (c Converters) ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews *entity.ReviewDetailWithIsFavoriteList, idIsFollowMap map[int]bool) output.ReviewDetailIsFavoriteList {
+func (c Converters) ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews *entity.ReviewDetailWithIsFavoriteList, idRelationFlgMap *entity.UserRelationFlgMap) output.ReviewDetailIsFavoriteList {
 	responses := make([]*output.Review, len(reviews.List))
 	for i, queryReview := range reviews.List {
-		responses[i] = c.ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview, idIsFollowMap)
+		responses[i] = c.ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview, idRelationFlgMap)
 	}
 	return output.ReviewDetailIsFavoriteList{
 		TotalNumber: reviews.TotalNumber,
@@ -88,7 +88,7 @@ func (c Converters) ConvertQueryReviewDetailWithIsFavoriteListToOutput(reviews *
 	}
 }
 
-func (c Converters) ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview *entity.ReviewDetailWithIsFavorite, idIsFollowMap map[int]bool) *output.Review {
+func (c Converters) ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview *entity.ReviewDetailWithIsFavorite, idRelationFlgMap *entity.UserRelationFlgMap) *output.Review {
 	hashtags := make([]output.Hashtag, len(queryReview.Hashtag))
 	for i, hashtag := range queryReview.Hashtag {
 		hashtags[i] = output.Hashtag{
@@ -112,7 +112,7 @@ func (c Converters) ConvertQueryReviewDetailWithIsFavoriteToOutput(queryReview *
 		TravelDate:    model.NewYearMonth(queryReview.TravelDate),
 		Hashtag:       hashtags,
 		CommentCount:  queryReview.CommentCount,
-		Creator:       c.NewCreatorFromUser(queryReview.User, idIsFollowMap[queryReview.User.ID]),
+		Creator:       c.NewCreatorFromUser(queryReview.User, idRelationFlgMap.IsFollowByUserID(queryReview.UserID), idRelationFlgMap.IsBlockingByUserID(queryReview.UserID)),
 		IsFavorite:    queryReview.IsFavorite,
 	}
 }

@@ -237,8 +237,5 @@ func (c CfProjectTiny) MediaWebURL(baseURL config.URL) *config.URL {
 }
 
 func (c *CfProjectSnapshotTiny) IsExpired() bool {
-	if c.Deadline.Before(time.Now()) {
-		return true
-	}
-	return false
+	return c.Deadline.Before(time.Now())
 }

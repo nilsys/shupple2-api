@@ -7,19 +7,18 @@ import (
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/factory"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
 
 type (
 	FeatureQueryScenario interface {
-		Show(id int, ouser *entity.OptionalUser) (*entity.FeatureDetailWithPosts, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error)
+		Show(id int, ouser *entity.OptionalUser) (*entity.FeatureDetailWithPosts, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error)
 		List(query *query.FindListPaginationQuery) (*entity.FeatureList, error)
 	}
 
 	FeatureQueryScenarioImpl struct {
 		factory.CategoryIDMapFactory
 		service.FeatureQueryService
-		repository.UserQueryRepository
+		service.UserQueryService
 	}
 )
 
@@ -28,8 +27,8 @@ var FeatureQueryScenarioSet = wire.NewSet(
 	wire.Bind(new(FeatureQueryScenario), new(*FeatureQueryScenarioImpl)),
 )
 
-func (s *FeatureQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*entity.FeatureDetailWithPosts, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, map[int]bool, error) {
-	var idIsFollowMap map[int]bool
+func (s *FeatureQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*entity.FeatureDetailWithPosts, map[int]*entity.AreaCategory, map[int]*entity.ThemeCategory, *entity.UserRelationFlgMap, error) {
+	idRelationFlgMap := &entity.UserRelationFlgMap{}
 
 	feature, err := s.FeatureQueryService.Show(id)
 	if err != nil {
@@ -42,13 +41,13 @@ func (s *FeatureQueryScenarioImpl) Show(id int, ouser *entity.OptionalUser) (*en
 	}
 
 	if ouser.IsAuthorized() {
-		idIsFollowMap, err = s.UserQueryRepository.IsFollowing(ouser.ID, []int{feature.UserID})
+		idRelationFlgMap, err = s.UserQueryService.RelationFlgMaps(ouser.ID, []int{feature.UserID})
 		if err != nil {
-			return nil, nil, nil, nil, errors.Wrap(err, "failed list user_following")
+			return nil, nil, nil, nil, errors.Wrap(err, "failed find is doing flg")
 		}
 	}
 
-	return feature, areaCategoriesMap, themeCategoriesMap, idIsFollowMap, nil
+	return feature, areaCategoriesMap, themeCategoriesMap, idRelationFlgMap, nil
 }
 
 func (s *FeatureQueryScenarioImpl) List(query *query.FindListPaginationQuery) (*entity.FeatureList, error) {

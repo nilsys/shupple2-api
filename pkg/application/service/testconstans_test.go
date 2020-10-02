@@ -181,6 +181,8 @@ func newCfProjectSnapshot() entity.CfProjectSnapshot {
 			SnapshotID:  cfProjectSnapshotID,
 			CfProjectID: cfProjectID,
 			UserID:      ownerUserID,
+			// 有効な期限
+			Deadline: time.Now().Add(time.Hour),
 		},
 	}
 	util.FillDummyString(&snapshot, cfProjectSnapshotID)

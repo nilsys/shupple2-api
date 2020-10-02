@@ -37,6 +37,7 @@ type (
 		UnscopedFindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error)
 		FindUserDetailWithCountByID(id int) (*entity.UserDetailWithMediaCount, error)
 		IsFollowing(baseUserID int, userIDs []int) (map[int]bool, error)
+		IsBlocking(baseUserID int, blockedUserIDs []int) (map[int]bool, error)
 		FindRecommendFollowUserList(interestIDs []int) ([]*entity.UserTiny, error)
 		IsExistByUID(uid string) (bool, error)
 		FindByCognitoUserName(cognitoUserName []string) ([]*entity.UserTiny, error)

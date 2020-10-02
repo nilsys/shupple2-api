@@ -36,7 +36,7 @@ func (c *ReviewCommandController) Store(ctx echo.Context, user entity.User) erro
 	}
 
 	// 自身をフォローする事はできないので、review.UserのIsFollowチェックはしない
-	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteToOutput(review, map[int]bool{}))
+	return ctx.JSON(http.StatusOK, c.ConvertQueryReviewDetailWithIsFavoriteToOutput(review, &entity.UserRelationFlgMap{}))
 }
 
 func (c *ReviewCommandController) Update(ctx echo.Context, user entity.User) error {
