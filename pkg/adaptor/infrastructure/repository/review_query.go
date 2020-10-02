@@ -1,10 +1,13 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -192,6 +195,13 @@ func (r *ReviewQueryRepositoryImpl) buildShowReviewListQuery(query *query.ShowRe
 
 	if query.MetasearchSubSubAreaID != 0 {
 		q = q.Where("tourist_spot_id IN (SELECT tourist_spot_id FROM tourist_spot_area_category WHERE area_category_id IN (SELECT id FROM area_category WHERE metasearch_sub_sub_area_id = ?))", query.MetasearchSubSubAreaID)
+	}
+
+	if query.TargetType != model.ReviewTargetUndefined {
+		// MEMO:
+		// q.Where("? IS NOT NULL", query.TargetType.ColumnName())
+		// の様にすると、gormの仕様で?はシングルクオーテーションで囲まれ、mysqlカラムとして扱われない為こうしている
+		q = q.Where(fmt.Sprintf("%s IS NOT NULL", query.TargetType.ColumnName()))
 	}
 
 	if len(query.InnIDs) > 0 {

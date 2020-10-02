@@ -24,3 +24,14 @@ func (sortBy ReviewSortBy) GetReviewOrderQueryForJoin() string {
 		return "review.created_at DESC"
 	}
 }
+
+func (x ReviewTarget) ColumnName() string {
+	switch x {
+	case ReviewTargetInn:
+		return "inn_id"
+	case ReviewTargetTouristSpot:
+		return "tourist_spot_id"
+	default:
+		return "'"
+	}
+}

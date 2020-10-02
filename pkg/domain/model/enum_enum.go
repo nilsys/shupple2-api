@@ -1173,6 +1173,61 @@ func (x *ReviewSortBy) UnmarshalText(text []byte) error {
 }
 
 const (
+	// ReviewTargetUndefined is a ReviewTarget of type Undefined
+	ReviewTargetUndefined ReviewTarget = iota
+	// ReviewTargetInn is a ReviewTarget of type Inn
+	ReviewTargetInn
+	// ReviewTargetTouristSpot is a ReviewTarget of type TouristSpot
+	ReviewTargetTouristSpot
+)
+
+const _ReviewTargetName = "UndefinedInnTouristSpot"
+
+var _ReviewTargetMap = map[ReviewTarget]string{
+	0: _ReviewTargetName[0:9],
+	1: _ReviewTargetName[9:12],
+	2: _ReviewTargetName[12:23],
+}
+
+// String implements the Stringer interface.
+func (x ReviewTarget) String() string {
+	if str, ok := _ReviewTargetMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("ReviewTarget(%d)", x)
+}
+
+var _ReviewTargetValue = map[string]ReviewTarget{
+	_ReviewTargetName[0:9]:   0,
+	_ReviewTargetName[9:12]:  1,
+	_ReviewTargetName[12:23]: 2,
+}
+
+// ParseReviewTarget attempts to convert a string to a ReviewTarget
+func ParseReviewTarget(name string) (ReviewTarget, error) {
+	if x, ok := _ReviewTargetValue[name]; ok {
+		return x, nil
+	}
+	return ReviewTarget(0), fmt.Errorf("%s is not a valid ReviewTarget", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x ReviewTarget) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *ReviewTarget) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseReviewTarget(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// SessionStatusUndefined is a SessionStatus of type Undefined
 	SessionStatusUndefined SessionStatus = iota
 	// SessionStatusInSession is a SessionStatus of type InSession

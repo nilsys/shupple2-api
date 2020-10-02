@@ -18,6 +18,7 @@ type (
 		MetasearchAreaID       int
 		MetasearchSubAreaID    int
 		MetasearchSubSubAreaID int
+		TargetType             model.ReviewTarget
 		SortBy                 model.ReviewSortBy
 		Keyword                string
 		ExcludeID              int

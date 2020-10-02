@@ -517,6 +517,12 @@ paths:
           schema:
             type: string
         - in: query
+          name: targetType
+          description: |
+            レビュー対象絞り込み
+          schema:
+            $ref: "#/components/schemas/ReviewTargetType"
+        - in: query
           name: q
           description: |
             検索ワード
@@ -5024,6 +5030,13 @@ components:
         - InSession
       description: |
         開催ステータス
+    ReviewTargetType:
+      type: string
+      enum:
+        - Inn
+        - TouristSpot
+      description: |
+        レビュー対象
     ErrorCode:
       type: string
       enum:

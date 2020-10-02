@@ -140,3 +140,8 @@ type EntityType int
 ENUM(Undefined, InSession)
 */
 type SessionStatus int
+
+/*
+ENUM(Undefined, Inn, TouristSpot)
+*/
+type ReviewTarget int
