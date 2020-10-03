@@ -1139,6 +1139,13 @@ paths:
           schema:
             type: integer
         - in: query
+          name: subThemeId
+          description: |
+            サブテーマID
+            いずれか1つ以上必須
+          schema:
+            type: integer
+        - in: query
           name: themeSlug
           description: |
             テーマスラッグ

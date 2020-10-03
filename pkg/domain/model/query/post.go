@@ -18,6 +18,7 @@ type (
 		MetasearchInnTypeID    int
 		MetasearchTagID        int
 		ThemeID                int
+		SubThemeID             int
 		ThemeSlug              string
 		HashTag                string
 		SortBy                 model.MediaSortBy
