@@ -19,6 +19,11 @@ var PostQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.PostQueryRepository), new(*PostQueryRepositoryImpl)),
 )
 
+const (
+	// 固定記事優先
+	defaultStickyOrder = "post.is_sticky DESC"
+)
+
 func (r *PostQueryRepositoryImpl) FindByLastID(lastID, limit int) ([]*entity.Post, error) {
 	var rows []*entity.Post
 
@@ -119,6 +124,7 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 	}
 
 	if err := q.
+		Order(defaultStickyOrder).
 		Order(query.SortBy.GetPostOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
@@ -156,6 +162,7 @@ func (r *PostQueryRepositoryImpl) FindListWithIsFavoriteByParams(query *query.Fi
 	if err := q.
 		Select("post.*, CASE WHEN user_favorite_post.post_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
 		Joins("LEFT JOIN user_favorite_post ON post.id = user_favorite_post.post_id AND user_favorite_post.user_id = ?", userID).
+		Order(defaultStickyOrder).
 		Order(query.SortBy.GetPostOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
