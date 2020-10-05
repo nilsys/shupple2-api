@@ -273,7 +273,7 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 	}
 
 	if query.ThemeID != 0 {
-		q = q.Where("post.id IN (SELECT post_id FROM post_theme_category WHERE theme_category_id = ?)", query.ThemeID)
+		q = q.Where("post.id IN (SELECT post_id FROM post_theme_category WHERE theme_category_id IN (SELECT id FROM theme_category WHERE theme_id = ?))", query.ThemeID)
 	}
 
 	if query.SubThemeID != 0 {
