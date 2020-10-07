@@ -3287,6 +3287,11 @@ components:
           type: string
           description: |
             pay.jpでチェックアウト時に取得できるカードトークン
+        associateId:
+          type: string
+          description: |
+            アソシエイトId
+          example: eioqwhr9023qujfi0ove
     CfReturnGiftID:
       type: object
       properties:
