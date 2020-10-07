@@ -156,7 +156,7 @@ func (b *Batch) importViews(c *cli.Context) error {
 }
 
 // TODO: 一旦2の固定値
-func possibilityPostPaths(post *entity.Post) [2]string {
+func possibilityPostPaths(post *entity.PostTiny) [2]string {
 	a := tourismPrefix + "/" + post.Slug
 	b := "/" + post.Slug
 	return [2]string{a, b}

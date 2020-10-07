@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/huandu/facebook/v2"
+	facebookEntity "github.com/stayway-corp/stayway-media-api/pkg/domain/entity/facebook"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 
 	"gopkg.in/guregu/null.v3"
@@ -115,6 +118,8 @@ type (
 	}
 
 	UserSupportCfProjectList []*UserSupportCfProject
+
+	CfProjectTinyList []*CfProjectTiny
 )
 
 func (c *CfProjectDetailList) ToIDMap() map[int]*CfProjectDetail {
@@ -238,4 +243,14 @@ func (c CfProjectTiny) MediaWebURL(baseURL config.URL) *config.URL {
 
 func (c *CfProjectSnapshotTiny) IsExpired() bool {
 	return c.Deadline.Before(time.Now())
+}
+
+func (c CfProjectTinyList) ToGraphAPIBatchRequestQueryStr(baseURL config.URL) []facebook.Params {
+	resolve := make([]facebook.Params, 0, len(c)*2)
+
+	for _, project := range c {
+		resolve = append(resolve, facebookEntity.GetRelativeURLParams(project.MediaWebURL(baseURL)), facebookEntity.GetRelativeTrailingSlashURLParams(project.MediaWebURL(baseURL)))
+	}
+
+	return resolve
 }

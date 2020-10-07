@@ -145,3 +145,8 @@ type SessionStatus int
 ENUM(Undefined, Inn, TouristSpot)
 */
 type ReviewTarget int
+
+/*
+ENUM(ImportFacebookShareCountLastPostID, ImportFacebookShareCountLastVlogID, ImportFacebookShareCountLastCfProjectID)
+*/
+type BatchOptionName int

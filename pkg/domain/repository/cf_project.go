@@ -31,7 +31,7 @@ type (
 
 	CfProjectQueryRepository interface {
 		FindByID(id int) (*entity.CfProjectDetail, error)
-		FindByLastID(lastID, limit int) ([]*entity.CfProjectTiny, error)
+		FindByLastID(lastID, limit int) (entity.CfProjectTinyList, error)
 		FindListByQuery(query *query.FindCfProjectQuery) (*entity.CfProjectDetailList, error)
 		FindSupportCommentListByCfProjectID(projectID, limit int) (*entity.CfProjectSupportCommentList, error)
 		FindNotSentAchievementNoticeEmailAndAchievedListByLastID(lastID, limit int) (*entity.CfProjectDetailList, error)

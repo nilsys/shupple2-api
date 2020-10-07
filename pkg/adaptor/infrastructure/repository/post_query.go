@@ -24,8 +24,8 @@ const (
 	defaultStickyOrder = "post.is_sticky DESC"
 )
 
-func (r *PostQueryRepositoryImpl) FindByLastID(lastID, limit int) ([]*entity.Post, error) {
-	var rows []*entity.Post
+func (r *PostQueryRepositoryImpl) FindByLastID(lastID, limit int) (entity.PostTinyList, error) {
+	var rows []*entity.PostTiny
 
 	if err := r.DB.Where("id > ?", lastID).Order("id").Limit(limit).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find post")

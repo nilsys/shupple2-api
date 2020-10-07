@@ -189,6 +189,61 @@ func (x *AreaGroup) UnmarshalText(text []byte) error {
 }
 
 const (
+	// BatchOptionNameImportFacebookShareCountLastPostID is a BatchOptionName of type ImportFacebookShareCountLastPostID
+	BatchOptionNameImportFacebookShareCountLastPostID BatchOptionName = iota
+	// BatchOptionNameImportFacebookShareCountLastVlogID is a BatchOptionName of type ImportFacebookShareCountLastVlogID
+	BatchOptionNameImportFacebookShareCountLastVlogID
+	// BatchOptionNameImportFacebookShareCountLastCfProjectID is a BatchOptionName of type ImportFacebookShareCountLastCfProjectID
+	BatchOptionNameImportFacebookShareCountLastCfProjectID
+)
+
+const _BatchOptionNameName = "ImportFacebookShareCountLastPostIDImportFacebookShareCountLastVlogIDImportFacebookShareCountLastCfProjectID"
+
+var _BatchOptionNameMap = map[BatchOptionName]string{
+	0: _BatchOptionNameName[0:34],
+	1: _BatchOptionNameName[34:68],
+	2: _BatchOptionNameName[68:107],
+}
+
+// String implements the Stringer interface.
+func (x BatchOptionName) String() string {
+	if str, ok := _BatchOptionNameMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("BatchOptionName(%d)", x)
+}
+
+var _BatchOptionNameValue = map[string]BatchOptionName{
+	_BatchOptionNameName[0:34]:   0,
+	_BatchOptionNameName[34:68]:  1,
+	_BatchOptionNameName[68:107]: 2,
+}
+
+// ParseBatchOptionName attempts to convert a string to a BatchOptionName
+func ParseBatchOptionName(name string) (BatchOptionName, error) {
+	if x, ok := _BatchOptionNameValue[name]; ok {
+		return x, nil
+	}
+	return BatchOptionName(0), fmt.Errorf("%s is not a valid BatchOptionName", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x BatchOptionName) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *BatchOptionName) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseBatchOptionName(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// CfProjectSortByNew is a CfProjectSortBy of type New
 	CfProjectSortByNew CfProjectSortBy = iota
 	// CfProjectSortByLargeAmount is a CfProjectSortBy of type LargeAmount

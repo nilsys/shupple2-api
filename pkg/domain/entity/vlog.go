@@ -5,7 +5,10 @@ import (
 	"path"
 	"time"
 
+	"github.com/huandu/facebook/v2"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	facebookEntity "github.com/stayway-corp/stayway-media-api/pkg/domain/entity/facebook"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 )
@@ -85,6 +88,8 @@ type (
 		UserID int
 		VlogID int
 	}
+
+	VlogTinyList []*VlogTiny
 )
 
 func NewVlog(tiny VlogTiny, areaCategoryIDs, themeCategoryIDs, touristSpotIDs, editors []int) Vlog {
@@ -239,4 +244,14 @@ func (v *VlogDetail) UserIDs() []int {
 func (v *VlogTiny) MediaWebURL(baseURL config.URL) *config.URL {
 	baseURL.Path = path.Join(baseURL.Path, fmt.Sprintf("/movie/%d", v.ID))
 	return &baseURL
+}
+
+func (v VlogTinyList) ToGraphAPIBatchRequestQueryStr(baseURL config.URL) []facebook.Params {
+	resolve := make([]facebook.Params, 0, len(v)*2)
+
+	for _, vlog := range v {
+		resolve = append(resolve, facebookEntity.GetRelativeURLParams(vlog.MediaWebURL(baseURL)), facebookEntity.GetRelativeTrailingSlashURLParams(vlog.MediaWebURL(baseURL)))
+	}
+
+	return resolve
 }

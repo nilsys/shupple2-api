@@ -302,6 +302,12 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	widgetoonjsoonQueryRepositoryImpl := &widgetoonjsoon.QueryRepositoryImpl{
 		Client: clientClient,
 	}
+	batchOptionCommandRepositoryImpl := &repository.BatchOptionCommandRepositoryImpl{
+		DB: db,
+	}
+	batchOptionQueryRepositoryImpl := &repository.BatchOptionQueryRepositoryImpl{
+		DB: db,
+	}
 	importSnsShareCountFacadeImpl := &facade.ImportSnsShareCountFacadeImpl{
 		FacebookQueryRepository:       queryRepositoryImpl,
 		WidgetoonJsoonQueryRepository: widgetoonjsoonQueryRepositoryImpl,
@@ -311,6 +317,8 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		VlogCommandRepository:         vlogCommandRepositoryImpl,
 		CfProjectQueryRepository:      cfProjectQueryRepositoryImpl,
 		CfProjectCommandRepository:    cfProjectCommandRepositoryImpl,
+		BatchOptionCommandRepository:  batchOptionCommandRepositoryImpl,
+		BatchOptionQueryRepository:    batchOptionQueryRepositoryImpl,
 		Config:                        configConfig,
 	}
 	batch := &Batch{

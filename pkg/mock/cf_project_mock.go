@@ -275,6 +275,20 @@ func (mr *MockCfProjectCommandRepositoryMockRecorder) UpdateTwitterCountByID(id,
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTwitterCountByID", reflect.TypeOf((*MockCfProjectCommandRepository)(nil).UpdateTwitterCountByID), id, count)
 }
 
+// UpdateImportFacebookShareCountLastID mocks base method
+func (m *MockCfProjectCommandRepository) UpdateImportFacebookShareCountLastID(id int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateImportFacebookShareCountLastID", id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateImportFacebookShareCountLastID indicates an expected call of UpdateImportFacebookShareCountLastID
+func (mr *MockCfProjectCommandRepositoryMockRecorder) UpdateImportFacebookShareCountLastID(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateImportFacebookShareCountLastID", reflect.TypeOf((*MockCfProjectCommandRepository)(nil).UpdateImportFacebookShareCountLastID), id)
+}
+
 // MockCfProjectQueryRepository is a mock of CfProjectQueryRepository interface
 type MockCfProjectQueryRepository struct {
 	ctrl     *gomock.Controller
@@ -314,10 +328,10 @@ func (mr *MockCfProjectQueryRepositoryMockRecorder) FindByID(id interface{}) *go
 }
 
 // FindByLastID mocks base method
-func (m *MockCfProjectQueryRepository) FindByLastID(lastID, limit int) ([]*entity.CfProjectTiny, error) {
+func (m *MockCfProjectQueryRepository) FindByLastID(lastID, limit int) (entity.CfProjectTinyList, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByLastID", lastID, limit)
-	ret0, _ := ret[0].([]*entity.CfProjectTiny)
+	ret0, _ := ret[0].(entity.CfProjectTinyList)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -416,4 +430,19 @@ func (m *MockCfProjectQueryRepository) IsSupported(userID int, projectIDs []int)
 func (mr *MockCfProjectQueryRepositoryMockRecorder) IsSupported(userID, projectIDs interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsSupported", reflect.TypeOf((*MockCfProjectQueryRepository)(nil).IsSupported), userID, projectIDs)
+}
+
+// FindImportFacebookShareCountLastID mocks base method
+func (m *MockCfProjectQueryRepository) FindImportFacebookShareCountLastID() (*int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindImportFacebookShareCountLastID")
+	ret0, _ := ret[0].(*int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindImportFacebookShareCountLastID indicates an expected call of FindImportFacebookShareCountLastID
+func (mr *MockCfProjectQueryRepositoryMockRecorder) FindImportFacebookShareCountLastID() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindImportFacebookShareCountLastID", reflect.TypeOf((*MockCfProjectQueryRepository)(nil).FindImportFacebookShareCountLastID))
 }

@@ -123,6 +123,8 @@ var RepositoriesSet = wire.NewSet(
 	payjp2.CustomerCommandRepositorySet,
 	MediaCommandRepositorySet,
 	MediaQueryRepositorySet,
+	BatchOptionQueryRepositorySet,
+	BatchOptionCommandRepositorySet,
 	CardQueryRepositorySet,
 	CfProjectQueryRepositorySet,
 	CfProjectCommandRepositorySet,

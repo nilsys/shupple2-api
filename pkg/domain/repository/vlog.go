@@ -25,7 +25,7 @@ type (
 	VlogQueryRepository interface {
 		FindAll() ([]*entity.Vlog, error)
 		FindByID(id int) (*entity.Vlog, error)
-		FindByLastID(lastID, limit int) ([]*entity.Vlog, error)
+		FindByLastID(lastID, limit int) (entity.VlogTinyList, error)
 		FindListByParams(query *query.FindVlogListQuery) (*entity.VlogList, error)
 		FindWithIsFavoriteListByParams(query *query.FindVlogListQuery, userID int) (*entity.VlogList, error)
 		FindDetailByID(id int) (*entity.VlogDetail, error)

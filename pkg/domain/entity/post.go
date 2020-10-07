@@ -4,8 +4,11 @@ import (
 	"path"
 	"time"
 
+	"github.com/huandu/facebook/v2"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/config"
 
+	facebookEntity "github.com/stayway-corp/stayway-media-api/pkg/domain/entity/facebook"
 	"github.com/stayway-corp/stayway-media-api/pkg/util"
 	"gopkg.in/guregu/null.v3"
 )
@@ -102,6 +105,8 @@ type (
 		Hashtag         []*Hashtag       `gorm:"many2many:post_hashtag;jointable_foreignkey:post_id;"`
 		Features        []*Feature       `gorm:"many2many:feature_post;jointable_foreignkey:post_id"`
 	}
+
+	PostTinyList []*PostTiny
 )
 
 func (p *PostDetail) TableName() string {
@@ -262,4 +267,37 @@ func (p *PostDetailList) ToCfProjectIDMap() map[int]*PostDetail {
 func (p *PostTiny) MediaWebURL(baseURL config.URL) *config.URL {
 	baseURL.Path = path.Join(baseURL.Path, p.Slug)
 	return &baseURL
+}
+
+/*
+import_facebook_share_countのバッチで使用する想定
+Graph APIのバッチリクエストのbatchクエリへ整形する
+トレイリングスラッシュを区別する為,1つのPostにつき以下の形で2つのリクエストを発行する
+上限がバッチリクエストに含める事が出来る上限は50なので
+事実上len(PostTinyList.List)==25の時のみ使用出来る
+ https://developers.facebook.com/docs/graph-api/making-multiple-requests
+
+[
+    {
+      "method":"GET",
+      "relative_url":"?id=https://stayway.jp/tourism/asia-heritage13/&fields=engagement"
+    },
+    {
+      "method":"GET",
+      "relative_url":"?id=https://stayway.jp/tourism/asia-heritage13&fields=engagement"
+    },
+]
+*/
+func (p PostTinyList) ToGraphAPIBatchRequestQueryStr(baseURL config.URL) []facebook.Params {
+	resolve := make([]facebook.Params, 0, len(p)*2)
+
+	for _, post := range p {
+		resolve = append(resolve, facebookEntity.GetRelativeURLParams(post.MediaWebURL(baseURL)), facebookEntity.GetRelativeTrailingSlashURLParams(post.MediaWebURL(baseURL)))
+	}
+
+	return resolve
+}
+
+func (p *PostTiny) TableName() string {
+	return "post"
 }

@@ -35,8 +35,8 @@ func (r *VlogQueryRepositoryImpl) FindDetailByID(id int) (*entity.VlogDetail, er
 	return &row, nil
 }
 
-func (r *VlogQueryRepositoryImpl) FindByLastID(lastID, limit int) ([]*entity.Vlog, error) {
-	var rows []*entity.Vlog
+func (r *VlogQueryRepositoryImpl) FindByLastID(lastID, limit int) (entity.VlogTinyList, error) {
+	var rows []*entity.VlogTiny
 
 	if err := r.DB.Where("id > ?", lastID).Limit(limit).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find vlog")
