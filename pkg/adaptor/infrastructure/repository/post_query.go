@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
+	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/query"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
 )
@@ -124,7 +125,6 @@ func (r *PostQueryRepositoryImpl) FindListByParams(query *query.FindPostListQuer
 	}
 
 	if err := q.
-		Order(defaultStickyOrder).
 		Order(query.SortBy.GetPostOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
@@ -162,7 +162,6 @@ func (r *PostQueryRepositoryImpl) FindListWithIsFavoriteByParams(query *query.Fi
 	if err := q.
 		Select("post.*, CASE WHEN user_favorite_post.post_id IS NULL THEN 'FALSE' ELSE 'TRUE' END is_favorite").
 		Joins("LEFT JOIN user_favorite_post ON post.id = user_favorite_post.post_id AND user_favorite_post.user_id = ?", userID).
-		Order(defaultStickyOrder).
 		Order(query.SortBy.GetPostOrderQuery()).
 		Limit(query.Limit).
 		Offset(query.OffSet).
@@ -302,6 +301,10 @@ func (r *PostQueryRepositoryImpl) buildFindListByParamsQuery(query *query.FindPo
 
 	if query.NoHaveAreaID {
 		q = q.Where("post.id NOT IN (SELECT post_id FROM post_area_category)")
+	}
+
+	if query.SortBy == model.MediaSortByNEW {
+		q = q.Order(defaultStickyOrder)
 	}
 
 	return q
