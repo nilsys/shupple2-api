@@ -117,6 +117,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		NoticeDomainService:        noticeDomainServiceImpl,
 		TransactionService:         transactionServiceImpl,
 		MediaCommandService:        mediaCommandServiceImpl,
+		MediaCommandRepository:     mediaCommandRepositoryImpl,
 	}
 	areaCategoryCommandRepositoryImpl := &repository.AreaCategoryCommandRepositoryImpl{
 		DAO: dao,

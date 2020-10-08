@@ -122,3 +122,17 @@ func (r *UserCommandRepositoryImpl) DeleteUserBlock(userBlock *entity.UserBlockU
 	}
 	return nil
 }
+
+func (r *UserCommandRepositoryImpl) UpdateHeaderUUIDToBlank(ctx context.Context, userID int) error {
+	if err := r.DB(ctx).Exec("UPDATE user SET header_uuid = NULL WHERE id = ?", userID).Error; err != nil {
+		return errors.Wrap(err, "failed update avatar_uuid")
+	}
+	return nil
+}
+
+func (r *UserCommandRepositoryImpl) UpdateIconUUIDToNull(ctx context.Context, userID int) error {
+	if err := r.DB(ctx).Exec("UPDATE user SET avatar_uuid = '' WHERE id = ?", userID).Error; err != nil {
+		return errors.Wrap(err, "failed update header_uuid")
+	}
+	return nil
+}

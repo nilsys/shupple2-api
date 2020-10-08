@@ -57,3 +57,15 @@ func (r *MediaCommandRepositoryImpl) Save(mediaBody *model.MediaBody, destinatio
 
 	return errors.Wrap(err, "failed to upload media")
 }
+
+func (r *MediaCommandRepositoryImpl) Delete(key string) error {
+	deleteInput := &s3.DeleteObjectInput{
+		Bucket: &r.AWSConfig.FilesBucket,
+		Key:    aws.String(key),
+	}
+
+	svc := s3.New(r.AWSSession)
+	_, err := svc.DeleteObject(deleteInput)
+
+	return errors.Wrap(err, "failed delete media")
+}

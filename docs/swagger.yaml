@@ -57,6 +57,29 @@ paths:
                 $ref: "#/components/schemas/User"
       security:
         - iDPCognito: []
+  /users/image:
+    delete:
+      tags:
+        - user
+      summary: ユーザーイメージ削除API
+      security:
+        - iDPCognito: []
+      parameters:
+        - in: query
+          name: type
+          description: |
+            画像タイプ
+          schema:
+            $ref: "#/components/schemas/MediaType"
+      responses:
+        "204":
+          description: nocontent
+        "400":
+          description: 画像を持たない場合
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /users/device_token:
     put:
       tags:
@@ -5063,6 +5086,11 @@ components:
         - InSession
       description: |
         開催ステータス
+    MediaType:
+      type: string
+      enum:
+        - UserIcon
+        - UserHeader
     ReviewTargetType:
       type: string
       enum:

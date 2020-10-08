@@ -33,6 +33,8 @@ type (
 		Unfollow(user *entity.User, targetID int) error
 		Block(user *entity.User, blockedUserID int) error
 		Unblock(user *entity.User, blockedUserID int) error
+		DeleteUserIcon(user *entity.User) error
+		DeleteUserHeader(user *entity.User) error
 	}
 
 	UserCommandServiceImpl struct {
@@ -46,6 +48,7 @@ type (
 		service.NoticeDomainService
 		TransactionService
 		MediaCommandService
+		repository.MediaCommandRepository
 	}
 )
 
@@ -252,6 +255,42 @@ func (s *UserCommandServiceImpl) UpdateDeviceToken(user *entity.User, deviceToke
 	}
 
 	return nil
+}
+
+func (s *UserCommandServiceImpl) DeleteUserIcon(user *entity.User) error {
+	return s.TransactionService.Do(func(ctx context.Context) error {
+		if !user.HasIcon() {
+			return serror.New(nil, serror.CodeInvalidParam, "not have icon")
+		}
+
+		if err := s.UserCommandRepository.UpdateIconUUIDToNull(ctx, user.ID); err != nil {
+			return errors.Wrap(err, "failed update icon uuid")
+		}
+
+		if err := s.MediaCommandRepository.Delete(model.UserS3Path(user.AvatarUUID)); err != nil {
+			return errors.Wrap(err, "failed delete from s3")
+		}
+
+		return nil
+	})
+}
+
+func (s *UserCommandServiceImpl) DeleteUserHeader(user *entity.User) error {
+	return s.TransactionService.Do(func(ctx context.Context) error {
+		if !user.HasHeader() {
+			return serror.New(nil, serror.CodeInvalidParam, "not have header")
+		}
+
+		if err := s.UserCommandRepository.UpdateHeaderUUIDToBlank(ctx, user.ID); err != nil {
+			return errors.Wrap(err, "failed update header uuid")
+		}
+
+		if err := s.MediaCommandRepository.Delete(model.UserS3Path(user.HeaderUUID)); err != nil {
+			return errors.Wrap(err, "failed delete from s3")
+		}
+
+		return nil
+	})
 }
 
 func (s *UserCommandServiceImpl) persistUserImage(cmd *command.UpdateUser) error {

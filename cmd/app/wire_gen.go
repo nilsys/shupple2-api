@@ -302,6 +302,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		NoticeDomainService:        noticeDomainServiceImpl,
 		TransactionService:         transactionServiceImpl,
 		MediaCommandService:        mediaCommandServiceImpl,
+		MediaCommandRepository:     mediaCommandRepositoryImpl,
 	}
 	chargeCommandScenarioImpl := &scenario.ChargeCommandScenarioImpl{
 		ChargeCommandService:       chargeCommandServiceImpl,
@@ -554,9 +555,13 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		Converters:       converters,
 		UserQueryService: userQueryServiceImpl,
 	}
-	userCommandController := api.UserCommandController{
-		Converters:         converters,
+	userCommandScenarioImpl := &scenario.UserCommandScenarioImpl{
 		UserCommandService: userCommandServiceImpl,
+	}
+	userCommandController := api.UserCommandController{
+		Converters:          converters,
+		UserCommandService:  userCommandServiceImpl,
+		UserCommandScenario: userCommandScenarioImpl,
 	}
 	healthCheckRepositoryImpl := &repository.HealthCheckRepositoryImpl{
 		DB: db,
@@ -864,7 +869,7 @@ var (
 
 var controllerSet = wire.NewSet(converter.ConvertersSet, api.ShippingQueryControllerSet, api.ShippingCommandControllerSet, api.ChargeCommandControllerSet, api.CardQueryControllerSet, api.CardCommandControllerSet, api.PostQueryControllerSet, api.PostFavoriteCommandControllerSet, api.CfProjectQueryControllerSet, api.CfReturnGiftQueryControllerSet, api.CategoryQueryControllerSet, api.CfProjectCommandControllerSet, api.ComicQueryControllerSet, api.ReviewQueryControllerSet, api.ReviewCommandControllerSet, api.ReviewFavoriteCommandControllerSet, api.RSSControllerSet, api.TouristSpotQeuryControllerSet, api.SearchQueryControllerSet, api.FeatureQueryControllerSet, api.VlogQueryControllerSet, api.HashtagQueryControllerSet, api.HashtagCommandControllerSet, api.UserQueryControllerSet, api.UserCommandControllerSet, api.HealthCheckControllerSet, api.ThemeQueryControllerSet, api.WordpressCallbackControllerSet, api.SitemapControllerSet, api.S3CommandControllerSet, api.InterestQueryControllerSet, api.AreaQueryControllerSet, api.InnQueryControllerSet, api.NoticeQueryControllerSet, api.NoticeCommandControllerSet, api.PaymentQueryControllerSet, api.CfReserveRequestCommandControllerSet, api.ReportCommandControllerSet, api.ComicFavoriteCommandControllerSet, api.VlogFavoriteCommandControllerSet)
 
-var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.ReviewQueryScenarioSet, scenario.PostQueryScenarioSet, scenario.FeatureQueryScenarioSet, scenario.HashtagQueryScenarioSet, scenario.VlogQueryScenarioSet, scenario.TouristSpotQueryScenarioSet, scenario.CfProjectQueryScenarioSet, scenario.ComicQueryScenarioSet, scenario.ChargeCommandScenarioSet)
+var scenarioSet = wire.NewSet(scenario.ReviewCommandScenarioSet, scenario.ReviewQueryScenarioSet, scenario.PostQueryScenarioSet, scenario.FeatureQueryScenarioSet, scenario.HashtagQueryScenarioSet, scenario.VlogQueryScenarioSet, scenario.TouristSpotQueryScenarioSet, scenario.CfProjectQueryScenarioSet, scenario.ComicQueryScenarioSet, scenario.ChargeCommandScenarioSet, scenario.UserCommandScenarioSet)
 
 var domainServiceSet = wire.NewSet(service2.NoticeDomainServiceSet, service2.TaggedUserDomainServiceSet, service2.UserValidatorDomainServiceSet)
 

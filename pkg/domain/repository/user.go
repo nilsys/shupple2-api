@@ -22,6 +22,8 @@ type (
 		DeleteFollow(userID, targetID int) error
 		StoreUserBlock(userBlock *entity.UserBlockUser) error
 		DeleteUserBlock(userBlock *entity.UserBlockUser) error
+		UpdateHeaderUUIDToBlank(ctx context.Context, userID int) error
+		UpdateIconUUIDToNull(ctx context.Context, userID int) error
 	}
 
 	UserQueryRepository interface {

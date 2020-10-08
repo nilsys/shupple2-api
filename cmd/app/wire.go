@@ -72,6 +72,7 @@ var scenarioSet = wire.NewSet(
 	scenario.CfProjectQueryScenarioSet,
 	scenario.ComicQueryScenarioSet,
 	scenario.ChargeCommandScenarioSet,
+	scenario.UserCommandScenarioSet,
 )
 
 var domainServiceSet = wire.NewSet(

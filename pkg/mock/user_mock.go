@@ -178,6 +178,34 @@ func (mr *MockUserCommandRepositoryMockRecorder) DeleteUserBlock(userBlock inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUserBlock", reflect.TypeOf((*MockUserCommandRepository)(nil).DeleteUserBlock), userBlock)
 }
 
+// UpdateHeaderUUIDToBlank mocks base method
+func (m *MockUserCommandRepository) UpdateHeaderUUIDToBlank(ctx context.Context, userID int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHeaderUUIDToBlank", ctx, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateHeaderUUIDToBlank indicates an expected call of UpdateHeaderUUIDToBlank
+func (mr *MockUserCommandRepositoryMockRecorder) UpdateHeaderUUIDToBlank(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHeaderUUIDToBlank", reflect.TypeOf((*MockUserCommandRepository)(nil).UpdateHeaderUUIDToBlank), ctx, userID)
+}
+
+// UpdateIconUUIDToNull mocks base method
+func (m *MockUserCommandRepository) UpdateIconUUIDToNull(ctx context.Context, userID int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateIconUUIDToNull", ctx, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateIconUUIDToNull indicates an expected call of UpdateIconUUIDToNull
+func (mr *MockUserCommandRepositoryMockRecorder) UpdateIconUUIDToNull(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateIconUUIDToNull", reflect.TypeOf((*MockUserCommandRepository)(nil).UpdateIconUUIDToNull), ctx, userID)
+}
+
 // MockUserQueryRepository is a mock of UserQueryRepository interface
 type MockUserQueryRepository struct {
 	ctrl     *gomock.Controller

@@ -348,3 +348,11 @@ func (u *UserRelationFlgMap) IsFollowByUserID(targetUserID int) bool {
 func (u *UserRelationFlgMap) IsBlockingByUserID(targetUserID int) bool {
 	return u.IDIsBlockingMap[targetUserID]
 }
+
+func (u *UserTiny) HasIcon() bool {
+	return u.AvatarUUID != ""
+}
+
+func (u *UserTiny) HasHeader() bool {
+	return u.HeaderUUID != ""
+}

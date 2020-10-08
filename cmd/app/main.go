@@ -129,6 +129,7 @@ func setRoutes(app *App) {
 		users.GET("/favorite/comics/:id", auth.Optional(app.UserQueryController.ListFavoriteComicUser))
 		users.GET("/favorite/vlogs/:id", auth.Optional(app.UserQueryController.ListFavoriteVlogUser))
 		users.GET("/phone_number/:phoneNumber", app.UserQueryController.IsExistPhoneNumber)
+		users.DELETE("/image", auth.Require(app.UserCommandController.DeleteUserImage))
 	}
 
 	{

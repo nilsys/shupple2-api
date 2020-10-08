@@ -94,6 +94,10 @@ type (
 	PhoneNumber struct {
 		Val string `param:"phoneNumber" validate:"required"`
 	}
+
+	DeleteUserImage struct {
+		Type model.MediaType `query:"type" validate:"required"`
+	}
 )
 
 const getUsersDefaultPerPage = 30
@@ -171,4 +175,12 @@ func (p *ListFavoriteMediaUser) GetOffset() int {
 		return 0
 	}
 	return p.GetLimit() * (p.Page - 1)
+}
+
+func (i *DeleteUserImage) Validate() error {
+	if !i.Type.IsUserImage() {
+		return serror.New(nil, serror.CodeInvalidParam, "must user image")
+	}
+
+	return nil
 }

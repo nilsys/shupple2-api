@@ -10,5 +10,6 @@ type (
 	MediaCommandRepository interface {
 		SavePersistRequest(*model.PersistMediaRequest) error
 		Save(mediaBody *model.MediaBody, destination string) error
+		Delete(key string) error
 	}
 )

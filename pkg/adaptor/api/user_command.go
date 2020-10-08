@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/stayway-corp/stayway-media-api/pkg/application/scenario"
+
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/entity"
 
 	"github.com/google/wire"
@@ -18,6 +20,7 @@ import (
 type UserCommandController struct {
 	converter.Converters
 	service.UserCommandService
+	scenario.UserCommandScenario
 }
 
 var UserCommandControllerSet = wire.NewSet(
@@ -113,6 +116,19 @@ func (c *UserCommandController) Unblock(ctx echo.Context, user entity.User) erro
 
 	if err := c.UserCommandService.Unblock(&user, i.ID); err != nil {
 		return errors.Wrap(err, "failed user unblock")
+	}
+
+	return ctx.NoContent(http.StatusNoContent)
+}
+
+func (c *UserCommandController) DeleteUserImage(ctx echo.Context, user entity.User) error {
+	i := input.DeleteUserImage{}
+	if err := BindAndValidate(ctx, &i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	if err := c.UserCommandScenario.DeleteImage(&user, i.Type); err != nil {
+		return errors.Wrap(err, "failed del user image")
 	}
 
 	return ctx.NoContent(http.StatusNoContent)
