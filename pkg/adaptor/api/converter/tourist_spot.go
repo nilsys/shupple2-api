@@ -89,6 +89,8 @@ func (c Converters) ConvertRecommendTouristSpotListParamToQuery(param *input.Lis
 	return &query.FindRecommendTouristSpotListQuery{
 		ID:                    param.ID,
 		TouristSpotCategoryID: param.TouristSpotCategoryID,
+		Lat:                   param.Lat,
+		Lng:                   param.Lng,
 		Limit:                 param.GetLimit(),
 		OffSet:                param.GetOffset(),
 	}

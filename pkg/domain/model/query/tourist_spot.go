@@ -15,6 +15,8 @@ type (
 	FindRecommendTouristSpotListQuery struct {
 		ID                    int
 		TouristSpotCategoryID int
+		Lat                   float64
+		Lng                   float64
 		Limit                 int
 		OffSet                int
 	}

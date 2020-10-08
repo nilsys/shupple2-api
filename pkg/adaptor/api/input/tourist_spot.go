@@ -20,10 +20,12 @@ type (
 	}
 
 	ListRecommendTouristSpotParam struct {
-		ID                    int `query:"touristSpotId"`
-		TouristSpotCategoryID int `query:"spotCategoryId"`
-		PerPage               int `query:"perPage"`
-		Page                  int `query:"page"`
+		ID                    int     `query:"touristSpotId"`
+		TouristSpotCategoryID int     `query:"spotCategoryId"`
+		Lat                   float64 `query:"lat"`
+		Lng                   float64 `query:"lng"`
+		PerPage               int     `query:"perPage"`
+		Page                  int     `query:"page"`
 	}
 )
 

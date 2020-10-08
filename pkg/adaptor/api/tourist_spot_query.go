@@ -35,6 +35,7 @@ func (c *TouristSpotQueryController) Show(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, c.ConvertTouristSpotToOutput(touristSpot, areaCategoriesMap, themeCategoriesMap))
 }
 
+// TODO: 統合
 func (c *TouristSpotQueryController) ListTouristSpot(ctx echo.Context) error {
 	p := &input.ListTouristSpotParams{}
 	if err := BindAndValidate(ctx, p); err != nil {
@@ -51,6 +52,7 @@ func (c *TouristSpotQueryController) ListTouristSpot(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, c.ConvertTouristSpotListToOutput(touristSpots, areaCategoriesMap, themeCategoriesMap))
 }
 
+// TODO: 統合
 func (c *TouristSpotQueryController) ListRecommendTouristSpot(ctx echo.Context) error {
 	p := &input.ListRecommendTouristSpotParam{}
 	if err := BindAndValidate(ctx, p); err != nil {

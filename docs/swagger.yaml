@@ -1797,6 +1797,20 @@ paths:
             観光スポットカテゴリID
           schema:
             type: integer
+        - in: query
+          name: lat
+          description: |
+            緯度
+          schema:
+            type: number
+            format: float
+        - in: query
+          name: lng
+          description: |
+            経度
+          schema:
+            type: number
+            format: float
       responses:
         "200":
           description: OK

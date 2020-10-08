@@ -120,6 +120,11 @@ func (r *TouristSpotQueryRepositoryImpl) buildFindRecommendListQuery(query *quer
 	if query.ID != 0 {
 		q = q.Select("*, (6371 * acos(cos(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* cos(radians(lat))* cos(radians(lng) - radians((SELECT lng FROM tourist_spot WHERE id = ?)))+ sin(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* sin(radians(lat)))) AS distance", query.ID, query.ID, query.ID).Not("id = ?", query.ID).Having("distance <= ?", defaultRangeSearchKm).Order("distance")
 	}
+
+	if query.Lat != 0 && query.Lng != 0 {
+		q = q.Select("*, (6371 * acos(cos(radians(?))* cos(radians(lat))* cos(radians(lng) - radians(?))+ sin(radians(?))* sin(radians(lat)))) AS distance", query.Lat, query.Lng, query.Lat).Having("distance <= ?", defaultRangeSearchKm).Order("distance")
+	}
+
 	if query.TouristSpotCategoryID != 0 {
 		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_spot_category WHERE spot_category_id = ?)", query.TouristSpotCategoryID)
 	}
@@ -135,6 +140,9 @@ func (r *TouristSpotQueryRepositoryImpl) buildCountRecommendListQuery(query *que
 
 	if query.ID != 0 {
 		q = q.Not("id = ?", query.ID).Where("6371 * acos(cos(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* cos(radians(lat))* cos(radians(lng) - radians((SELECT lng FROM tourist_spot WHERE id = ?)))+ sin(radians((SELECT lat FROM tourist_spot WHERE id = ?)))* sin(radians(lat))) <= ?", query.ID, query.ID, query.ID, defaultRangeSearchKm)
+	}
+	if query.Lat != 0 && query.Lng != 0 {
+		q = q.Where("6371 * acos(cos(radians(?))* cos(radians(lat))* cos(radians(lng) - radians(?))+ sin(radians(?))* sin(radians(lat))) <= ?", query.Lat, query.Lng, query.Lat, defaultRangeSearchKm)
 	}
 	if query.TouristSpotCategoryID != 0 {
 		q = q.Where("id IN (SELECT tourist_spot_id FROM tourist_spot_spot_category WHERE spot_category_id = ?)", query.TouristSpotCategoryID)
