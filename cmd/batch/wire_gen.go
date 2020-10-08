@@ -292,12 +292,12 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	}
 	clientConfig := _wireConfigValue
 	clientClient := client.NewClient(clientConfig)
-	facebookSession, err := repository.ProvideFacebookSession(configConfig, clientClient)
+	accessToken, err := repository.ProvideFacebookAccessToken(configConfig, clientClient)
 	if err != nil {
 		return nil, err
 	}
 	queryRepositoryImpl := &facebook.QueryRepositoryImpl{
-		FacebookSession: facebookSession,
+		AccessToken: accessToken,
 	}
 	widgetoonjsoonQueryRepositoryImpl := &widgetoonjsoon.QueryRepositoryImpl{
 		Client: clientClient,

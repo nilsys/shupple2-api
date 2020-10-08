@@ -17,10 +17,10 @@ var BatchOptionQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.BatchOptionQueryRepository), new(*BatchOptionQueryRepositoryImpl)),
 )
 
-func (r *BatchOptionQueryRepositoryImpl) FindByName(name model.BatchOptionName) (string, error) {
-	row := entity.BatchOption{Name: name}
+func (r *BatchOptionQueryRepositoryImpl) FirstOrCreateByName(name model.BatchOptionName) (string, error) {
+	var row entity.BatchOption
 
-	if err := r.DB.FirstOrCreate(&row).Error; err != nil {
+	if err := r.DB.Where("name = ?", name).FirstOrCreate(&row).Error; err != nil {
 		return "", ErrorToFindSingleRecord(err, "batch_option(name=%d)", name)
 	}
 

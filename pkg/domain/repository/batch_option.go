@@ -8,6 +8,6 @@ type (
 	}
 
 	BatchOptionQueryRepository interface {
-		FindByName(name model.BatchOptionName) (string, error)
+		FirstOrCreateByName(name model.BatchOptionName) (string, error)
 	}
 )

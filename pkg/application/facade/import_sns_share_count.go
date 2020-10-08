@@ -64,7 +64,7 @@ const (
 )
 
 func (s *ImportSnsShareCountFacadeImpl) ImportPostFacebookShareCount() error {
-	lastIDStr, err := s.BatchOptionQueryRepository.FindByName(model.BatchOptionNameImportFacebookShareCountLastPostID)
+	lastIDStr, err := s.BatchOptionQueryRepository.FirstOrCreateByName(model.BatchOptionNameImportFacebookShareCountLastPostID)
 	if err != nil {
 		return errors.Wrap(err, "failed ref batch_option")
 	}
@@ -100,7 +100,7 @@ func (s *ImportSnsShareCountFacadeImpl) ImportPostFacebookShareCount() error {
 		}
 		for _, post := range posts {
 			if err := s.PostCommandRepository.UpdateFacebookCountByID(post.ID, result.GetShareCountBySuffixKey(post.Slug)); err != nil {
-				return errors.Wrap(err, "failed update facebook graphAPIReqCount")
+				return errors.Wrap(err, "failed update facebook facebook_count")
 			}
 		}
 
@@ -115,7 +115,7 @@ func (s *ImportSnsShareCountFacadeImpl) ImportPostFacebookShareCount() error {
 }
 
 func (s *ImportSnsShareCountFacadeImpl) ImportVlogFacebookShareCount() error {
-	lastIDStr, err := s.BatchOptionQueryRepository.FindByName(model.BatchOptionNameImportFacebookShareCountLastVlogID)
+	lastIDStr, err := s.BatchOptionQueryRepository.FirstOrCreateByName(model.BatchOptionNameImportFacebookShareCountLastVlogID)
 	if err != nil {
 		return errors.Wrap(err, "failed ref batch_option")
 	}
@@ -166,7 +166,7 @@ func (s *ImportSnsShareCountFacadeImpl) ImportVlogFacebookShareCount() error {
 }
 
 func (s *ImportSnsShareCountFacadeImpl) ImportCfProjectFacebookShareCount() error {
-	lastIDStr, err := s.BatchOptionQueryRepository.FindByName(model.BatchOptionNameImportFacebookShareCountLastCfProjectID)
+	lastIDStr, err := s.BatchOptionQueryRepository.FirstOrCreateByName(model.BatchOptionNameImportFacebookShareCountLastCfProjectID)
 	if err != nil {
 		return errors.Wrap(err, "failed ref batch_option")
 	}

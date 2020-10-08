@@ -4,7 +4,7 @@ import "github.com/stayway-corp/stayway-media-api/pkg/domain/model"
 
 type (
 	BatchOption struct {
-		Name  model.BatchOptionName `gorm:"primary_key"`
+		Name  model.BatchOptionName
 		Value string
 	}
 )

@@ -13,8 +13,6 @@ import (
 
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/client"
 
-	"github.com/huandu/facebook/v2"
-
 	firebase "firebase.google.com/go"
 
 	"google.golang.org/api/option"
@@ -303,8 +301,7 @@ func ProvideFcmRepo(client *FcmClientWrap) firebaseRepo.CloudMessageCommandRepos
 	return &firebaseRepoAdaptor.CloudMessageRepositoryImpl{Client: client.Client}
 }
 
-func ProvideFacebookSession(config *config.Config, httpClient client.Client) (*facebook.Session, error) {
-	globalApp := facebook.New(config.Facebook.AppID, config.Facebook.AppSecret)
+func ProvideFacebookAccessToken(config *config.Config, httpClient client.Client) (facebook2.AccessToken, error) {
 	var credential struct {
 		AccessToken string `json:"access_token"`
 	}
@@ -316,10 +313,9 @@ func ProvideFacebookSession(config *config.Config, httpClient client.Client) (*f
 	opts.QueryParams.Add("grant_type", "client_credentials")
 	err := httpClient.GetJSON("https://graph.facebook.com/oauth/access_token", opts, &credential)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed get facebook creds")
+		return "", errors.Wrap(err, "failed get facebook creds")
 	}
-	sess := globalApp.Session(credential.AccessToken)
-	return sess, nil
+	return facebook2.AccessToken(credential.AccessToken), nil
 }
 
 func Transaction(db *gorm.DB, f func(db *gorm.DB) error) (err error) {
