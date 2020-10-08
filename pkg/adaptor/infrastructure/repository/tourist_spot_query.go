@@ -18,6 +18,11 @@ var TouristSpotQueryRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.TouristSpotQueryRepository), new(*TouristSpotQueryRepositoryImpl)),
 )
 
+const (
+	defaultTouristSpotRateOrder        = "(vendor_rate + rate) DESC"
+	defaultTouristSpotReviewCountOrder = "review_count DESC"
+)
+
 func (r *TouristSpotQueryRepositoryImpl) FindAll() ([]*entity.TouristSpot, error) {
 	var rows []*entity.TouristSpot
 
@@ -56,7 +61,8 @@ func (r *TouristSpotQueryRepositoryImpl) FindListByParams(query *query.FindTouri
 		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review WHERE deleted_at IS NULL GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
 		Limit(query.Limit).
 		Offset(query.OffSet).
-		Order("vendor_rate desc").
+		Order(defaultTouristSpotRateOrder).
+		Order(defaultTouristSpotReviewCountOrder).
 		Find(&rows.TouristSpots).Offset(0).Count(&rows.TotalNumber).Error; err != nil {
 		return nil, errors.Wrapf(err, "Failed get tourist_spots by params")
 	}
@@ -75,7 +81,8 @@ func (r *TouristSpotQueryRepositoryImpl) FindRecommendListByParams(query *query.
 		Joins("LEFT JOIN (SELECT tourist_spot_id, count(id) AS review_count FROM review WHERE deleted_at IS NULL GROUP BY tourist_spot_id) rc ON tourist_spot.id = rc.tourist_spot_id").
 		Limit(query.Limit).
 		Offset(query.OffSet).
-		Order("vendor_rate desc").
+		Order(defaultTouristSpotRateOrder).
+		Order(defaultTouristSpotReviewCountOrder).
 		Find(&rows.TouristSpots).Error; err != nil {
 		return nil, errors.Wrap(err, "failed get recommend tourist_spots by params")
 	}
