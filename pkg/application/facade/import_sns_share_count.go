@@ -59,9 +59,17 @@ const (
 		バッチリクエスト：https://developers.facebook.com/docs/graph-api/making-multiple-requests
 		リクエスト制限：https://developers.facebook.com/docs/graph-api/advanced/rate-limited
 	*/
-	queryLimitForFacebook    = 25
-	queryLimitForTwitter     = 100
-	facebookGraphAPIReqLimit = 200
+	queryLimitForFacebook = 25
+	queryLimitForTwitter  = 100
+	/*
+		バッチリクエストでは最大50リクエストを1リクエストにまとめる事が出来るだけで、実際の挙動を見ると50リクエストとして換算されているので200/50=4
+		実際の挙動では以下を確認
+		(4リクエスト送って100%が98%へ)
+		(7リクエスト送って98%が93%へ)
+		これに初回のトークン取得で1回リクエストを消費するので、4-1=3とする
+		上限に達する事が無い様に抑えめの値にしている
+	*/
+	facebookGraphAPIReqLimit = 3
 )
 
 func (s *ImportSnsShareCountFacadeImpl) ImportPostFacebookShareCount() error {
