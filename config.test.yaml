@@ -34,6 +34,10 @@ slack:
   report_channel: changeme
 payjp:
   secret_key: changeme
+facebook:
+  batch:
+    app_id: changeme
+    app_secret: changeme
 cf_project:
   system_fee: 220
 

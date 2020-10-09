@@ -2,7 +2,6 @@ package facebook
 
 import (
 	"encoding/json"
-	"fmt"
 
 	facebookEntity "github.com/stayway-corp/stayway-media-api/pkg/domain/entity/facebook"
 
@@ -28,8 +27,6 @@ func (r *QueryRepositoryImpl) GetShareCountByURLBatchRequest(query []facebook.Pa
 	if err != nil {
 		return nil, errors.Wrap(err, "failed facebook graph api")
 	}
-
-	fmt.Printf("results: %v", results)
 
 	var res []*facebookEntity.EngagementAndID
 

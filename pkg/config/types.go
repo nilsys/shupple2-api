@@ -102,7 +102,12 @@ type (
 		SecretKey string `validate:"required" yaml:"secret_key"`
 	}
 
+	// MEMO: facebookアプリが増えた場合には追記
 	Facebook struct {
+		BatchApp FacebookApp `validate:"" yaml:"batch"`
+	}
+
+	FacebookApp struct {
 		AppID     string `validate:"" yaml:"app_id"`
 		AppSecret string `validate:"" yaml:"app_secret"`
 	}

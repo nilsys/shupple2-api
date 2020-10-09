@@ -293,7 +293,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 	}
 	clientConfig := _wireConfigValue
 	clientClient := client.NewClient(clientConfig)
-	facebookSession, err := repository.ProvideFacebookSession(configConfig, clientClient)
+	facebookSession, err := repository.ProvideFacebookBatchSession(configConfig, clientClient)
 	if err != nil {
 		return nil, err
 	}

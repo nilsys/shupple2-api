@@ -65,7 +65,7 @@ func InitializeBatch(configFilePath config.FilePath) (*Batch, error) {
 		domainServiceSet,
 		repository.RepositoriesSet,
 		repository.ProvideS3Uploader,
-		repository.ProvideFacebookSession,
+		repository.ProvideFacebookBatchSession,
 	)
 
 	return new(Batch), nil

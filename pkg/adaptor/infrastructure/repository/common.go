@@ -303,16 +303,16 @@ func ProvideFcmRepo(client *FcmClientWrap) firebaseRepo.CloudMessageCommandRepos
 	return &firebaseRepoAdaptor.CloudMessageRepositoryImpl{Client: client.Client}
 }
 
-func ProvideFacebookSession(config *config.Config, httpClient client.Client) (*facebook.Session, error) {
-	globalApp := facebook.New(config.Facebook.AppID, config.Facebook.AppSecret)
+func ProvideFacebookBatchSession(config *config.Config, httpClient client.Client) (*facebook.Session, error) {
+	globalApp := facebook.New(config.Facebook.BatchApp.AppID, config.Facebook.BatchApp.AppSecret)
 	var credential struct {
 		AccessToken string `json:"access_token"`
 	}
 	opts := &client.Option{
 		QueryParams: map[string][]string{},
 	}
-	opts.QueryParams.Add("client_id", config.Facebook.AppID)
-	opts.QueryParams.Add("client_secret", config.Facebook.AppSecret)
+	opts.QueryParams.Add("client_id", config.Facebook.BatchApp.AppID)
+	opts.QueryParams.Add("client_secret", config.Facebook.BatchApp.AppSecret)
 	opts.QueryParams.Add("grant_type", "client_credentials")
 	err := httpClient.GetJSON("https://graph.facebook.com/oauth/access_token", opts, &credential)
 	if err != nil {
