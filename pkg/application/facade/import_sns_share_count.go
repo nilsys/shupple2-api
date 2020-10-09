@@ -68,6 +68,14 @@ const (
 		(7リクエスト送って98%が93%へ)
 		これに初回のトークン取得で1回リクエストを消費するので、4-1=3とする
 		上限に達する事が無い様に抑えめの値にしている
+
+		現状、アクティブユーザーが少ないので、ログイン機構を利用しているメインのアプリ
+		https://developers.facebook.com/apps/147594942662494/dashboard/?business_id=2223711221246888
+		を使用せず、少しでも多く件数を処理出来る様に別のアプリを使用している
+		https://developers.facebook.com/apps/940190389837227/dashboard/?business_id=2223711221246888
+
+		TODO: アクティブユーザー数が増えたらリクエスト件数も増えるのでメインのアプリを使用する様にする事
+		https://developers.facebook.com/docs/graph-api/overview/rate-limiting/?translation
 	*/
 	facebookGraphAPIReqLimit = 3
 )
@@ -108,8 +116,13 @@ func (s *ImportSnsShareCountFacadeImpl) ImportPostFacebookShareCount() error {
 			return errors.Wrap(err, "failed facebook error")
 		}
 		for _, post := range posts {
-			fmt.Printf("\n--------------- slug: %s, cnt: %d ------------", post.Slug, result.GetShareCountBySuffixKey(post.Slug))
-			if err := s.PostCommandRepository.UpdateFacebookCountByID(post.ID, result.GetShareCountBySuffixKey(post.Slug)); err != nil {
+			// 起きない様に設計しているがfacebookのAPIリクエスト制限に引っかかった際にシェア数がある場合でも取得出来ない事が発生するので、0の場合は更新しない
+			count := result.GetShareCountBySuffixKey(post.Slug)
+			fmt.Printf("\n--------------- slug: %s, cnt: %d ------------", post.Slug, count)
+			if count == 0 {
+				continue
+			}
+			if err := s.PostCommandRepository.UpdateFacebookCountByID(post.ID, count); err != nil {
 				return errors.Wrap(err, "failed update facebook facebook_count")
 			}
 		}
