@@ -2,6 +2,7 @@ package facebook
 
 import (
 	"encoding/json"
+	"fmt"
 
 	facebookEntity "github.com/stayway-corp/stayway-media-api/pkg/domain/entity/facebook"
 
@@ -13,11 +14,8 @@ import (
 
 type (
 	QueryRepositoryImpl struct {
-		// https://webtan.impress.co.jp/e/2016/09/13/23782
-		AccessToken
+		FacebookSession *facebook.Session
 	}
-
-	AccessToken string
 )
 
 var QueryRepositorySet = wire.NewSet(
@@ -26,10 +24,12 @@ var QueryRepositorySet = wire.NewSet(
 )
 
 func (r *QueryRepositoryImpl) GetShareCountByURLBatchRequest(query []facebook.Params) (facebookEntity.EngagementAndIDList, error) {
-	results, err := facebook.Batch(facebook.Params{"include_headers": false, "access_token": r.AccessToken}, query...)
+	results, err := r.FacebookSession.Batch(facebook.Params{"include_headers": false}, query...)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed facebook graph api")
 	}
+
+	fmt.Printf("results: %v", results)
 
 	var res []*facebookEntity.EngagementAndID
 

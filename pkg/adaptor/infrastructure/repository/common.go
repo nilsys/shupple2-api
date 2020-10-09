@@ -7,6 +7,8 @@ import (
 	"os"
 	"reflect"
 
+	"github.com/huandu/facebook/v2"
+
 	facebook2 "github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/facebook"
 
 	widgetoon_jsoon "github.com/stayway-corp/stayway-media-api/pkg/adaptor/infrastructure/repository/widgetoonjsoon"
@@ -301,7 +303,8 @@ func ProvideFcmRepo(client *FcmClientWrap) firebaseRepo.CloudMessageCommandRepos
 	return &firebaseRepoAdaptor.CloudMessageRepositoryImpl{Client: client.Client}
 }
 
-func ProvideFacebookAccessToken(config *config.Config, httpClient client.Client) (facebook2.AccessToken, error) {
+func ProvideFacebookSession(config *config.Config, httpClient client.Client) (*facebook.Session, error) {
+	globalApp := facebook.New(config.Facebook.AppID, config.Facebook.AppSecret)
 	var credential struct {
 		AccessToken string `json:"access_token"`
 	}
@@ -313,9 +316,10 @@ func ProvideFacebookAccessToken(config *config.Config, httpClient client.Client)
 	opts.QueryParams.Add("grant_type", "client_credentials")
 	err := httpClient.GetJSON("https://graph.facebook.com/oauth/access_token", opts, &credential)
 	if err != nil {
-		return "", errors.Wrap(err, "failed get facebook creds")
+		return nil, errors.Wrap(err, "failed get facebook creds")
 	}
-	return facebook2.AccessToken(credential.AccessToken), nil
+	sess := globalApp.Session(credential.AccessToken)
+	return sess, nil
 }
 
 func Transaction(db *gorm.DB, f func(db *gorm.DB) error) (err error) {

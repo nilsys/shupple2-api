@@ -1,6 +1,7 @@
 package facade
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
@@ -99,6 +100,7 @@ func (s *ImportSnsShareCountFacadeImpl) ImportPostFacebookShareCount() error {
 			return errors.Wrap(err, "failed facebook error")
 		}
 		for _, post := range posts {
+			fmt.Printf("--------------- slug: %s, cnt: %d ------------", post.Slug, result.GetShareCountBySuffixKey(post.Slug))
 			if err := s.PostCommandRepository.UpdateFacebookCountByID(post.ID, result.GetShareCountBySuffixKey(post.Slug)); err != nil {
 				return errors.Wrap(err, "failed update facebook facebook_count")
 			}
