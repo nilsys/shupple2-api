@@ -3,8 +3,10 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"syscall"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
+	"github.com/stayway-corp/stayway-media-api/pkg/config"
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
 
 	"github.com/labstack/echo/v4"
@@ -17,37 +19,56 @@ const stackTraceDepth = 5
 
 type (
 	ErrorResponse struct {
-		Status string `json:"status"`
-		Error  string `json:"error"`
-		Body   string `json:"body"`
+		RequestID string `json:"request_id"`
+		Status    string `json:"status"`
+		Error     string `json:"error"`
+		Body      string `json:"body"`
 	}
 
 	stackTracer interface {
 		StackTrace() errors.StackTrace
 	}
+
+	errorHandler struct {
+		env config.Env
+	}
 )
 
-func ErrorHandler(err error, ctx echo.Context) {
+func CreateErrorHandler(env config.Env) echo.HTTPErrorHandler {
+	return (errorHandler{env: env}).handle
+}
+
+func (h errorHandler) handle(err error, ctx echo.Context) {
 	req := ctx.Request()
 	code := GetStatusCode(err)
 
+	requestID := ctx.Response().Header().Get(echo.HeaderXRequestID) // NOTE: middlewareの都合でresから取らないといけない
+
 	if code/100 == 5 {
 		logger.Error(err.Error(),
+			zap.String("request_id", requestID),
 			zap.String("url", req.URL.String()),
 			zap.Int("status", code),
 			zap.String("stacktrace", getStackTrace(err)),
 		)
 	}
 
-	// TODO: メッセージどうするか
-	resp := ErrorResponse{
-		Status: http.StatusText(code),
-		Error:  GetErrorString(err),
-		Body:   err.Error(),
+	errResp := ErrorResponse{
+		RequestID: requestID,
+		Status:    http.StatusText(code),
+		Error:     GetErrorString(err),
+	}
+	if !h.env.IsPrd() {
+		errResp.Body = err.Error()
 	}
 
-	if err := ctx.JSON(code, &resp); err != nil {
-		logger.Error(err.Error(), zap.Error(err))
+	if err := ctx.JSON(code, &errResp); err != nil {
+		if isBrokenPipe(err) {
+			// broken pipeはどうしようもない上にそこそこ発生するのでINFOに
+			logger.Info(err.Error(), zap.Error(err))
+		} else {
+			logger.Error(err.Error(), zap.Error(err))
+		}
 	}
 }
 
@@ -82,4 +103,8 @@ func getStackTrace(err error) string {
 		return fmt.Sprintf("%+v", st)
 	}
 	return ""
+}
+
+func isBrokenPipe(err error) bool {
+	return errors.Is(err, syscall.EPIPE) || errors.Is(err, syscall.ECONNRESET)
 }

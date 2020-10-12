@@ -217,9 +217,11 @@ const (
 	StatusPrivate
 	// StatusTrash is a Status of type Trash
 	StatusTrash
+	// StatusAutoDraft is a Status of type Auto-Draft
+	StatusAutoDraft
 )
 
-const _StatusName = "publishfuturedraftpendingprivatetrash"
+const _StatusName = "publishfuturedraftpendingprivatetrashauto-draft"
 
 var _StatusMap = map[Status]string{
 	1: _StatusName[0:7],
@@ -228,6 +230,7 @@ var _StatusMap = map[Status]string{
 	4: _StatusName[18:25],
 	5: _StatusName[25:32],
 	6: _StatusName[32:37],
+	7: _StatusName[37:47],
 }
 
 // String implements the Stringer interface.
@@ -245,6 +248,7 @@ var _StatusValue = map[string]Status{
 	_StatusName[18:25]: 4,
 	_StatusName[25:32]: 5,
 	_StatusName[32:37]: 6,
+	_StatusName[37:47]: 7,
 }
 
 // ParseStatus attempts to convert a string to a Status

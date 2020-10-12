@@ -13,7 +13,7 @@ ENUM(user = 1, post, location, movie, comic, feature, category, location__cat, r
 type EntityType int
 
 /*
-ENUM(publish = 1, future, draft, pending, private, trash)
+ENUM(publish = 1, future, draft, pending, private, trash, auto-draft)
 */
 type Status int
 

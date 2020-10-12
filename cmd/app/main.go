@@ -83,7 +83,8 @@ func run() error {
 	}
 
 	app.Echo.Debug = app.Config.IsDev()
-	app.Echo.HTTPErrorHandler = api.ErrorHandler
+	app.Echo.HTTPErrorHandler = api.CreateErrorHandler(app.Config.Env)
+	app.Echo.Use(middleware.RequestID())
 	app.Echo.Use(middleware.Logger())
 	app.Echo.Use(middleware.CORS())
 	setRoutes(app)
