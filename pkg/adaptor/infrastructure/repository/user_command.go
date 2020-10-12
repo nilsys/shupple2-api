@@ -81,7 +81,7 @@ func (r *UserCommandRepositoryImpl) StoreWithAvatar(user *entity.User, avatar io
 
 func (r *UserCommandRepositoryImpl) UpdateWordpressID(userID, wordpressUserID int) error {
 	return errors.Wrap(
-		r.DB(context.TODO()).Exec("UPDATE user SET wordpress_id = ? WHERE wordpress_id = 0 AND id = ?", wordpressUserID, userID).Error,
+		r.DB(context.TODO()).Exec("UPDATE user SET wordpress_id = ? WHERE wordpress_id IS NULL AND id = ?", wordpressUserID, userID).Error,
 		"failed to update user wordpress id",
 	)
 }

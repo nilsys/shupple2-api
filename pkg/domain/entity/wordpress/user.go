@@ -16,7 +16,6 @@ type User struct {
 	Slug        URLEscapedString `json:"slug"`
 	AvatarURLs  AvatarURLs       `json:"avatar_urls"`
 	Meta        UserMeta         `json:"meta"`
-	Attributes  UserAttributes   `json:"acf"`
 }
 
 type UserMeta struct {
@@ -25,10 +24,6 @@ type UserMeta struct {
 	Instagram    string `json:"instagram"`
 	Youtube      string `json:"youtube"`
 	WPUserAvatar int    `json:"wp_user_avatar"`
-}
-
-type UserAttributes struct {
-	MediaUserID string `json:"media_user_id"`
 }
 
 type AvatarURLs struct {
@@ -43,14 +38,5 @@ func (u *UserMeta) UnmarshalJSON(body []byte) error {
 	}
 
 	type Alias UserMeta
-	return errors.WithStack(json.Unmarshal(body, (*Alias)(u)))
-}
-
-func (u *UserAttributes) UnmarshalJSON(body []byte) error {
-	if bytes.Equal(body, arrayJSONBytes) {
-		return nil
-	}
-
-	type Alias UserAttributes
 	return errors.WithStack(json.Unmarshal(body, (*Alias)(u)))
 }

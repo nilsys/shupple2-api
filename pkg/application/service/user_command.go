@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"github.com/stayway-corp/stayway-media-api/pkg/domain/model"
@@ -116,49 +115,41 @@ func (s *UserCommandServiceImpl) ImportFromWordpressByID(wordpressUserID int) er
 		return errors.Wrapf(err, "failed to get wordpress user(id=%d)", wordpressUserID)
 	}
 
-	user, err := s.UserQueryRepository.FindByWordpressID(wordpressUserID)
+	existingUser, err := s.UserQueryRepository.FindByWordpressID(wordpressUserID)
 	if err != nil {
 		if !serror.IsErrorCode(err, serror.CodeNotFound) {
 			return errors.Wrapf(err, "failed to import wordpress user(id=%d)", wordpressUserID)
 		}
 
-		// 新規登録かつメディア側で登録済みの場合
-		if wpUser.Attributes.MediaUserID != "" {
-			return s.updateMapping(wpUser)
+		mappingTargetUser, err := s.UserQueryRepository.FindByUID(string(wpUser.Slug))
+		if err != nil {
+			if !serror.IsErrorCode(err, serror.CodeNotFound) {
+				return errors.Wrapf(err, "failed to find user by wordpress user slug(%s)", string(wpUser.Slug))
+			}
+
+			// 新規登録でメディア側で登録がない場合
+			return s.storeWithAvatar(entity.NewUserByWordpressUser(wpUser), wpUser)
 		}
 
-		// 新規登録でメディア側で登録がない場合
-		return s.storeWithAvatar(entity.NewUserByWordpressUser(wpUser), wpUser)
+		// 新規登録かつメディア側で登録済みの場合
+		// ターゲットとして指定したユーザーが既にマッピングを持っていないかをチェックして大丈夫ならマッピングをセット
+		if mappingTargetUser.WordpressID.Valid {
+			return serror.New(nil, serror.CodeInvalidParam, "already mapped user; wordpress_user_id=%d, target_user_id=%d", wpUser.ID, mappingTargetUser.ID)
+		}
+		return s.UserCommandRepository.UpdateWordpressID(mappingTargetUser.ID, wpUser.ID)
 	}
 
 	// 更新の場合
 	// すでにログイン済みの場合は無視
-	if user.CognitoID.Valid {
+	if existingUser.CognitoID.Valid {
 		const msg = "tried to import user already logged in"
 		logger.Info(msg, zap.Int("wordpress_user_id", wordpressUserID))
 		return serror.New(nil, serror.CodeInvalidParam, msg)
 	}
 
 	// TODO: lock取ったほうがいいかも？
-	user.PatchByWordpressUser(wpUser)
-	return s.storeWithAvatar(user, wpUser)
-}
-
-func (s *UserCommandServiceImpl) updateMapping(wpUser *wordpress.User) error {
-	mediaUserID, err := strconv.Atoi(wpUser.Attributes.MediaUserID)
-	if err != nil {
-		return errors.Wrap(err, "invalid media_user_id")
-	}
-
-	targetUser, err := s.UserQueryRepository.FindByID(mediaUserID)
-	if err != nil {
-		return errors.Wrap(err, "failed to find target user")
-	}
-	if targetUser.WordpressID.Valid {
-		return serror.New(nil, serror.CodeInvalidParam, "already mapped user; wordpress_user_id=%d, target_user_id=%d", wpUser.ID, mediaUserID)
-	}
-
-	return s.UserCommandRepository.UpdateWordpressID(targetUser.ID, wpUser.ID)
+	existingUser.PatchByWordpressUser(wpUser)
+	return s.storeWithAvatar(existingUser, wpUser)
 }
 
 func (s *UserCommandServiceImpl) storeWithAvatar(user *entity.User, wpUser *wordpress.User) error {
