@@ -10,26 +10,18 @@ type (
 	}
 
 	SearchSuggestions struct {
-		Area                          *AreaCategories
-		AreaCategoryWithThemeCategory []*AreaCategoryWithThemeCategory
-		TouristSpot                   []*TouristSpotTiny
-		Hashtag                       []*Hashtag
-		User                          []*UserTiny
-	}
-
-	// value object
-	AreaCategoryWithThemeCategory struct {
-		AreaCategory    *AreaCategory
-		ThemeCategories []*ThemeCategoryWithPostCount
+		Area        []*AreaCategory    `json:"area"`
+		TouristSpot []*TouristSpotTiny `json:"touristSpot"`
+		Hashtag     []*Hashtag         `json:"hashtag"`
+		User        []*UserTiny        `json:"user"`
 	}
 )
 
-func NewSearchSuggestions(area *AreaCategories, areaCategoryWithThemeCategory []*AreaCategoryWithThemeCategory, touristSpot []*TouristSpotTiny, hashtag []*Hashtag, user []*UserTiny) *SearchSuggestions {
+func NewSearchSuggestions(area []*AreaCategory, touristSpot []*TouristSpotTiny, hashtag []*Hashtag, user []*UserTiny) *SearchSuggestions {
 	return &SearchSuggestions{
-		Area:                          area,
-		AreaCategoryWithThemeCategory: areaCategoryWithThemeCategory,
-		TouristSpot:                   touristSpot,
-		Hashtag:                       hashtag,
-		User:                          user,
+		Area:        area,
+		TouristSpot: touristSpot,
+		Hashtag:     hashtag,
+		User:        user,
 	}
 }

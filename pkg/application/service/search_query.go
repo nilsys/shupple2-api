@@ -46,66 +46,53 @@ func (s *SearchQueryServiceImpl) ListSuggestionsByKeyward(keyword string) (*enti
 		return nil, errors.Wrap(err, "failed search user list by keyword")
 	}
 
-	areaCategoryWithThemeCategory := make([]*entity.AreaCategoryWithThemeCategory, len(*areaCategories))
-	for i, areaCategory := range *areaCategories {
-		themes, err := s.ThemeCategoryQueryRepository.FindThemesByAreaCategoryID(areaCategory.AreaID, int(areaCategory.SubAreaID.Int64), int(areaCategory.SubSubAreaID.Int64), nil)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed find theme_category")
-		}
-
-		areaCategoryWithThemeCategory[i] = &entity.AreaCategoryWithThemeCategory{
-			AreaCategory:    areaCategory,
-			ThemeCategories: themes,
-		}
-	}
-
-	return entity.NewSearchSuggestions(areaCategories, areaCategoryWithThemeCategory, touristSpots, hashtags, users), nil
+	return entity.NewSearchSuggestions(areaCategories, touristSpots, hashtags, users), nil
 }
 
 // 選択された候補のみ返す
 // TODO: リファクタ
 func (s *SearchQueryServiceImpl) ListSuggestionsByType(keyword string, suggestionType model.SuggestionType) (*entity.SearchSuggestions, error) {
 	if suggestionType == model.SuggestionTypeArea {
-		areaCategories, err := s.AreaCategoryQueryRepository.SearchAreaByName(keyword)
+		areaCategories, err := s.AreaCategoryQueryRepository.SearchByName(keyword)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed search area list by keyword")
 		}
-		return entity.NewSearchSuggestions(areaCategories, nil, nil, nil, nil), nil
+		return entity.NewSearchSuggestions(areaCategories, nil, nil, nil), nil
 	}
 	if suggestionType == model.SuggestionTypeSubArea {
 		areaCategories, err := s.AreaCategoryQueryRepository.SearchSubAreaByName(keyword)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed search sub_area list by keyword")
 		}
-		return entity.NewSearchSuggestions(areaCategories, nil, nil, nil, nil), nil
+		return entity.NewSearchSuggestions(areaCategories, nil, nil, nil), nil
 	}
 	if suggestionType == model.SuggestionTypeSubSubArea {
 		areaCategories, err := s.AreaCategoryQueryRepository.SearchSubSubAreaByName(keyword)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed search sub_sub_area list by keyword")
 		}
-		return entity.NewSearchSuggestions(areaCategories, nil, nil, nil, nil), nil
+		return entity.NewSearchSuggestions(areaCategories, nil, nil, nil), nil
 	}
 	if suggestionType == model.SuggestionTypeTouristSpot {
 		touristSpots, err := s.TouristSpotQueryRepository.SearchByName(keyword)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed search tourist_spot list by keyword")
 		}
-		return entity.NewSearchSuggestions(nil, nil, touristSpots, nil, nil), nil
+		return entity.NewSearchSuggestions(nil, touristSpots, nil, nil), nil
 	}
 	if suggestionType == model.SuggestionTypeHashTag {
 		hashtags, err := s.HashtagQueryRepository.SearchByName(keyword)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed search hashtag list by keyword")
 		}
-		return entity.NewSearchSuggestions(nil, nil, nil, hashtags, nil), nil
+		return entity.NewSearchSuggestions(nil, nil, hashtags, nil), nil
 	}
 	if suggestionType == model.SuggestionTypeUser {
 		users, err := s.UserQueryRepository.SearchByNameOrUID(keyword)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed search user list by keyword")
 		}
-		return entity.NewSearchSuggestions(nil, nil, nil, nil, users), nil
+		return entity.NewSearchSuggestions(nil, nil, nil, users), nil
 	}
 	return nil, nil
 }

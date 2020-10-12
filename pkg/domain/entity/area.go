@@ -33,8 +33,6 @@ type (
 		AreaCategory
 		PostCount int
 	}
-
-	AreaCategories []*AreaCategory
 )
 
 func (ac AreaCategory) CategoryType() string {
@@ -59,34 +57,4 @@ func (acd *AreaCategoryDetail) SetSubSubArea(subSubArea *AreaCategory) {
 
 func (acwpc *AreaCategoryWithPostCount) TableName() string {
 	return "area_category"
-}
-
-func (a AreaCategories) AreaIDs() []int {
-	resolve := make([]int, 0, len(a))
-	for _, area := range a {
-		if area.Type == model.AreaCategoryTypeArea {
-			resolve = append(resolve, area.ID)
-		}
-	}
-	return resolve
-}
-
-func (a AreaCategories) SubAreaIDs() []int {
-	resolve := make([]int, 0, len(a))
-	for _, area := range a {
-		if area.Type == model.AreaCategoryTypeSubArea {
-			resolve = append(resolve, area.ID)
-		}
-	}
-	return resolve
-}
-
-func (a AreaCategories) SubSubAreaIDs() []int {
-	resolve := make([]int, 0, len(a))
-	for _, area := range a {
-		if area.Type == model.AreaCategoryTypeSubSubArea {
-			resolve = append(resolve, area.ID)
-		}
-	}
-	return resolve
 }
