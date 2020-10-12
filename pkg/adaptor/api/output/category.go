@@ -62,6 +62,11 @@ type (
 		AreaCategory
 		PostCount int `json:"postCount"`
 	}
+
+	AreaCategoryWithThemeCategory struct {
+		AreaCategory    *AreaCategory    `json:"area"`
+		ThemeCategories []*ThemeCategory `json:"theme"`
+	}
 )
 
 func NewCategory(id int, name, categoryType, slug string, group model.AreaGroup) *Category {

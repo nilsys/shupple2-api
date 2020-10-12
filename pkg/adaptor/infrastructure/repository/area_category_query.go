@@ -312,18 +312,18 @@ func (r *AreaCategoryQueryRepositoryImpl) buildQueryByLimitAndExcludeID(limit in
 	return query
 }
 
-func (r *AreaCategoryQueryRepositoryImpl) SearchByName(name string) ([]*entity.AreaCategory, error) {
-	var rows []*entity.AreaCategory
+func (r *AreaCategoryQueryRepositoryImpl) SearchByName(name string) (*entity.AreaCategories, error) {
+	var rows entity.AreaCategories
 
 	if err := r.DB.Where("MATCH(name) AGAINST(?)", name).Limit(defaultSearchSuggestionsNumber).Order(sortOrder).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to find areaCategory list by like name")
 	}
 
-	return rows, nil
+	return &rows, nil
 }
 
-func (r *AreaCategoryQueryRepositoryImpl) SearchAreaByName(name string) ([]*entity.AreaCategory, error) {
-	var rows []*entity.AreaCategory
+func (r *AreaCategoryQueryRepositoryImpl) SearchAreaByName(name string) (*entity.AreaCategories, error) {
+	var rows entity.AreaCategories
 
 	q := r.buildSearchByNameAndType(name, model.AreaCategoryTypeArea)
 
@@ -331,11 +331,11 @@ func (r *AreaCategoryQueryRepositoryImpl) SearchAreaByName(name string) ([]*enti
 		return nil, errors.Wrap(err, "failed to search area by name")
 	}
 
-	return rows, nil
+	return &rows, nil
 }
 
-func (r *AreaCategoryQueryRepositoryImpl) SearchSubAreaByName(name string) ([]*entity.AreaCategory, error) {
-	var rows []*entity.AreaCategory
+func (r *AreaCategoryQueryRepositoryImpl) SearchSubAreaByName(name string) (*entity.AreaCategories, error) {
+	var rows entity.AreaCategories
 
 	q := r.buildSearchByNameAndType(name, model.AreaCategoryTypeSubArea)
 
@@ -343,11 +343,11 @@ func (r *AreaCategoryQueryRepositoryImpl) SearchSubAreaByName(name string) ([]*e
 		return nil, errors.Wrap(err, "failed to search area by name")
 	}
 
-	return rows, nil
+	return &rows, nil
 }
 
-func (r *AreaCategoryQueryRepositoryImpl) SearchSubSubAreaByName(name string) ([]*entity.AreaCategory, error) {
-	var rows []*entity.AreaCategory
+func (r *AreaCategoryQueryRepositoryImpl) SearchSubSubAreaByName(name string) (*entity.AreaCategories, error) {
+	var rows entity.AreaCategories
 
 	q := r.buildSearchByNameAndType(name, model.AreaCategoryTypeSubSubArea)
 
@@ -355,7 +355,7 @@ func (r *AreaCategoryQueryRepositoryImpl) SearchSubSubAreaByName(name string) ([
 		return nil, errors.Wrap(err, "failed to search area by name")
 	}
 
-	return rows, nil
+	return &rows, nil
 }
 
 func (r *AreaCategoryQueryRepositoryImpl) FindByMetaSearchID(innAreaTypeIDs *entity.InnAreaTypeIDs) ([]*entity.AreaCategory, error) {

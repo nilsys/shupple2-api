@@ -6,13 +6,26 @@ import (
 )
 
 func (c Converters) ConvertSearchSuggestionsToOutput(suggestions *entity.SearchSuggestions) *output.SearchSuggestions {
-	areaCategories := make([]*output.AreaCategory, len(suggestions.Area))
+	areaCategories := make([]*output.AreaCategory, len(*suggestions.Area))
+	areaCategoryWithThemeCategoryList := make([]*output.AreaCategoryWithThemeCategory, len(suggestions.AreaCategoryWithThemeCategory))
 	touristSpots := make([]*output.TouristSpotTiny, len(suggestions.TouristSpot))
 	hashtags := make([]*output.Hashtag, len(suggestions.Hashtag))
 	users := make([]*output.UserSummary, len(suggestions.User))
 
-	for i, areaCategorie := range suggestions.Area {
+	for i, areaCategorie := range *suggestions.Area {
 		areaCategories[i] = c.ConvertAreaCategoryToOutput(areaCategorie)
+	}
+
+	for i, areaCategoryWithThemeCategory := range suggestions.AreaCategoryWithThemeCategory {
+		tmp := make([]*output.ThemeCategory, len(areaCategoryWithThemeCategory.ThemeCategories))
+		for n, themeCate := range areaCategoryWithThemeCategory.ThemeCategories {
+			tmp[n] = c.ConvertThemeCategoryToOutput(&themeCate.ThemeCategory)
+		}
+
+		areaCategoryWithThemeCategoryList[i] = &output.AreaCategoryWithThemeCategory{
+			AreaCategory:    c.ConvertAreaCategoryToOutput(areaCategoryWithThemeCategory.AreaCategory),
+			ThemeCategories: tmp,
+		}
 	}
 
 	for i, touristSpot := range suggestions.TouristSpot {
@@ -30,6 +43,7 @@ func (c Converters) ConvertSearchSuggestionsToOutput(suggestions *entity.SearchS
 
 	return &output.SearchSuggestions{
 		Area:        areaCategories,
+		Theme:       areaCategoryWithThemeCategoryList,
 		TouristSpot: touristSpots,
 		Hashtag:     hashtags,
 		User:        users,

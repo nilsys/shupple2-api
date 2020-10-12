@@ -24,9 +24,9 @@ type (
 		FindSubAreaListHavingPostByAreaIDAndThemeID(areaID, themeID, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
 		FindSubSubAreaListHavingPostBySubAreaIDAndThemeID(subAreaID, themeID int, limit int, excludeID []int) ([]*entity.AreaCategoryWithPostCount, error)
 		// name部分一致検索
-		SearchByName(name string) ([]*entity.AreaCategory, error)
-		SearchAreaByName(name string) ([]*entity.AreaCategory, error)
-		SearchSubAreaByName(name string) ([]*entity.AreaCategory, error)
-		SearchSubSubAreaByName(name string) ([]*entity.AreaCategory, error)
+		SearchByName(name string) (*entity.AreaCategories, error)
+		SearchAreaByName(name string) (*entity.AreaCategories, error)
+		SearchSubAreaByName(name string) (*entity.AreaCategories, error)
+		SearchSubSubAreaByName(name string) (*entity.AreaCategories, error)
 	}
 )

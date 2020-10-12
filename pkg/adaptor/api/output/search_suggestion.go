@@ -2,9 +2,10 @@ package output
 
 type (
 	SearchSuggestions struct {
-		Area        []*AreaCategory    `json:"area"`
-		TouristSpot []*TouristSpotTiny `json:"touristSpot"`
-		Hashtag     []*Hashtag         `json:"hashtag"`
-		User        []*UserSummary     `json:"user"`
+		Area        []*AreaCategory                  `json:"area"`
+		Theme       []*AreaCategoryWithThemeCategory `json:"theme"`
+		TouristSpot []*TouristSpotTiny               `json:"touristSpot"`
+		Hashtag     []*Hashtag                       `json:"hashtag"`
+		User        []*UserSummary                   `json:"user"`
 	}
 )

@@ -4185,6 +4185,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AreaCategory"
+        theme:
+          type: array
+          items:
+            $ref: "#/components/schemas/AreaCategoryWithThemeCategories"
         touristSpot:
           type: array
           items:
@@ -4461,6 +4465,15 @@ components:
             - Area
             - SubArea
             - SubSubArea
+    AreaCategoryWithThemeCategories:
+      type: object
+      properties:
+        area:
+          $ref: "#/components/schemas/AreaCategory"
+        theme:
+          type: array
+          items:
+            $ref: "#/components/schemas/ThemeCategory"
     AreaCategoryWithPostCount:
       type: object
       required:

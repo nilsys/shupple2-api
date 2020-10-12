@@ -15,8 +15,7 @@ type (
 	}
 
 	ThemeCategoryWithPostCount struct {
-		CategoryBase
-		Type      model.ThemeCategoryType
+		ThemeCategory
 		PostCount int
 	}
 )
