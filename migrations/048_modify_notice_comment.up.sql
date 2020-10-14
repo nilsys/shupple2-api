@@ -1,1 +1,0 @@
-ALTER TABLE notice COMMENT '通知を保存するテーブル';

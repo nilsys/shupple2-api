@@ -1,2 +1,0 @@
-ALTER TABLE tourist_spot
-  ADD FULLTEXT KEY(name) WITH PARSER NGRAM

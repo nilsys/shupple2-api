@@ -1,2 +1,0 @@
-ALTER TABLE area_category
-  ADD FULLTEXT KEY(name) WITH PARSER NGRAM

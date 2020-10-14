@@ -1,3 +1,0 @@
-ALTER TABLE vlog ADD views BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '閲覧数' AFTER timeline;
-ALTER TABLE vlog ADD facebook_count INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'facebookシェア数' AFTER views;
-ALTER TABLE vlog ADD twitter_count INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'twitterシェア数' AFTER facebook_count;

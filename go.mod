@@ -1,4 +1,4 @@
-module github.com/stayway-corp/stayway-media-api
+module github.com/uma-co82/shupple2-api
 
 go 1.13
 

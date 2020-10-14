@@ -1,1 +1,0 @@
-ALTER TABLE user ADD cognito_user_name VARCHAR(255) NOT NULL AFTER wordpress_id;
