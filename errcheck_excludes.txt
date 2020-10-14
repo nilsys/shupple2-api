@@ -1,3 +1,3 @@
 io.WriteString
 (net/http.ResponseWriter).Write
-(*github.com/stayway-corp/stayway/common/util.sliceUtil).BitFlagToSlice
+(*github.com/uma-co82/shupple2-api/common/util.sliceUtil).BitFlagToSlice

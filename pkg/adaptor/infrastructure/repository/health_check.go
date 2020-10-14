@@ -3,7 +3,7 @@ package repository
 import (
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/repository"
+	"github.com/uma-co82/shupple2-api/pkg/domain/repository"
 )
 
 type HealthCheckRepositoryImpl struct {
