@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"github.com/stayway-corp/stayway-media-api/pkg/config"
+	"github.com/uma-co82/shupple2-api/pkg/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

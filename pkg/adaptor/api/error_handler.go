@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"syscall"
 
-	"github.com/stayway-corp/stayway-media-api/pkg/adaptor/logger"
-	"github.com/stayway-corp/stayway-media-api/pkg/config"
-	"github.com/stayway-corp/stayway-media-api/pkg/domain/model/serror"
+	"github.com/uma-co82/shupple2-api/pkg/adaptor/logger"
+	"github.com/uma-co82/shupple2-api/pkg/config"
+	"github.com/uma-co82/shupple2-api/pkg/domain/model/serror"
 
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
