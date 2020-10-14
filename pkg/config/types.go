@@ -13,8 +13,8 @@ type (
 	FilePath string
 
 	Config struct {
-		Version         string
 		Env             Env
+		Version         string          `validate:"required" yaml:"version"`
 		Development     *Development    `validate:"omitempty" yaml:"development"`
 		Database        string          `validate:"required" yaml:"database"`
 		Migrate         Migrate         `validate:"" yaml:"migrate"`

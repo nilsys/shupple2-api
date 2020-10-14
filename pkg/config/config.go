@@ -19,9 +19,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// build時にldflagで注入する
-var Version = "unknown"
-
 const (
 	region                 = "ap-northeast-1"
 	ssmKeyFormat           = "sw-%s-media-api-config"
@@ -83,8 +80,6 @@ func loadConfig(reader io.Reader, env Env) (*Config, error) {
 	if err := v.Struct(&config); err != nil {
 		return nil, errors.WithStack(err)
 	}
-
-	config.Version = Version
 
 	return &config, nil
 }
