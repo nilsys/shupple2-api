@@ -1,7 +1,7 @@
 version: v1
 development:
   user_id: 10
-database: "root:@tcp(mysql:3306)/stayway?charset=utf8mb4&parseTime=True&loc=Local&clientFoundRows=true"
+database: "root:@tcp(mysql:3306)/shupple?charset=utf8mb4&parseTime=True&loc=Local&clientFoundRows=true"
 migrate:
   auto: false
 logger:
