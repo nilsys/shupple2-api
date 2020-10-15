@@ -1,0 +1,97 @@
+openapi: 3.0.0
+info:
+  title: stayway-media-api
+  version: 1.0.0
+paths:
+  /users:
+    post:
+      tags:
+        - user
+      summary: ユーザー登録
+      requestBody:
+        $ref: "#/components/requestBodies/UserRegisterRequest"
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: バリデーションエラーまたは既に存在するユーザー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+        - iDPCognito: []
+components:
+  securitySchemes:
+    iDPCognito:
+      in: header
+      name: Authorization
+      type: apiKey
+      description: CognitoIDPから取得するDToken
+  requestBodies:
+    UserRegisterRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UserRegisterRequest"
+  schemas:
+    UserRegisterRequest:
+      type: object
+      required:
+        - firebaseToken
+        - name
+        - email
+        - birthdate
+        - gender
+        - profile
+      properties:
+        firebaseToken:
+          type: string
+          description: firebaseで認証して得られたJWT
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NzcifQ.Gu9mozICWKVRA-32hPAIPNPWe-fNPCQbnV8MKt8vRag"
+        name:
+          type: string
+          description: ユーザー名
+          example: かな
+        email:
+          type: string
+          format: email
+          description: email
+        birthdate:
+          type: string
+          format: date
+          description: 生年月日
+        gender:
+          $ref: '#/components/schemas/Gender'
+        profile:
+          type: string
+          description: プロフィール文
+          example: 香川出身24歳です！旅大好き！
+    Gender:
+      type: string
+      enum:
+        - Male
+        - Female
+    ErrorCode:
+      type: string
+      enum:
+        - Undefined
+        - InvalidParam
+        - NotFound
+        - ImportDeleted
+        - Unauthorized
+        - Forbidden
+        - InvalidCategoryType
+        - PayAgentError
+        - DuplicateCard
+        - DuplicateReport
+        - Expired
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+        error:
+          $ref: "#/components/schemas/ErrorCode"
+        body:
+          type: string
