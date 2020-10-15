@@ -21,12 +21,11 @@ FROM alpine:3.10
 RUN apk add --update --no-cache ca-certificates
 WORKDIR /app
 COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
-COPY --from=build /app/bin/stayway-media-api /app
-COPY --from=build /app/bin/stayway-media-batch /app
+COPY --from=build /app/bin/shupple2-api /app
 COPY migrations /app/migrations
 
 EXPOSE 3000
 
-ENTRYPOINT ["./stayway-media-api"]
+ENTRYPOINT ["./shupple2-api"]
 
 # vim: set ft=dockerfile:
