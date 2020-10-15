@@ -6,3 +6,8 @@ package model
 ENUM(Transaction = 1)
 */
 type ContextKey int
+
+/*
+ENUM(Male, Female)
+*/
+type Gender int
