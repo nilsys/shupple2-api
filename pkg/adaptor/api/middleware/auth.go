@@ -14,7 +14,7 @@ import (
 )
 
 type (
-	AuthorizedHandleFunc func(ctx echo.Context, user entity.UserTiny) error
+	AuthorizedHandleFunc func(ctx echo.Context, user *entity.UserTiny) error
 )
 
 type Authorize struct {
@@ -39,6 +39,7 @@ func (a Authorize) Auth(f AuthorizedHandleFunc) echo.HandlerFunc {
 		if err != nil {
 			return errors.Wrap(err, "failed ref user")
 		}
+
 		return f(context, user)
 	}
 }
