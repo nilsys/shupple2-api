@@ -8,7 +8,8 @@ import (
 
 type (
 	UserQueryRepository interface {
-		FindByFirebaseID(id string) (entity.UserTiny, error)
+		FindByFirebaseID(id string) (*entity.UserTiny, error)
+		FindByID(id int) (*entity.UserTiny, error)
 	}
 
 	UserCommandRepository interface {
