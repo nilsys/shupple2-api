@@ -3,7 +3,8 @@ module github.com/uma-co82/shupple2-api
 go 1.14
 
 require (
-	github.com/aws/aws-sdk-go v1.17.7
+	firebase.google.com/go v3.13.0+incompatible
+	github.com/aws/aws-sdk-go v1.35.7
 	github.com/cosmtrek/air v1.12.0
 	github.com/docker/go-metrics v0.0.1 // indirect
 	github.com/dustin/go-humanize v1.0.0
