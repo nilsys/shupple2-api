@@ -15,6 +15,7 @@ type (
 		Version     string       `validate:"required" yaml:"version"`
 		Development *Development `validate:"omitempty" yaml:"development"`
 		Database    string       `validate:"required" yaml:"database"`
+		Shupple     Shupple      `validate:"required" yaml:"shupple"`
 		Migrate     Migrate      `validate:"" yaml:"migrate"`
 		Logger      *Logger      `validate:"" yaml:"logger"`
 	}
@@ -31,6 +32,10 @@ type (
 	Logger struct {
 		JSON  bool
 		Level zap.AtomicLevel
+	}
+
+	Shupple struct {
+		FilesURL URL `validate:"required" yaml:"files_url"`
 	}
 
 	URL struct {
