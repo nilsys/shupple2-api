@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 
+	"github.com/google/wire"
+
 	"github.com/uma-co82/shupple2-api/pkg/domain/entity"
 	"github.com/uma-co82/shupple2-api/pkg/domain/model/command"
 	"github.com/uma-co82/shupple2-api/pkg/domain/model/serror"
@@ -19,6 +21,11 @@ type (
 		repository.UserCommandRepository
 		AuthService
 	}
+)
+
+var UserCommandServiceSet = wire.NewSet(
+	wire.Struct(new(UserCommandServiceImpl), "*"),
+	wire.Bind(new(UserCommandService), new(*UserCommandServiceImpl)),
 )
 
 func (s *UserCommandServiceImpl) SignUp(cmd command.StoreUser, firebaseToken string) error {
