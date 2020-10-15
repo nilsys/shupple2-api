@@ -1,9 +1,17 @@
 package repository
 
-import "github.com/uma-co82/shupple2-api/pkg/domain/entity"
+import (
+	"context"
+
+	"github.com/uma-co82/shupple2-api/pkg/domain/entity"
+)
 
 type (
 	UserQueryRepository interface {
 		FindByFirebaseID(id string) (entity.UserTiny, error)
+	}
+
+	UserCommandRepository interface {
+		Store(ctx context.Context, user *entity.UserTiny) error
 	}
 )
