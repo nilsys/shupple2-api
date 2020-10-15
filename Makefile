@@ -1,5 +1,5 @@
 BIN=$(abspath ./bin)
-PKG=github.com/stayway-corp/stayway
+PKG=github.com/uma-co82/shupple2-api
 
 VERSION ?= "$(shell git rev-parse --short HEAD)"
 LDFLAGS="-X $(PKG)/config.Version=$(VERSION)"
@@ -15,14 +15,10 @@ mockgen=$(BIN)/mockgen
 linter=$(BIN)/golangci-lint
 go-enum=$(BIN)/go-enum
 
-build: build-app build-batch build-lambda
+build: build-app
 
 build-app:
-	go build $(BUILD_OPTS) -o bin/stayway-media-api ./cmd/app
-build-batch:
-	go build $(BUILD_OPTS) -o bin/stayway-media-batch ./cmd/batch
-build-lambda:
-	go build $(BUILD_OPTS) -o bin/stayway-media-lambda ./cmd/lambda
+	go build $(BUILD_OPTS) -o bin/shupple2-api ./cmd/app
 
 install-cli: $(air) $(migrate) $(wire) $(ginkgo) $(mockgen) $(linter) $(go-enum)
 $(air):
@@ -44,13 +40,13 @@ wait-mysql:
 	dockerize -wait tcp://$(MYSQL_HOST):3306 -timeout 30s
 
 migrate-up: $(migrate) $(wait-mysql)
-	$(migrate) -database 'mysql://root:@tcp($(MYSQL_HOST):3306)/stayway' -path ./migrations up $(NUM)
+	$(migrate) -database 'mysql://root:@tcp($(MYSQL_HOST):3306)/shupple' -path ./migrations up $(NUM)
 
 migrate-down: $(migrate) $(wait-mysql)
-	$(migrate) -database 'mysql://root:@tcp($(MYSQL_HOST):3306)/stayway' -path ./migrations down $(NUM)
+	$(migrate) -database 'mysql://root:@tcp($(MYSQL_HOST):3306)/shupple' -path ./migrations down $(NUM)
 
 migrate-cmd: $(migrate)
-	$(migrate) -database 'mysql://root:@tcp($(MYSQL_HOST):3306)/stayway' -path ./migrations $(CMD)
+	$(migrate) -database 'mysql://root:@tcp($(MYSQL_HOST):3306)/shupple' -path ./migrations $(CMD)
 
 run: start-dev
 start-dev: $(air) $(wire) migrate-up
@@ -63,8 +59,8 @@ test: $(ginkgo)
 	ENV=test $(ginkgo) $(TARGET)
 
 mysql-cli:
-	mysql --port $(shell docker inspect stayway-media-api-mysql | jq -r '.[0].NetworkSettings.Ports."3306/tcp"[0].HostPort') \
-	--host 127.0.0.1 --user root stayway
+	mysql --port $(shell docker inspect shupple2-api-mysql | jq -r '.[0].NetworkSettings.Ports."3306/tcp"[0].HostPort') \
+	--host 127.0.0.1 --user root shupple
 
 generate: $(mockgen) $(wire) $(go-enum)
 	PATH=$(PATH):$(BIN) go generate ./...
