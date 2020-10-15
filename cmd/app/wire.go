@@ -17,6 +17,7 @@ var controllerSet = wire.NewSet(
 func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	wire.Build(
 		echo.New,
+		controllerSet,
 		wire.Struct(new(App), "*"),
 		config.GetConfig,
 		repository.RepositoriesSet,
