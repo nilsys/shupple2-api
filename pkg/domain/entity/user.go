@@ -13,6 +13,7 @@ type (
 		Name       string
 		Email      string
 		Birthdate  time.Time
+		Profile    string
 		Gender     model.Gender
 	}
 )
