@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/aws/aws-sdk-go v1.17.7
-	github.com/cosmtrek/air v1.21.2
+	github.com/cosmtrek/air v1.12.0
 	github.com/docker/go-metrics v0.0.1 // indirect
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gin-gonic/gin v1.6.3 // indirect
