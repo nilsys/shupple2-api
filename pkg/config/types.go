@@ -25,7 +25,7 @@ type (
 	}
 
 	Development struct {
-		CognitoID string `validate:"required" yaml:"cognito_id"`
+		FirebaseID string `validate:"required" yaml:"firebase_id"`
 	}
 
 	Logger struct {
