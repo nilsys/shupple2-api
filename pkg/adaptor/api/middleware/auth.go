@@ -3,12 +3,13 @@ package middleware
 import (
 	"strings"
 
+	"github.com/uma-co82/shupple2-api/pkg/application/service"
+
 	"github.com/pkg/errors"
 	"github.com/uma-co82/shupple2-api/pkg/domain/model/serror"
 	"github.com/uma-co82/shupple2-api/pkg/domain/repository"
 
 	"github.com/labstack/echo/v4"
-	"github.com/uma-co82/shupple2-api/pkg/application"
 	"github.com/uma-co82/shupple2-api/pkg/domain/entity"
 )
 
@@ -17,7 +18,7 @@ type (
 )
 
 type Authorize struct {
-	application.AuthService
+	service.AuthService
 	repository.UserQueryRepository
 }
 
