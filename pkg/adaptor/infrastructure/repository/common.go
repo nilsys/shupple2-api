@@ -50,6 +50,8 @@ func (d DAO) LockDB(c context.Context) *gorm.DB {
 var RepositoriesSet = wire.NewSet(
 	ProvideDB,
 	HealthCheckRepositorySet,
+	UserQueryRepositorySet,
+	UserCommandRepositorySet,
 )
 
 func ProvideDB(config *config.Config) (*gorm.DB, error) {
