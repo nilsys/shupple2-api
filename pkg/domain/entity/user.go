@@ -15,5 +15,6 @@ type (
 		Birthdate  time.Time
 		Profile    string
 		Gender     model.Gender
+		Prefecture model.Prefecture
 	}
 )
