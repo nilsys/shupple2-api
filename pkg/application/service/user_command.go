@@ -41,6 +41,7 @@ func (s *UserCommandServiceImpl) SignUp(cmd command.StoreUser, firebaseToken str
 		Birthdate:  cmd.Birthdate,
 		Profile:    cmd.Profile,
 		Gender:     cmd.Gender,
+		Prefecture: cmd.Prefecture,
 	}
 
 	return s.Store(context.Background(), user)
