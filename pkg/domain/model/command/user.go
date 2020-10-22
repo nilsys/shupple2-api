@@ -8,11 +8,12 @@ import (
 
 type (
 	StoreUser struct {
-		Name       string
-		Email      string
-		Birthdate  time.Time
-		Profile    string
-		Gender     model.Gender
-		Prefecture model.Prefecture
+		Name           string
+		Email          string
+		Birthdate      time.Time
+		Profile        string
+		Gender         model.Gender
+		Prefecture     model.Prefecture
+		MatchingReason model.MatchingReason
 	}
 )
