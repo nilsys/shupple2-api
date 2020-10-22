@@ -9,8 +9,8 @@ import (
 
 type (
 	UserQueryService interface {
-		Show(id int) (*entity.UserTiny, error)
-		ShowMatchingUser(user *entity.UserTiny) (*entity.UserTiny, error)
+		Show(id int) (*entity.User, error)
+		ShowMatchingUser(user *entity.UserTiny) (*entity.User, error)
 	}
 
 	UserQueryServiceImpl struct {
@@ -23,7 +23,7 @@ var UserQueryServiceSet = wire.NewSet(
 	wire.Bind(new(UserQueryService), new(*UserQueryServiceImpl)),
 )
 
-func (s *UserQueryServiceImpl) Show(id int) (*entity.UserTiny, error) {
+func (s *UserQueryServiceImpl) Show(id int) (*entity.User, error) {
 	return s.UserQueryRepository.FindByID(id)
 }
 
@@ -31,7 +31,7 @@ func (s *UserQueryServiceImpl) Show(id int) (*entity.UserTiny, error) {
 	マッチングしているユーザーを取得
 	マッチングしていない場合はCodeNotMatching
 */
-func (s *UserQueryServiceImpl) ShowMatchingUser(user *entity.UserTiny) (*entity.UserTiny, error) {
+func (s *UserQueryServiceImpl) ShowMatchingUser(user *entity.UserTiny) (*entity.User, error) {
 	if !user.IsMatching {
 		return nil, serror.New(nil, serror.CodeNotMatching, "not matching")
 	}
