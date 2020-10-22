@@ -22,7 +22,7 @@ var UserCommandControllerSet = wire.NewSet(
 	wire.Struct(new(UserCommandController), "*"),
 )
 
-func (c *UserCommandController) SingUp(ctx echo.Context) error {
+func (c *UserCommandController) SignUp(ctx echo.Context) error {
 	i := &input.RegisterUser{}
 	if err := BindAndValidate(ctx, i); err != nil {
 		return errors.Wrap(err, "failed bind input")
