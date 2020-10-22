@@ -1,6 +1,10 @@
 package api
 
 import (
+	"net/http"
+
+	"github.com/uma-co82/shupple2-api/pkg/domain/entity"
+
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
@@ -25,6 +29,16 @@ func (c *UserCommandController) SingUp(ctx echo.Context) error {
 	}
 
 	if err := c.UserCommandService.SignUp(c.ConvertRegisterUserInput2Cmd(i), i.FirebaseToken); err != nil {
-
+		return errors.Wrap(err, "failed sign up user")
 	}
+
+	return ctx.NoContent(http.StatusNoContent)
+}
+
+func (c *UserCommandController) Matching(ctx echo.Context, user *entity.UserTiny) error {
+	if err := c.UserCommandService.Matching(user); err != nil {
+		return errors.Wrap(err, "failed matching user")
+	}
+
+	return ctx.NoContent(http.StatusNoContent)
 }
