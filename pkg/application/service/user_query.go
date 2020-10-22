@@ -3,12 +3,14 @@ package service
 import (
 	"github.com/google/wire"
 	"github.com/uma-co82/shupple2-api/pkg/domain/entity"
+	"github.com/uma-co82/shupple2-api/pkg/domain/model/serror"
 	"github.com/uma-co82/shupple2-api/pkg/domain/repository"
 )
 
 type (
 	UserQueryService interface {
 		Show(id int) (*entity.UserTiny, error)
+		ShowMatchingUser(user *entity.UserTiny) (*entity.UserTiny, error)
 	}
 
 	UserQueryServiceImpl struct {
@@ -23,4 +25,15 @@ var UserQueryServiceSet = wire.NewSet(
 
 func (s *UserQueryServiceImpl) Show(id int) (*entity.UserTiny, error) {
 	return s.UserQueryRepository.FindByID(id)
+}
+
+/*
+	マッチングしているユーザーを取得
+	マッチングしていない場合はCodeNotMatching
+*/
+func (s *UserQueryServiceImpl) ShowMatchingUser(user *entity.UserTiny) (*entity.UserTiny, error) {
+	if !user.IsMatching {
+		return nil, serror.New(nil, serror.CodeNotMatching, "not matching")
+	}
+	return s.UserQueryRepository.FindMatchingUserByID(user.ID)
 }
