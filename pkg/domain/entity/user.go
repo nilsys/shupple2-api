@@ -16,5 +16,6 @@ type (
 		Profile    string
 		Gender     model.Gender
 		Prefecture model.Prefecture
+		IsMatching bool
 	}
 )
