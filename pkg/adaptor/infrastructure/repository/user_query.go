@@ -26,7 +26,7 @@ func (r *UserQueryRepositoryImpl) FindByFirebaseID(id string) (*entity.UserTiny,
 	return &row, nil
 }
 
-func (r *UserQueryRepositoryImpl) FindByID(id int) (*entity.UserTiny, error) {
+func (r *UserQueryRepositoryImpl) FindTinyByID(id int) (*entity.UserTiny, error) {
 	var row entity.UserTiny
 	if err := r.DB.First(&row, id).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find user")
@@ -34,8 +34,16 @@ func (r *UserQueryRepositoryImpl) FindByID(id int) (*entity.UserTiny, error) {
 	return &row, nil
 }
 
-func (r *UserQueryRepositoryImpl) FindMatchingUserByID(id int) (*entity.UserTiny, error) {
-	var row entity.UserTiny
+func (r *UserQueryRepositoryImpl) FindByID(id int) (*entity.User, error) {
+	var row entity.User
+	if err := r.DB.First(&row, id).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find user")
+	}
+	return &row, nil
+}
+
+func (r *UserQueryRepositoryImpl) FindMatchingUserByID(id int) (*entity.User, error) {
+	var row entity.User
 	if err := r.DB.Where("id = (SELECT matching_user_id FROM user_matching_history WHERE user_id = ? ORDER BY created_at DESC LIMIT 1)", id).First(&row).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find user")
 	}
