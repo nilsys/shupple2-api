@@ -15,6 +15,7 @@ type (
 		Version     string       `validate:"required" yaml:"version"`
 		Development *Development `validate:"omitempty" yaml:"development"`
 		Database    string       `validate:"required" yaml:"database"`
+		AWS         AWS          `validate:"required" yaml:"aws"`
 		Shupple     Shupple      `validate:"required" yaml:"shupple"`
 		Migrate     Migrate      `validate:"" yaml:"migrate"`
 		Logger      *Logger      `validate:"" yaml:"logger"`
@@ -36,6 +37,10 @@ type (
 
 	Shupple struct {
 		FilesURL URL `validate:"required" yaml:"files_url"`
+	}
+
+	AWS struct {
+		FilesBucket string `validate:"required" yaml:"files_bucket"`
 	}
 
 	URL struct {
