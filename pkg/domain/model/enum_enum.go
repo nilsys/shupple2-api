@@ -56,7 +56,7 @@ func (x *ContextKey) UnmarshalText(text []byte) error {
 
 const (
 	// GenderMale is a Gender of type Male
-	GenderMale Gender = iota
+	GenderMale Gender = iota + 1
 	// GenderFemale is a Gender of type Female
 	GenderFemale
 )
@@ -64,8 +64,8 @@ const (
 const _GenderName = "MaleFemale"
 
 var _GenderMap = map[Gender]string{
-	0: _GenderName[0:4],
-	1: _GenderName[4:10],
+	1: _GenderName[0:4],
+	2: _GenderName[4:10],
 }
 
 // String implements the Stringer interface.
@@ -77,8 +77,8 @@ func (x Gender) String() string {
 }
 
 var _GenderValue = map[string]Gender{
-	_GenderName[0:4]:  0,
-	_GenderName[4:10]: 1,
+	_GenderName[0:4]:  1,
+	_GenderName[4:10]: 2,
 }
 
 // ParseGender attempts to convert a string to a Gender
