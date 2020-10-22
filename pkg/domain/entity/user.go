@@ -1,7 +1,11 @@
 package entity
 
 import (
+	"fmt"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/pkg/errors"
 
 	"github.com/uma-co82/shupple2-api/pkg/domain/model/command"
 
@@ -9,6 +13,11 @@ import (
 )
 
 type (
+	User struct {
+		UserTiny
+		Images []*UserImage `gorm:"foreignkey:UserID"`
+	}
+
 	UserTiny struct {
 		ID             int `gorm:"primary_key"`
 		FirebaseID     string
@@ -20,14 +29,37 @@ type (
 		Prefecture     model.Prefecture
 		MatchingReason model.MatchingReason
 		IsMatching     bool
+		Times
+	}
+
+	UserImage struct {
+		UUID     string `gorm:"primary_key"`
+		UserID   int
+		Priority int
+		MimeType string
+		TimesWithoutDeletedAt
 	}
 
 	UserMatchingHistory struct {
 		UserID         int `gorm:"primary_key"`
 		MatchingUserID int `gorm:"primary_key"`
+		TimesWithoutDeletedAt
 	}
 )
 
+func (u *User) InsertUserID2Images() {
+	for _, image := range u.Images {
+		image.UserID = u.ID
+	}
+}
+
+func (u *UserImage) S3Path() string {
+	return fmt.Sprintf("user/%d/%s", u.UserID, u.UUID)
+}
+
+/*
+	constructor
+*/
 func NewUserTinyFromCmd(cmd command.StoreUser, firebaseID string) *UserTiny {
 	return &UserTiny{
 		FirebaseID:     firebaseID,
@@ -38,7 +70,6 @@ func NewUserTinyFromCmd(cmd command.StoreUser, firebaseID string) *UserTiny {
 		Gender:         cmd.Gender,
 		Prefecture:     cmd.Prefecture,
 		MatchingReason: cmd.MatchingReason,
-		IsMatching:     false,
 	}
 }
 
@@ -47,4 +78,24 @@ func NewUserMatchingHistory(userID, matchingUserID int) *UserMatchingHistory {
 		UserID:         userID,
 		MatchingUserID: matchingUserID,
 	}
+}
+
+func NewUser(cmd command.StoreUser, firebaseID string) (*User, error) {
+	images := make([]*UserImage, len(cmd.Images))
+	for i, image := range images {
+		uuid, err := uuid.NewRandom()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed gen uuid")
+		}
+
+		images[i] = &UserImage{
+			UUID:     uuid.String(),
+			Priority: image.Priority,
+			MimeType: image.MimeType,
+		}
+	}
+	return &User{
+		UserTiny: *NewUserTinyFromCmd(cmd, firebaseID),
+		Images:   images,
+	}, nil
 }
