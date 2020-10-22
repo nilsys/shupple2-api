@@ -13,10 +13,13 @@ import (
 
 var controllerSet = wire.NewSet(
 	api.HealthCheckControllerSet,
+	api.UserCommandControllerSet,
+	api.UserQueryControllerSet,
 )
 
 var serviceSet = wire.NewSet(
 	service.UserCommandServiceSet,
+	service.UserQueryServiceSet,
 )
 
 func InitializeApp(configFilePath config.FilePath) (*App, error) {
@@ -27,6 +30,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		serviceSet,
 		wire.Struct(new(App), "*"),
 		config.GetConfig,
+		wire.FieldsOf(new(*config.Config), "AWS"),
 		repository.RepositoriesSet,
 	)
 
