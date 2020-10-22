@@ -9,11 +9,12 @@ import (
 
 func (c Converters) ConvertRegisterUserInput2Cmd(in *input.RegisterUser) *command.StoreUser {
 	return &command.StoreUser{
-		Name:       in.Name,
-		Email:      in.Email,
-		Birthdate:  time.Time(in.Birthdate),
-		Profile:    in.Profile,
-		Gender:     in.Gender,
-		Prefecture: in.Prefecture,
+		Name:           in.Name,
+		Email:          in.Email,
+		Birthdate:      time.Time(in.Birthdate),
+		Profile:        in.Profile,
+		Gender:         in.Gender,
+		Prefecture:     in.Prefecture,
+		MatchingReason: in.MatchingReason,
 	}
 }
