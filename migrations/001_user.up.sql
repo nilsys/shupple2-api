@@ -15,6 +15,17 @@ CREATE TABLE IF NOT EXISTS user (
   INDEX idx_user_firebase_id(firebase_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS user_image (
+  uuid             CHAR(36) NOT NULL COMMENT 's3上の画像のUUID',
+  user_id          BIGINT UNSIGNED NOT NULL,
+  priority         INT UNSIGNED NOT NULL,
+  mime_type        VARCHAR(255) NOT NULL COMMENT 'MIME type',
+  created_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY(uuid),
+  CONSTRAINT user_image_user_id FOREIGN KEY(user_id) REFERENCES user(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS user_matching_history (
   user_id          BIGINT UNSIGNED NOT NULL,
   matching_user_id BIGINT UNSIGNED NOT NULL,
