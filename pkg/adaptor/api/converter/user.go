@@ -7,7 +7,7 @@ import (
 	"github.com/uma-co82/shupple2-api/pkg/domain/model/command"
 )
 
-func (c Converters) ConvertRegisterUserInput2Cmd(in *input.RegisterUser) *command.StoreUser {
+func (c Converters) ConvertRegisterUserInput2Cmd(in *input.RegisterUser) command.StoreUser {
 	images := make([]command.StoreUserImage, len(in.Images))
 	for i, image := range images {
 		images[i] = command.StoreUserImage{
@@ -17,7 +17,7 @@ func (c Converters) ConvertRegisterUserInput2Cmd(in *input.RegisterUser) *comman
 		}
 	}
 
-	return &command.StoreUser{
+	return command.StoreUser{
 		Name:           in.Name,
 		Email:          in.Email,
 		Birthdate:      time.Time(in.Birthdate),
