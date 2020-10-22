@@ -5,8 +5,10 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/pkg/errors"
 	"github.com/uma-co82/shupple2-api/pkg/adaptor/api"
+	middleware2 "github.com/uma-co82/shupple2-api/pkg/adaptor/api/middleware"
 	"github.com/uma-co82/shupple2-api/pkg/adaptor/infrastructure/repository"
 	"github.com/uma-co82/shupple2-api/pkg/adaptor/logger"
+	"github.com/uma-co82/shupple2-api/pkg/application/service"
 	"github.com/uma-co82/shupple2-api/pkg/config"
 
 	"log"
@@ -23,10 +25,14 @@ func main() {
 }
 
 type App struct {
-	Config                *config.Config
-	DB                    *gorm.DB
-	Echo                  *echo.Echo
-	HealthCheckController api.HealthCheckController
+	Config *config.Config
+	DB     *gorm.DB
+	Echo   *echo.Echo
+	middleware2.Authorize
+	api.HealthCheckController
+	api.UserQueryController
+	api.UserCommandController
+	service.TransactionService
 }
 
 func run() error {
@@ -54,6 +60,16 @@ func run() error {
 
 func setRoutes(app *App) {
 	api := app.Echo.Group("/api/v1")
+	auth := app.Authorize
+
+	users := api.Group("/users")
+
+	{
+		users.POST("", app.UserCommandController.SignUp)
+		users.GET("/:id", app.UserQueryController.Show)
+		users.POST("/matching", auth.Auth(app.UserCommandController.Matching))
+		users.GET("/matching", auth.Auth(app.UserQueryController.ShowMatchingUser))
+	}
 
 	api.GET("/healthcheck", app.HealthCheckController.HealthCheck)
 }
