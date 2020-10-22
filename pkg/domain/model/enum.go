@@ -17,6 +17,12 @@ ENUM(Hokkaido = 1, Aomori, Iwate, Miyagi, Akita, Yamagata, Hukushima, Ibaragi, T
 */
 type Prefecture int
 
+// 分かりやす様にローマ字
+/*
+ENUM(Renai = 1, Asobi, ImakaraNomitai)
+*/
+type MatchingReason int
+
 func (x Gender) Reverse() Gender {
 	if x == GenderMale {
 		return GenderFemale
