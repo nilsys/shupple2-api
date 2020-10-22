@@ -15,5 +15,12 @@ type (
 		Gender         model.Gender
 		Prefecture     model.Prefecture
 		MatchingReason model.MatchingReason
+		Images         []StoreUserImage
+	}
+
+	StoreUserImage struct {
+		Priority    int
+		MimeType    string
+		ImageBase64 string
 	}
 )
