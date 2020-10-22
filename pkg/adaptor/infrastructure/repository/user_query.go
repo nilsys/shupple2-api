@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/uma-co82/shupple2-api/pkg/domain/entity"
+	"github.com/uma-co82/shupple2-api/pkg/domain/model"
 	"github.com/uma-co82/shupple2-api/pkg/domain/repository"
 )
 
@@ -28,6 +29,24 @@ func (r *UserQueryRepositoryImpl) FindByFirebaseID(id string) (*entity.UserTiny,
 func (r *UserQueryRepositoryImpl) FindByID(id int) (*entity.UserTiny, error) {
 	var row entity.UserTiny
 	if err := r.DB.First(&row, id).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find user")
+	}
+	return &row, nil
+}
+
+func (r *UserQueryRepositoryImpl) FindMatchingUserByID(id int) (*entity.UserTiny, error) {
+	var row entity.UserTiny
+	if err := r.DB.Where("id = (SELECT matching_user_id FROM user_matching_history WHERE user_id = ? ORDER BY created_at DESC LIMIT 1)", id).First(&row).Error; err != nil {
+		return nil, errors.Wrap(err, "failed find user")
+	}
+	return &row, nil
+}
+
+func (r *UserQueryRepositoryImpl) FindAvailableMatchingUser(gender model.Gender, id int) (*entity.UserTiny, error) {
+	var row entity.UserTiny
+	if err := r.DB.
+		Where("is_matching = false AND gender = ? AND id NOT IN (?) AND id NOT IN (SELECT matching_user_id FROM user_matching_history WHERE user_id = ?)", gender.Reverse(), id, id).
+		First(&row).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find user")
 	}
 	return &row, nil
