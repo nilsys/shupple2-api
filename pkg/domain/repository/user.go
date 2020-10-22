@@ -11,8 +11,9 @@ import (
 type (
 	UserQueryRepository interface {
 		FindByFirebaseID(id string) (*entity.UserTiny, error)
-		FindByID(id int) (*entity.UserTiny, error)
-		FindMatchingUserByID(id int) (*entity.UserTiny, error)
+		FindTinyByID(id int) (*entity.UserTiny, error)
+		FindByID(id int) (*entity.User, error)
+		FindMatchingUserByID(id int) (*entity.User, error)
 		FindAvailableMatchingUser(gender model.Gender, reason model.MatchingReason, id int) (*entity.UserTiny, error)
 	}
 
