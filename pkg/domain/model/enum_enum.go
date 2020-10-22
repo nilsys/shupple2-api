@@ -106,6 +106,61 @@ func (x *Gender) UnmarshalText(text []byte) error {
 }
 
 const (
+	// MatchingReasonRenai is a MatchingReason of type Renai
+	MatchingReasonRenai MatchingReason = iota + 1
+	// MatchingReasonAsobi is a MatchingReason of type Asobi
+	MatchingReasonAsobi
+	// MatchingReasonImakaraNomitai is a MatchingReason of type ImakaraNomitai
+	MatchingReasonImakaraNomitai
+)
+
+const _MatchingReasonName = "RenaiAsobiImakaraNomitai"
+
+var _MatchingReasonMap = map[MatchingReason]string{
+	1: _MatchingReasonName[0:5],
+	2: _MatchingReasonName[5:10],
+	3: _MatchingReasonName[10:24],
+}
+
+// String implements the Stringer interface.
+func (x MatchingReason) String() string {
+	if str, ok := _MatchingReasonMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("MatchingReason(%d)", x)
+}
+
+var _MatchingReasonValue = map[string]MatchingReason{
+	_MatchingReasonName[0:5]:   1,
+	_MatchingReasonName[5:10]:  2,
+	_MatchingReasonName[10:24]: 3,
+}
+
+// ParseMatchingReason attempts to convert a string to a MatchingReason
+func ParseMatchingReason(name string) (MatchingReason, error) {
+	if x, ok := _MatchingReasonValue[name]; ok {
+		return x, nil
+	}
+	return MatchingReason(0), fmt.Errorf("%s is not a valid MatchingReason", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x MatchingReason) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *MatchingReason) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseMatchingReason(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// PrefectureHokkaido is a Prefecture of type Hokkaido
 	PrefectureHokkaido Prefecture = iota + 1
 	// PrefectureAomori is a Prefecture of type Aomori
