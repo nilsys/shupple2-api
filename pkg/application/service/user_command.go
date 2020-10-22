@@ -46,3 +46,6 @@ func (s *UserCommandServiceImpl) SignUp(cmd command.StoreUser, firebaseToken str
 
 	return s.Store(context.Background(), user)
 }
+
+func (s *UserCommandServiceImpl) Matching(user *entity.UserTiny) error {
+}
