@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/uma-co82/shupple2-api/pkg/config"
+
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
@@ -55,6 +57,11 @@ func (u *User) InsertUserID2Images() {
 
 func (u *UserImage) S3Path() string {
 	return fmt.Sprintf("user/%d/%s", u.UserID, u.UUID)
+}
+
+func (u *UserImage) URL(filesURL config.URL) string {
+	filesURL.Path = u.S3Path()
+	return filesURL.String()
 }
 
 /*
