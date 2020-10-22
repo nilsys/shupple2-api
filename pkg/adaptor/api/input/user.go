@@ -16,8 +16,8 @@ type (
 	}
 
 	RegisterUserImage struct {
-		Priority    int
-		MimeType    string
-		ImageBase64 string
+		Priority    int    `json:"priority"`
+		MimeType    string `json:"mimeType"`
+		ImageBase64 string `json:"imageBase64"`
 	}
 )
