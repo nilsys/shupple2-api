@@ -12,6 +12,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.12.2
 	github.com/golang/mock v1.4.4
 	github.com/golangci/golangci-lint v1.31.0
+	github.com/google/uuid v1.1.1
 	github.com/google/wire v0.4.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/labstack/echo/v4 v4.1.17
