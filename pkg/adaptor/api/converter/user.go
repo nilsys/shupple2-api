@@ -8,6 +8,15 @@ import (
 )
 
 func (c Converters) ConvertRegisterUserInput2Cmd(in *input.RegisterUser) *command.StoreUser {
+	images := make([]command.StoreUserImage, len(in.Images))
+	for i, image := range images {
+		images[i] = command.StoreUserImage{
+			Priority:    image.Priority,
+			MimeType:    image.MimeType,
+			ImageBase64: image.ImageBase64,
+		}
+	}
+
 	return &command.StoreUser{
 		Name:           in.Name,
 		Email:          in.Email,
@@ -16,5 +25,6 @@ func (c Converters) ConvertRegisterUserInput2Cmd(in *input.RegisterUser) *comman
 		Gender:         in.Gender,
 		Prefecture:     in.Prefecture,
 		MatchingReason: in.MatchingReason,
+		Images:         images,
 	}
 }
