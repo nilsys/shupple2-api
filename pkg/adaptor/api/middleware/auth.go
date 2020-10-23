@@ -3,6 +3,8 @@ package middleware
 import (
 	"strings"
 
+	"github.com/google/wire"
+
 	"github.com/uma-co82/shupple2-api/pkg/application/service"
 
 	"github.com/pkg/errors"
@@ -23,6 +25,10 @@ type Authorize struct {
 }
 
 const authScheme = "JWT "
+
+var AuthorizeSet = wire.NewSet(
+	wire.Struct(new(Authorize), "*"),
+)
 
 func (a Authorize) Auth(f AuthorizedHandleFunc) echo.HandlerFunc {
 	return func(context echo.Context) error {
