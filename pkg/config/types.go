@@ -40,6 +40,8 @@ type (
 	}
 
 	AWS struct {
+		Region      string `validate:"required" yaml:"region"`
+		Endpoint    string `validate:"" yaml:"endpoint"`
 		FilesBucket string `validate:"required" yaml:"files_bucket"`
 	}
 
