@@ -9,7 +9,11 @@ import (
 	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/uma-co82/shupple2-api/pkg/adaptor/api"
+	"github.com/uma-co82/shupple2-api/pkg/adaptor/api/converter"
+	"github.com/uma-co82/shupple2-api/pkg/adaptor/api/middleware"
 	"github.com/uma-co82/shupple2-api/pkg/adaptor/infrastructure/repository"
+	"github.com/uma-co82/shupple2-api/pkg/adaptor/infrastructure/repository/aws"
+	"github.com/uma-co82/shupple2-api/pkg/application/service"
 	"github.com/uma-co82/shupple2-api/pkg/config"
 )
 
@@ -29,6 +33,17 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		return nil, err
 	}
 	echoEcho := echo.New()
+	authService, err := service.ProvideAuthService(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	userQueryRepositoryImpl := &repository.UserQueryRepositoryImpl{
+		DB: db,
+	}
+	authorize := middleware.Authorize{
+		AuthService:         authService,
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
 	healthCheckRepositoryImpl := &repository.HealthCheckRepositoryImpl{
 		DB: db,
 	}
@@ -36,15 +51,60 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		HealthCheckRepository: healthCheckRepositoryImpl,
 		Config:                configConfig,
 	}
+	userQueryServiceImpl := &service.UserQueryServiceImpl{
+		UserQueryRepository: userQueryRepositoryImpl,
+	}
+	converters := converter.Converters{
+		Config: configConfig,
+	}
+	userQueryController := api.UserQueryController{
+		UserQueryService: userQueryServiceImpl,
+		Converters:       converters,
+	}
+	dao := repository.DAO{
+		UnderlyingDB: db,
+	}
+	userCommandRepositoryImpl := &repository.UserCommandRepositoryImpl{
+		DAO: dao,
+	}
+	session, err := repository.ProvideAWSSession(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	s3CommandRepositoryImpl := &aws.S3CommandRepositoryImpl{
+		AWSSession: session,
+	}
+	configAWS := configConfig.AWS
+	transactionServiceImpl := &repository.TransactionServiceImpl{
+		DB: db,
+	}
+	userCommandServiceImpl := &service.UserCommandServiceImpl{
+		UserQueryRepository:   userQueryRepositoryImpl,
+		UserCommandRepository: userCommandRepositoryImpl,
+		S3CommandRepository:   s3CommandRepositoryImpl,
+		AWSConfig:             configAWS,
+		AuthService:           authService,
+		TransactionService:    transactionServiceImpl,
+	}
+	userCommandController := api.UserCommandController{
+		UserCommandService: userCommandServiceImpl,
+		Converters:         converters,
+	}
 	app := &App{
 		Config:                configConfig,
 		DB:                    db,
 		Echo:                  echoEcho,
+		Authorize:             authorize,
 		HealthCheckController: healthCheckController,
+		UserQueryController:   userQueryController,
+		UserCommandController: userCommandController,
+		TransactionService:    transactionServiceImpl,
 	}
 	return app, nil
 }
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.HealthCheckControllerSet)
+var controllerSet = wire.NewSet(api.HealthCheckControllerSet, api.UserCommandControllerSet, api.UserQueryControllerSet)
+
+var serviceSet = wire.NewSet(service.UserCommandServiceSet, service.UserQueryServiceSet)
