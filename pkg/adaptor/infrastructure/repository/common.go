@@ -6,6 +6,12 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+
+	shuppleAWS "github.com/uma-co82/shupple2-api/pkg/adaptor/infrastructure/repository/aws"
+
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file" // register driver
@@ -23,6 +29,10 @@ type (
 	DAO struct {
 		UnderlyingDB *gorm.DB
 	}
+)
+
+const (
+	dummyCredential = "shuppledummy"
 )
 
 func (d DAO) DB(c context.Context) *gorm.DB {
@@ -49,10 +59,13 @@ func (d DAO) LockDB(c context.Context) *gorm.DB {
 
 var RepositoriesSet = wire.NewSet(
 	ProvideDB,
+	ProvideAWSSession,
+	wire.Struct(new(DAO), "*"),
 	HealthCheckRepositorySet,
 	UserQueryRepositorySet,
 	UserCommandRepositorySet,
 	TransactionServiceSet,
+	shuppleAWS.S3CommandRepositorySet,
 )
 
 func ProvideDB(config *config.Config) (*gorm.DB, error) {
@@ -181,4 +194,21 @@ func MigrateUp(database, migrationsDir string) error {
 	}
 
 	return nil
+}
+
+func ProvideAWSSession(config *config.Config) (*session.Session, error) {
+	cfgs := aws.NewConfig().WithRegion(config.AWS.Region)
+
+	if config.AWS.Endpoint != "" {
+		cfgs = cfgs.
+			WithEndpoint(config.AWS.Endpoint).
+			WithS3ForcePathStyle(true).
+			WithCredentials(credentials.NewStaticCredentials(dummyCredential, dummyCredential, ""))
+	}
+
+	if config.IsDev() {
+		cfgs = cfgs.WithLogLevel(aws.LogDebug)
+	}
+
+	return session.NewSession(cfgs)
 }
