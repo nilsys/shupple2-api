@@ -59,3 +59,11 @@ func (r *UserQueryRepositoryImpl) FindAvailableMatchingUser(gender model.Gender,
 	}
 	return &row, nil
 }
+
+func (r *UserQueryRepositoryImpl) FindMatchingHistoryByUserIDAndMatchingUserID(userID, matchingUserID int) (*entity.UserMatchingHistory, error) {
+	var row entity.UserMatchingHistory
+	if err := r.DB.Where("user_id = ? AND matching_user_id = ?", userID, matchingUserID).First(&row).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "(user_matching_history=%d, %d)", userID, matchingUserID)
+	}
+	return &row, nil
+}
