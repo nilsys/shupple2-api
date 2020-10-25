@@ -43,8 +43,10 @@ type (
 	}
 
 	UserMatchingHistory struct {
-		UserID         int `gorm:"primary_key"`
-		MatchingUserID int `gorm:"primary_key"`
+		UserID                int `gorm:"primary_key"`
+		MatchingUserID        int `gorm:"primary_key"`
+		UserConfirmed         bool
+		MatchingUserConfirmed bool
 		TimesWithoutDeletedAt
 	}
 )
@@ -62,6 +64,10 @@ func (u *UserImage) S3Path() string {
 func (u *UserImage) URL(filesURL config.URL) string {
 	filesURL.Path = u.S3Path()
 	return filesURL.String()
+}
+
+func (u *UserMatchingHistory) IsExpired() bool {
+	return u.CreatedAt.Add(24 * time.Hour).Before(time.Now())
 }
 
 /*
