@@ -21,7 +21,7 @@ type (
 		Store(ctx context.Context, user *entity.UserTiny) error
 		StoreUserImages(ctx context.Context, images []*entity.UserImage) error
 		StoreUserMatchingHistory(ctx context.Context, history *entity.UserMatchingHistory) error
-		UpdateForMatchingByIDs(ctx context.Context, ids []int) error
+		UpdateIsMatchingForTrueByIDs(ctx context.Context, ids []int) error
 		UpdateForNotMatchingByID(ctx context.Context, id int) error
 	}
 )
