@@ -5,23 +5,23 @@ import "net/http"
 //go:generate go-enum -f=$GOFILE --marshal
 
 /*
-ENUM(Undefined, InvalidParam, NotFound, ImportDeleted, Unauthorized, Forbidden, NotMatching)
+ENUM(Undefined, InvalidParam, NotFound, Unauthorized, Forbidden, NotMatching, MatchingNotExpired)
 */
 type Code int
 
-func (c Code) HTTPStatusCode() int {
-	switch c {
+func (x Code) HTTPStatusCode() int {
+	switch x {
 	case CodeInvalidParam:
 		return http.StatusBadRequest
 	case CodeNotFound:
 		return http.StatusNotFound
-	case CodeImportDeleted:
-		return http.StatusBadRequest
 	case CodeUnauthorized:
 		return http.StatusUnauthorized
 	case CodeForbidden:
 		return http.StatusForbidden
 	case CodeNotMatching:
+		return http.StatusBadRequest
+	case CodeMatchingNotExpired:
 		return http.StatusBadRequest
 	}
 
