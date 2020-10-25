@@ -34,6 +34,16 @@ func (c Converters) ConvertRegisterUserInput2Cmd(in *input.RegisterUser) command
 	}
 }
 
+func (c Converters) ConvertUserList2Output(users []*entity.User) []output.User {
+	resolve := make([]output.User, len(users))
+
+	for i, user := range users {
+		resolve[i] = c.ConvertUser2Output(user)
+	}
+
+	return resolve
+}
+
 func (c Converters) ConvertUser2Output(user *entity.User) output.User {
 	images := make([]output.UserImage, len(user.Images))
 	for i, image := range user.Images {
