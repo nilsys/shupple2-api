@@ -11,6 +11,7 @@ type (
 	UserQueryService interface {
 		Show(id int) (*entity.User, error)
 		ShowMatchingUser(user *entity.UserTiny) (*entity.User, error)
+		ListNotConfirmedMatchingUser(user *entity.UserTiny) ([]*entity.User, error)
 	}
 
 	UserQueryServiceImpl struct {
@@ -36,4 +37,11 @@ func (s *UserQueryServiceImpl) ShowMatchingUser(user *entity.UserTiny) (*entity.
 		return nil, serror.New(nil, serror.CodeNotMatching, "not matching")
 	}
 	return s.UserQueryRepository.FindMatchingUserByID(user.ID)
+}
+
+/*
+	マッチング後の評価をしていないユーザー一覧
+*/
+func (s *UserQueryServiceImpl) ListNotConfirmedMatchingUser(user *entity.UserTiny) ([]*entity.User, error) {
+	return s.UserQueryRepository.FindNotConfirmMatchingUsersByID(user.ID)
 }
