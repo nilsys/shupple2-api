@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"gopkg.in/guregu/null.v3"
+
 	"github.com/uma-co82/shupple2-api/pkg/config"
 
 	"github.com/google/uuid"
@@ -45,8 +47,9 @@ type (
 	UserMatchingHistory struct {
 		UserID                int `gorm:"primary_key"`
 		MatchingUserID        int `gorm:"primary_key"`
-		UserConfirmed         bool
-		MatchingUserConfirmed bool
+		UserConfirmed         null.Bool
+		MatchingUserConfirmed null.Bool
+		MatchingExpiredAt     time.Time
 		TimesWithoutDeletedAt
 	}
 )
@@ -67,7 +70,7 @@ func (u *UserImage) URL(filesURL config.URL) string {
 }
 
 func (u *UserMatchingHistory) IsExpired() bool {
-	return u.CreatedAt.Add(24 * time.Hour).Before(time.Now())
+	return u.MatchingExpiredAt.Before(time.Now())
 }
 
 /*
@@ -86,10 +89,11 @@ func NewUserTinyFromCmd(cmd command.StoreUser, firebaseID string) *UserTiny {
 	}
 }
 
-func NewUserMatchingHistory(userID, matchingUserID int) *UserMatchingHistory {
+func NewUserMatchingHistory(userID, matchingUserID int, now time.Time) *UserMatchingHistory {
 	return &UserMatchingHistory{
-		UserID:         userID,
-		MatchingUserID: matchingUserID,
+		UserID:            userID,
+		MatchingUserID:    matchingUserID,
+		MatchingExpiredAt: now.Add(24 * time.Hour),
 	}
 }
 
