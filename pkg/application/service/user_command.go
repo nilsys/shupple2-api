@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/uma-co82/shupple2-api/pkg/config"
 
@@ -27,6 +28,8 @@ type (
 	UserCommandService interface {
 		SignUp(cmd command.StoreUser, firebaseToken string) error
 		Matching(user *entity.UserTiny) error
+		// メッセージ後の評価
+		ConfirmMatching(user *entity.User, matchingUserID int, isConfirm bool) error
 	}
 
 	UserCommandServiceImpl struct {
@@ -83,8 +86,9 @@ func (s *UserCommandServiceImpl) Matching(user *entity.UserTiny) error {
 	}
 
 	return s.Do(func(ctx context.Context) error {
-		history := entity.NewUserMatchingHistory(user.ID, matchingUser.ID)
-		matchingUserHistory := entity.NewUserMatchingHistory(matchingUser.ID, user.ID)
+		matchedAt := time.Now()
+		history := entity.NewUserMatchingHistory(user.ID, matchingUser.ID, matchedAt)
+		matchingUserHistory := entity.NewUserMatchingHistory(matchingUser.ID, user.ID, matchedAt)
 
 		if err := s.UserCommandRepository.StoreUserMatchingHistory(ctx, history); err != nil {
 			return errors.Wrap(err, "failed store user_matching_history")
@@ -101,8 +105,27 @@ func (s *UserCommandServiceImpl) Matching(user *entity.UserTiny) error {
 	})
 }
 
-func (s *UserCommandServiceImpl) ()  {
+func (s *UserCommandServiceImpl) ConfirmMatching(user *entity.User, matchingUserID int, isConfirm bool) error {
+	history, err := s.UserQueryRepository.FindMatchingHistoryByUserIDAndMatchingUserID(user.ID, matchingUserID)
+	if err != nil {
+		return errors.Wrap(err, "failed find user_matching_history")
+	}
 
+	if !history.IsExpired() {
+		return serror.New(nil, serror.CodeMatchingNotExpired, "matching is not expired")
+	}
+
+	// 既に評価済みの場合
+	if history.UserConfirmed.Valid {
+		return serror.New(nil, serror.CodeInvalidParam, "duplicate confirm")
+	}
+
+	return s.TransactionService.Do(func(ctx context.Context) error {
+		if err := s.UserCommandRepository.UpdateUserMatchingHistoryUserConfirmed(ctx, user.ID, matchingUserID, isConfirm); err != nil {
+			return errors.Wrap(err, "failed update user_matching_history")
+		}
+		return nil
+	})
 }
 
 func (s *UserCommandServiceImpl) uploadUserImage(cmd []command.StoreUserImage, images []*entity.UserImage) error {
