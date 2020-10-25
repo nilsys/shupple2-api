@@ -29,8 +29,9 @@ CREATE TABLE IF NOT EXISTS user_image (
 CREATE TABLE IF NOT EXISTS user_matching_history (
   user_id                   BIGINT UNSIGNED NOT NULL,
   matching_user_id          BIGINT UNSIGNED NOT NULL,
-  user_confirmed            TINYINT NOT NULL DEFAULT 0,
-  matching_user_confirmed   TINYINT NOT NULL DEFAULT 0,
+  user_confirmed            TINYINT DEFAULT NULL,
+  matching_user_confirmed   TINYINT DEFAULT NULL,
+  matching_expired_at       DATETIME NOT NULL COMMENT 'マッチング有効期限',
   created_at                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY(user_id, matching_user_id),
