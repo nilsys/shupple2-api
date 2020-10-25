@@ -15,6 +15,7 @@ type (
 		FindByID(id int) (*entity.User, error)
 		FindMatchingUserByID(id int) (*entity.User, error)
 		FindAvailableMatchingUser(gender model.Gender, reason model.MatchingReason, id int) (*entity.UserTiny, error)
+		FindMatchingHistoryByUserIDAndMatchingUserID(userID, matchingUserID int) (*entity.UserMatchingHistory, error)
 	}
 
 	UserCommandRepository interface {
@@ -23,5 +24,6 @@ type (
 		StoreUserMatchingHistory(ctx context.Context, history *entity.UserMatchingHistory) error
 		UpdateIsMatchingToTrueByIDs(ctx context.Context, ids []int) error
 		UpdateIsMatchingToFalseByID(ctx context.Context, id int) error
+		UpdateUserMatchingHistoryUserConfirmed(ctx context.Context, userID, matchingUserID int, isConfirm bool) error
 	}
 )
