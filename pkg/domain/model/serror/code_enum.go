@@ -14,26 +14,26 @@ const (
 	CodeInvalidParam
 	// CodeNotFound is a Code of type NotFound
 	CodeNotFound
-	// CodeImportDeleted is a Code of type ImportDeleted
-	CodeImportDeleted
 	// CodeUnauthorized is a Code of type Unauthorized
 	CodeUnauthorized
 	// CodeForbidden is a Code of type Forbidden
 	CodeForbidden
 	// CodeNotMatching is a Code of type NotMatching
 	CodeNotMatching
+	// CodeMatchingNotExpired is a Code of type MatchingNotExpired
+	CodeMatchingNotExpired
 )
 
-const _CodeName = "UndefinedInvalidParamNotFoundImportDeletedUnauthorizedForbiddenNotMatching"
+const _CodeName = "UndefinedInvalidParamNotFoundUnauthorizedForbiddenNotMatchingMatchingNotExpired"
 
 var _CodeMap = map[Code]string{
 	0: _CodeName[0:9],
 	1: _CodeName[9:21],
 	2: _CodeName[21:29],
-	3: _CodeName[29:42],
-	4: _CodeName[42:54],
-	5: _CodeName[54:63],
-	6: _CodeName[63:74],
+	3: _CodeName[29:41],
+	4: _CodeName[41:50],
+	5: _CodeName[50:61],
+	6: _CodeName[61:79],
 }
 
 // String implements the Stringer interface.
@@ -48,10 +48,10 @@ var _CodeValue = map[string]Code{
 	_CodeName[0:9]:   0,
 	_CodeName[9:21]:  1,
 	_CodeName[21:29]: 2,
-	_CodeName[29:42]: 3,
-	_CodeName[42:54]: 4,
-	_CodeName[54:63]: 5,
-	_CodeName[63:74]: 6,
+	_CodeName[29:41]: 3,
+	_CodeName[41:50]: 4,
+	_CodeName[50:61]: 5,
+	_CodeName[61:79]: 6,
 }
 
 // ParseCode attempts to convert a string to a Code
