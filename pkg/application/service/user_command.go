@@ -101,6 +101,10 @@ func (s *UserCommandServiceImpl) Matching(user *entity.UserTiny) error {
 	})
 }
 
+func (s *UserCommandServiceImpl) ()  {
+
+}
+
 func (s *UserCommandServiceImpl) uploadUserImage(cmd []command.StoreUserImage, images []*entity.UserImage) error {
 	for i, image := range cmd {
 		body, err := util.Base64StrWriteBuffer(image.ImageBase64)
