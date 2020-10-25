@@ -27,10 +27,12 @@ CREATE TABLE IF NOT EXISTS user_image (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS user_matching_history (
-  user_id          BIGINT UNSIGNED NOT NULL,
-  matching_user_id BIGINT UNSIGNED NOT NULL,
-  created_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  user_id                   BIGINT UNSIGNED NOT NULL,
+  matching_user_id          BIGINT UNSIGNED NOT NULL,
+  user_confirmed            TINYINT NOT NULL DEFAULT 0,
+  matching_user_confirmed   TINYINT NOT NULL DEFAULT 0,
+  created_at                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY(user_id, matching_user_id),
   CONSTRAINT user_matching_history_user_id FOREIGN KEY(user_id) REFERENCES user(id),
   CONSTRAINT user_matching_history_matching_user_id FOREIGN KEY(matching_user_id) REFERENCES user(id)
