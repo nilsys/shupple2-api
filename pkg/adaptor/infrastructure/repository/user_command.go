@@ -42,7 +42,7 @@ func (r *UserCommandRepositoryImpl) StoreUserMatchingHistory(ctx context.Context
 	return nil
 }
 
-func (r *UserCommandRepositoryImpl) UpdateForMatchingByIDs(ctx context.Context, ids []int) error {
+func (r *UserCommandRepositoryImpl) UpdateIsMatchingForTrueByIDs(ctx context.Context, ids []int) error {
 	if err := r.DB(ctx).Exec("UPDATE user SET is_matching = true WHERE id IN (?)", ids).Error; err != nil {
 		return errors.Wrap(err, "failed update user.is_matching = true")
 	}
