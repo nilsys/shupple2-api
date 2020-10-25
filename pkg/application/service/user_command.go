@@ -93,7 +93,7 @@ func (s *UserCommandServiceImpl) Matching(user *entity.UserTiny) error {
 			return errors.Wrap(err, "failed store user_matching_history")
 		}
 
-		if err := s.UserCommandRepository.UpdateForMatchingByIDs(ctx, []int{user.ID, matchingUser.ID}); err != nil {
+		if err := s.UserCommandRepository.UpdateIsMatchingForTrueByIDs(ctx, []int{user.ID, matchingUser.ID}); err != nil {
 			return errors.Wrap(err, "failed update user is_matching")
 		}
 
