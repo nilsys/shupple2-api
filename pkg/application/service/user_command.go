@@ -122,7 +122,10 @@ func (s *UserCommandServiceImpl) ConfirmMatching(user *entity.User, matchingUser
 
 	return s.TransactionService.Do(func(ctx context.Context) error {
 		if err := s.UserCommandRepository.UpdateUserMatchingHistoryUserConfirmed(ctx, user.ID, matchingUserID, isConfirm); err != nil {
-			return errors.Wrap(err, "failed update user_matching_history")
+			return errors.Wrap(err, "failed update user_matching_history.user_confirmed")
+		}
+		if err := s.UserCommandRepository.UpdateUserMatchingHistoryMatchingUserConfirmed(ctx, matchingUserID, user.ID, isConfirm); err != nil {
+			return errors.Wrap(err, "failed update user_matching_history.matching_user_confirmed")
 		}
 		return nil
 	})
