@@ -80,3 +80,12 @@ func (r *UserQueryRepositoryImpl) FindNotConfirmMatchingUsersByID(id int) ([]*en
 	}
 	return rows, nil
 }
+
+func (r *UserQueryRepositoryImpl) FindConfirmMatchingUserByID(id int) ([]*entity.User, error) {
+	var rows []*entity.User
+	if err := r.DB.
+		Joins("INNER JOIN user_matching_history ON user.id = user_matching_history.matching_user_id").
+		Where("user_matching_history.user_id = ? AND user_matching_history.user_confirmed = true AND user_matching_history.matching_user_confirmed = true", id).Find(&rows).Error; err != nil {
+	}
+	return rows, nil
+}
