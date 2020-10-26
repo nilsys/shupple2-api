@@ -62,3 +62,10 @@ func (r *UserCommandRepositoryImpl) UpdateUserMatchingHistoryUserConfirmed(ctx c
 	}
 	return nil
 }
+
+func (r *UserCommandRepositoryImpl) UpdateUserMatchingHistoryMatchingUserConfirmed(ctx context.Context, userID, matchingUserID int, isConfirm bool) error {
+	if err := r.DB(ctx).Exec("UPDATE user_matching_history SET matching_user_confirmed = ? WHERE user_id = ? AND matching_user_id = ?", isConfirm, userID, matchingUserID).Error; err != nil {
+		return errors.Wrap(err, "failed update user_matching_history")
+	}
+	return nil
+}
