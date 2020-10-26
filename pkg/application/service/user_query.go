@@ -12,6 +12,7 @@ type (
 		Show(id int) (*entity.User, error)
 		ShowMatchingUser(user *entity.UserTiny) (*entity.User, error)
 		ListNotConfirmedMatchingUser(user *entity.UserTiny) ([]*entity.User, error)
+		ListConfirmMatchingUser(user *entity.UserTiny) ([]*entity.User, error)
 	}
 
 	UserQueryServiceImpl struct {
@@ -44,4 +45,11 @@ func (s *UserQueryServiceImpl) ShowMatchingUser(user *entity.UserTiny) (*entity.
 */
 func (s *UserQueryServiceImpl) ListNotConfirmedMatchingUser(user *entity.UserTiny) ([]*entity.User, error) {
 	return s.UserQueryRepository.FindNotConfirmMatchingUsersByID(user.ID)
+}
+
+/*
+	マッチング後お互いがいいねしたユーザー一覧
+*/
+func (s *UserQueryServiceImpl) ListConfirmMatchingUser(user *entity.UserTiny) ([]*entity.User, error) {
+	return s.UserQueryRepository.FindConfirmMatchingUserByID(user.ID)
 }
