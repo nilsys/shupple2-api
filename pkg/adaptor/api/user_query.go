@@ -55,3 +55,11 @@ func (c *UserQueryController) ListNotConfirmedMatchingUser(ctx echo.Context, use
 	}
 	return ctx.JSON(http.StatusOK, c.ConvertUserList2Output(resolve))
 }
+
+func (c *UserQueryController) ListConfirmedMatchingUser(ctx echo.Context, user *entity.UserTiny) error {
+	resolve, err := c.UserQueryService.ListConfirmMatchingUser(user)
+	if err != nil {
+		return errors.Wrap(err, "failed list not confirmed user")
+	}
+	return ctx.JSON(http.StatusOK, c.ConvertUserList2Output(resolve))
+}
