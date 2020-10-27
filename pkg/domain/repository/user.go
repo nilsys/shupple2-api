@@ -26,7 +26,7 @@ type (
 		StoreUserMatchingHistory(ctx context.Context, history *entity.UserMatchingHistory) error
 		UpdateIsMatchingToTrueByIDs(ctx context.Context, ids []int) error
 		UpdateIsMatchingToFalseByID(ctx context.Context, id int) error
-		UpdateUserMatchingHistoryUserConfirmed(ctx context.Context, userID, matchingUserID int, isConfirm bool) error
-		UpdateUserMatchingHistoryMatchingUserConfirmed(ctx context.Context, userID, matchingUserID int, isConfirm bool) error
+		UpdateUserMatchingHistoryUserMainMatchingApprove(ctx context.Context, userID, matchingUserID int, isApprove bool) error
+		UpdateUserMatchingHistoryMatchingUserMainMatchingApprove(ctx context.Context, userID, matchingUserID int, isApprove bool) error
 	}
 )
