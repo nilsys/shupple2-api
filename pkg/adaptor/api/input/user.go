@@ -21,7 +21,7 @@ type (
 		ImageBase64 string `json:"imageBase64"`
 	}
 
-	ConfirmMatching struct {
+	ReviewMainMatching struct {
 		MatchingUserID IDParam
 	}
 )
