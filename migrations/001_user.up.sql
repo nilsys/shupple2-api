@@ -27,13 +27,13 @@ CREATE TABLE IF NOT EXISTS user_image (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS user_matching_history (
-  user_id                   BIGINT UNSIGNED NOT NULL,
-  matching_user_id          BIGINT UNSIGNED NOT NULL,
-  user_confirmed            TINYINT DEFAULT NULL,
-  matching_user_confirmed   TINYINT DEFAULT NULL,
-  matching_expired_at       DATETIME NOT NULL COMMENT 'マッチング有効期限',
-  created_at                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  user_id                               BIGINT UNSIGNED NOT NULL,
+  matching_user_id                      BIGINT UNSIGNED NOT NULL,
+  user_main_matching_approve            TINYINT DEFAULT NULL,
+  matching_user_main_matching_approve   TINYINT DEFAULT NULL,
+  matching_expired_at                   DATETIME NOT NULL COMMENT 'マッチング有効期限',
+  created_at                            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at                            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY(user_id, matching_user_id),
   CONSTRAINT user_matching_history_user_id FOREIGN KEY(user_id) REFERENCES user(id),
   CONSTRAINT user_matching_history_matching_user_id FOREIGN KEY(matching_user_id) REFERENCES user(id)
