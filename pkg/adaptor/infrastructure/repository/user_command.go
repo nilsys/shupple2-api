@@ -56,15 +56,15 @@ func (r *UserCommandRepositoryImpl) UpdateIsMatchingToFalseByID(ctx context.Cont
 	return nil
 }
 
-func (r *UserCommandRepositoryImpl) UpdateUserMatchingHistoryUserConfirmed(ctx context.Context, userID, matchingUserID int, isConfirm bool) error {
-	if err := r.DB(ctx).Exec("UPDATE user_matching_history SET user_confirmed = ? WHERE user_id = ? AND matching_user_id = ?", isConfirm, userID, matchingUserID).Error; err != nil {
+func (r *UserCommandRepositoryImpl) UpdateUserMatchingHistoryUserMainMatchingApprove(ctx context.Context, userID, matchingUserID int, isApprove bool) error {
+	if err := r.DB(ctx).Exec("UPDATE user_matching_history SET user_main_matching_approve = ? WHERE user_id = ? AND matching_user_id = ?", isApprove, userID, matchingUserID).Error; err != nil {
 		return errors.Wrap(err, "failed update user_matching_history")
 	}
 	return nil
 }
 
-func (r *UserCommandRepositoryImpl) UpdateUserMatchingHistoryMatchingUserConfirmed(ctx context.Context, userID, matchingUserID int, isConfirm bool) error {
-	if err := r.DB(ctx).Exec("UPDATE user_matching_history SET matching_user_confirmed = ? WHERE user_id = ? AND matching_user_id = ?", isConfirm, userID, matchingUserID).Error; err != nil {
+func (r *UserCommandRepositoryImpl) UpdateUserMatchingHistoryMatchingUserMainMatchingApprove(ctx context.Context, userID, matchingUserID int, isApprove bool) error {
+	if err := r.DB(ctx).Exec("UPDATE user_matching_history SET matching_user_main_matching_approve = ? WHERE user_id = ? AND matching_user_id = ?", isApprove, userID, matchingUserID).Error; err != nil {
 		return errors.Wrap(err, "failed update user_matching_history")
 	}
 	return nil
