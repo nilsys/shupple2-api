@@ -20,4 +20,8 @@ type (
 		MimeType    string `json:"mimeType"`
 		ImageBase64 string `json:"imageBase64"`
 	}
+
+	ConfirmMatching struct {
+		MatchingUserID IDParam
+	}
 )
