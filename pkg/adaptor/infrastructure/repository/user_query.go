@@ -71,21 +71,21 @@ func (r *UserQueryRepositoryImpl) FindMatchingHistoryByUserIDAndMatchingUserID(u
 /*
 	マッチング後、評価していないUser一覧
 */
-func (r *UserQueryRepositoryImpl) FindNotConfirmMatchingUsersByID(id int) ([]*entity.User, error) {
+func (r *UserQueryRepositoryImpl) FindNotMainMatchingReviewMatchingUsersByID(id int) ([]*entity.User, error) {
 	var rows []*entity.User
 	if err := r.DB.
 		Joins("INNER JOIN user_matching_history ON user.id = user_matching_history.matching_user_id").
-		Where("user_matching_history.user_id = ? AND user_matching_history.user_confirmed IS NULL", id).Find(&rows).Error; err != nil {
+		Where("user_matching_history.user_id = ? AND user_matching_history.user_main_matching_approve IS NULL", id).Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find user")
 	}
 	return rows, nil
 }
 
-func (r *UserQueryRepositoryImpl) FindConfirmMatchingUserByID(id int) ([]*entity.User, error) {
+func (r *UserQueryRepositoryImpl) FindMainMatchingUserByID(id int) ([]*entity.User, error) {
 	var rows []*entity.User
 	if err := r.DB.
 		Joins("INNER JOIN user_matching_history ON user.id = user_matching_history.matching_user_id").
-		Where("user_matching_history.user_id = ? AND user_matching_history.user_confirmed = true AND user_matching_history.matching_user_confirmed = true", id).Find(&rows).Error; err != nil {
+		Where("user_matching_history.user_id = ? AND user_matching_history.user_main_matching_approve = true AND user_matching_history.matching_user_main_matching_approve = true", id).Find(&rows).Error; err != nil {
 	}
 	return rows, nil
 }
