@@ -11,8 +11,8 @@ type (
 	UserQueryService interface {
 		Show(id int) (*entity.User, error)
 		ShowMatchingUser(user *entity.UserTiny) (*entity.User, error)
-		ListNotConfirmedMatchingUser(user *entity.UserTiny) ([]*entity.User, error)
-		ListConfirmMatchingUser(user *entity.UserTiny) ([]*entity.User, error)
+		ListNotReviewMainMatchingMatchingUser(user *entity.UserTiny) ([]*entity.User, error)
+		ListMainMatchingUser(user *entity.UserTiny) ([]*entity.User, error)
 	}
 
 	UserQueryServiceImpl struct {
@@ -43,13 +43,13 @@ func (s *UserQueryServiceImpl) ShowMatchingUser(user *entity.UserTiny) (*entity.
 /*
 	マッチング後の評価をしていないユーザー一覧
 */
-func (s *UserQueryServiceImpl) ListNotConfirmedMatchingUser(user *entity.UserTiny) ([]*entity.User, error) {
-	return s.UserQueryRepository.FindNotConfirmMatchingUsersByID(user.ID)
+func (s *UserQueryServiceImpl) ListNotReviewMainMatchingMatchingUser(user *entity.UserTiny) ([]*entity.User, error) {
+	return s.UserQueryRepository.FindNotMainMatchingReviewMatchingUsersByID(user.ID)
 }
 
 /*
 	マッチング後お互いがいいねしたユーザー一覧
 */
-func (s *UserQueryServiceImpl) ListConfirmMatchingUser(user *entity.UserTiny) ([]*entity.User, error) {
-	return s.UserQueryRepository.FindConfirmMatchingUserByID(user.ID)
+func (s *UserQueryServiceImpl) ListMainMatchingUser(user *entity.UserTiny) ([]*entity.User, error) {
+	return s.UserQueryRepository.FindMainMatchingUserByID(user.ID)
 }
