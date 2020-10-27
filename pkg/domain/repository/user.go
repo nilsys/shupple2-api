@@ -16,8 +16,8 @@ type (
 		FindMatchingUserByID(id int) (*entity.User, error)
 		FindAvailableMatchingUser(gender model.Gender, reason model.MatchingReason, id int) (*entity.UserTiny, error)
 		FindMatchingHistoryByUserIDAndMatchingUserID(userID, matchingUserID int) (*entity.UserMatchingHistory, error)
-		FindNotConfirmMatchingUsersByID(id int) ([]*entity.User, error)
-		FindConfirmMatchingUserByID(id int) ([]*entity.User, error)
+		FindNotMainMatchingReviewMatchingUsersByID(id int) ([]*entity.User, error)
+		FindMainMatchingUserByID(id int) ([]*entity.User, error)
 	}
 
 	UserCommandRepository interface {
