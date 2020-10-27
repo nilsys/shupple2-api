@@ -45,11 +45,11 @@ type (
 	}
 
 	UserMatchingHistory struct {
-		UserID                int `gorm:"primary_key"`
-		MatchingUserID        int `gorm:"primary_key"`
-		UserConfirmed         null.Bool
-		MatchingUserConfirmed null.Bool
-		MatchingExpiredAt     time.Time
+		UserID                          int `gorm:"primary_key"`
+		MatchingUserID                  int `gorm:"primary_key"`
+		UserMainMatchingApprove         null.Bool
+		MatchingUserMainMatchingApprove null.Bool
+		MatchingExpiredAt               time.Time
 		TimesWithoutDeletedAt
 	}
 )
