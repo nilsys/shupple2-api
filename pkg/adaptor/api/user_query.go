@@ -48,18 +48,18 @@ func (c *UserQueryController) ShowMatchingUser(ctx echo.Context, user *entity.Us
 /*
 	マッチング後の評価をしていないユーザー一覧
 */
-func (c *UserQueryController) ListNotConfirmedMatchingUser(ctx echo.Context, user *entity.UserTiny) error {
-	resolve, err := c.UserQueryService.ListNotConfirmedMatchingUser(user)
+func (c *UserQueryController) ListNotReviewMainMatchingMatchingUser(ctx echo.Context, user *entity.UserTiny) error {
+	resolve, err := c.UserQueryService.ListNotReviewMainMatchingMatchingUser(user)
 	if err != nil {
-		return errors.Wrap(err, "failed list not confirmed user")
+		return errors.Wrap(err, "failed list not review main matching user")
 	}
 	return ctx.JSON(http.StatusOK, c.ConvertUserList2Output(resolve))
 }
 
-func (c *UserQueryController) ListConfirmedMatchingUser(ctx echo.Context, user *entity.UserTiny) error {
-	resolve, err := c.UserQueryService.ListConfirmMatchingUser(user)
+func (c *UserQueryController) ListMainMatchingUser(ctx echo.Context, user *entity.UserTiny) error {
+	resolve, err := c.UserQueryService.ListMainMatchingUser(user)
 	if err != nil {
-		return errors.Wrap(err, "failed list not confirmed user")
+		return errors.Wrap(err, "failed list main matching user")
 	}
 	return ctx.JSON(http.StatusOK, c.ConvertUserList2Output(resolve))
 }
