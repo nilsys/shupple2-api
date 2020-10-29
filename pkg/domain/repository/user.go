@@ -25,9 +25,9 @@ type (
 		Store(ctx context.Context, user *entity.UserTiny) error
 		StoreUserImages(ctx context.Context, image *entity.UserImage) error
 		StoreUserMatchingHistory(ctx context.Context, history *entity.UserMatchingHistory) error
-		UpdateIsMatchingToTrueByIDs(ctx context.Context, ids []int) error
-		UpdateIsMatchingToFalseByID(ctx context.Context, id int) error
+		UpdateLatestMatchingUserID(ctx context.Context, id, matchingUserID int) error
 		UpdateUserMatchingHistoryUserMainMatchingApprove(ctx context.Context, userID, matchingUserID int, isApprove bool) error
 		UpdateUserMatchingHistoryMatchingUserMainMatchingApprove(ctx context.Context, userID, matchingUserID int, isApprove bool) error
+		UpdateMatchingExpiredUserLatestMatchingUserID() error
 	}
 )
