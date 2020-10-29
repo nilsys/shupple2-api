@@ -25,12 +25,9 @@ func (r *UserCommandRepositoryImpl) Store(ctx context.Context, user *entity.User
 	return nil
 }
 
-func (r *UserCommandRepositoryImpl) StoreUserImages(ctx context.Context, images []*entity.UserImage) error {
-	db := r.DB(ctx)
-	for _, image := range images {
-		if err := db.Save(image).Error; err != nil {
-			return errors.Wrap(err, "failed store user_image")
-		}
+func (r *UserCommandRepositoryImpl) StoreUserImages(ctx context.Context, image *entity.UserImage) error {
+	if err := r.DB(ctx).Save(image).Error; err != nil {
+		return errors.Wrap(err, "failed store user_image")
 	}
 	return nil
 }
