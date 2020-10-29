@@ -16,6 +16,7 @@ type (
 	}
 
 	UserImage struct {
+		ID       string `json:"id"`
 		Priority int    `json:"priority"`
 		URL      string `json:"url"`
 	}
