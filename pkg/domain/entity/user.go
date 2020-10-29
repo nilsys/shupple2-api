@@ -73,6 +73,33 @@ func (u *UserMatchingHistory) IsExpired() bool {
 	return u.MatchingExpiredAt.Before(time.Now())
 }
 
+func (u *UserTiny) TableName() string {
+	return "user"
+}
+
+// 変更があったフィールドのみ置き換え
+// Genderの更新は不可
+func (u *UserTiny) UpdateUser(cmd command.StoreUser) {
+	if cmd.Name != "" {
+		u.Name = cmd.Name
+	}
+	if cmd.Email != "" {
+		u.Email = cmd.Email
+	}
+	if !cmd.Birthdate.IsZero() {
+		u.Birthdate = cmd.Birthdate
+	}
+	if cmd.Profile != "" {
+		u.Profile = cmd.Profile
+	}
+	if cmd.Prefecture != 0 {
+		u.Prefecture = cmd.Prefecture
+	}
+	if cmd.MatchingReason != 0 {
+		u.MatchingReason = cmd.MatchingReason
+	}
+}
+
 /*
 	constructor
 */
