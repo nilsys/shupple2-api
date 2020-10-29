@@ -15,10 +15,13 @@ mockgen=$(BIN)/mockgen
 linter=$(BIN)/golangci-lint
 go-enum=$(BIN)/go-enum
 
-build: build-app
+build: build-app build-batch
 
 build-app:
 	go build $(BUILD_OPTS) -o bin/shupple2-api ./cmd/app
+
+build-batch:
+    go build ${BUILD_OPTS} -o bin/shupple2-batch ./cmd/batch
 
 install-cli: $(air) $(migrate) $(wire) $(ginkgo) $(mockgen) $(linter) $(go-enum)
 $(air):
