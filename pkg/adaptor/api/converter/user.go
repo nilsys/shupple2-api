@@ -13,15 +13,6 @@ import (
 )
 
 func (c Converters) ConvertRegisterUserInput2Cmd(in *input.RegisterUser) command.StoreUser {
-	images := make([]command.StoreUserImage, len(in.Images))
-	for i, image := range images {
-		images[i] = command.StoreUserImage{
-			Priority:    image.Priority,
-			MimeType:    image.MimeType,
-			ImageBase64: image.ImageBase64,
-		}
-	}
-
 	return command.StoreUser{
 		Name:           in.Name,
 		Email:          in.Email,
@@ -30,7 +21,14 @@ func (c Converters) ConvertRegisterUserInput2Cmd(in *input.RegisterUser) command
 		Gender:         in.Gender,
 		Prefecture:     in.Prefecture,
 		MatchingReason: in.MatchingReason,
-		Images:         images,
+	}
+}
+
+func (c Converters) ConvertRegisterUserImagesInput2Cmd(in input.RegisterUserImage) command.StoreUserImage {
+	return command.StoreUserImage{
+		Priority:    in.Priority,
+		MimeType:    in.MimeType,
+		ImageBase64: in.ImageBase64,
 	}
 }
 
@@ -48,6 +46,7 @@ func (c Converters) ConvertUser2Output(user *entity.User) output.User {
 	images := make([]output.UserImage, len(user.Images))
 	for i, image := range user.Images {
 		images[i] = output.UserImage{
+			ID:       image.UUID,
 			Priority: image.Priority,
 			URL:      image.URL(c.filesURL()),
 		}
