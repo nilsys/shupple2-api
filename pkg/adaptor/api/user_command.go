@@ -35,6 +35,19 @@ func (c *UserCommandController) SignUp(ctx echo.Context) error {
 	return ctx.NoContent(http.StatusNoContent)
 }
 
+func (c *UserCommandController) Update(ctx echo.Context, user *entity.UserTiny) error {
+	i := &input.RegisterUser{}
+	if err := BindAndValidate(ctx, i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	if err := c.UserCommandService.Update(c.ConvertRegisterUserInput2Cmd(i), user); err != nil {
+		return errors.Wrap(err, "failed update user")
+	}
+
+	return ctx.NoContent(http.StatusNoContent)
+}
+
 func (c *UserCommandController) StoreImage(ctx echo.Context, user *entity.UserTiny) error {
 	i := input.RegisterUserImage{}
 	if err := BindAndValidate(ctx, &i); err != nil {
@@ -44,6 +57,20 @@ func (c *UserCommandController) StoreImage(ctx echo.Context, user *entity.UserTi
 	if err := c.UserCommandService.StoreUserImage(c.ConvertRegisterUserImagesInput2Cmd(i), user); err != nil {
 		return errors.Wrap(err, "failed store user image")
 	}
+
+	return ctx.NoContent(http.StatusNoContent)
+}
+
+func (c *UserCommandController) DeleteUserImage(ctx echo.Context, user *entity.UserTiny) error {
+	i := input.DeleteUserImage{}
+	if err := BindAndValidate(ctx, &i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	if err := c.UserCommandService.DeleteUserImage(i.ID, user); err != nil {
+		return errors.Wrap(err, "failed delete user image")
+	}
+
 	return ctx.NoContent(http.StatusNoContent)
 }
 
