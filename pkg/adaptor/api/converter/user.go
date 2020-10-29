@@ -60,7 +60,6 @@ func (c Converters) ConvertUser2Output(user *entity.User) output.User {
 		Gender:         user.Gender,
 		Prefecture:     user.Prefecture,
 		MatchingReason: user.MatchingReason,
-		IsMatching:     user.IsMatching,
 		Images:         images,
 	}
 }
