@@ -23,4 +23,8 @@ type (
 	ReviewMainMatching struct {
 		MatchingUserID IDParam
 	}
+
+	DeleteUserImage struct {
+		ID string `param:"id"`
+	}
 )
