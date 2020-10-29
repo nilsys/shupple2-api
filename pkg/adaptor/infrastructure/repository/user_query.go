@@ -89,3 +89,11 @@ func (r *UserQueryRepositoryImpl) FindMainMatchingUserByID(id int) ([]*entity.Us
 	}
 	return rows, nil
 }
+
+func (r *UserQueryRepositoryImpl) FindImageByUUID(uuid string) (*entity.UserImage, error) {
+	var row entity.UserImage
+	if err := r.DB.First(&row, uuid).Error; err != nil {
+		return nil, ErrorToFindSingleRecord(err, "user_image(id=%s)", uuid)
+	}
+	return &row, nil
+}
