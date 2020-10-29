@@ -22,13 +22,22 @@ var UserQueryControllerSet = wire.NewSet(
 	wire.Struct(new(UserQueryController), "*"),
 )
 
-func (c *UserQueryController) Show(ctx echo.Context) error {
+func (c *UserQueryController) Show(ctx echo.Context, user *entity.UserTiny) error {
+	resolve, err := c.UserQueryService.Show(user)
+	if err != nil {
+		return errors.Wrap(err, "failed show user")
+	}
+
+	return ctx.JSON(http.StatusOK, c.ConvertUser2Output(resolve))
+}
+
+func (c *UserQueryController) ShowByID(ctx echo.Context) error {
 	i := &input.IDParam{}
 	if err := BindAndValidate(ctx, i); err != nil {
 		return errors.Wrap(err, "failed bind input")
 	}
 
-	user, err := c.UserQueryService.Show(i.ID)
+	user, err := c.UserQueryService.ShowByID(i.ID)
 	if err != nil {
 		return errors.Wrap(err, "failed show user")
 	}
