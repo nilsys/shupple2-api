@@ -11,6 +11,7 @@ type (
 		Gender         model.Gender         `json:"gender"`
 		Prefecture     model.Prefecture     `json:"prefecture"`
 		MatchingReason model.MatchingReason `json:"matchingReason"`
+		IsMatching     bool                 `json:"isMatching"`
 		Images         []UserImage          `json:"images"`
 	}
 
