@@ -39,7 +39,7 @@ func (s *UserQueryServiceImpl) ShowByID(id int) (*entity.User, error) {
 	マッチングしていない場合はCodeNotMatching
 */
 func (s *UserQueryServiceImpl) ShowMatchingUser(user *entity.UserTiny) (*entity.User, error) {
-	if !user.IsMatching {
+	if !user.IsMatching() {
 		return nil, serror.New(nil, serror.CodeNotMatching, "not matching")
 	}
 	return s.UserQueryRepository.FindMatchingUserByID(user.ID)
