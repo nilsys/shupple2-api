@@ -39,16 +39,9 @@ func (r *UserCommandRepositoryImpl) StoreUserMatchingHistory(ctx context.Context
 	return nil
 }
 
-func (r *UserCommandRepositoryImpl) UpdateIsMatchingToTrueByIDs(ctx context.Context, ids []int) error {
-	if err := r.DB(ctx).Exec("UPDATE user SET is_matching = true WHERE id IN (?)", ids).Error; err != nil {
-		return errors.Wrap(err, "failed update user.is_matching = true")
-	}
-	return nil
-}
-
-func (r *UserCommandRepositoryImpl) UpdateIsMatchingToFalseByID(ctx context.Context, id int) error {
-	if err := r.DB(ctx).Exec("UPDATE user SET is_matching = false WHERE id = ?", id).Error; err != nil {
-		return errors.Wrap(err, "failed update user.is_matching = false")
+func (r *UserCommandRepositoryImpl) UpdateLatestMatchingUserID(ctx context.Context, id, matchingUserID int) error {
+	if err := r.DB(ctx).Exec("UPDATE user SET latest_matching_user_id = ? WHERE id = ?", matchingUserID, id).Error; err != nil {
+		return errors.Wrap(err, "failed update user.latest_matching_user_id")
 	}
 	return nil
 }
@@ -63,6 +56,13 @@ func (r *UserCommandRepositoryImpl) UpdateUserMatchingHistoryUserMainMatchingApp
 func (r *UserCommandRepositoryImpl) UpdateUserMatchingHistoryMatchingUserMainMatchingApprove(ctx context.Context, userID, matchingUserID int, isApprove bool) error {
 	if err := r.DB(ctx).Exec("UPDATE user_matching_history SET matching_user_main_matching_approve = ? WHERE user_id = ? AND matching_user_id = ?", isApprove, userID, matchingUserID).Error; err != nil {
 		return errors.Wrap(err, "failed update user_matching_history")
+	}
+	return nil
+}
+
+func (r *UserCommandRepositoryImpl) UpdateMatchingExpiredUserLatestMatchingUserID() error {
+	if err := r.DB(context.Background()).Exec("UPDATE user u JOIN user_matching_history um ON u.id = um.user_id AND u.latest_matching_user_id = um.matching_user_id SET u.latest_matching_user_id = NULL WHERE um.matching_expired_at < NOW()").Error; err != nil {
+		return errors.Wrap(err, "failed update user latest_matching_user_id")
 	}
 	return nil
 }
