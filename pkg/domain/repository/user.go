@@ -18,11 +18,12 @@ type (
 		FindMatchingHistoryByUserIDAndMatchingUserID(userID, matchingUserID int) (*entity.UserMatchingHistory, error)
 		FindNotMainMatchingReviewMatchingUsersByID(id int) ([]*entity.User, error)
 		FindMainMatchingUserByID(id int) ([]*entity.User, error)
+		FindImageByUUID(uuid string) (*entity.UserImage, error)
 	}
 
 	UserCommandRepository interface {
 		Store(ctx context.Context, user *entity.UserTiny) error
-		StoreUserImages(ctx context.Context, images []*entity.UserImage) error
+		StoreUserImages(ctx context.Context, image *entity.UserImage) error
 		StoreUserMatchingHistory(ctx context.Context, history *entity.UserMatchingHistory) error
 		UpdateIsMatchingToTrueByIDs(ctx context.Context, ids []int) error
 		UpdateIsMatchingToFalseByID(ctx context.Context, id int) error
