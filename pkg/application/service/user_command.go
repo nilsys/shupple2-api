@@ -29,6 +29,8 @@ type (
 		SignUp(cmd command.StoreUser, firebaseToken string) error
 		Matching(user *entity.UserTiny) error
 		ApproveMainMatching(user *entity.User, matchingUserID int, isApprove bool) error
+		StoreUserImage(cmd command.StoreUserImage, user *entity.UserTiny) error
+		DeleteUserImage(imageUUID string, user *entity.UserTiny) error
 	}
 
 	UserCommandServiceImpl struct {
@@ -52,30 +54,46 @@ func (s *UserCommandServiceImpl) SignUp(cmd command.StoreUser, firebaseToken str
 		return serror.New(err, serror.CodeUnauthorized, "unauthorized")
 	}
 
-	user, err := entity.NewUser(cmd, firebaseID)
+	user := entity.NewUserTinyFromCmd(cmd, firebaseID)
+
+	return s.TransactionService.Do(func(ctx context.Context) error {
+		if err := s.UserCommandRepository.Store(ctx, user); err != nil {
+			return errors.Wrap(err, "failed store user")
+		}
+		return nil
+	})
+}
+
+func (s *UserCommandServiceImpl) StoreUserImage(cmd command.StoreUserImage, user *entity.UserTiny) error {
+	image, err := entity.NewUserImage(cmd, user.ID)
 	if err != nil {
-		return errors.Wrap(err, "failed new user")
+		return errors.Wrap(err, "failed new user images")
 	}
 
 	return s.TransactionService.Do(func(ctx context.Context) error {
-
-		if err := s.Store(ctx, &user.UserTiny); err != nil {
-			return errors.Wrap(err, "failed store user")
-		}
-
-		// user.idはここで初めて取得できるので、画像のstoreの前にidをいれる
-		user.InsertUserID2Images()
-
-		if err := s.StoreUserImages(ctx, user.Images); err != nil {
+		if err := s.UserCommandRepository.StoreUserImages(ctx, image); err != nil {
 			return errors.Wrap(err, "failed store user_image")
 		}
 
-		if err := s.uploadUserImage(cmd.Images, user.Images); err != nil {
+		if err := s.uploadUserImage(cmd, image); err != nil {
 			return errors.Wrap(err, "failed upload user image")
 		}
 
 		return nil
 	})
+}
+
+func (s *UserCommandServiceImpl) DeleteUserImage(imageUUID string, user *entity.UserTiny) error {
+	image, err := s.UserQueryRepository.FindImageByUUID(imageUUID)
+	if err != nil {
+		return errors.Wrap(err, "failed find user_image")
+	}
+
+	if image.UserID != user.ID {
+		return serror.New(nil, serror.CodeForbidden, "forbidden")
+	}
+
+	return s.S3CommandRepository.Delete(image.S3Path())
 }
 
 func (s *UserCommandServiceImpl) Matching(user *entity.UserTiny) error {
@@ -130,22 +148,20 @@ func (s *UserCommandServiceImpl) ApproveMainMatching(user *entity.User, matching
 	})
 }
 
-func (s *UserCommandServiceImpl) uploadUserImage(cmd []command.StoreUserImage, images []*entity.UserImage) error {
-	for i, image := range cmd {
-		body, err := util.Base64StrWriteBuffer(image.ImageBase64)
-		if err != nil {
-			return errors.Wrap(err, "failed write buffer")
-		}
-		uploadInput := &s3manager.UploadInput{
-			ACL:         aws.String(s3.ObjectCannedACLPublicRead),
-			Body:        body,
-			Bucket:      aws.String(s.AWSConfig.FilesBucket),
-			Key:         aws.String(images[i].S3Path()),
-			ContentType: aws.String(image.MimeType),
-		}
-		if err := s.S3CommandRepository.Upload(uploadInput); err != nil {
-			return errors.Wrap(err, "failed upload to s3")
-		}
+func (s *UserCommandServiceImpl) uploadUserImage(cmd command.StoreUserImage, image *entity.UserImage) error {
+	body, err := util.Base64StrWriteBuffer(cmd.ImageBase64)
+	if err != nil {
+		return errors.Wrap(err, "failed write buffer")
+	}
+	uploadInput := &s3manager.UploadInput{
+		ACL:         aws.String(s3.ObjectCannedACLPublicRead),
+		Body:        body,
+		Bucket:      aws.String(s.AWSConfig.FilesBucket),
+		Key:         aws.String(image.S3Path()),
+		ContentType: aws.String(image.MimeType),
+	}
+	if err := s.S3CommandRepository.Upload(uploadInput); err != nil {
+		return errors.Wrap(err, "failed upload to s3")
 	}
 	return nil
 }
