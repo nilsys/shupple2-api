@@ -27,6 +27,7 @@ import (
 type (
 	UserCommandService interface {
 		SignUp(cmd command.StoreUser, firebaseToken string) error
+		Update(cmd command.StoreUser, user *entity.UserTiny) error
 		Matching(user *entity.UserTiny) error
 		ApproveMainMatching(user *entity.User, matchingUserID int, isApprove bool) error
 		StoreUserImage(cmd command.StoreUserImage, user *entity.UserTiny) error
@@ -62,6 +63,12 @@ func (s *UserCommandServiceImpl) SignUp(cmd command.StoreUser, firebaseToken str
 		}
 		return nil
 	})
+}
+
+func (s *UserCommandServiceImpl) Update(cmd command.StoreUser, user *entity.UserTiny) error {
+	user.UpdateUser(cmd)
+
+	return s.UserCommandRepository.Store(context.Background(), user)
 }
 
 func (s *UserCommandServiceImpl) StoreUserImage(cmd command.StoreUserImage, user *entity.UserTiny) error {
