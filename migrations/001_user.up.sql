@@ -1,17 +1,18 @@
 CREATE TABLE IF NOT EXISTS user (
-  id           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  firebase_id   VARCHAR(255) NOT NULL COMMENT 'firebaseから返るsub',
-  name         VARCHAR(255) NOT NULL,
-  email        VARCHAR(255) NOT NULL,
-  birthdate    DATE NOT NULL,
-  gender       TINYINT NOT NULL,
-  prefecture   TINYINT NOT NULL,
-  profile      TEXT NOT NULL,
-  is_matching   TINYINT NOT NULL DEFAULT 0,
+  id                      BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  firebase_id             VARCHAR(255) NOT NULL COMMENT 'firebaseから返るsub',
+  name                    VARCHAR(255) NOT NULL,
+  email                   VARCHAR(255) NOT NULL,
+  birthdate               DATE NOT NULL,
+  gender                  TINYINT NOT NULL,
+  prefecture              TINYINT NOT NULL,
+  profile                 TEXT NOT NULL,
+  latest_matching_user_id BIGINT UNSIGNED DEFAULT NULL COMMENT 'マッチング中のユーザーid',
   created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   deleted_at   DATETIME DEFAULT NULL,
   PRIMARY KEY(id),
+  CONSTRAINT user_latest_matching_user_id FOREIGN KEY(latest_matching_user_id) REFERENCES user(id),
   INDEX idx_user_firebase_id(firebase_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
