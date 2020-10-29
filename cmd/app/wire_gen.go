@@ -71,10 +71,11 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 	if err != nil {
 		return nil, err
 	}
+	configAWS := configConfig.AWS
 	s3CommandRepositoryImpl := &aws.S3CommandRepositoryImpl{
 		AWSSession: session,
+		AWSConfig:  configAWS,
 	}
-	configAWS := configConfig.AWS
 	transactionServiceImpl := &repository.TransactionServiceImpl{
 		DB: db,
 	}
