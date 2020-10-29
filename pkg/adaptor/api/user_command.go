@@ -35,6 +35,18 @@ func (c *UserCommandController) SignUp(ctx echo.Context) error {
 	return ctx.NoContent(http.StatusNoContent)
 }
 
+func (c *UserCommandController) StoreImage(ctx echo.Context, user *entity.UserTiny) error {
+	i := input.RegisterUserImage{}
+	if err := BindAndValidate(ctx, &i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	if err := c.UserCommandService.StoreUserImage(c.ConvertRegisterUserImagesInput2Cmd(i), user); err != nil {
+		return errors.Wrap(err, "failed store user image")
+	}
+	return ctx.NoContent(http.StatusNoContent)
+}
+
 func (c *UserCommandController) Matching(ctx echo.Context, user *entity.UserTiny) error {
 	if err := c.UserCommandService.Matching(user); err != nil {
 		return errors.Wrap(err, "failed matching user")
