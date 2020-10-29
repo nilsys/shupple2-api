@@ -12,7 +12,6 @@ type (
 		Gender         model.Gender         `json:"gender"`
 		Prefecture     model.Prefecture     `json:"prefecture"`
 		MatchingReason model.MatchingReason `json:"matchingReason"`
-		Images         []RegisterUserImage  `json:"images"`
 	}
 
 	RegisterUserImage struct {
