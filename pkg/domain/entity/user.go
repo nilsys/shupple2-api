@@ -23,16 +23,16 @@ type (
 	}
 
 	UserTiny struct {
-		ID             int `gorm:"primary_key"`
-		FirebaseID     string
-		Name           string
-		Email          string
-		Birthdate      time.Time
-		Profile        string
-		Gender         model.Gender
-		Prefecture     model.Prefecture
-		MatchingReason model.MatchingReason
-		IsMatching     bool
+		ID                   int `gorm:"primary_key"`
+		FirebaseID           string
+		Name                 string
+		Email                string
+		Birthdate            time.Time
+		Profile              string
+		Gender               model.Gender
+		Prefecture           model.Prefecture
+		MatchingReason       model.MatchingReason
+		LatestMatchingUserID null.Int
 		Times
 	}
 
@@ -75,6 +75,10 @@ func (u *UserMatchingHistory) IsExpired() bool {
 
 func (u *UserTiny) TableName() string {
 	return "user"
+}
+
+func (u *UserTiny) IsMatching() bool {
+	return u.LatestMatchingUserID.Valid
 }
 
 // 変更があったフィールドのみ置き換え
