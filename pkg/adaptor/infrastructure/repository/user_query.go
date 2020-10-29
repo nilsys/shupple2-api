@@ -53,7 +53,7 @@ func (r *UserQueryRepositoryImpl) FindMatchingUserByID(id int) (*entity.User, er
 func (r *UserQueryRepositoryImpl) FindAvailableMatchingUser(gender model.Gender, reason model.MatchingReason, id int) (*entity.UserTiny, error) {
 	var row entity.UserTiny
 	if err := r.DB.
-		Where("is_matching = false AND gender = ? AND matching_reason = ? AND id NOT IN (?) AND id NOT IN (SELECT matching_user_id FROM user_matching_history WHERE user_id = ?)", gender.Reverse(), reason, id, id).
+		Where("latest_matching_user_id IS NULL AND gender = ? AND matching_reason = ? AND id NOT IN (?) AND id NOT IN (SELECT matching_user_id FROM user_matching_history WHERE user_id = ?)", gender.Reverse(), reason, id, id).
 		First(&row).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find user")
 	}
