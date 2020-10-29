@@ -9,7 +9,8 @@ import (
 
 type (
 	UserQueryService interface {
-		Show(id int) (*entity.User, error)
+		Show(user *entity.UserTiny) (*entity.User, error)
+		ShowByID(id int) (*entity.User, error)
 		ShowMatchingUser(user *entity.UserTiny) (*entity.User, error)
 		ListNotReviewMainMatchingMatchingUser(user *entity.UserTiny) ([]*entity.User, error)
 		ListMainMatchingUser(user *entity.UserTiny) ([]*entity.User, error)
@@ -25,7 +26,11 @@ var UserQueryServiceSet = wire.NewSet(
 	wire.Bind(new(UserQueryService), new(*UserQueryServiceImpl)),
 )
 
-func (s *UserQueryServiceImpl) Show(id int) (*entity.User, error) {
+func (s *UserQueryServiceImpl) Show(user *entity.UserTiny) (*entity.User, error) {
+	return s.UserQueryRepository.FindByID(user.ID)
+}
+
+func (s *UserQueryServiceImpl) ShowByID(id int) (*entity.User, error) {
 	return s.UserQueryRepository.FindByID(id)
 }
 
