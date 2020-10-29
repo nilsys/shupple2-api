@@ -97,22 +97,16 @@ func NewUserMatchingHistory(userID, matchingUserID int, now time.Time) *UserMatc
 	}
 }
 
-func NewUser(cmd command.StoreUser, firebaseID string) (*User, error) {
-	images := make([]*UserImage, len(cmd.Images))
-	for i, image := range images {
-		uuid, err := uuid.NewRandom()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed gen uuid")
-		}
-
-		images[i] = &UserImage{
-			UUID:     uuid.String(),
-			Priority: image.Priority,
-			MimeType: image.MimeType,
-		}
+func NewUserImage(cmd command.StoreUserImage, userID int) (*UserImage, error) {
+	uuid, err := uuid.NewRandom()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed gen uuid")
 	}
-	return &User{
-		UserTiny: *NewUserTinyFromCmd(cmd, firebaseID),
-		Images:   images,
+
+	return &UserImage{
+		UserID:   userID,
+		UUID:     uuid.String(),
+		Priority: cmd.Priority,
+		MimeType: cmd.MimeType,
 	}, nil
 }
