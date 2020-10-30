@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS user (
   birthdate               DATE NOT NULL,
   gender                  TINYINT NOT NULL,
   prefecture              TINYINT NOT NULL,
+  matching_reason         TINYINT NOT NULL,
   profile                 TEXT NOT NULL,
   latest_matching_user_id BIGINT UNSIGNED DEFAULT NULL COMMENT 'マッチング中のユーザーid',
   created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -30,6 +31,7 @@ CREATE TABLE IF NOT EXISTS user_image (
 CREATE TABLE IF NOT EXISTS user_matching_history (
   user_id                               BIGINT UNSIGNED NOT NULL,
   matching_user_id                      BIGINT UNSIGNED NOT NULL,
+  matching_reason                       TINYINT NOT NULL,
   user_main_matching_approve            TINYINT DEFAULT NULL,
   matching_user_main_matching_approve   TINYINT DEFAULT NULL,
   matching_expired_at                   DATETIME NOT NULL COMMENT 'マッチング有効期限',
