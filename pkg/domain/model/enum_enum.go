@@ -106,14 +106,17 @@ func (x *Gender) UnmarshalText(text []byte) error {
 }
 
 const (
+	// MainMatchingStatusUndefined is a MainMatchingStatus of type Undefined
+	MainMatchingStatusUndefined MainMatchingStatus = iota
 	// MainMatchingStatusArrangeSchedule is a MainMatchingStatus of type ArrangeSchedule
-	MainMatchingStatusArrangeSchedule MainMatchingStatus = iota + 1
+	MainMatchingStatusArrangeSchedule
 )
 
-const _MainMatchingStatusName = "ArrangeSchedule"
+const _MainMatchingStatusName = "UndefinedArrangeSchedule"
 
 var _MainMatchingStatusMap = map[MainMatchingStatus]string{
-	1: _MainMatchingStatusName[0:15],
+	0: _MainMatchingStatusName[0:9],
+	1: _MainMatchingStatusName[9:24],
 }
 
 // String implements the Stringer interface.
@@ -125,7 +128,8 @@ func (x MainMatchingStatus) String() string {
 }
 
 var _MainMatchingStatusValue = map[string]MainMatchingStatus{
-	_MainMatchingStatusName[0:15]: 1,
+	_MainMatchingStatusName[0:9]:  0,
+	_MainMatchingStatusName[9:24]: 1,
 }
 
 // ParseMainMatchingStatus attempts to convert a string to a MainMatchingStatus
@@ -153,23 +157,26 @@ func (x *MainMatchingStatus) UnmarshalText(text []byte) error {
 }
 
 const (
+	// MatchingReasonUndefined is a MatchingReason of type Undefined
+	MatchingReasonUndefined MatchingReason = iota
 	// MatchingReasonRenai is a MatchingReason of type Renai
-	MatchingReasonRenai MatchingReason = iota + 1
+	MatchingReasonRenai
 	// MatchingReasonAsobi is a MatchingReason of type Asobi
 	MatchingReasonAsobi
 	// MatchingReasonImakaraNomitai is a MatchingReason of type ImakaraNomitai
 	MatchingReasonImakaraNomitai
-	// MatchingReasonSyumatsuAsobitai is a MatchingReason of type SyumatsuAsobitai
-	MatchingReasonSyumatsuAsobitai
+	// MatchingReasonSyumatsuDate is a MatchingReason of type SyumatsuDate
+	MatchingReasonSyumatsuDate
 )
 
-const _MatchingReasonName = "RenaiAsobiImakaraNomitaiSyumatsuAsobitai"
+const _MatchingReasonName = "UndefinedRenaiAsobiImakaraNomitaiSyumatsuDate"
 
 var _MatchingReasonMap = map[MatchingReason]string{
-	1: _MatchingReasonName[0:5],
-	2: _MatchingReasonName[5:10],
-	3: _MatchingReasonName[10:24],
-	4: _MatchingReasonName[24:40],
+	0: _MatchingReasonName[0:9],
+	1: _MatchingReasonName[9:14],
+	2: _MatchingReasonName[14:19],
+	3: _MatchingReasonName[19:33],
+	4: _MatchingReasonName[33:45],
 }
 
 // String implements the Stringer interface.
@@ -181,10 +188,11 @@ func (x MatchingReason) String() string {
 }
 
 var _MatchingReasonValue = map[string]MatchingReason{
-	_MatchingReasonName[0:5]:   1,
-	_MatchingReasonName[5:10]:  2,
-	_MatchingReasonName[10:24]: 3,
-	_MatchingReasonName[24:40]: 4,
+	_MatchingReasonName[0:9]:   0,
+	_MatchingReasonName[9:14]:  1,
+	_MatchingReasonName[14:19]: 2,
+	_MatchingReasonName[19:33]: 3,
+	_MatchingReasonName[33:45]: 4,
 }
 
 // ParseMatchingReason attempts to convert a string to a MatchingReason
