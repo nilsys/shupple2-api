@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS user_matching_history (
   user_main_matching_approve            TINYINT DEFAULT NULL,
   matching_user_main_matching_approve   TINYINT DEFAULT NULL,
   matching_expired_at                   DATETIME NOT NULL COMMENT 'マッチング有効期限',
+  main_matching_status                  TINYINT DEFAULT NULL
   created_at                            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at                            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY(user_id, matching_user_id),
