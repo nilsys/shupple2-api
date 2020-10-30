@@ -65,6 +65,8 @@ var RepositoriesSet = wire.NewSet(
 	UserQueryRepositorySet,
 	UserCommandRepositorySet,
 	TransactionServiceSet,
+	ArrangeScheduleRequestCommandRepositorySet,
+	ArrangeScheduleRequestQueryRepositorySet,
 	shuppleAWS.S3CommandRepositorySet,
 )
 
