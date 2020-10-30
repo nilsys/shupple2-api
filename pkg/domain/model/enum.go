@@ -19,9 +19,14 @@ type Prefecture int
 
 // 分かりやす様にローマ字
 /*
-ENUM(Renai = 1, Asobi, ImakaraNomitai)
+ENUM(Renai = 1, Asobi, ImakaraNomitai, SyumatsuAsobitai)
 */
 type MatchingReason int
+
+/*
+ENUM(ArrangeSchedule = 1)
+*/
+type MainMatchingStatus int
 
 func (x Gender) Reverse() Gender {
 	if x == GenderMale {
