@@ -75,7 +75,9 @@ func (r *UserQueryRepositoryImpl) FindNotMainMatchingReviewMatchingUsersByID(id 
 	var rows []*entity.User
 	if err := r.DB.
 		Joins("INNER JOIN user_matching_history ON user.id = user_matching_history.matching_user_id").
-		Where("user_matching_history.user_id = ? AND user_matching_history.user_main_matching_approve IS NULL", id).Find(&rows).Error; err != nil {
+		Where("user_matching_history.user_id = ? AND user_matching_history.user_main_matching_approve IS NULL", id).
+		Order("user_matching_history.matching_expired_at DESC").
+		Find(&rows).Error; err != nil {
 		return nil, errors.Wrap(err, "failed find user")
 	}
 	return rows, nil
@@ -85,7 +87,8 @@ func (r *UserQueryRepositoryImpl) FindMainMatchingUserByID(id int) ([]*entity.Us
 	var rows []*entity.User
 	if err := r.DB.
 		Joins("INNER JOIN user_matching_history ON user.id = user_matching_history.matching_user_id").
-		Where("user_matching_history.user_id = ? AND user_matching_history.user_main_matching_approve = true AND user_matching_history.matching_user_main_matching_approve = true", id).Find(&rows).Error; err != nil {
+		Where("user_matching_history.user_id = ? AND user_matching_history.user_main_matching_approve = true AND user_matching_history.matching_user_main_matching_approve = true", id).
+		Order("user_matching_history.matching_expired_at DESC").Find(&rows).Error; err != nil {
 	}
 	return rows, nil
 }
