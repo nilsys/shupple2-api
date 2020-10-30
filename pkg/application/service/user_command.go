@@ -111,8 +111,8 @@ func (s *UserCommandServiceImpl) Matching(user *entity.UserTiny) error {
 
 	return s.Do(func(ctx context.Context) error {
 		matchedAt := time.Now()
-		history := entity.NewUserMatchingHistory(user.ID, matchingUser.ID, matchedAt)
-		matchingUserHistory := entity.NewUserMatchingHistory(matchingUser.ID, user.ID, matchedAt)
+		history := entity.NewUserMatchingHistory(user.ID, matchingUser.ID, user.MatchingReason, matchedAt)
+		matchingUserHistory := entity.NewUserMatchingHistory(matchingUser.ID, user.ID, user.MatchingReason, matchedAt)
 
 		if err := s.UserCommandRepository.StoreUserMatchingHistory(ctx, history); err != nil {
 			return errors.Wrap(err, "failed store user_matching_history")
