@@ -106,20 +106,70 @@ func (x *Gender) UnmarshalText(text []byte) error {
 }
 
 const (
+	// MainMatchingStatusArrangeSchedule is a MainMatchingStatus of type ArrangeSchedule
+	MainMatchingStatusArrangeSchedule MainMatchingStatus = iota + 1
+)
+
+const _MainMatchingStatusName = "ArrangeSchedule"
+
+var _MainMatchingStatusMap = map[MainMatchingStatus]string{
+	1: _MainMatchingStatusName[0:15],
+}
+
+// String implements the Stringer interface.
+func (x MainMatchingStatus) String() string {
+	if str, ok := _MainMatchingStatusMap[x]; ok {
+		return str
+	}
+	return fmt.Sprintf("MainMatchingStatus(%d)", x)
+}
+
+var _MainMatchingStatusValue = map[string]MainMatchingStatus{
+	_MainMatchingStatusName[0:15]: 1,
+}
+
+// ParseMainMatchingStatus attempts to convert a string to a MainMatchingStatus
+func ParseMainMatchingStatus(name string) (MainMatchingStatus, error) {
+	if x, ok := _MainMatchingStatusValue[name]; ok {
+		return x, nil
+	}
+	return MainMatchingStatus(0), fmt.Errorf("%s is not a valid MainMatchingStatus", name)
+}
+
+// MarshalText implements the text marshaller method
+func (x MainMatchingStatus) MarshalText() ([]byte, error) {
+	return []byte(x.String()), nil
+}
+
+// UnmarshalText implements the text unmarshaller method
+func (x *MainMatchingStatus) UnmarshalText(text []byte) error {
+	name := string(text)
+	tmp, err := ParseMainMatchingStatus(name)
+	if err != nil {
+		return err
+	}
+	*x = tmp
+	return nil
+}
+
+const (
 	// MatchingReasonRenai is a MatchingReason of type Renai
 	MatchingReasonRenai MatchingReason = iota + 1
 	// MatchingReasonAsobi is a MatchingReason of type Asobi
 	MatchingReasonAsobi
 	// MatchingReasonImakaraNomitai is a MatchingReason of type ImakaraNomitai
 	MatchingReasonImakaraNomitai
+	// MatchingReasonSyumatsuAsobitai is a MatchingReason of type SyumatsuAsobitai
+	MatchingReasonSyumatsuAsobitai
 )
 
-const _MatchingReasonName = "RenaiAsobiImakaraNomitai"
+const _MatchingReasonName = "RenaiAsobiImakaraNomitaiSyumatsuAsobitai"
 
 var _MatchingReasonMap = map[MatchingReason]string{
 	1: _MatchingReasonName[0:5],
 	2: _MatchingReasonName[5:10],
 	3: _MatchingReasonName[10:24],
+	4: _MatchingReasonName[24:40],
 }
 
 // String implements the Stringer interface.
@@ -134,6 +184,7 @@ var _MatchingReasonValue = map[string]MatchingReason{
 	_MatchingReasonName[0:5]:   1,
 	_MatchingReasonName[5:10]:  2,
 	_MatchingReasonName[10:24]: 3,
+	_MatchingReasonName[24:40]: 4,
 }
 
 // ParseMatchingReason attempts to convert a string to a MatchingReason
