@@ -47,6 +47,7 @@ type (
 	UserMatchingHistory struct {
 		UserID                          int `gorm:"primary_key"`
 		MatchingUserID                  int `gorm:"primary_key"`
+		MatchingReason                  model.MatchingReason
 		UserMainMatchingApprove         null.Bool
 		MatchingUserMainMatchingApprove null.Bool
 		MatchingExpiredAt               time.Time
@@ -120,10 +121,11 @@ func NewUserTinyFromCmd(cmd command.StoreUser, firebaseID string) *UserTiny {
 	}
 }
 
-func NewUserMatchingHistory(userID, matchingUserID int, now time.Time) *UserMatchingHistory {
+func NewUserMatchingHistory(userID, matchingUserID int, matchingReason model.MatchingReason, now time.Time) *UserMatchingHistory {
 	return &UserMatchingHistory{
 		UserID:            userID,
 		MatchingUserID:    matchingUserID,
+		MatchingReason:    matchingReason,
 		MatchingExpiredAt: now.Add(24 * time.Hour),
 	}
 }
