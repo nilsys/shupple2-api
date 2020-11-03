@@ -15,3 +15,7 @@ type (
 		repository.ArrangeScheduleRequestCommandRepository
 	}
 )
+
+func (s *ArrangeScheduleRequestCommandServiceImpl) Store(cmd *command.StoreArrangeScheduleRequest, user *entity.UserTiny) error {
+	req := entity.ArrangeScheduleRequest{}
+}
