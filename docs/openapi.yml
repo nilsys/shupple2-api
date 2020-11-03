@@ -36,6 +36,42 @@ paths:
                 $ref: "#/components/schemas/Error"
       security:
         - firebaseAuth: []
+  /users/image:
+    post:
+      tags:
+        - user
+      summary: ユーザー画像登録
+      requestBody:
+        $ref: "#/components/requestBodies/UserRegisterImageRequest"
+      responses:
+        "204":
+          description: 成功
+        "400":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+        - firebaseAuth: []
+  /users/image/{id}:
+    delete:
+      tags:
+        - user
+      summary: ユーザー画像削除
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: |
+            画像id
+          schema:
+            type: string
+      responses:
+        "204":
+          description: 成功
+      security:
+        - firebaseAuth: []
 components:
   securitySchemes:
     firebaseAuth:
@@ -49,6 +85,11 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/UserRegisterRequest"
+    UserRegisterImageRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UserRegisterImageRequest"
   schemas:
     UserRegisterRequest:
       type: object
@@ -86,6 +127,22 @@ components:
           type: string
           description: プロフィール文
           example: 香川出身24歳です！旅大好き！
+    UserRegisterImageRequest:
+      type: object
+      properties:
+        priority:
+          type: integer
+          description: |
+            何番目か
+        mimeType:
+          type: string
+          description: |
+            画像タイプ
+        imageBase64:
+          type: string
+          format: byte
+          description: |
+            base64
     MatchingReason:
       type: string
       enum:
