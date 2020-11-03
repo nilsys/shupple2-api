@@ -13,6 +13,11 @@ type (
 	}
 )
 
-func NewArrangeScheduleRequest() ArrangeScheduleRequest {
-
+func NewArrangeScheduleRequest(userID, matchingUserID int, date time.Time, remark string) *ArrangeScheduleRequest {
+	return &ArrangeScheduleRequest{
+		UserID:         userID,
+		MatchingUserID: matchingUserID,
+		Date:           date,
+		Remark:         remark,
+	}
 }
