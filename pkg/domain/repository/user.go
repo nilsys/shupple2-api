@@ -19,6 +19,7 @@ type (
 		FindNotMainMatchingReviewMatchingUsersByID(id int) ([]*entity.User, error)
 		FindMainMatchingUserByID(id int) ([]*entity.User, error)
 		FindImageByUUID(uuid string) (*entity.UserImage, error)
+		IsExistUserMatchingHistory(id, matchingUserID int) (bool, error)
 	}
 
 	UserCommandRepository interface {
