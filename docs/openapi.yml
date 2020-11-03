@@ -14,20 +14,35 @@ paths:
         "200":
           description: 成功
         "400":
-          description: バリデーションエラーまたは既に存在するユーザー
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+        - user
+      summary: ユーザー更新
+      requestBody:
+        $ref: "#/components/requestBodies/UserRegisterRequest"
+      responses:
+        "200":
+          description: 成功
+        "400":
+          description: バリデーションエラー
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
       security:
-        - iDPCognito: []
+        - firebaseAuth: []
 components:
   securitySchemes:
-    iDPCognito:
+    firebaseAuth:
       in: header
       name: Authorization
       type: apiKey
-      description: CognitoIDPから取得するDToken
+      description: firebaseから取得するToken
   requestBodies:
     UserRegisterRequest:
       content:
