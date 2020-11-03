@@ -4,14 +4,14 @@ import "github.com/uma-co82/shupple2-api/pkg/domain/model"
 
 type (
 	RegisterUser struct {
-		FirebaseToken  string               `json:"firebaseToken"`
-		Name           string               `json:"name"`
-		Email          string               `json:"email"`
-		Birthdate      model.Date           `json:"birthdate"`
-		Profile        string               `json:"profile"`
-		Gender         model.Gender         `json:"gender"`
-		Prefecture     model.Prefecture     `json:"prefecture"`
-		MatchingReason model.MatchingReason `json:"matchingReason"`
+		FirebaseToken  string               `json:"firebaseToken" validate:"required"`
+		Name           string               `json:"name" validate:"required"`
+		Email          string               `json:"email" validate:"required"`
+		Birthdate      model.Date           `json:"birthdate" validate:"required"`
+		Profile        string               `json:"profile" validate:"required"`
+		Gender         model.Gender         `json:"gender" validate:"required"`
+		Prefecture     model.Prefecture     `json:"prefecture" validate:"required"`
+		MatchingReason model.MatchingReason `json:"matchingReason" validate:"required"`
 	}
 
 	RegisterUserImage struct {
