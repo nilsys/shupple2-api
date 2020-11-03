@@ -63,10 +63,31 @@ components:
           description: 生年月日
         gender:
           $ref: '#/components/schemas/Gender'
+        prefecture:
+          $ref: '#/components/schemas/Prefecture'
+        matchingReason:
+          $ref: '#/components/schemas/MatchingReason'
         profile:
           type: string
           description: プロフィール文
           example: 香川出身24歳です！旅大好き！
+    MatchingReason:
+      type: string
+      enum:
+        - Renai
+        - Asobi
+        - ImakaraNomitai
+        - SyumatsuDate
+    Prefecture:
+      type: string
+      enum:
+        - Hokkaido
+        - Aomori
+        - Iwate
+        - Miyagi
+        - Akita
+        - Yamagata
+        - .....
     Gender:
       type: string
       enum:
