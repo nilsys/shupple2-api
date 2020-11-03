@@ -4,12 +4,15 @@ import "time"
 
 type (
 	ArrangeScheduleRequest struct {
-		ID                  int `gorm:"primary_key"`
-		UserID              int
-		MatchingUserID      int
+		UserID              int `gorm:"primary_key"`
+		MatchingUserID      int `gorm:"primary_key"`
 		Date                time.Time
 		Remark              string
 		MatchingUserApprove bool
 		Times
 	}
 )
+
+func NewArrangeScheduleRequest() ArrangeScheduleRequest {
+
+}
