@@ -11,7 +11,7 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/UserRegisterRequest"
       responses:
-        "200":
+        "204":
           description: 成功
         "400":
           description: バリデーションエラー
@@ -26,7 +26,7 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/UserRegisterRequest"
       responses:
-        "200":
+        "204":
           description: 成功
         "400":
           description: バリデーションエラー
@@ -36,6 +36,17 @@ paths:
                 $ref: "#/components/schemas/Error"
       security:
         - firebaseAuth: []
+    get:
+      tags:
+        - user
+      summary: ユーザー取得
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
   /users/image:
     post:
       tags:
@@ -143,6 +154,41 @@ components:
           format: byte
           description: |
             base64
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        profile:
+          type: string
+        gender:
+          $ref: '#/components/schemas/Gender'
+        prefecture:
+          $ref: '#/components/schemas/Prefecture'
+        matchingReason:
+          $ref: '#/components/schemas/MatchingReason'
+        isMatching:
+          type: boolean
+          description: |
+            今マッチング中か
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserImage'
+    UserImage:
+      type: object
+      properties:
+        id:
+          type: string
+        priority:
+          type: integer
+        url:
+          type: string
     MatchingReason:
       type: string
       enum:
