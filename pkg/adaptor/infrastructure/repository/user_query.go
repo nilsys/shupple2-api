@@ -100,3 +100,9 @@ func (r *UserQueryRepositoryImpl) FindImageByUUID(uuid string) (*entity.UserImag
 	}
 	return &row, nil
 }
+
+func (r *UserQueryRepositoryImpl) IsExistUserMatchingHistory(id, matchingUserID int) (bool, error) {
+	var row entity.UserMatchingHistory
+	err := r.DB.Where("user_id = ? AND matching_user_id = ?", id, matchingUserID).First(&row).Error
+	return ErrorToIsExist(err, "user_matching_history(user_id=%d,matching_user_id=%d)", id, matchingUserID)
+}
