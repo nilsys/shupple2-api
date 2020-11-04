@@ -41,5 +41,9 @@ func (date *Date) UnmarshalText(data []byte) error {
 }
 
 func (date Date) MarshalJSON() ([]byte, error) {
+	if time.Time(date).IsZero() {
+		return []byte("null"), nil
+	}
+
 	return json.Marshal(time.Time(date).In(util.JSTLoc).Format(dateFormat))
 }
