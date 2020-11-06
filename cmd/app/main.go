@@ -32,6 +32,7 @@ type App struct {
 	api.HealthCheckController
 	api.UserQueryController
 	api.UserCommandController
+	api.ArrangeScheduleRequestCommandController
 	service.TransactionService
 }
 
@@ -69,6 +70,12 @@ func setRoutes(app *App) {
 		users.GET("/:id", app.UserQueryController.ShowByID)
 		users.POST("/matching", auth.Auth(app.UserCommandController.Matching))
 		users.GET("/matching", auth.Auth(app.UserQueryController.ShowMatchingUser))
+	}
+
+	arrangeSchedule := api.Group("/arrange_schedule")
+
+	{
+		arrangeSchedule.POST("", auth.Auth(app.ArrangeScheduleRequestCommandController.Store))
 	}
 
 	api.GET("/healthcheck", app.HealthCheckController.HealthCheck)
