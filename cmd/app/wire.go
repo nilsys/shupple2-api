@@ -18,6 +18,7 @@ var controllerSet = wire.NewSet(
 	api.UserCommandControllerSet,
 	api.UserQueryControllerSet,
 	api.ArrangeScheduleRequestCommandControllerSet,
+	api.ArrangeScheduleRequestQueryControllerSet,
 )
 
 var serviceSet = wire.NewSet(
