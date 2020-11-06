@@ -19,7 +19,7 @@ var ArrangeScheduleRequestCommandRepositorySet = wire.NewSet(
 	wire.Bind(new(repository.ArrangeScheduleRequestCommandRepository), new(*ArrangeScheduleRequestCommandRepositoryImpl)),
 )
 
-func (r *ArrangeScheduleRequestCommandRepositoryImpl) Store(ctx context.Context, request *entity.ArrangeScheduleRequest) error {
+func (r *ArrangeScheduleRequestCommandRepositoryImpl) Store(ctx context.Context, request *entity.ArrangeScheduleRequestTiny) error {
 	if err := r.DB(ctx).Save(request).Error; err != nil {
 		return errors.Wrap(err, "failed store arrange_schedule_request")
 	}
