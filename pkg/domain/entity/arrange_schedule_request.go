@@ -6,7 +6,7 @@ type (
 	ArrangeScheduleRequest struct {
 		UserID              int `gorm:"primary_key"`
 		MatchingUserID      int `gorm:"primary_key"`
-		Date                time.Time
+		DateTime            time.Time
 		Remark              string
 		MatchingUserApprove bool
 		Times
@@ -17,7 +17,7 @@ func NewArrangeScheduleRequest(userID, matchingUserID int, date time.Time, remar
 	return &ArrangeScheduleRequest{
 		UserID:         userID,
 		MatchingUserID: matchingUserID,
-		Date:           date,
+		DateTime:       date,
 		Remark:         remark,
 	}
 }
