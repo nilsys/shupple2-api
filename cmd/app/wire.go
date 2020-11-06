@@ -17,11 +17,13 @@ var controllerSet = wire.NewSet(
 	api.HealthCheckControllerSet,
 	api.UserCommandControllerSet,
 	api.UserQueryControllerSet,
+	api.ArrangeScheduleRequestCommandControllerSet,
 )
 
 var serviceSet = wire.NewSet(
 	service.UserCommandServiceSet,
 	service.UserQueryServiceSet,
+	service.ArrangeScheduleRequestCommandServiceSet,
 )
 
 func InitializeApp(configFilePath config.FilePath) (*App, error) {
