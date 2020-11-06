@@ -13,7 +13,6 @@ type (
 	}
 
 	ArrangeScheduleRequestQueryServiceImpl struct {
-		repository.UserQueryRepository
 		repository.ArrangeScheduleRequestQueryRepository
 	}
 )
