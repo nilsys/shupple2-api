@@ -7,7 +7,6 @@ import (
 
 type (
 	ArrangeScheduleRequestQueryService interface {
-		//Store(cmd *command.StoreArrangeScheduleRequest, user *entity.UserTiny) error
 	}
 
 	ArrangeScheduleRequestQueryServiceImpl struct {
@@ -16,7 +15,7 @@ type (
 	}
 )
 
-var ArrangeScheduleRequestCommandServiceSet = wire.NewSet(
-	wire.Struct(new(ArrangeScheduleRequestCommandServiceImpl), "*"),
-	wire.Bind(new(ArrangeScheduleRequestCommandService), new(*ArrangeScheduleRequestCommandServiceImpl)),
+var ArrangeScheduleRequestQueryServiceSet = wire.NewSet(
+	wire.Struct(new(ArrangeScheduleRequestQueryServiceImpl), "*"),
+	wire.Bind(new(ArrangeScheduleRequestQueryService), new(*ArrangeScheduleRequestQueryServiceImpl)),
 )
