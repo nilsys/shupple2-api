@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 
+	"github.com/google/wire"
+
 	"github.com/pkg/errors"
 	"github.com/uma-co82/shupple2-api/pkg/domain/entity"
 	"github.com/uma-co82/shupple2-api/pkg/domain/model/command"
@@ -19,6 +21,11 @@ type (
 		repository.UserQueryRepository
 		repository.ArrangeScheduleRequestCommandRepository
 	}
+)
+
+var ArrangeScheduleRequestCommandServiceSet = wire.NewSet(
+	wire.Struct(new(ArrangeScheduleRequestCommandServiceImpl), "*"),
+	wire.Bind(new(ArrangeScheduleRequestCommandService), new(*ArrangeScheduleRequestCommandServiceImpl)),
 )
 
 func (s *ArrangeScheduleRequestCommandServiceImpl) Store(cmd *command.StoreArrangeScheduleRequest, user *entity.UserTiny) error {
