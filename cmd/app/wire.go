@@ -24,6 +24,7 @@ var serviceSet = wire.NewSet(
 	service.UserCommandServiceSet,
 	service.UserQueryServiceSet,
 	service.ArrangeScheduleRequestCommandServiceSet,
+	service.ArrangeScheduleRequestQueryServiceSet,
 )
 
 func InitializeApp(configFilePath config.FilePath) (*App, error) {
