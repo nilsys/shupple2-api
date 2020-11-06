@@ -27,5 +27,5 @@ func (s *ArrangeScheduleRequestQueryServiceImpl) ShowReceiveList(user *entity.Us
 }
 
 func (s *ArrangeScheduleRequestQueryServiceImpl) ShowSendList(user *entity.UserTiny) ([]*entity.ArrangeScheduleRequest, error) {
-	return s.ArrangeScheduleRequestQueryRepository.FindByMatchingUserID(user.ID)
+	return s.ArrangeScheduleRequestQueryRepository.FindByUserID(user.ID)
 }
