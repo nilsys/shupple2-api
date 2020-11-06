@@ -101,6 +101,27 @@ paths:
           description: 成功
       security:
         - firebaseAuth: []
+  /users/matching:
+    post:
+      tags:
+        - user
+      summary: マッチング実行
+      responses:
+        "204":
+          description: 成功
+      security:
+        - firebaseAuth: []
+    get:
+      tags:
+        - user
+      summary: 現在のマッチング相手取得
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
 components:
   securitySchemes:
     firebaseAuth:
