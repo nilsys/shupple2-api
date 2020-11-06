@@ -33,6 +33,7 @@ type App struct {
 	api.UserQueryController
 	api.UserCommandController
 	api.ArrangeScheduleRequestCommandController
+	api.ArrangeScheduleRequestQueryController
 	service.TransactionService
 }
 
