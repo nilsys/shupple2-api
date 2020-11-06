@@ -68,6 +68,7 @@ func setRoutes(app *App) {
 
 	{
 		users.POST("", app.UserCommandController.SignUp)
+		users.PUT("", auth.Auth(app.UserCommandController.Update))
 		users.GET("/:id", app.UserQueryController.ShowByID)
 		users.POST("/matching", auth.Auth(app.UserCommandController.Matching))
 		users.GET("/matching", auth.Auth(app.UserQueryController.ShowMatchingUser))
