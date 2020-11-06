@@ -91,21 +91,33 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		UserCommandService: userCommandServiceImpl,
 		Converters:         converters,
 	}
+	arrangeScheduleRequestCommandRepositoryImpl := &repository.ArrangeScheduleRequestCommandRepositoryImpl{
+		DAO: dao,
+	}
+	arrangeScheduleRequestCommandServiceImpl := &service.ArrangeScheduleRequestCommandServiceImpl{
+		UserQueryRepository:                     userQueryRepositoryImpl,
+		ArrangeScheduleRequestCommandRepository: arrangeScheduleRequestCommandRepositoryImpl,
+	}
+	arrangeScheduleRequestCommandController := api.ArrangeScheduleRequestCommandController{
+		ArrangeScheduleRequestCommandService: arrangeScheduleRequestCommandServiceImpl,
+		Converters:                           converters,
+	}
 	app := &App{
-		Config:                configConfig,
-		DB:                    db,
-		Echo:                  echoEcho,
-		Authorize:             authorize,
-		HealthCheckController: healthCheckController,
-		UserQueryController:   userQueryController,
-		UserCommandController: userCommandController,
-		TransactionService:    transactionServiceImpl,
+		Config:                                  configConfig,
+		DB:                                      db,
+		Echo:                                    echoEcho,
+		Authorize:                               authorize,
+		HealthCheckController:                   healthCheckController,
+		UserQueryController:                     userQueryController,
+		UserCommandController:                   userCommandController,
+		ArrangeScheduleRequestCommandController: arrangeScheduleRequestCommandController,
+		TransactionService:                      transactionServiceImpl,
 	}
 	return app, nil
 }
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.HealthCheckControllerSet, api.UserCommandControllerSet, api.UserQueryControllerSet)
+var controllerSet = wire.NewSet(api.HealthCheckControllerSet, api.UserCommandControllerSet, api.UserQueryControllerSet, api.ArrangeScheduleRequestCommandControllerSet)
 
-var serviceSet = wire.NewSet(service.UserCommandServiceSet, service.UserQueryServiceSet)
+var serviceSet = wire.NewSet(service.UserCommandServiceSet, service.UserQueryServiceSet, service.ArrangeScheduleRequestCommandServiceSet)
