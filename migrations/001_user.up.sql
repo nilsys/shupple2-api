@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS user_matching_history (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS arrange_schedule_request (
+  id                                    BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   user_id                               BIGINT UNSIGNED NOT NULL,
   matching_user_id                      BIGINT UNSIGNED NOT NULL,
   date_time                             DATETIME NOT NULL,
@@ -52,6 +53,7 @@ CREATE TABLE IF NOT EXISTS arrange_schedule_request (
   created_at                            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at                            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   deleted_at                            DATETIME DEFAULT NULL,
+  PRIMARY KEY(id),
   CONSTRAINT arrange_schedule_request_user_id FOREIGN KEY(user_id) REFERENCES user(id),
   CONSTRAINT arrange_schedule_request_matching_user_id FOREIGN KEY(matching_user_id) REFERENCES user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
