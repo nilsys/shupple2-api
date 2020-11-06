@@ -22,13 +22,13 @@ type (
 )
 
 func (s *ArrangeScheduleRequestCommandServiceImpl) Store(cmd *command.StoreArrangeScheduleRequest, user *entity.UserTiny) error {
-	isMatchinged, err := s.UserQueryRepository.IsExistUserMatchingHistory(user.ID, cmd.MatchingUserID)
+	isMainMatching, err := s.UserQueryRepository.IsExistMainMatchingUserMatchingHistory(user.ID, cmd.MatchingUserID)
 	if err != nil {
 		return errors.Wrap(err, "failed find user_matching_history")
 	}
 
-	// マッチングしていないユーザーに送ろうとした場合
-	if !isMatchinged {
+	// 本マッチングしていないユーザーに送ろうとした場合
+	if !isMainMatching {
 		return serror.New(nil, serror.CodeNotMatching, "not matching")
 	}
 
