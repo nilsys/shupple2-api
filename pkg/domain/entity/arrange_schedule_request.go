@@ -3,18 +3,25 @@ package entity
 import "time"
 
 type (
-	ArrangeScheduleRequest struct {
-		UserID              int `gorm:"primary_key"`
-		MatchingUserID      int `gorm:"primary_key"`
+	ArrangeScheduleRequestTiny struct {
+		ID                  int `gorm:"primary_key"`
+		UserID              int
+		MatchingUserID      int
 		DateTime            time.Time
 		Remark              string
 		MatchingUserApprove bool
 		Times
 	}
+
+	ArrangeScheduleRequest struct {
+		ArrangeScheduleRequestTiny
+		User         *User `gorm:"foreignkey:ID;association_foreignkey:UserID"`
+		MatchingUser *User `gorm:"foreignkey:ID;association_foreignkey:MatchingUserID"`
+	}
 )
 
-func NewArrangeScheduleRequest(userID, matchingUserID int, date time.Time, remark string) *ArrangeScheduleRequest {
-	return &ArrangeScheduleRequest{
+func NewArrangeScheduleRequest(userID, matchingUserID int, date time.Time, remark string) *ArrangeScheduleRequestTiny {
+	return &ArrangeScheduleRequestTiny{
 		UserID:         userID,
 		MatchingUserID: matchingUserID,
 		DateTime:       date,
