@@ -42,3 +42,16 @@ CREATE TABLE IF NOT EXISTS user_matching_history (
   CONSTRAINT user_matching_history_user_id FOREIGN KEY(user_id) REFERENCES user(id),
   CONSTRAINT user_matching_history_matching_user_id FOREIGN KEY(matching_user_id) REFERENCES user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS arrange_schedule_request (
+  user_id                               BIGINT UNSIGNED NOT NULL,
+  matching_user_id                      BIGINT UNSIGNED NOT NULL,
+  date_time                             DATETIME NOT NULL,
+  remark                                VARCHAR(255) NOT NULL,
+  matching_user_approve                 TINYINT DEFAULT NULL,
+  created_at                            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at                            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at                            DATETIME DEFAULT NULL,
+  CONSTRAINT arrange_schedule_request_user_id FOREIGN KEY(user_id) REFERENCES user(id),
+  CONSTRAINT arrange_schedule_request_matching_user_id FOREIGN KEY(matching_user_id) REFERENCES user(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
