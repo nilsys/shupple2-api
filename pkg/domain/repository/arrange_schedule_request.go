@@ -13,6 +13,6 @@ type (
 	}
 
 	ArrangeScheduleRequestCommandRepository interface {
-		Store(ctx context.Context, request *entity.ArrangeScheduleRequest) error
+		Store(ctx context.Context, request *entity.ArrangeScheduleRequestTiny) error
 	}
 )
