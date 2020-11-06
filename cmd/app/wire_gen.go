@@ -102,6 +102,16 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		ArrangeScheduleRequestCommandService: arrangeScheduleRequestCommandServiceImpl,
 		Converters:                           converters,
 	}
+	arrangeScheduleRequestQueryRepositoryImpl := &repository.ArrangeScheduleRequestQueryRepositoryImpl{
+		DB: db,
+	}
+	arrangeScheduleRequestQueryServiceImpl := &service.ArrangeScheduleRequestQueryServiceImpl{
+		ArrangeScheduleRequestQueryRepository: arrangeScheduleRequestQueryRepositoryImpl,
+	}
+	arrangeScheduleRequestQueryController := api.ArrangeScheduleRequestQueryController{
+		ArrangeScheduleRequestQueryService: arrangeScheduleRequestQueryServiceImpl,
+		Converters:                         converters,
+	}
 	app := &App{
 		Config:                                  configConfig,
 		DB:                                      db,
@@ -111,6 +121,7 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 		UserQueryController:                     userQueryController,
 		UserCommandController:                   userCommandController,
 		ArrangeScheduleRequestCommandController: arrangeScheduleRequestCommandController,
+		ArrangeScheduleRequestQueryController:   arrangeScheduleRequestQueryController,
 		TransactionService:                      transactionServiceImpl,
 	}
 	return app, nil
@@ -118,6 +129,6 @@ func InitializeApp(configFilePath config.FilePath) (*App, error) {
 
 // wire.go:
 
-var controllerSet = wire.NewSet(api.HealthCheckControllerSet, api.UserCommandControllerSet, api.UserQueryControllerSet, api.ArrangeScheduleRequestCommandControllerSet)
+var controllerSet = wire.NewSet(api.HealthCheckControllerSet, api.UserCommandControllerSet, api.UserQueryControllerSet, api.ArrangeScheduleRequestCommandControllerSet, api.ArrangeScheduleRequestQueryControllerSet)
 
-var serviceSet = wire.NewSet(service.UserCommandServiceSet, service.UserQueryServiceSet, service.ArrangeScheduleRequestCommandServiceSet)
+var serviceSet = wire.NewSet(service.UserCommandServiceSet, service.UserQueryServiceSet, service.ArrangeScheduleRequestCommandServiceSet, service.ArrangeScheduleRequestQueryServiceSet)
