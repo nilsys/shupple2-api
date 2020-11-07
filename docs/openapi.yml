@@ -122,6 +122,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+      security:
+        - firebaseAuth: []
+  /users/matching/pending:
+    get:
+      tags:
+        - user
+      summary: マッチング後の本マッチングへの評価をしていないユーザー
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserList"
 components:
   securitySchemes:
     firebaseAuth:
@@ -193,6 +207,10 @@ components:
           format: byte
           description: |
             base64
+    UserList:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
     User:
       type: object
       properties:
