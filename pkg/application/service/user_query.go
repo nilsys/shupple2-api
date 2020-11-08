@@ -12,7 +12,7 @@ type (
 		Show(user *entity.UserTiny) (*entity.User, error)
 		ShowByID(id int) (*entity.User, error)
 		ShowMatchingUser(user *entity.UserTiny) (*entity.User, error)
-		ListNotReviewMainMatchingMatchingUser(user *entity.UserTiny) ([]*entity.User, error)
+		ListPendingMainMatchingMatchingUser(user *entity.UserTiny) ([]*entity.User, error)
 		ListMainMatchingUser(user *entity.UserTiny) ([]*entity.User, error)
 	}
 
@@ -48,8 +48,8 @@ func (s *UserQueryServiceImpl) ShowMatchingUser(user *entity.UserTiny) (*entity.
 /*
 	マッチング後の評価をしていないユーザー一覧
 */
-func (s *UserQueryServiceImpl) ListNotReviewMainMatchingMatchingUser(user *entity.UserTiny) ([]*entity.User, error) {
-	return s.UserQueryRepository.FindNotMainMatchingReviewMatchingUsersByID(user.ID)
+func (s *UserQueryServiceImpl) ListPendingMainMatchingMatchingUser(user *entity.UserTiny) ([]*entity.User, error) {
+	return s.UserQueryRepository.FindPendingMainMatchingMatchingUsersByID(user.ID)
 }
 
 /*
