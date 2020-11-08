@@ -136,6 +136,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserList"
+      security:
+        - firebaseAuth: []
   /users/{id}/matching/approve:
     put:
       tags:
@@ -150,6 +152,8 @@ paths:
       responses:
         "204":
           description: ok
+      security:
+        - firebaseAuth: []
   /users/{id}/matching/reject:
     put:
       tags:
@@ -164,6 +168,32 @@ paths:
       responses:
         "204":
           description: ok
+      security:
+        - firebaseAuth: []
+  /arrange_schedule_request/receive:
+    get:
+      tags:
+        - arrange_schedule_reqeust
+      summary: 届いた日程調整リクエスト一覧取得
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArrangeScheduleRequestList"
+  /arrange_schedule_request/send:
+    get:
+      tags:
+        - arrange_schedule_request
+      summary: 送信した日程調整リクエスト一覧取得
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArrangeScheduleRequestList"
 components:
   securitySchemes:
     firebaseAuth:
@@ -274,6 +304,31 @@ components:
           type: integer
         url:
           type: string
+    ArrangeScheduleRequestList:
+      type: array
+      items:
+        $ref: '#/components/schemas/ArrangeScheduleRequest'
+    ArrangeScheduleRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: pk
+        userId:
+          type: integer
+        matchingUserId:
+          type: integer
+        dateTime:
+          type: string
+          format: date-time
+        remark:
+          type: string
+          description: |
+            備考
+        matchingUserApprove:
+          type: boolean
+          description: |
+            相手方が承認したか
     MatchingReason:
       type: string
       enum:
