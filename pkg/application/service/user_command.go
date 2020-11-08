@@ -30,7 +30,7 @@ type (
 		Update(cmd command.StoreUser, user *entity.UserTiny) error
 		Matching(user *entity.UserTiny) error
 		ApproveMainMatching(user *entity.UserTiny, matchingUserID int) error
-		NonApproveMainMatching(user *entity.UserTiny, matchingUserID int) error
+		RejectMainMatching(user *entity.UserTiny, matchingUserID int) error
 		StoreUserImage(cmd command.StoreUserImage, user *entity.UserTiny) error
 		DeleteUserImage(imageUUID string, user *entity.UserTiny) error
 	}
@@ -135,7 +135,7 @@ func (s *UserCommandServiceImpl) Matching(user *entity.UserTiny) error {
 	})
 }
 
-func (s *UserCommandServiceImpl) NonApproveMainMatching(user *entity.UserTiny, matchingUserID int) error {
+func (s *UserCommandServiceImpl) RejectMainMatching(user *entity.UserTiny, matchingUserID int) error {
 	history, err := s.UserQueryRepository.FindMatchingHistoryByUserIDAndMatchingUserID(user.ID, matchingUserID)
 	if err != nil {
 		return errors.Wrap(err, "failed find user_matching_history")
