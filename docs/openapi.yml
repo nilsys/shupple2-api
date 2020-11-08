@@ -136,6 +136,34 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserList"
+  /users/{id}/matching/approve:
+    put:
+      tags:
+        - user
+      summary: 本マッチングを許可
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: ok
+  /users/{id}/matching/reject:
+    put:
+      tags:
+        - user
+      summary: 本マッチングを拒否
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: ok
 components:
   securitySchemes:
     firebaseAuth:
