@@ -29,7 +29,8 @@ type (
 		SignUp(cmd command.StoreUser, firebaseToken string) error
 		Update(cmd command.StoreUser, user *entity.UserTiny) error
 		Matching(user *entity.UserTiny) error
-		ApproveMainMatching(user *entity.User, matchingUserID int, isApprove bool) error
+		ApproveMainMatching(user *entity.UserTiny, matchingUserID int) error
+		NonApproveMainMatching(user *entity.UserTiny, matchingUserID int) error
 		StoreUserImage(cmd command.StoreUserImage, user *entity.UserTiny) error
 		DeleteUserImage(imageUUID string, user *entity.UserTiny) error
 	}
@@ -111,7 +112,7 @@ func (s *UserCommandServiceImpl) Matching(user *entity.UserTiny) error {
 
 	return s.Do(func(ctx context.Context) error {
 		matchedAt := time.Now()
-		// matching_reasonは同じはずなので
+		// matching_reasonは同じ
 		history := entity.NewUserMatchingHistory(user.ID, matchingUser.ID, user.MatchingReason, matchedAt)
 		matchingUserHistory := entity.NewUserMatchingHistory(matchingUser.ID, user.ID, user.MatchingReason, matchedAt)
 
@@ -134,7 +135,7 @@ func (s *UserCommandServiceImpl) Matching(user *entity.UserTiny) error {
 	})
 }
 
-func (s *UserCommandServiceImpl) ApproveMainMatching(user *entity.User, matchingUserID int, isApprove bool) error {
+func (s *UserCommandServiceImpl) NonApproveMainMatching(user *entity.UserTiny, matchingUserID int) error {
 	history, err := s.UserQueryRepository.FindMatchingHistoryByUserIDAndMatchingUserID(user.ID, matchingUserID)
 	if err != nil {
 		return errors.Wrap(err, "failed find user_matching_history")
@@ -146,14 +147,40 @@ func (s *UserCommandServiceImpl) ApproveMainMatching(user *entity.User, matching
 
 	// 既に評価済みの場合
 	if history.UserMainMatchingApprove.Valid {
-		return serror.New(nil, serror.CodeInvalidParam, "duplicate confirm")
+		return serror.New(nil, serror.CodeInvalidParam, "duplicate approve")
 	}
 
 	return s.TransactionService.Do(func(ctx context.Context) error {
-		if err := s.UserCommandRepository.UpdateUserMatchingHistoryUserMainMatchingApprove(ctx, user.ID, matchingUserID, isApprove); err != nil {
+		if err := s.UserCommandRepository.UpdateUserMatchingHistoryUserMainMatchingApprove(ctx, user.ID, matchingUserID, false); err != nil {
 			return errors.Wrap(err, "failed update user_matching_history.user_main_matching_approve")
 		}
-		if err := s.UserCommandRepository.UpdateUserMatchingHistoryMatchingUserMainMatchingApprove(ctx, matchingUserID, user.ID, isApprove); err != nil {
+		if err := s.UserCommandRepository.UpdateUserMatchingHistoryMatchingUserMainMatchingApprove(ctx, matchingUserID, user.ID, false); err != nil {
+			return errors.Wrap(err, "failed update user_matching_history.matching_user_main_matching_approve")
+		}
+		return nil
+	})
+}
+
+func (s *UserCommandServiceImpl) ApproveMainMatching(user *entity.UserTiny, matchingUserID int) error {
+	history, err := s.UserQueryRepository.FindMatchingHistoryByUserIDAndMatchingUserID(user.ID, matchingUserID)
+	if err != nil {
+		return errors.Wrap(err, "failed find user_matching_history")
+	}
+
+	if !history.IsExpired() {
+		return serror.New(nil, serror.CodeMatchingNotExpired, "matching is not expired")
+	}
+
+	// 既に評価済みの場合
+	if history.UserMainMatchingApprove.Valid {
+		return serror.New(nil, serror.CodeInvalidParam, "duplicate approve")
+	}
+
+	return s.TransactionService.Do(func(ctx context.Context) error {
+		if err := s.UserCommandRepository.UpdateUserMatchingHistoryUserMainMatchingApprove(ctx, user.ID, matchingUserID, true); err != nil {
+			return errors.Wrap(err, "failed update user_matching_history.user_main_matching_approve")
+		}
+		if err := s.UserCommandRepository.UpdateUserMatchingHistoryMatchingUserMainMatchingApprove(ctx, matchingUserID, user.ID, true); err != nil {
 			return errors.Wrap(err, "failed update user_matching_history.matching_user_main_matching_approve")
 		}
 		return nil
