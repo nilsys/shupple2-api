@@ -173,7 +173,7 @@ paths:
   /arrange_schedule_request/receive:
     get:
       tags:
-        - arrange_schedule_reqeust
+        - arrange_schedule_request
       summary: 届いた日程調整リクエスト一覧取得
       responses:
         "200":
@@ -194,6 +194,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ArrangeScheduleRequestList"
+  /arrange_schedule_request:
+    post:
+      tags:
+        - arrange_schedule_request
+      summary: 日程調整リクエスト
+      requestBody:
+        $ref: "#/components/requestBodies/StoreArrangeScheduleRequest"
+      responses:
+        "204":
+          description: ok
 components:
   securitySchemes:
     firebaseAuth:
@@ -212,6 +222,11 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/UserRegisterImageRequest"
+    StoreArrangeScheduleRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/StoreArrangeScheduleRequest"
   schemas:
     UserRegisterRequest:
       type: object
@@ -265,6 +280,20 @@ components:
           format: byte
           description: |
             base64
+    StoreArrangeScheduleRequest:
+      type: object
+      properties:
+        matchingUserId:
+          type: integer
+          description: |
+            送るuser.id
+        dateTime:
+          type: string
+          format: date-time
+        remark:
+          type: string
+          description: |
+            備考
     UserList:
       type: array
       items:
