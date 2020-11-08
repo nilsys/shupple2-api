@@ -81,3 +81,14 @@ func (c *UserCommandController) Matching(ctx echo.Context, user *entity.UserTiny
 
 	return ctx.NoContent(http.StatusNoContent)
 }
+
+func (c *UserCommandController) NonApproveMainMatching(ctx echo.Context, user *entity.UserTiny) error {
+	i := input.IDParam{}
+	if err := BindAndValidate(ctx, &i); err != nil {
+		return errors.Wrap(err, "failed bind input")
+	}
+
+	if err := c.UserCommandService.NonApproveMainMatching(user, i.ID); err != nil {
+		return errors.Wrap(err, "failed non approve main matching")
+	}
+}
