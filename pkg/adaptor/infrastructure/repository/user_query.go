@@ -71,7 +71,7 @@ func (r *UserQueryRepositoryImpl) FindMatchingHistoryByUserIDAndMatchingUserID(u
 /*
 	マッチング後、評価していないUser一覧
 */
-func (r *UserQueryRepositoryImpl) FindNotMainMatchingReviewMatchingUsersByID(id int) ([]*entity.User, error) {
+func (r *UserQueryRepositoryImpl) FindPendingMainMatchingMatchingUsersByID(id int) ([]*entity.User, error) {
 	var rows []*entity.User
 	if err := r.DB.
 		Joins("INNER JOIN user_matching_history ON user.id = user_matching_history.matching_user_id").
