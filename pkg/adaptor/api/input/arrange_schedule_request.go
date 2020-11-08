@@ -6,6 +6,6 @@ type (
 	StoreArrangeScheduleRequest struct {
 		MatchingUserID IDParam
 		DateTime       model.DateTime `json:"dateTime"`
-		Remark         string
+		Remark         string         `json:"remark"`
 	}
 )
