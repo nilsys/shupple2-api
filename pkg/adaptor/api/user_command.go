@@ -95,13 +95,13 @@ func (c *UserCommandController) ApproveMainMatching(ctx echo.Context, user *enti
 	return ctx.NoContent(http.StatusNoContent)
 }
 
-func (c *UserCommandController) NonApproveMainMatching(ctx echo.Context, user *entity.UserTiny) error {
+func (c *UserCommandController) RejectMainMatching(ctx echo.Context, user *entity.UserTiny) error {
 	i := input.IDParam{}
 	if err := BindAndValidate(ctx, &i); err != nil {
 		return errors.Wrap(err, "failed bind input")
 	}
 
-	if err := c.UserCommandService.NonApproveMainMatching(user, i.ID); err != nil {
+	if err := c.UserCommandService.RejectMainMatching(user, i.ID); err != nil {
 		return errors.Wrap(err, "failed non approve main matching")
 	}
 
