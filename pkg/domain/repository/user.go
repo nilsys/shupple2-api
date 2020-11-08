@@ -16,7 +16,7 @@ type (
 		FindMatchingUserByID(id int) (*entity.User, error)
 		FindAvailableMatchingUser(gender model.Gender, reason model.MatchingReason, id int) (*entity.UserTiny, error)
 		FindMatchingHistoryByUserIDAndMatchingUserID(userID, matchingUserID int) (*entity.UserMatchingHistory, error)
-		FindNotMainMatchingReviewMatchingUsersByID(id int) ([]*entity.User, error)
+		FindPendingMainMatchingMatchingUsersByID(id int) ([]*entity.User, error)
 		FindMainMatchingUserByID(id int) ([]*entity.User, error)
 		FindImageByUUID(uuid string) (*entity.UserImage, error)
 		IsExistMainMatchingUserMatchingHistory(id, matchingUserID int) (bool, error)
