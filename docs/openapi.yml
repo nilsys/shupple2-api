@@ -394,14 +394,10 @@ components:
         - Undefined
         - InvalidParam
         - NotFound
-        - ImportDeleted
         - Unauthorized
         - Forbidden
-        - InvalidCategoryType
-        - PayAgentError
-        - DuplicateCard
-        - DuplicateReport
-        - Expired
+        - NotMatching
+        - MatchingNotExpired
     Error:
       type: object
       properties:
