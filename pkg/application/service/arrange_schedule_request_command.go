@@ -39,7 +39,7 @@ func (s *ArrangeScheduleRequestCommandServiceImpl) Store(cmd *command.StoreArran
 		return serror.New(nil, serror.CodeNotMatching, "not matching")
 	}
 
-	req := entity.NewArrangeScheduleRequest(user.ID, cmd.MatchingUserID, cmd.Date, cmd.Remark)
+	req := entity.NewArrangeScheduleRequest(user.ID, cmd.MatchingUserID, cmd.Date, cmd.Remark, cmd.StartNow)
 
 	return s.ArrangeScheduleRequestCommandRepository.Store(context.Background(), req)
 }
