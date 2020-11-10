@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS arrange_schedule_request (
   matching_user_id                      BIGINT UNSIGNED NOT NULL,
   date_time                             DATETIME NOT NULL,
   remark                                VARCHAR(255) NOT NULL,
+  start_now                             TINYINT DEFAULT NULL,
   matching_user_approve                 TINYINT DEFAULT NULL,
   created_at                            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at                            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
