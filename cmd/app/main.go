@@ -69,14 +69,22 @@ func setRoutes(app *App) {
 	{
 		users.POST("", app.UserCommandController.SignUp)
 		users.PUT("", auth.Auth(app.UserCommandController.Update))
+		users.GET("", auth.Auth(app.UserQueryController.Show))
 		users.GET("/:id", app.UserQueryController.ShowByID)
+		users.POST("/image", auth.Auth(app.UserCommandController.StoreImage))
+		users.DELETE("/image/:id", auth.Auth(app.UserCommandController.DeleteUserImage))
 		users.POST("/matching", auth.Auth(app.UserCommandController.Matching))
 		users.GET("/matching", auth.Auth(app.UserQueryController.ShowMatchingUser))
+		users.GET("/matching/pending", auth.Auth(app.UserQueryController.ListPendingMainMatchingMatchingUser))
+		users.PUT("/:id/matching/approve", auth.Auth(app.UserCommandController.ApproveMainMatching))
+		users.PUT("/:id/matching/reject", auth.Auth(app.UserCommandController.RejectMainMatching))
 	}
 
 	arrangeSchedule := api.Group("/arrange_schedule")
 
 	{
+		arrangeSchedule.GET("/receive", auth.Auth(app.ArrangeScheduleRequestQueryController.ShowReceiveList))
+		arrangeSchedule.GET("/send", auth.Auth(app.ArrangeScheduleRequestQueryController.ShowSendList))
 		arrangeSchedule.POST("", auth.Auth(app.ArrangeScheduleRequestCommandController.Store))
 	}
 
