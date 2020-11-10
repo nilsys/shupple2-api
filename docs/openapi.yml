@@ -294,6 +294,10 @@ components:
           type: string
           description: |
             備考
+        startNow:
+          type: boolean
+          description: |
+            今からか
     UserList:
       type: array
       items:
@@ -358,6 +362,10 @@ components:
           type: boolean
           description: |
             相手方が承認したか
+        startNow:
+          type: boolean
+          description: |
+            今からか
     MatchingReason:
       type: string
       enum:
