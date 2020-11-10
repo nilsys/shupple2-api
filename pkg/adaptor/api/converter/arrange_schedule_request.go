@@ -16,6 +16,7 @@ func (c Converters) ConvertStoreArrangeScheduleRequestInputToCmd(input *input.St
 		MatchingUserID: input.MatchingUserID.ID,
 		Date:           time.Time(input.DateTime),
 		Remark:         input.Remark,
+		StartNow:       input.StartNow,
 	}
 }
 
@@ -36,6 +37,7 @@ func (c Converters) ConvertArrangeScheduleRequest2Output(req *entity.ArrangeSche
 		MatchingUserID:      req.MatchingUserID,
 		DateTime:            model.DateTime(req.DateTime),
 		Remark:              req.Remark,
+		StartNow:            req.StartNow.Bool,
 		MatchingUserApprove: req.MatchingUserApprove,
 		User:                c.ConvertUser2Output(req.User),
 		MatchingUser:        c.ConvertUser2Output(req.MatchingUser),
