@@ -9,8 +9,9 @@ type (
 		MatchingUserID      int            `json:"matchingUserId"`
 		DateTime            model.DateTime `json:"dateTime"`
 		Remark              string         `json:"remark"`
-		MatchingUserApprove bool
-		User                User `json:"user"`
-		MatchingUser        User `json:"matchingUser"`
+		StartNow            bool           `json:"startNow"`
+		MatchingUserApprove bool           `json:"matchingUserApprove"`
+		User                User           `json:"user"`
+		MatchingUser        User           `json:"matchingUser"`
 	}
 )
