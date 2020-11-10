@@ -57,7 +57,7 @@ func (c *UserQueryController) ShowMatchingUser(ctx echo.Context, user *entity.Us
 /*
 	マッチング後の評価をしていないユーザー一覧
 */
-func (c *UserQueryController) ListNotReviewMainMatchingMatchingUser(ctx echo.Context, user *entity.UserTiny) error {
+func (c *UserQueryController) ListPendingMainMatchingMatchingUser(ctx echo.Context, user *entity.UserTiny) error {
 	resolve, err := c.UserQueryService.ListPendingMainMatchingMatchingUser(user)
 	if err != nil {
 		return errors.Wrap(err, "failed list not review main matching user")
